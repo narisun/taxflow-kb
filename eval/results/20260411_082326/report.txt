@@ -1,0 +1,61 @@
+============================================================================
+  TAX BRAIN — Evaluation Report
+  2026-04-11 08:23:26
+============================================================================
+
+  Questions: 5 total, 5 valid, 0 errors
+
+────────────────────────────────────────────────────────────────────────────
+  RETRIEVAL METRICS
+────────────────────────────────────────────────────────────────────────────
+  Pub Recall (direct):     40.0%
+  Pub Recall (nav+onto):   100.0%
+  Pub Precision:           25.0%
+  Avg Contexts:            3.4
+  Avg Retrieval Time:      2208ms
+
+────────────────────────────────────────────────────────────────────────────
+  FACT CHECK (heuristic)
+────────────────────────────────────────────────────────────────────────────
+  Avg Key-Fact Ratio:      5.0%
+
+────────────────────────────────────────────────────────────────────────────
+  LLM-AS-JUDGE (5 questions judged)
+────────────────────────────────────────────────────────────────────────────
+  correctness             mean=1.0  min=1  max=1
+  completeness            mean=1.0  min=1  max=1
+  hallucination           mean=3.0  min=1  max=5
+  citation_quality        mean=1.2  min=1  max=2
+  Total judge tokens:      4598
+
+────────────────────────────────────────────────────────────────────────────
+  BY CATEGORY
+────────────────────────────────────────────────────────────────────────────
+  I. Individual Filing & Standard Deductions           n=2  recall=50%  facts=0%  correct=1.0
+  II. Family, Dependents & Trump Accounts              n=1  recall=100%  facts=25%  correct=1.0
+  III. Tipped & Overtime Workers                       n=2  recall=0%  facts=0%  correct=1.0
+
+────────────────────────────────────────────────────────────────────────────
+  PER-QUESTION DETAIL
+────────────────────────────────────────────────────────────────────────────
+  ✓ IND-02   recall=100%  nav=100%  facts=0/4  pubs=['17', '1040', '1-A', '505']  C=1 F=1 H=2 S=2
+           missing: $16,100, not required to file, special taxes, refund of withheld credits
+  ✓ FAM-06   recall=100%  nav=100%  facts=1/4  pubs=['4547']  C=1 F=1 H=5 S=1
+           missing: Form 4547, $1,000 not taxable, earnings taxable upon withdrawal
+  ✗ TIP-12   recall=0%  nav=100%  facts=0/4  pubs=['334', '587', '463', '15-B']  C=1 F=1 H=1 S=1
+           missing: overtime premium only, FLSA, $5,000 deduction, 50% premium
+  ✗ TIP-14   recall=0%  nav=100%  facts=0/3  pubs=['1040', 'W-2', '535', '501', '15-B', '17']  C=1 F=1 H=2 S=1
+           missing: $150,000 Single phase-out, $300,000 Joint phase-out, significantly reduced
+  ✗ OBBBA-74 recall=0%  nav=100%  facts=0/4  pubs=['463', '525']  C=1 F=1 H=5 S=1
+           missing: purchased after 2024, U.S. assembled, $10,000 annual limit, interest deductible
+
+============================================================================
+
+────────────────────────────────────────────────────────────────────────────
+  CONTENT GAP ANALYSIS
+  Questions where no expected pub was retrieved — likely missing from KB
+────────────────────────────────────────────────────────────────────────────
+  Pub 1-A      needed by: TIP-14
+  Pub 17       needed by: TIP-12, OBBBA-74
+
+  → 2 publications need to be ingested or updated

@@ -1,0 +1,90 @@
+{
+  "total_questions": 196,
+  "valid_questions": 196,
+  "errors": 0,
+  "retrieval": {
+    "avg_pub_recall": 0.409,
+    "avg_nav_recall": 0.442,
+    "avg_pub_precision": 0.157,
+    "avg_context_count": 13.3,
+    "avg_retrieval_ms": 1308,
+    "total_retrieval_ms": 256318,
+    "missing_pubs": [
+      "1-A",
+      "1040",
+      "1099",
+      "15",
+      "15-B",
+      "4547",
+      "514",
+      "529",
+      "536",
+      "537",
+      "541",
+      "542",
+      "560",
+      "6765",
+      "8812",
+      "8962",
+      "8995-A",
+      "915",
+      "926",
+      "MeF",
+      "W-2"
+    ]
+  },
+  "fact_check": {
+    "avg_fact_ratio": 0.0
+  },
+  "judge": {},
+  "by_category": {
+    "I. Individual Filing & Standard Deductions": {
+      "count": 14,
+      "avg_pub_recall": 0.571,
+      "avg_nav_recall": 0.643,
+      "avg_fact_ratio": 0.0
+    },
+    "II. Family, Dependents & Trump Accounts": {
+      "count": 13,
+      "avg_pub_recall": 0.154,
+      "avg_nav_recall": 0.231,
+      "avg_fact_ratio": 0.0
+    },
+    "III. Tipped & Overtime Workers": {
+      "count": 14,
+      "avg_pub_recall": 0.071,
+      "avg_nav_recall": 0.143,
+      "avg_fact_ratio": 0.0
+    },
+    "IV. Business, R&D & Depreciation": {
+      "count": 19,
+      "avg_pub_recall": 0.421,
+      "avg_nav_recall": 0.421,
+      "avg_fact_ratio": 0.0
+    },
+    "V. Reporting & Thresholds": {
+      "count": 17,
+      "avg_pub_recall": 0.176,
+      "avg_nav_recall": 0.176,
+      "avg_fact_ratio": 0.0
+    },
+    "VI. MeF & Procedural Errors": {
+      "count": 22,
+      "avg_pub_recall": 0.273,
+      "avg_nav_recall": 0.318,
+      "avg_fact_ratio": 0.0
+    },
+    "VII. Pre-OBBBA Knowledge Base": {
+      "count": 76,
+      "avg_pub_recall": 0.566,
+      "avg_nav_recall": 0.592,
+      "avg_fact_ratio": 0.0
+    },
+    "VIII. Cross-Topic Scenarios": {
+      "count": 21,
+      "avg_pub_recall": 0.433,
+      "avg_nav_recall": 0.456,
+      "avg_fact_ratio": 0.0
+    }
+  }
+}

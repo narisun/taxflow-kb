@@ -1,0 +1,64 @@
+{
+  "total_questions": 5,
+  "valid_questions": 5,
+  "errors": 0,
+  "retrieval": {
+    "avg_pub_recall": 0.4,
+    "avg_nav_recall": 1.0,
+    "avg_pub_precision": 0.25,
+    "avg_context_count": 3.4,
+    "avg_retrieval_ms": 2208,
+    "total_retrieval_ms": 11040,
+    "missing_pubs": []
+  },
+  "fact_check": {
+    "avg_fact_ratio": 0.05
+  },
+  "judge": {
+    "correctness": {
+      "mean": 1.0,
+      "min": 1,
+      "max": 1
+    },
+    "completeness": {
+      "mean": 1.0,
+      "min": 1,
+      "max": 1
+    },
+    "hallucination": {
+      "mean": 3.0,
+      "min": 1,
+      "max": 5
+    },
+    "citation_quality": {
+      "mean": 1.2,
+      "min": 1,
+      "max": 2
+    },
+    "n_judged": 5,
+    "total_judge_tokens": 4598
+  },
+  "by_category": {
+    "I. Individual Filing & Standard Deductions": {
+      "count": 2,
+      "avg_pub_recall": 0.5,
+      "avg_nav_recall": 1.0,
+      "avg_fact_ratio": 0.0,
+      "avg_correctness": 1.0
+    },
+    "II. Family, Dependents & Trump Accounts": {
+      "count": 1,
+      "avg_pub_recall": 1.0,
+      "avg_nav_recall": 1.0,
+      "avg_fact_ratio": 0.25,
+      "avg_correctness": 1.0
+    },
+    "III. Tipped & Overtime Workers": {
+      "count": 2,
+      "avg_pub_recall": 0.0,
+      "avg_nav_recall": 1.0,
+      "avg_fact_ratio": 0.0,
+      "avg_correctness": 1.0
+    }
+  }
+}

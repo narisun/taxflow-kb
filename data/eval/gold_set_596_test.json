@@ -1,0 +1,71 @@
+{
+  "version": "1.0.0",
+  "description": "TaxFlow AI evaluation gold set",
+  "created_at": "2026-04-09T15:08:02.370232+00:00",
+  "total": 3,
+  "entries": [
+    {
+      "question": "For EIC purposes, if a child was married at the end of the year but did not file a joint return, under what circumstances can that child still be treated as your qualifying child?",
+      "ground_truth": "The married child can still be your qualifying child only if either: (1) you can claim the child as a dependent, or (2) you can't claim the child as a dependent solely because you let the child's other parent claim the child as a dependent under the special rule for divorced or separated parents (or parents who live apart).",
+      "expected_pub": "596",
+      "gold_chunk_ids": [
+        "p596-2025::0040"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "EIC",
+        "qualifying child",
+        "married child",
+        "dependency rules"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "f19d385e"
+    },
+    {
+      "question": "In Example 9, where separated parents both claim Jordan as a qualifying child, which spouse is allowed to treat Jordan as a qualifying child, and why?",
+      "ground_truth": "Only your spouse is allowed to treat Jordan as a qualifying child because during 2025 Jordan lived with your spouse longer than with you.",
+      "expected_pub": "596",
+      "gold_chunk_ids": [
+        "p596-2025::0048"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "EIC",
+        "qualifying-child",
+        "tiebreaker-rules",
+        "separated-parents"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "0d72bb53"
+    },
+    {
+      "question": "In the Cameron and Jordan EIC example, what amount do they enter on line 1 of the EIC Worksheet as total earned income, and into what EIC Table income range does that amount fall?",
+      "ground_truth": "They enter $33,030 on line 1, and that amount falls in the $33,000 to $33,050 range in the EIC Table.",
+      "expected_pub": "596",
+      "gold_chunk_ids": [
+        "p596-2025::0083"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "EIC",
+        "earned income",
+        "EIC Worksheet",
+        "EIC Table"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "dc6c2167"
+    }
+  ]
+}

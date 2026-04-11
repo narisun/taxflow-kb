@@ -1,0 +1,322 @@
+[
+  {
+    "sample_id": 1,
+    "category": "income_limits",
+    "rule_id": "F1040-030-01",
+    "rule_expression": "If [AdditionalChildTaxCreditAmt] > 0 Then [IRS8812] must be attached",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 2,
+    "category": "income_limits",
+    "rule_id": "F1040-002-01",
+    "rule_expression": "[AdjustedGrossIncomeAmt] = [TotalIncomeAmt] - [EducatorExpensesAmt] - [StudentLoanInterestDeductionAmt] - [TuitionAndFeesDedAmt] - [HealthSavingsAccountDedAmt] - [SelfEmployedHealthInsDedAmt] - [SEPSIMPLEQualifiedPlansAmt] - [SelfEmploymentTaxDeductionAmt] - [AlimonyPaidAmt]",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 3,
+    "category": "income_limits",
+    "rule_id": "F1040-044-01",
+    "rule_expression": "If [WorkplacePlanParticipantInd] = true AND [FilingStatusCd] = 2 AND [AdjustedGrossIncomeAmt] > 123000 Then [IRADeductionAmt] <= MAX(0, 7000 - ([AdjustedGrossIncomeAmt] - 123000) / 10000 * 7000)",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 4,
+    "category": "income_limits",
+    "rule_id": "F1040-060-01",
+    "rule_expression": "If [FilingStatusCd] = 2 AND [ModifiedAGIAmt] > 155000 Then [StudentLoanInterestDeductionAmt] <= MAX(0, 2500 - ([ModifiedAGIAmt] - 155000) / 30000 * 2500)",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 5,
+    "category": "income_limits",
+    "rule_id": "F1040-057-01",
+    "rule_expression": "If [HSACoverageTypeCd] = 'SELF' AND [PrimaryAge] < 55 Then [HSAContributionAmt] <= 4150",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 6,
+    "category": "income_limits",
+    "rule_id": "F1040-010-01",
+    "rule_expression": "[ChildTaxCreditAmt] <= [QualifyingChildrenCnt] * 2000",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 7,
+    "category": "income_limits",
+    "rule_id": "F1040-047-01",
+    "rule_expression": "If [FilingStatusCd] = 2 AND [ModifiedAGIAmt] > 250000 Then [NetInvestmentIncomeTaxAmt] = MIN([NetInvestmentIncomeAmt], [ModifiedAGIAmt] - 250000) * 0.038",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 8,
+    "category": "income_limits",
+    "rule_id": "F1040-005-01",
+    "rule_expression": "[TotalPaymentsAmt] = [FederalIncomeTaxWithheldAmt] + [EstimatedTaxPaymentsAmt] + [EarnedIncomeCreditAmt] + [AdditionalChildTaxCreditAmt] + [AmericanOpportunityCreditAmt] + [RecoveryRebateCreditAmt] + [OtherPaymentsAmt]",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 9,
+    "category": "income_limits",
+    "rule_id": "F1040-058-01",
+    "rule_expression": "If [HSACoverageTypeCd] = 'FAMILY' AND [PrimaryAge] < 55 Then [HSAContributionAmt] <= 8300",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 10,
+    "category": "income_limits",
+    "rule_id": "F1040-046-01",
+    "rule_expression": "If [FilingStatusCd] != 2 AND [AdjustedGrossIncomeAmt] > 200000 Then [ChildTaxCreditAmt] <= MAX(0, [QualifyingChildrenCnt] * 2000 - CEIL(([AdjustedGrossIncomeAmt] - 200000) / 1000) * 200)",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 11,
+    "category": "required_attachments",
+    "rule_id": "F1040-028-01",
+    "rule_expression": "If [SupplementalIncomeOrLossAmt] != 0 Then [IRS1040ScheduleE] must be attached",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 12,
+    "category": "required_attachments",
+    "rule_id": "F1040-025-01",
+    "rule_expression": "If [TaxableInterestAmt] > 1500 OR [OrdinaryDividendsAmt] > 1500 Then [IRS1040ScheduleB] must be attached",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 13,
+    "category": "required_attachments",
+    "rule_id": "F1040-013-01",
+    "rule_expression": "[PrimarySSN] is present AND [PrimarySSN] matches pattern '^\\d{3}-\\d{2}-\\d{4}$'",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 14,
+    "category": "required_attachments",
+    "rule_id": "F1040-037-01",
+    "rule_expression": "If [CharitableContributionsAmt] > [AdjustedGrossIncomeAmt] * 0.5 Then [IRS8283] must be attached",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 15,
+    "category": "required_attachments",
+    "rule_id": "F1040-015-01",
+    "rule_expression": "[PrimaryBirthDt] is present",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 16,
+    "category": "required_attachments",
+    "rule_id": "F1040-026-01",
+    "rule_expression": "If [SelfEmploymentNetProfitAmt] != 0 Then [IRS1040ScheduleC] must be attached",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 17,
+    "category": "required_attachments",
+    "rule_id": "F1040-029-01",
+    "rule_expression": "If [ForeignTaxCreditAmt] > 0 Then [IRS1116] must be attached",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 18,
+    "category": "required_attachments",
+    "rule_id": "F1040-023-01",
+    "rule_expression": "If [SelfEmploymentTaxAmt] > 0 Then [IRS1040ScheduleSE] must be attached",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 19,
+    "category": "required_attachments",
+    "rule_id": "F1040-027-01",
+    "rule_expression": "If [CapitalGainOrLossAmt] != 0 Then [IRS1040ScheduleD] must be attached",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 20,
+    "category": "required_attachments",
+    "rule_id": "F1040-021-01",
+    "rule_expression": "If [NetInvestmentIncomeTaxAmt] > 0 Then [IRS8960] must be attached",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 21,
+    "category": "math_validation",
+    "rule_id": "F1040-006-01",
+    "rule_expression": "[OverpaymentAmt] = [TotalPaymentsAmt] - [TotalTaxAmt]",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 22,
+    "category": "math_validation",
+    "rule_id": "F1040-034-01",
+    "rule_expression": "If [IRS1099DIV] is attached Then ABS([OrdinaryDividendsAmt] - SUM([IRS1099DIV].OrdinaryDividendsAmt)) <= 1",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 23,
+    "category": "math_validation",
+    "rule_id": "F1040-033-01",
+    "rule_expression": "If [IRS1099INT] is attached Then ABS([TaxableInterestAmt] - SUM([IRS1099INT].InterestIncomeAmt)) <= 1",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 24,
+    "category": "math_validation",
+    "rule_id": "F1040-031-01",
+    "rule_expression": "[WagesSalariesTipsAmt] = SUM([IRS W2].WagesAmt)",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 25,
+    "category": "math_validation",
+    "rule_id": "F1040-009-01",
+    "rule_expression": "If [ItemizedOrStandardCd] = 'S' Then [DeductionsAmt] >= [StandardDeductionAmt] Else [DeductionsAmt] = [ScheduleADeductionAmt]",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 26,
+    "category": "math_validation",
+    "rule_id": "F1040-035-01",
+    "rule_expression": "If [IRS1098] is attached Then [MortgageInterestAmt] <= SUM([IRS1098].MortgageInterestAmt)",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 27,
+    "category": "math_validation",
+    "rule_id": "F1040-016-01",
+    "rule_expression": "[SignatureDt] is present AND [SignatureDt] <= [ReturnProcessingDt]",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 28,
+    "category": "math_validation",
+    "rule_id": "F1040-007-01",
+    "rule_expression": "If [TotalTaxAmt] > [TotalPaymentsAmt] Then [AmountOwedAmt] = [TotalTaxAmt] - [TotalPaymentsAmt]",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 29,
+    "category": "math_validation",
+    "rule_id": "F1040-004-01",
+    "rule_expression": "[TotalTaxAmt] = [IncomeTaxAmt] + [AlternativeMinimumTaxAmt] + [ExcessAdvancePremiumTaxCreditRepayAmt] + [SelfEmploymentTaxAmt] + [UnreportedSSTaxAmt] + [AdditionalTaxOnIRAAmt] + [HouseholdEmploymentTaxAmt] + [NetInvestmentIncomeTaxAmt] + [AdditionalMedicareTaxAmt]",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 30,
+    "category": "math_validation",
+    "rule_id": "F1040-001-01",
+    "rule_expression": "[TotalIncomeAmt] = [WagesSalariesTipsAmt] + [TaxableInterestAmt] + [OrdinaryDividendsAmt] + [IRADistributionsAmt] + [PensionsAnnuitiesAmt] + [SocialSecurityBenefitsAmt] + [OtherIncomeAmt]",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 31,
+    "category": "other",
+    "rule_id": "F1040-019-01",
+    "rule_expression": "If [IPPINAssignedInd] = true Then [IPPINNum] matches IRS_IPPIN_DATABASE",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 32,
+    "category": "other",
+    "rule_id": "F1040-051-01",
+    "rule_expression": "If [FilingStatusCd] = 1 AND [ItemizedOrStandardCd] = 'S' Then [StandardDeductionAmt] = 14600",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 33,
+    "category": "other",
+    "rule_id": "F1040-054-01",
+    "rule_expression": "If [FilingStatusCd] = 3 AND [ItemizedOrStandardCd] = 'S' Then [StandardDeductionAmt] = 14600",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 34,
+    "category": "other",
+    "rule_id": "F1040-018-01",
+    "rule_expression": "[EFINNum] matches pattern '^\\d{6}$'",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 35,
+    "category": "other",
+    "rule_id": "F1040-014-01",
+    "rule_expression": "If [FilingStatusCd] IN (2, 3) Then [SpouseSSN] is present",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 36,
+    "category": "other",
+    "rule_id": "F1040-017-01",
+    "rule_expression": "If [PreparedByOtherThanTaxpayerInd] = true Then [PreparerSSNOrPTIN] is present",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 37,
+    "category": "other",
+    "rule_id": "F1040-052-01",
+    "rule_expression": "If [FilingStatusCd] = 2 AND [ItemizedOrStandardCd] = 'S' Then [StandardDeductionAmt] = 29200",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 38,
+    "category": "other",
+    "rule_id": "F1040-012-01",
+    "rule_expression": "[FilingStatusCd] IN (1, 2, 3, 4, 5)",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 39,
+    "category": "other",
+    "rule_id": "F1040-040-01",
+    "rule_expression": "[EarnedIncomeCreditAmt] <= EIC_MAX_TABLE([FilingStatusCd], [EICQualifyingChildrenCnt], 2024)",
+    "expert_correct": null,
+    "expert_notes": ""
+  },
+  {
+    "sample_id": 40,
+    "category": "other",
+    "rule_id": "F1040-020-01",
+    "rule_expression": "[PrimarySSN] NOT IN IRS_ACCEPTED_RETURNS_DATABASE FOR TaxYear = 2024",
+    "expert_correct": null,
+    "expert_notes": ""
+  }
+]

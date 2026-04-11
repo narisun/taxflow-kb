@@ -1,0 +1,72 @@
+{
+  "total": 102,
+  "agent_errors": 0,
+  "judge_errors": 0,
+  "pass_rate": 0.4118,
+  "pass_count": 42,
+  "avg_overall": 3.0216,
+  "avg_faithfulness": 2.7549,
+  "avg_answer_correctness": 2.8137,
+  "avg_citation_accuracy": 2.5784,
+  "avg_temporal_accuracy": 3.549,
+  "avg_safe_abstention": 3.4118,
+  "by_difficulty": {
+    "simple": {
+      "pass": 11,
+      "total": 27,
+      "score_sum": 81.60000000000001
+    },
+    "medium": {
+      "pass": 17,
+      "total": 38,
+      "score_sum": 119.0
+    },
+    "complex": {
+      "pass": 14,
+      "total": 37,
+      "score_sum": 107.6
+    }
+  },
+  "by_pub": {
+    "17": {
+      "pass": 3,
+      "total": 13,
+      "score_sum": 39.199999999999996
+    },
+    "501": {
+      "pass": 9,
+      "total": 12,
+      "score_sum": 40.4
+    },
+    "525": {
+      "pass": 3,
+      "total": 14,
+      "score_sum": 35.0
+    },
+    "550": {
+      "pass": 6,
+      "total": 14,
+      "score_sum": 42.2
+    },
+    "590a": {
+      "pass": 4,
+      "total": 10,
+      "score_sum": 30.8
+    },
+    "590b": {
+      "pass": 5,
+      "total": 12,
+      "score_sum": 39.400000000000006
+    },
+    "596": {
+      "pass": 6,
+      "total": 12,
+      "score_sum": 35.8
+    },
+    "969": {
+      "pass": 6,
+      "total": 15,
+      "score_sum": 45.40000000000001
+    }
+  }
+}

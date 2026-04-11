@@ -1,0 +1,14 @@
+[project]
+name = "taxflow-kb"
+version = "0.1.0"
+description = "TaxFlow AI Knowledge Base — IRS tax research agent for CPAs"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+filterwarnings = [
+    "ignore::pytest.PytestCollectionWarning",
+]

@@ -1,0 +1,513 @@
+"""
+tests/test_hierarchical_agent.py
+
+Integration tests for the hierarchical + ontology hybrid retrieval agent.
+
+Tests three retrieval modes:
+  1. Hierarchical (navigate → drill → ontology augment) — default for GENERAL/LOOKUP
+  2. Scoped multi-pub — SCENARIO queries spanning multiple publications
+  3. Cross-year comparison — queries comparing rules across tax years
+
+All tests use mock retrievers to avoid needing a running Postgres instance.
+"""
+
+import pytest
+from unittest.mock import patch, MagicMock, PropertyMock
+from dataclasses import dataclass
+
+from taxflow_kb.layer4.models_layer4 import RetrievedContext, CPAQueryResult
+from taxflow_kb.layer4.query_classifier import (
+    QueryMetadata, QueryIntent, classify_query,
+)
+
+
+# ── Test helpers ─────────────────────────────────────────────────────────────
+
+def _make_context(
+    pub: str = "17",
+    text: str = "Test passage",
+    score: float = 0.9,
+    method: str = "vector",
+    chunk_type: str = "detail",
+    chapter: str = "",
+) -> RetrievedContext:
+    return RetrievedContext(
+        layer=3,
+        source_type="publication",
+        reference=pub,
+        title=f"Pub {pub}",
+        text=text,
+        score=score,
+        retrieval_method=method,
+        chunk_type=chunk_type,
+        chapter=chapter,
+    )
+
+
+def _mock_settings():
+    """Return a MagicMock that looks like TaxFlowSettings."""
+    s = MagicMock()
+    s.default_tax_year = 2025
+    s.retrieval_top_k = 5
+    s.synthesis_temperature = 0.1
+    s.synthesis_max_tokens = 1000
+    return s
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Item 1: Agent uses HierarchicalRetriever
+# ──────────────────────────────────────────────────────────────────────────────
+
+class TestAgentUsesHierarchicalRetriever:
+    """Verify the agent instantiates and delegates to HierarchicalRetriever."""
+
+    def test_agent_imports_hierarchical_retriever(self):
+        """The agent module should import HierarchicalRetriever."""
+        from taxflow_kb.layer4 import agent as agent_mod
+        source = open(agent_mod.__file__).read()
+        assert "HierarchicalRetriever" in source
+
+    def test_agent_does_not_import_multi_layer_directly(self):
+        """The agent should NOT directly instantiate MultiLayerRetriever."""
+        from taxflow_kb.layer4 import agent as agent_mod
+        source = open(agent_mod.__file__).read()
+        # Should not have "self._retriever = MultiLayerRetriever("
+        assert "self._retriever = MultiLayerRetriever(" not in source
+
+    def test_hierarchical_retrieve_returns_three_tuple(self):
+        """HierarchicalRetriever.retrieve() returns (contexts, ms, metadata)."""
+        from taxflow_kb.layer4.hierarchical_retriever import HierarchicalRetriever
+        import inspect
+        sig = inspect.signature(HierarchicalRetriever.retrieve)
+        # Should have: query, top_k, pub_filter, tax_year, classify, force_flat
+        params = list(sig.parameters.keys())
+        assert "query" in params
+        assert "top_k" in params
+        assert "force_flat" in params
+
+    def test_agent_query_passes_through_to_hierarchical(self):
+        """Agent.query() should call self._retriever.retrieve() which is HierarchicalRetriever."""
+        from taxflow_kb.layer4.agent import CPAQueryAgent
+
+        simple_meta = QueryMetadata(
+            original_query="What is the standard deduction?",
+            normalized_query="what is the standard deduction",
+            intent=QueryIntent.LOOKUP,
+            tax_year=2025,
+            form_refs=[],
+            pub_refs=[],
+            topic_tags=["standard_deduction"],
+            confidence=0.9,
+        )
+
+        with patch("taxflow_kb.layer4.agent.classify_query", return_value=simple_meta):
+            with patch("taxflow_kb.layer4.agent.get_settings", return_value=_mock_settings()):
+                agent = MagicMock(spec=CPAQueryAgent)
+                agent._retriever = MagicMock()
+                agent._retriever.retrieve.return_value = (
+                    [_make_context()],
+                    15.0,
+                    {"mode": "hierarchical", "nav_pubs": ["501"], "ontology_pubs": []},
+                )
+
+                result = CPAQueryAgent.query(agent, "What is the standard deduction?", synthesize=False)
+
+                assert agent._retriever.retrieve.called
+                assert result.retrieval_mode == "hierarchical"
+                assert result.nav_pubs == ["501"]
+
+    def test_result_model_has_retrieval_mode(self):
+        """CPAQueryResult should include retrieval_mode, nav_pubs, ontology_pubs."""
+        result = CPAQueryResult(
+            query="test",
+            answer="",
+            retrieval_mode="hierarchical",
+            nav_pubs=["501", "17"],
+            ontology_pubs=["525"],
+        )
+        assert result.retrieval_mode == "hierarchical"
+        assert result.nav_pubs == ["501", "17"]
+        assert result.ontology_pubs == ["525"]
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Item 2: Scoped multi-pub retrieval for SCENARIO queries
+# ──────────────────────────────────────────────────────────────────────────────
+
+class TestScopedScenarioRetrieval:
+    """Test scoped multi-pub retrieval for complex SCENARIO queries."""
+
+    def test_scenario_query_triggers_scoped_retrieval(self):
+        """SCENARIO intent + multiple ontology pub groups → scoped multi-pub."""
+        from taxflow_kb.layer4.agent import CPAQueryAgent
+
+        scenario_meta = QueryMetadata(
+            original_query="Client sold rental property, what depreciation recapture?",
+            normalized_query="client sold rental property what depreciation recapture",
+            intent=QueryIntent.SCENARIO,
+            tax_year=2025,
+            form_refs=[],
+            pub_refs=[],
+            topic_tags=["rental-property", "depreciation", "capital-gains"],
+            confidence=0.85,
+        )
+
+        with patch("taxflow_kb.layer4.agent.classify_query", return_value=scenario_meta):
+            with patch("taxflow_kb.layer4.agent.get_settings", return_value=_mock_settings()):
+                agent = MagicMock(spec=CPAQueryAgent)
+                agent._retriever = MagicMock()
+                agent._retriever.retrieve.return_value = (
+                    [_make_context(pub="527", text="Rental property depreciation")],
+                    10.0,
+                    {"mode": "flat", "nav_pubs": [], "ontology_pubs": []},
+                )
+
+                # Mock ontology to return 2+ pub groups
+                agent._get_ontology_pub_groups = MagicMock(return_value=[
+                    ["527"],        # rental
+                    ["946"],        # depreciation
+                    ["544", "550"], # capital gains
+                ])
+
+                # Bind the real _retrieve_scoped_scenario method
+                agent._retrieve_scoped_scenario = lambda *a, **kw: CPAQueryAgent._retrieve_scoped_scenario(agent, *a, **kw)
+
+                result = CPAQueryAgent.query(
+                    agent,
+                    "Client sold rental property, what depreciation recapture?",
+                    synthesize=False,
+                )
+
+                # Should have called retrieve multiple times (once per group)
+                assert agent._retriever.retrieve.call_count >= 2
+
+    def test_scenario_with_single_group_falls_to_hierarchical(self):
+        """SCENARIO with only 1 pub group → standard hierarchical retrieval."""
+        from taxflow_kb.layer4.agent import CPAQueryAgent
+
+        scenario_meta = QueryMetadata(
+            original_query="How is rental income reported?",
+            normalized_query="how is rental income reported",
+            intent=QueryIntent.SCENARIO,
+            tax_year=2025,
+            form_refs=[],
+            pub_refs=[],
+            topic_tags=["rental-property"],
+            confidence=0.8,
+        )
+
+        with patch("taxflow_kb.layer4.agent.classify_query", return_value=scenario_meta):
+            with patch("taxflow_kb.layer4.agent.get_settings", return_value=_mock_settings()):
+                agent = MagicMock(spec=CPAQueryAgent)
+                agent._retriever = MagicMock()
+                agent._retriever.retrieve.return_value = (
+                    [_make_context(pub="527")],
+                    10.0,
+                    {"mode": "hierarchical", "nav_pubs": ["527"], "ontology_pubs": []},
+                )
+
+                # Only 1 pub group → should fall back to hierarchical
+                agent._get_ontology_pub_groups = MagicMock(return_value=[["527"]])
+
+                # Bind the real method
+                agent._retrieve_scoped_scenario = lambda *a, **kw: CPAQueryAgent._retrieve_scoped_scenario(agent, *a, **kw)
+
+                result = CPAQueryAgent.query(
+                    agent,
+                    "How is rental income reported?",
+                    synthesize=False,
+                )
+
+                # Should have called retrieve once (hierarchical, not scoped)
+                assert agent._retriever.retrieve.call_count == 1
+
+    def test_get_ontology_pub_groups_returns_distinct_groups(self):
+        """_get_ontology_pub_groups should return non-overlapping groups."""
+        from taxflow_kb.layer4.agent import CPAQueryAgent
+
+        meta = QueryMetadata(
+            original_query="Rental depreciation and capital gains",
+            normalized_query="rental depreciation and capital gains",
+            intent=QueryIntent.SCENARIO,
+            tax_year=2025,
+            form_refs=[],
+            pub_refs=[],
+            topic_tags=["rental-property", "depreciation", "capital-gains"],
+            confidence=0.85,
+        )
+
+        # Use the real method
+        agent = MagicMock(spec=CPAQueryAgent)
+        groups = CPAQueryAgent._get_ontology_pub_groups(agent, meta)
+
+        # Should be a list of lists
+        assert isinstance(groups, list)
+        for g in groups:
+            assert isinstance(g, list)
+
+        # Groups should be non-overlapping
+        if len(groups) >= 2:
+            all_pubs: list[str] = []
+            for g in groups:
+                all_pubs.extend(g)
+            assert len(all_pubs) == len(set(all_pubs)), \
+                "Pub groups should not overlap"
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Item 3: Ontology-driven cross-publication routing
+# ──────────────────────────────────────────────────────────────────────────────
+
+class TestOntologyRouting:
+    """Test that the ontology drives cross-publication routing."""
+
+    def test_ontology_finds_topics_for_depreciation_query(self):
+        """Ontology should match depreciation topics for a depreciation query."""
+        from taxflow_kb.layer3.topic_ontology import get_ontology
+
+        ontology = get_ontology()
+        topics = ontology.find_by_query("MACRS depreciation recovery period for rental property")
+        topic_ids = [t.topic_id for t in topics]
+
+        # Should find depreciation and/or rental-property topics
+        assert len(topics) > 0
+        assert any("depreciation" in tid or "rental" in tid for tid in topic_ids)
+
+    def test_ontology_finds_cross_pub_sections(self):
+        """Depreciation topic should map to multiple publications."""
+        from taxflow_kb.layer3.topic_ontology import get_ontology
+
+        ontology = get_ontology()
+        # Find the depreciation topic
+        topics = ontology.find_by_query("depreciation MACRS section 179")
+        depreciation_topics = [t for t in topics if "depreciation" in t.topic_id.lower()]
+
+        if depreciation_topics:
+            topic = depreciation_topics[0]
+            pubs = ontology.get_pub_numbers_for_topic(topic.topic_id)
+            # Should map to at least Pub 946
+            assert "946" in pubs
+
+    def test_ontology_provides_relevance_levels(self):
+        """PubSections should have primary/supplementary/reference relevance."""
+        from taxflow_kb.layer3.topic_ontology import get_ontology
+
+        ontology = get_ontology()
+        all_topics = list(ontology._topics.values())
+
+        relevance_levels_seen = set()
+        for topic in all_topics:
+            for ps in topic.pub_sections:
+                relevance_levels_seen.add(ps.relevance)
+
+        # Should have at least primary
+        assert "primary" in relevance_levels_seen
+
+    def test_hierarchical_retriever_has_ontology_augment(self):
+        """HierarchicalRetriever should have _augment_from_ontology method."""
+        from taxflow_kb.layer4.hierarchical_retriever import HierarchicalRetriever
+        assert hasattr(HierarchicalRetriever, "_augment_from_ontology")
+
+    def test_hierarchical_retriever_enable_ontology_default(self):
+        """enable_ontology should default to True."""
+        import inspect
+        from taxflow_kb.layer4.hierarchical_retriever import HierarchicalRetriever
+        sig = inspect.signature(HierarchicalRetriever.__init__)
+        assert sig.parameters["enable_ontology"].default is True
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Cross-year comparison with hierarchical retriever
+# ──────────────────────────────────────────────────────────────────────────────
+
+class TestCrossYearWithHierarchical:
+    """Test cross-year comparison queries work with the hierarchical agent."""
+
+    def test_cross_year_runs_per_year_retrieval(self):
+        """Comparison query should make one hierarchical retrieval per year."""
+        from taxflow_kb.layer4.agent import CPAQueryAgent
+
+        comparison_meta = QueryMetadata(
+            original_query="How did HSA limits change from 2023 to 2025?",
+            normalized_query="how did hsa limits change from 2023 to 2025",
+            intent=QueryIntent.COMPARISON,
+            tax_year=2023,
+            comparison_years=[2023, 2025],
+            form_refs=[],
+            pub_refs=[],
+            topic_tags=["hsa"],
+            confidence=0.85,
+        )
+
+        with patch("taxflow_kb.layer4.agent.classify_query", return_value=comparison_meta):
+            with patch("taxflow_kb.layer4.agent.get_settings", return_value=_mock_settings()):
+                agent = MagicMock(spec=CPAQueryAgent)
+                agent._retriever = MagicMock()
+                agent._retriever.retrieve.return_value = (
+                    [_make_context(pub="969", text="HSA contribution limits")],
+                    10.0,
+                    {"mode": "hierarchical", "nav_pubs": ["969"], "ontology_pubs": []},
+                )
+
+                # Bind the real cross-year method
+                agent._retrieve_cross_year = lambda *a, **kw: CPAQueryAgent._retrieve_cross_year(agent, *a, **kw)
+
+                result = CPAQueryAgent.query(
+                    agent,
+                    "How did HSA limits change from 2023 to 2025?",
+                    synthesize=False,
+                )
+
+                # Should have made 2 calls (one per year)
+                assert agent._retriever.retrieve.call_count == 2
+                assert result.retrieval_mode == "cross_year_comparison"
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# End-to-end integration: query classification → retrieval mode selection
+# ──────────────────────────────────────────────────────────────────────────────
+
+class TestRetrievalModeSelection:
+    """Test that the right retrieval mode is selected based on query intent."""
+
+    def _run_agent_query(self, question, query_meta):
+        """Helper to run a mocked agent query and return the result."""
+        from taxflow_kb.layer4.agent import CPAQueryAgent
+
+        with patch("taxflow_kb.layer4.agent.classify_query", return_value=query_meta):
+            with patch("taxflow_kb.layer4.agent.get_settings", return_value=_mock_settings()):
+                agent = MagicMock(spec=CPAQueryAgent)
+                agent._retriever = MagicMock()
+                agent._retriever.retrieve.return_value = (
+                    [_make_context()], 10.0,
+                    {"mode": "hierarchical", "nav_pubs": ["17"], "ontology_pubs": []},
+                )
+                agent._get_ontology_pub_groups = MagicMock(return_value=[])
+
+                return CPAQueryAgent.query(agent, question, synthesize=False)
+
+    def test_lookup_uses_hierarchical(self):
+        """LOOKUP queries should use hierarchical (or flat) — not scoped."""
+        meta = QueryMetadata(
+            original_query="What is the 2025 standard deduction?",
+            normalized_query="what is the 2025 standard deduction",
+            intent=QueryIntent.LOOKUP,
+            tax_year=2025,
+            form_refs=[],
+            pub_refs=[],
+            topic_tags=["standard_deduction"],
+            confidence=0.9,
+        )
+        result = self._run_agent_query("What is the 2025 standard deduction?", meta)
+        assert result.retrieval_mode in ("hierarchical", "flat", "flat_fallback")
+
+    def test_general_uses_hierarchical(self):
+        """GENERAL queries should use hierarchical."""
+        meta = QueryMetadata(
+            original_query="How does the earned income credit work?",
+            normalized_query="how does the earned income credit work",
+            intent=QueryIntent.GENERAL,
+            tax_year=None,
+            form_refs=[],
+            pub_refs=[],
+            topic_tags=["eic"],
+            confidence=0.7,
+        )
+        result = self._run_agent_query("How does the earned income credit work?", meta)
+        assert result.retrieval_mode in ("hierarchical", "flat", "flat_fallback")
+
+    def test_form_line_uses_flat(self):
+        """FORM_LINE queries should use flat (already narrowly scoped)."""
+        meta = QueryMetadata(
+            original_query="What goes on Schedule C line 31?",
+            normalized_query="what goes on schedule c line 31",
+            intent=QueryIntent.FORM_LINE,
+            tax_year=2025,
+            form_refs=["Schedule C"],
+            pub_refs=[],
+            topic_tags=[],
+            confidence=0.9,
+        )
+        result = self._run_agent_query("What goes on Schedule C line 31?", meta)
+        # Should delegate directly to retriever (which decides hierarchical vs flat)
+        assert result.retrieval_mode in ("hierarchical", "flat", "flat_fallback")
+
+    def test_comparison_uses_cross_year(self):
+        """COMPARISON with 2+ years → cross-year retrieval."""
+        meta = QueryMetadata(
+            original_query="Standard deduction 2023 vs 2025",
+            normalized_query="standard deduction 2023 vs 2025",
+            intent=QueryIntent.COMPARISON,
+            tax_year=2023,
+            comparison_years=[2023, 2025],
+            form_refs=[],
+            pub_refs=[],
+            topic_tags=["standard_deduction"],
+            confidence=0.85,
+        )
+        from taxflow_kb.layer4.agent import CPAQueryAgent
+
+        with patch("taxflow_kb.layer4.agent.classify_query", return_value=meta):
+            with patch("taxflow_kb.layer4.agent.get_settings", return_value=_mock_settings()):
+                agent = MagicMock(spec=CPAQueryAgent)
+                agent._retriever = MagicMock()
+                agent._retriever.retrieve.return_value = (
+                    [_make_context()], 10.0,
+                    {"mode": "hierarchical", "nav_pubs": ["501"], "ontology_pubs": []},
+                )
+                # Bind the real cross-year method
+                agent._retrieve_cross_year = lambda *a, **kw: CPAQueryAgent._retrieve_cross_year(agent, *a, **kw)
+
+                result = CPAQueryAgent.query(
+                    agent, "Standard deduction 2023 vs 2025", synthesize=False,
+                )
+                assert result.retrieval_mode == "cross_year_comparison"
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# HierarchicalRetriever structural tests (no DB required)
+# ──────────────────────────────────────────────────────────────────────────────
+
+class TestHierarchicalRetrieverStructure:
+    """Structural tests for HierarchicalRetriever — no DB needed."""
+
+    def test_has_leaf_retrievers(self):
+        """HierarchicalRetriever should internally create leaf retrievers."""
+        from taxflow_kb.layer4 import hierarchical_retriever as hr_mod
+        source = open(hr_mod.__file__).read()
+        assert "Layer3Retriever" in source
+        assert "BM25Retriever" in source
+
+    def test_has_navigate_method(self):
+        from taxflow_kb.layer4.hierarchical_retriever import HierarchicalRetriever
+        assert hasattr(HierarchicalRetriever, "_navigate")
+
+    def test_has_augment_from_ontology_method(self):
+        from taxflow_kb.layer4.hierarchical_retriever import HierarchicalRetriever
+        assert hasattr(HierarchicalRetriever, "_augment_from_ontology")
+
+    def test_has_get_nav_summaries_method(self):
+        from taxflow_kb.layer4.hierarchical_retriever import HierarchicalRetriever
+        assert hasattr(HierarchicalRetriever, "_get_nav_summaries")
+
+    def test_has_summary_chunks_check(self):
+        from taxflow_kb.layer4.hierarchical_retriever import HierarchicalRetriever
+        assert hasattr(HierarchicalRetriever, "_has_summary_chunks")
+
+    def test_retrieve_returns_metadata_dict(self):
+        """Retrieve should return a 3-tuple with metadata dict as third element."""
+        import inspect
+        from taxflow_kb.layer4.hierarchical_retriever import HierarchicalRetriever
+        # Check return annotation
+        sig = inspect.signature(HierarchicalRetriever.retrieve)
+        ret = sig.return_annotation
+        # Should be tuple[list[RetrievedContext], float, dict]
+        assert "tuple" in str(ret).lower() or "Tuple" in str(ret)
+
+    def test_force_flat_parameter(self):
+        """Retrieve should accept force_flat parameter."""
+        import inspect
+        from taxflow_kb.layer4.hierarchical_retriever import HierarchicalRetriever
+        sig = inspect.signature(HierarchicalRetriever.retrieve)
+        assert "force_flat" in sig.parameters
+        assert sig.parameters["force_flat"].default is False

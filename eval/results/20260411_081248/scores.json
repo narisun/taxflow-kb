@@ -1,0 +1,71 @@
+[
+  {
+    "id": "TIP-14",
+    "category": "III. Tipped & Overtime Workers",
+    "question": "Does my high income disqualify me from the overtime deduction?",
+    "ground_truth": "Yes. The overtime deduction begins to phase out at $150,000 (Single) or $300,000 (Joint). At $200,000 MAGI, your deduction is significantly reduced.",
+    "candidate_answer": "For tax year 2025, the overtime deduction is subject to a phase-out at higher income levels. The key threshold for certain deductions, including the overtime deduction, is $150,000 [7]. If your income exceeds this threshold, the deduction may be significantly reduced. However, the excerpts do not provide specific details on how the phase-out is calculated beyond this threshold.\n\nKey Sources: [6], [7]\n\nCONFIDENCE: MODERATE",
+    "retrieval": {
+      "retrieved_pubs": [
+        "1040",
+        "17",
+        "15-B",
+        "501",
+        "535",
+        "W-2",
+        "1-A"
+      ],
+      "expected_pubs": [
+        "1-A"
+      ],
+      "pub_precision": 0.143,
+      "pub_recall": 1.0,
+      "nav_recall": 1.0,
+      "context_count": 7,
+      "retrieval_ms": 4943,
+      "retrieval_mode": "hierarchical",
+      "nav_pubs": [
+        "1-A",
+        "463",
+        "501",
+        "1040",
+        "525",
+        "17",
+        "529",
+        "W-2",
+        "15-B"
+      ],
+      "ontology_pubs": [
+        "W-2",
+        "535",
+        "334",
+        "15-B"
+      ],
+      "query_intent": "general",
+      "detected_tax_year": null
+    },
+    "fact_check": {
+      "facts_found": 1,
+      "facts_total": 3,
+      "fact_ratio": 0.333,
+      "missing": [
+        "$150,000 Single phase-out",
+        "$300,000 Joint phase-out"
+      ]
+    },
+    "judge": {
+      "correctness": 3,
+      "completeness": 3,
+      "hallucination": 4,
+      "citation_quality": 3,
+      "reasoning": "The candidate answer correctly identifies the $150,000 threshold for the phase-out of the overtime deduction, which matches the ground truth for single filers. However, it fails to mention the $300,000 threshold for joint filers and does not specify the significant reduction at $200,000 MAGI. The answer does not fabricate facts but lacks detail on the phase-out specifics. The citation to IRS Pub 1-A is relevant, but the answer lacks specificity and does not mention the joint filer threshold, which is a key fact.",
+      "judge_ms": 1784,
+      "judge_model": "gpt-4o",
+      "judge_tokens": 967
+    },
+    "query_ms": 13865,
+    "synthesis_ms": 1001,
+    "model_used": "gpt-4o",
+    "tokens": 2700
+  }
+]

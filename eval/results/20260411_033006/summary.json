@@ -1,0 +1,28 @@
+{
+  "total_questions": 1,
+  "valid_questions": 1,
+  "errors": 0,
+  "retrieval": {
+    "avg_pub_recall": 0.667,
+    "avg_nav_recall": 0.667,
+    "avg_pub_precision": 0.167,
+    "avg_context_count": 40.0,
+    "avg_retrieval_ms": 4943,
+    "total_retrieval_ms": 4943,
+    "missing_pubs": [
+      "536"
+    ]
+  },
+  "fact_check": {
+    "avg_fact_ratio": 0.0
+  },
+  "judge": {},
+  "by_category": {
+    "VIII. Cross-Topic Scenarios": {
+      "count": 1,
+      "avg_pub_recall": 0.667,
+      "avg_nav_recall": 0.667,
+      "avg_fact_ratio": 0.0
+    }
+  }
+}

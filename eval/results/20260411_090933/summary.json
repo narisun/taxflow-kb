@@ -1,0 +1,99 @@
+{
+  "total_questions": 196,
+  "valid_questions": 196,
+  "errors": 0,
+  "retrieval": {
+    "avg_pub_recall": 0.872,
+    "avg_nav_recall": 1.0,
+    "avg_pub_precision": 0.178,
+    "avg_context_count": 10.8,
+    "avg_retrieval_ms": 1472,
+    "total_retrieval_ms": 288494,
+    "missing_pubs": []
+  },
+  "fact_check": {
+    "avg_fact_ratio": 0.055
+  },
+  "judge": {
+    "correctness": {
+      "mean": 2.41,
+      "min": 1,
+      "max": 5
+    },
+    "completeness": {
+      "mean": 2.41,
+      "min": 1,
+      "max": 5
+    },
+    "hallucination": {
+      "mean": 3.64,
+      "min": 1,
+      "max": 5
+    },
+    "citation_quality": {
+      "mean": 2.34,
+      "min": 1,
+      "max": 4
+    },
+    "n_judged": 196,
+    "total_judge_tokens": 206088
+  },
+  "by_category": {
+    "I. Individual Filing & Standard Deductions": {
+      "count": 14,
+      "avg_pub_recall": 0.714,
+      "avg_nav_recall": 1.0,
+      "avg_fact_ratio": 0.0,
+      "avg_correctness": 1.79
+    },
+    "II. Family, Dependents & Trump Accounts": {
+      "count": 13,
+      "avg_pub_recall": 0.846,
+      "avg_nav_recall": 1.0,
+      "avg_fact_ratio": 0.077,
+      "avg_correctness": 1.92
+    },
+    "III. Tipped & Overtime Workers": {
+      "count": 14,
+      "avg_pub_recall": 0.714,
+      "avg_nav_recall": 1.0,
+      "avg_fact_ratio": 0.095,
+      "avg_correctness": 2.14
+    },
+    "IV. Business, R&D & Depreciation": {
+      "count": 19,
+      "avg_pub_recall": 0.947,
+      "avg_nav_recall": 1.0,
+      "avg_fact_ratio": 0.063,
+      "avg_correctness": 2.21
+    },
+    "V. Reporting & Thresholds": {
+      "count": 17,
+      "avg_pub_recall": 0.882,
+      "avg_nav_recall": 1.0,
+      "avg_fact_ratio": 0.029,
+      "avg_correctness": 2.06
+    },
+    "VI. MeF & Procedural Errors": {
+      "count": 22,
+      "avg_pub_recall": 0.818,
+      "avg_nav_recall": 1.0,
+      "avg_fact_ratio": 0.08,
+      "avg_correctness": 2.14
+    },
+    "VII. Pre-OBBBA Knowledge Base": {
+      "count": 76,
+      "avg_pub_recall": 0.947,
+      "avg_nav_recall": 1.0,
+      "avg_fact_ratio": 0.059,
+      "avg_correctness": 2.87
+    },
+    "VIII. Cross-Topic Scenarios": {
+      "count": 21,
+      "avg_pub_recall": 0.806,
+      "avg_nav_recall": 1.0,
+      "avg_fact_ratio": 0.024,
+      "avg_correctness": 2.43
+    }
+  }
+}

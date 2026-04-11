@@ -1,0 +1,50 @@
+{
+  "total_questions": 1,
+  "valid_questions": 1,
+  "errors": 0,
+  "retrieval": {
+    "avg_pub_recall": 1.0,
+    "avg_nav_recall": 1.0,
+    "avg_pub_precision": 0.067,
+    "avg_context_count": 47.0,
+    "avg_retrieval_ms": 6562,
+    "total_retrieval_ms": 6562,
+    "missing_pubs": []
+  },
+  "fact_check": {
+    "avg_fact_ratio": 0.0
+  },
+  "judge": {
+    "correctness": {
+      "mean": 4.0,
+      "min": 4,
+      "max": 4
+    },
+    "completeness": {
+      "mean": 4.0,
+      "min": 4,
+      "max": 4
+    },
+    "hallucination": {
+      "mean": 4.0,
+      "min": 4,
+      "max": 4
+    },
+    "citation_quality": {
+      "mean": 3.0,
+      "min": 3,
+      "max": 3
+    },
+    "n_judged": 1,
+    "total_judge_tokens": 1575
+  },
+  "by_category": {
+    "I. Individual Filing & Standard Deductions": {
+      "count": 1,
+      "avg_pub_recall": 1.0,
+      "avg_nav_recall": 1.0,
+      "avg_fact_ratio": 0.0,
+      "avg_correctness": 4.0
+    }
+  }
+}

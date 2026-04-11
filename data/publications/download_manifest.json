@@ -1,0 +1,738 @@
+{
+  "p17_2022.pdf": {
+    "downloaded_at": "2026-04-10T19:51:59.192389+00:00",
+    "file_size": 2921289,
+    "pub_number": "17",
+    "sha256": "9e7b040385b5433fece6be86d8a6c298222dcbbccf0f2ad343484c330ac1b5ca",
+    "tax_year": 2022,
+    "url": "https://www.irs.gov/pub/irs-prior/p17--2022.pdf"
+  },
+  "p17_2023.pdf": {
+    "downloaded_at": "2026-04-10T19:52:00.869671+00:00",
+    "file_size": 3038846,
+    "pub_number": "17",
+    "sha256": "01b4e7a90a5c7031bb8ef66036a13af75117658f4c94b0157fc360fb33cf425e",
+    "tax_year": 2023,
+    "url": "https://www.irs.gov/pub/irs-prior/p17--2023.pdf"
+  },
+  "p17_2024.pdf": {
+    "downloaded_at": "2026-04-10T19:52:02.135495+00:00",
+    "file_size": 3046757,
+    "pub_number": "17",
+    "sha256": "33a0cb93a183258bdf6ad6289c6ad599b276146da9e7ee7366c73b73ed7b2807",
+    "tax_year": 2024,
+    "url": "https://www.irs.gov/pub/irs-prior/p17--2024.pdf"
+  },
+  "p334_2022.pdf": {
+    "downloaded_at": "2026-04-10T19:52:03.443990+00:00",
+    "file_size": 2600395,
+    "pub_number": "334",
+    "sha256": "e2c4745147715a8c4afadb51b2cefd9571ddeda2087e1af7b1759a1efc2afcb4",
+    "tax_year": 2022,
+    "url": "https://www.irs.gov/pub/irs-prior/p334--2022.pdf"
+  },
+  "p334_2023.pdf": {
+    "downloaded_at": "2026-04-10T19:52:04.762001+00:00",
+    "file_size": 2623186,
+    "pub_number": "334",
+    "sha256": "330a68c99b784b0c7970bc2495065e3e041352d8ccbb345323404647e332d9d3",
+    "tax_year": 2023,
+    "url": "https://www.irs.gov/pub/irs-prior/p334--2023.pdf"
+  },
+  "p334_2024.pdf": {
+    "downloaded_at": "2026-04-10T19:52:06.139609+00:00",
+    "file_size": 2646772,
+    "pub_number": "334",
+    "sha256": "0414933ed67c5138a9cb994ad170f9f64a6dac278223ff2d278bbace3c0b1e6a",
+    "tax_year": 2024,
+    "url": "https://www.irs.gov/pub/irs-prior/p334--2024.pdf"
+  },
+  "p334_2025.pdf": {
+    "downloaded_at": "2026-04-10T19:52:07.403230+00:00",
+    "file_size": 2714784,
+    "pub_number": "334",
+    "sha256": "722639ba7bfd6f5348234b58d21e1afd8cb0c04895138bd5c4539142dde6c60a",
+    "tax_year": 2025,
+    "url": "https://www.irs.gov/pub/irs-pdf/p334.pdf"
+  },
+  "p463_2022.pdf": {
+    "downloaded_at": "2026-04-10T19:52:08.686210+00:00",
+    "file_size": 1770629,
+    "pub_number": "463",
+    "sha256": "875018fd3a2ca4b2132e832f7ba5452c647a9a6e2910dadec138ee41db198270",
+    "tax_year": 2022,
+    "url": "https://www.irs.gov/pub/irs-prior/p463--2022.pdf"
+  },
+  "p463_2023.pdf": {
+    "downloaded_at": "2026-04-10T19:50:46.660835+00:00",
+    "file_size": 1801149,
+    "pub_number": "463",
+    "sha256": "8e19b78803a509d19ef51614cece102497e1fa5fb6132f6282f0b79a3905cabe",
+    "tax_year": 2023,
+    "url": "https://www.irs.gov/pub/irs-prior/p463--2023.pdf"
+  },
+  "p463_2024.pdf": {
+    "downloaded_at": "2026-04-10T19:50:48.011909+00:00",
+    "file_size": 1876085,
+    "pub_number": "463",
+    "sha256": "5c8bbbc377116174a94885935249ff090bb976cb9804b0e300e75256c6afe562",
+    "tax_year": 2024,
+    "url": "https://www.irs.gov/pub/irs-prior/p463--2024.pdf"
+  },
+  "p463_2025.pdf": {
+    "downloaded_at": "2026-04-10T19:50:49.352608+00:00",
+    "file_size": 1851538,
+    "pub_number": "463",
+    "sha256": "ddc3bb15e437bd65c37da2036debdae78c1a0bf5a080b19d5301c81f5ec5ae5d",
+    "tax_year": 2025,
+    "url": "https://www.irs.gov/pub/irs-pdf/p463.pdf"
+  },
+  "p501_2022.pdf": {
+    "downloaded_at": "2026-04-10T19:52:09.940254+00:00",
+    "file_size": 1467992,
+    "pub_number": "501",
+    "sha256": "4e47708fc61bb25e4b8a448b9fbfb1d64b56f8621f9a9ad186737f7c77d31f65",
+    "tax_year": 2022,
+    "url": "https://www.irs.gov/pub/irs-prior/p501--2022.pdf"
+  },
+  "p501_2023.pdf": {
+    "downloaded_at": "2026-04-10T19:52:11.235043+00:00",
+    "file_size": 1490238,
+    "pub_number": "501",
+    "sha256": "1481957f02fbeb0a096b8b4e19fcc57e107ddb9fdc7ef7b850bad72fcc2acc8d",
+    "tax_year": 2023,
+    "url": "https://www.irs.gov/pub/irs-prior/p501--2023.pdf"
+  },
+  "p501_2024.pdf": {
+    "downloaded_at": "2026-04-10T19:52:12.507359+00:00",
+    "file_size": 1488918,
+    "pub_number": "501",
+    "sha256": "e94ffe4312d220792b11a7dfe092f9daf782b797a6591f90b521b2a9aa9eb352",
+    "tax_year": 2024,
+    "url": "https://www.irs.gov/pub/irs-prior/p501--2024.pdf"
+  },
+  "p502_2022.pdf": {
+    "downloaded_at": "2026-04-10T19:52:13.798397+00:00",
+    "file_size": 1330287,
+    "pub_number": "502",
+    "sha256": "01830b5cf9778a22b5376f85416660537312ca6a6d16e8841b28a1cb783f284b",
+    "tax_year": 2022,
+    "url": "https://www.irs.gov/pub/irs-prior/p502--2022.pdf"
+  },
+  "p502_2023.pdf": {
+    "downloaded_at": "2026-04-10T19:50:50.684214+00:00",
+    "file_size": 1336083,
+    "pub_number": "502",
+    "sha256": "cd5a289d5417ce17b882db924f29b9ae595f4b8a43fc6196a046f83d15c3dd18",
+    "tax_year": 2023,
+    "url": "https://www.irs.gov/pub/irs-prior/p502--2023.pdf"
+  },
+  "p502_2024.pdf": {
+    "downloaded_at": "2026-04-10T19:50:51.999224+00:00",
+    "file_size": 1337914,
+    "pub_number": "502",
+    "sha256": "a1189e5ef95cebff4131930b163c3e57e52730ea9403865bd4a5315550174fd3",
+    "tax_year": 2024,
+    "url": "https://www.irs.gov/pub/irs-prior/p502--2024.pdf"
+  },
+  "p502_2025.pdf": {
+    "downloaded_at": "2026-04-10T19:50:53.371011+00:00",
+    "file_size": 1401964,
+    "pub_number": "502",
+    "sha256": "11801353ab959ee04dcadc1f799b6c0b87e1879680fe6f8511af3fa113690d25",
+    "tax_year": 2025,
+    "url": "https://www.irs.gov/pub/irs-pdf/p502.pdf"
+  },
+  "p503_2022.pdf": {
+    "downloaded_at": "2026-04-10T19:52:15.078236+00:00",
+    "file_size": 1261059,
+    "pub_number": "503",
+    "sha256": "2b0816f1c183c1fcb2b722b7f27efed9cb4840c3eeeb6cf62c55d647cdd40241",
+    "tax_year": 2022,
+    "url": "https://www.irs.gov/pub/irs-prior/p503--2022.pdf"
+  },
+  "p503_2023.pdf": {
+    "downloaded_at": "2026-04-10T19:50:54.687846+00:00",
+    "file_size": 1267084,
+    "pub_number": "503",
+    "sha256": "5903acc1ed21a6ac61ea73caac638237134dcb27694dec6f7854871d16f572c6",
+    "tax_year": 2023,
+    "url": "https://www.irs.gov/pub/irs-prior/p503--2023.pdf"
+  },
+  "p503_2024.pdf": {
+    "downloaded_at": "2026-04-10T19:50:55.982993+00:00",
+    "file_size": 1273799,
+    "pub_number": "503",
+    "sha256": "e01e1c7d325244ad917c978f37bce807e953409a3a4c13f7d749fe3e0d24c6e1",
+    "tax_year": 2024,
+    "url": "https://www.irs.gov/pub/irs-prior/p503--2024.pdf"
+  },
+  "p503_2025.pdf": {
+    "downloaded_at": "2026-04-10T19:50:57.259468+00:00",
+    "file_size": 1326038,
+    "pub_number": "503",
+    "sha256": "3a00d0c1a1d6d3a88afdf418b79873f95f6d2de584c330ec67647139c09c5532",
+    "tax_year": 2025,
+    "url": "https://www.irs.gov/pub/irs-pdf/p503.pdf"
+  },
+  "p504_2022.pdf": {
+    "downloaded_at": "2026-04-10T19:52:16.550122+00:00",
+    "file_size": 1358935,
+    "pub_number": "504",
+    "sha256": "345786e83c015e7bd4a8ec27011f14232f7ab3fa36c7450329ad550141745938",
+    "tax_year": 2022,
+    "url": "https://www.irs.gov/pub/irs-prior/p504--2022.pdf"
+  },
+  "p504_2023.pdf": {
+    "downloaded_at": "2026-04-10T19:50:58.587903+00:00",
+    "file_size": 1353865,
+    "pub_number": "504",
+    "sha256": "786ac718b9aa2d92cf1fbda2362f54d382db84ab1856dbd4d161cb0f8c2146f6",
+    "tax_year": 2023,
+    "url": "https://www.irs.gov/pub/irs-prior/p504--2023.pdf"
+  },
+  "p504_2024.pdf": {
+    "downloaded_at": "2026-04-10T19:50:59.902325+00:00",
+    "file_size": 1355422,
+    "pub_number": "504",
+    "sha256": "960d1bb1acc4e8f694416304564af9efffc5dc56ac86d8de3a17017e35e7a289",
+    "tax_year": 2024,
+    "url": "https://www.irs.gov/pub/irs-prior/p504--2024.pdf"
+  },
+  "p504_2025.pdf": {
+    "downloaded_at": "2026-04-10T19:51:01.208487+00:00",
+    "file_size": 1421115,
+    "pub_number": "504",
+    "sha256": "61bb4d52fa8c218dd9e6eac95513f16ffc5aa602df6b2f9af88369fbc295b175",
+    "tax_year": 2025,
+    "url": "https://www.irs.gov/pub/irs-pdf/p504.pdf"
+  },
+  "p505_2022.pdf": {
+    "downloaded_at": "2026-04-10T19:52:17.814252+00:00",
+    "file_size": 1671150,
+    "pub_number": "505",
+    "sha256": "d578ff0ce3ceaccac27eae97cc6d9f907c4a3ed77de446cbc5d9ee80c8b755a7",
+    "tax_year": 2022,
+    "url": "https://www.irs.gov/pub/irs-prior/p505--2022.pdf"
+  },
+  "p505_2023.pdf": {
+    "downloaded_at": "2026-04-10T19:52:19.085550+00:00",
+    "file_size": 1650069,
+    "pub_number": "505",
+    "sha256": "aaa985aa048815fc8c0cb35e277ed0e71d3fb9cd11f9230698624d7d59bd6337",
+    "tax_year": 2023,
+    "url": "https://www.irs.gov/pub/irs-prior/p505--2023.pdf"
+  },
+  "p505_2024.pdf": {
+    "downloaded_at": "2026-04-10T19:52:20.440893+00:00",
+    "file_size": 1673502,
+    "pub_number": "505",
+    "sha256": "9808dc6ec9307d97785d5d92881eb3f8e24572aacef1fbd5523883bd4b4caaa6",
+    "tax_year": 2024,
+    "url": "https://www.irs.gov/pub/irs-prior/p505--2024.pdf"
+  },
+  "p505_2025.pdf": {
+    "downloaded_at": "2026-04-10T19:52:21.723983+00:00",
+    "file_size": 1776844,
+    "pub_number": "505",
+    "sha256": "c69e87caa93cdefa4493f0ec1d8478b1ff9ec1329ee18c7b9d442f2dcb79c621",
+    "tax_year": 2025,
+    "url": "https://www.irs.gov/pub/irs-pdf/p505.pdf"
+  },
+  "p523_2022.pdf": {
+    "downloaded_at": "2026-04-10T19:52:23.034219+00:00",
+    "file_size": 1265447,
+    "pub_number": "523",
+    "sha256": "eccbf5254f16ae7e8b576ef42beaf7c09c7b4078285b90090502fced30fe5f18",
+    "tax_year": 2022,
+    "url": "https://www.irs.gov/pub/irs-prior/p523--2022.pdf"
+  },
+  "p523_2023.pdf": {
+    "downloaded_at": "2026-04-10T19:52:24.290459+00:00",
+    "file_size": 1298804,
+    "pub_number": "523",
+    "sha256": "c280820c5ea739ef3c4bdd782d13574137a631cc195108f9cf5ce41d32bfb2f4",
+    "tax_year": 2023,
+    "url": "https://www.irs.gov/pub/irs-prior/p523--2023.pdf"
+  },
+  "p523_2024.pdf": {
+    "downloaded_at": "2026-04-10T19:50:30.356960+00:00",
+    "file_size": 1316715,
+    "pub_number": "523",
+    "sha256": "60a6a94250b919dc259eef795e2fc348f3d49354146444be8ea3e288155bec95",
+    "tax_year": 2024,
+    "url": "https://www.irs.gov/pub/irs-prior/p523--2024.pdf"
+  },
+  "p523_2025.pdf": {
+    "downloaded_at": "2026-04-10T19:52:25.616685+00:00",
+    "file_size": 1366676,
+    "pub_number": "523",
+    "sha256": "f11fca89408fa329fdbfec9b9bd0aa22f411f30704e805088076d89a754f736b",
+    "tax_year": 2025,
+    "url": "https://www.irs.gov/pub/irs-pdf/p523.pdf"
+  },
+  "p525_2022.pdf": {
+    "downloaded_at": "2026-04-10T19:52:26.930326+00:00",
+    "file_size": 1708164,
+    "pub_number": "525",
+    "sha256": "49d4c7fc397b104c516d18455f31d294a840c0e220f9eb9f31ba82e076df77d0",
+    "tax_year": 2022,
+    "url": "https://www.irs.gov/pub/irs-prior/p525--2022.pdf"
+  },
+  "p525_2023.pdf": {
+    "downloaded_at": "2026-04-10T19:52:28.234977+00:00",
+    "file_size": 1742710,
+    "pub_number": "525",
+    "sha256": "0035cc7cf9f74dcac1b34498cfa00ad412a89dacc7055f0a4b2eddfa67511e16",
+    "tax_year": 2023,
+    "url": "https://www.irs.gov/pub/irs-prior/p525--2023.pdf"
+  },
+  "p525_2024.pdf": {
+    "downloaded_at": "2026-04-10T19:52:29.530843+00:00",
+    "file_size": 1806971,
+    "pub_number": "525",
+    "sha256": "978ff5d0517a679a7f9d2e8bda4aa02747d7ed974c20cb8e397357898a434338",
+    "tax_year": 2024,
+    "url": "https://www.irs.gov/pub/irs-prior/p525--2024.pdf"
+  },
+  "p526_2022.pdf": {
+    "downloaded_at": "2026-04-10T19:52:30.811990+00:00",
+    "file_size": 1396634,
+    "pub_number": "526",
+    "sha256": "8944193a239813c4f89636fc40b39958f60af31c210f714d6a78fb5236df3d9b",
+    "tax_year": 2022,
+    "url": "https://www.irs.gov/pub/irs-prior/p526--2022.pdf"
+  },
+  "p526_2023.pdf": {
+    "downloaded_at": "2026-04-10T19:51:02.499623+00:00",
+    "file_size": 1422805,
+    "pub_number": "526",
+    "sha256": "ee2222913d95fffbc1af4c6e1e633be9cc9cfcdcfe8692ff7b4976e1ba081f54",
+    "tax_year": 2023,
+    "url": "https://www.irs.gov/pub/irs-prior/p526--2023.pdf"
+  },
+  "p526_2024.pdf": {
+    "downloaded_at": "2026-04-10T19:51:03.780981+00:00",
+    "file_size": 1496043,
+    "pub_number": "526",
+    "sha256": "01a36d18185785c6b85db86f67b7eefd8e76b3e7c6d53498c8232febebeb480e",
+    "tax_year": 2024,
+    "url": "https://www.irs.gov/pub/irs-prior/p526--2024.pdf"
+  },
+  "p526_2025.pdf": {
+    "downloaded_at": "2026-04-10T19:51:05.043553+00:00",
+    "file_size": 1498520,
+    "pub_number": "526",
+    "sha256": "607011d9065a39b2fa3e08eda90c6313c581c2d4515f00fc23b0ae0a145435ae",
+    "tax_year": 2025,
+    "url": "https://www.irs.gov/pub/irs-pdf/p526.pdf"
+  },
+  "p527_2022.pdf": {
+    "downloaded_at": "2026-04-10T19:52:32.076895+00:00",
+    "file_size": 1427555,
+    "pub_number": "527",
+    "sha256": "54c74ac4fd83323094c908fc02f168b384c33018e616678e8edc9b33fd18b89c",
+    "tax_year": 2022,
+    "url": "https://www.irs.gov/pub/irs-prior/p527--2022.pdf"
+  },
+  "p527_2023.pdf": {
+    "downloaded_at": "2026-04-10T19:52:33.390305+00:00",
+    "file_size": 1461325,
+    "pub_number": "527",
+    "sha256": "cedb772265bafa5a81d3bd157ffa630bf911bb7bb6c5fa580b5a04a06fc27105",
+    "tax_year": 2023,
+    "url": "https://www.irs.gov/pub/irs-prior/p527--2023.pdf"
+  },
+  "p527_2024.pdf": {
+    "downloaded_at": "2026-04-10T19:52:34.878081+00:00",
+    "file_size": 1456858,
+    "pub_number": "527",
+    "sha256": "ea48f23105b0380da10916c2e93c9a3df26f74e3b2b6f308dcdca0caf816c6d7",
+    "tax_year": 2024,
+    "url": "https://www.irs.gov/pub/irs-prior/p527--2024.pdf"
+  },
+  "p527_2025.pdf": {
+    "downloaded_at": "2026-04-10T19:52:36.180991+00:00",
+    "file_size": 1515629,
+    "pub_number": "527",
+    "sha256": "20c826e98dce23d20f80ab89da7e668a8ee7162a2194f480ce417cff651201d6",
+    "tax_year": 2025,
+    "url": "https://www.irs.gov/pub/irs-pdf/p527.pdf"
+  },
+  "p535_2022.pdf": {
+    "downloaded_at": "2026-04-10T19:52:37.498031+00:00",
+    "file_size": 1892134,
+    "pub_number": "535",
+    "sha256": "e7a5ba625bcd9771cf80f06423dfa1d3383feb1ba0d467c9de8e2c7611165769",
+    "tax_year": 2022,
+    "url": "https://www.irs.gov/pub/irs-prior/p535--2022.pdf"
+  },
+  "p544_2022.pdf": {
+    "downloaded_at": "2026-04-10T19:52:41.079807+00:00",
+    "file_size": 1608400,
+    "pub_number": "544",
+    "sha256": "7c4d74d67fa5e1c6ca09fa887f813ad62a31ba6409574b53dfdff91c1c9902a0",
+    "tax_year": 2022,
+    "url": "https://www.irs.gov/pub/irs-prior/p544--2022.pdf"
+  },
+  "p544_2023.pdf": {
+    "downloaded_at": "2026-04-10T19:52:42.385359+00:00",
+    "file_size": 1659798,
+    "pub_number": "544",
+    "sha256": "230fc178ba817ffc1141d381548753fbe1fe05a42388ed73ccc617558d1f05ea",
+    "tax_year": 2023,
+    "url": "https://www.irs.gov/pub/irs-prior/p544--2023.pdf"
+  },
+  "p544_2024.pdf": {
+    "downloaded_at": "2026-04-10T19:52:43.725126+00:00",
+    "file_size": 1764546,
+    "pub_number": "544",
+    "sha256": "6e1d3d47489b5b750eec119479fd1a8e3b0a9196a50fd85702b1860b97cc197e",
+    "tax_year": 2024,
+    "url": "https://www.irs.gov/pub/irs-prior/p544--2024.pdf"
+  },
+  "p544_2025.pdf": {
+    "downloaded_at": "2026-04-10T19:52:45.010641+00:00",
+    "file_size": 1732834,
+    "pub_number": "544",
+    "sha256": "b8282a22f637e147b6435787bf9e20db6c24d08d8124386cce75eaab05de0cfd",
+    "tax_year": 2025,
+    "url": "https://www.irs.gov/pub/irs-pdf/p544.pdf"
+  },
+  "p547_2022.pdf": {
+    "downloaded_at": "2026-04-10T19:52:46.286369+00:00",
+    "file_size": 1409999,
+    "pub_number": "547",
+    "sha256": "f81db6fc7b780fc1c56bd0efac8cea95d82c28233af69c3d4e2adeeb75c889b8",
+    "tax_year": 2022,
+    "url": "https://www.irs.gov/pub/irs-prior/p547--2022.pdf"
+  },
+  "p547_2023.pdf": {
+    "downloaded_at": "2026-04-10T19:51:06.361272+00:00",
+    "file_size": 1413853,
+    "pub_number": "547",
+    "sha256": "22383e1ff7f85e95fba866849a043b13ae736654eba9c4d86861d312ce146c28",
+    "tax_year": 2023,
+    "url": "https://www.irs.gov/pub/irs-prior/p547--2023.pdf"
+  },
+  "p547_2024.pdf": {
+    "downloaded_at": "2026-04-10T19:51:07.677575+00:00",
+    "file_size": 1429976,
+    "pub_number": "547",
+    "sha256": "2f2bcc1a45a1f0ff063490b3c19bc8b1c8392d1bf3c31f951670f2c7739259f9",
+    "tax_year": 2024,
+    "url": "https://www.irs.gov/pub/irs-prior/p547--2024.pdf"
+  },
+  "p547_2025.pdf": {
+    "downloaded_at": "2026-04-10T19:51:09.052133+00:00",
+    "file_size": 1483922,
+    "pub_number": "547",
+    "sha256": "1389cd83618e75eb8294190fef200af688d876e6bcd850409e274dba00bd73d8",
+    "tax_year": 2025,
+    "url": "https://www.irs.gov/pub/irs-pdf/p547.pdf"
+  },
+  "p550_2022.pdf": {
+    "downloaded_at": "2026-04-10T19:52:47.617058+00:00",
+    "file_size": 2219975,
+    "pub_number": "550",
+    "sha256": "1e08468eaac6c034f5482ba90f19578ed89fec8f8f57c5d79186f2644b29bf6e",
+    "tax_year": 2022,
+    "url": "https://www.irs.gov/pub/irs-prior/p550--2022.pdf"
+  },
+  "p550_2023.pdf": {
+    "downloaded_at": "2026-04-10T19:52:48.913987+00:00",
+    "file_size": 2313009,
+    "pub_number": "550",
+    "sha256": "16b09e1ad5b0d71dbb2a575efb1d2678a46e2e17d08c8b4a2a8e85ead405f20a",
+    "tax_year": 2023,
+    "url": "https://www.irs.gov/pub/irs-prior/p550--2023.pdf"
+  },
+  "p550_2024.pdf": {
+    "downloaded_at": "2026-04-10T19:52:50.210829+00:00",
+    "file_size": 2412046,
+    "pub_number": "550",
+    "sha256": "0c0e3209ad1e533fa09bfc43dd21d1494cf4ebf73b45a0a57ed367488398d86c",
+    "tax_year": 2024,
+    "url": "https://www.irs.gov/pub/irs-prior/p550--2024.pdf"
+  },
+  "p551_2022.pdf": {
+    "downloaded_at": "2026-04-10T19:52:51.481814+00:00",
+    "file_size": 1221916,
+    "pub_number": "551",
+    "sha256": "ca97452cce89e16afbd6639e984ab08bb3f56fc180528babb86cea13840cd08e",
+    "tax_year": 2022,
+    "url": "https://www.irs.gov/pub/irs-prior/p551--2022.pdf"
+  },
+  "p551_2024.pdf": {
+    "downloaded_at": "2026-04-10T19:52:53.537732+00:00",
+    "file_size": 1316972,
+    "pub_number": "551",
+    "sha256": "b8bc196d52819d607973f30452f4b00608b4cec43bb988f491746f9739f44961",
+    "tax_year": 2024,
+    "url": "https://www.irs.gov/pub/irs-prior/p551--2024.pdf"
+  },
+  "p551_2025.pdf": {
+    "downloaded_at": "2026-04-10T19:52:54.812582+00:00",
+    "file_size": 1319374,
+    "pub_number": "551",
+    "sha256": "0fbd4f0d37d575f95bd3dbdff09be846a2bf62e882902e02f0318739c4f904d2",
+    "tax_year": 2025,
+    "url": "https://www.irs.gov/pub/irs-pdf/p551.pdf"
+  },
+  "p561_2022.pdf": {
+    "downloaded_at": "2026-04-10T19:52:56.130411+00:00",
+    "file_size": 1223621,
+    "pub_number": "561",
+    "sha256": "12a0cb788fc6c0a9c1b76b3549826613c57c04b1355e0fc2c92924f6bb96c561",
+    "tax_year": 2022,
+    "url": "https://www.irs.gov/pub/irs-prior/p561--2022.pdf"
+  },
+  "p561_2023.pdf": {
+    "downloaded_at": "2026-04-10T19:51:10.349599+00:00",
+    "file_size": 1247843,
+    "pub_number": "561",
+    "sha256": "338db6c0a24658cc3c26f80444f63db8c20be0d89f5c2a68a4a04a5785cb9c9e",
+    "tax_year": 2023,
+    "url": "https://www.irs.gov/pub/irs-prior/p561--2023.pdf"
+  },
+  "p561_2024.pdf": {
+    "downloaded_at": "2026-04-10T19:51:11.616449+00:00",
+    "file_size": 1309267,
+    "pub_number": "561",
+    "sha256": "a391dc1415c49f9de52e2e2ef6e4b4c66b253d2594a00e7b643d3b51ef10e67a",
+    "tax_year": 2024,
+    "url": "https://www.irs.gov/pub/irs-prior/p561--2024.pdf"
+  },
+  "p561_2025.pdf": {
+    "downloaded_at": "2026-04-10T19:51:12.870747+00:00",
+    "file_size": 1306311,
+    "pub_number": "561",
+    "sha256": "c51b97c8d89b027831c7a9c118c504a253e1cc0b276741dc27d34a9e292045cb",
+    "tax_year": 2025,
+    "url": "https://www.irs.gov/pub/irs-pdf/p561.pdf"
+  },
+  "p575_2022.pdf": {
+    "downloaded_at": "2026-04-10T19:52:58.409565+00:00",
+    "file_size": 1646465,
+    "pub_number": "575",
+    "sha256": "941fa7b6816266e4b00cd22fc25179e9b320289fe9d3f69e45dd006ecd643b9e",
+    "tax_year": 2022,
+    "url": "https://www.irs.gov/pub/irs-prior/p575--2022.pdf"
+  },
+  "p575_2023.pdf": {
+    "downloaded_at": "2026-04-10T19:51:16.584551+00:00",
+    "file_size": 1668771,
+    "pub_number": "575",
+    "sha256": "ac949b4e6ac6c1b31b633f9229b494ab286a04d256974787a04a24e2534fa338",
+    "tax_year": 2023,
+    "url": "https://www.irs.gov/pub/irs-prior/p575--2023.pdf"
+  },
+  "p575_2024.pdf": {
+    "downloaded_at": "2026-04-10T19:51:17.914751+00:00",
+    "file_size": 1754781,
+    "pub_number": "575",
+    "sha256": "c7eddb14a396338e741262bcb2ee9a9f07f592dd98f1ff85ca809f6febbe4794",
+    "tax_year": 2024,
+    "url": "https://www.irs.gov/pub/irs-prior/p575--2024.pdf"
+  },
+  "p575_2025.pdf": {
+    "downloaded_at": "2026-04-10T19:51:19.209969+00:00",
+    "file_size": 1616319,
+    "pub_number": "575",
+    "sha256": "30bd37ccfcb1fe2e191abadbb38ce7cf7fcbb638e3065335436dd6025a35caa5",
+    "tax_year": 2025,
+    "url": "https://www.irs.gov/pub/irs-pdf/p575.pdf"
+  },
+  "p587_2022.pdf": {
+    "downloaded_at": "2026-04-10T19:52:59.718876+00:00",
+    "file_size": 1404200,
+    "pub_number": "587",
+    "sha256": "4130f8e9a6f17b8c5a71d1952a511d5e290a2fce238139f375149646da24b788",
+    "tax_year": 2022,
+    "url": "https://www.irs.gov/pub/irs-prior/p587--2022.pdf"
+  },
+  "p587_2023.pdf": {
+    "downloaded_at": "2026-04-10T19:51:20.542258+00:00",
+    "file_size": 1419313,
+    "pub_number": "587",
+    "sha256": "33279d800d8b565613a1771385f493171541ed530b431c8d10ac750bb4dd19c7",
+    "tax_year": 2023,
+    "url": "https://www.irs.gov/pub/irs-prior/p587--2023.pdf"
+  },
+  "p587_2024.pdf": {
+    "downloaded_at": "2026-04-10T19:51:21.824232+00:00",
+    "file_size": 1430139,
+    "pub_number": "587",
+    "sha256": "a3cc2111c5383d1be60136b89ade0237627401fe8310f52913f390ba65061a79",
+    "tax_year": 2024,
+    "url": "https://www.irs.gov/pub/irs-prior/p587--2024.pdf"
+  },
+  "p587_2025.pdf": {
+    "downloaded_at": "2026-04-10T19:51:23.167524+00:00",
+    "file_size": 1482736,
+    "pub_number": "587",
+    "sha256": "7f68de213b25a0f826b6112191fcf89e29c121865ef59c4945f8699de0a6d2af",
+    "tax_year": 2025,
+    "url": "https://www.irs.gov/pub/irs-pdf/p587.pdf"
+  },
+  "p590a_2022.pdf": {
+    "downloaded_at": "2026-04-10T19:53:01.028933+00:00",
+    "file_size": 1725886,
+    "pub_number": "590a",
+    "sha256": "b84d1e67a744bb4bb4a83380c98511446fb177779907f9ddfe7868a48847553c",
+    "tax_year": 2022,
+    "url": "https://www.irs.gov/pub/irs-prior/p590a--2022.pdf"
+  },
+  "p590a_2023.pdf": {
+    "downloaded_at": "2026-04-10T19:53:02.398853+00:00",
+    "file_size": 1746300,
+    "pub_number": "590a",
+    "sha256": "3d796c2971a79c7cbe922b588cde615aa2e9677f27906f3c1d87d6d9d00eecc1",
+    "tax_year": 2023,
+    "url": "https://www.irs.gov/pub/irs-prior/p590a--2023.pdf"
+  },
+  "p590a_2024.pdf": {
+    "downloaded_at": "2026-04-10T19:53:03.722577+00:00",
+    "file_size": 1760181,
+    "pub_number": "590a",
+    "sha256": "9e947620cc24541ae618d609612c76a665e1ced30ff2562642bb1d227182eea0",
+    "tax_year": 2024,
+    "url": "https://www.irs.gov/pub/irs-prior/p590a--2024.pdf"
+  },
+  "p590b_2022.pdf": {
+    "downloaded_at": "2026-04-10T19:53:05.016219+00:00",
+    "file_size": 1970793,
+    "pub_number": "590b",
+    "sha256": "e16c21fc70bfaafab1c662e8e930b925d695e1903b44c4629dce5d2eef5a2598",
+    "tax_year": 2022,
+    "url": "https://www.irs.gov/pub/irs-prior/p590b--2022.pdf"
+  },
+  "p590b_2023.pdf": {
+    "downloaded_at": "2026-04-10T19:53:06.311784+00:00",
+    "file_size": 2001387,
+    "pub_number": "590b",
+    "sha256": "c7c2928317757c6708ef404f97a24ed2930e3c153cc24b99ba708714d23b30b3",
+    "tax_year": 2023,
+    "url": "https://www.irs.gov/pub/irs-prior/p590b--2023.pdf"
+  },
+  "p590b_2024.pdf": {
+    "downloaded_at": "2026-04-10T19:53:07.635538+00:00",
+    "file_size": 2099433,
+    "pub_number": "590b",
+    "sha256": "28f8ddddb8ca488ef900bbfb5ba0f95b051e7220e36785aed387d4d351f92e91",
+    "tax_year": 2024,
+    "url": "https://www.irs.gov/pub/irs-prior/p590b--2024.pdf"
+  },
+  "p596_2022.pdf": {
+    "downloaded_at": "2026-04-10T19:53:08.954039+00:00",
+    "file_size": 1879701,
+    "pub_number": "596",
+    "sha256": "12b8ede62a5891969dcf0d05b105cadb7d26ff41f1d637ebf767d27a5c38a4db",
+    "tax_year": 2022,
+    "url": "https://www.irs.gov/pub/irs-prior/p596--2022.pdf"
+  },
+  "p596_2023.pdf": {
+    "downloaded_at": "2026-04-10T19:53:10.279992+00:00",
+    "file_size": 1933698,
+    "pub_number": "596",
+    "sha256": "6e87be5f50d78fdc3e7497b237b7b0e66c128ae7a44de66033e131b97c0ec130",
+    "tax_year": 2023,
+    "url": "https://www.irs.gov/pub/irs-prior/p596--2023.pdf"
+  },
+  "p596_2024.pdf": {
+    "downloaded_at": "2026-04-10T19:53:11.632803+00:00",
+    "file_size": 1998210,
+    "pub_number": "596",
+    "sha256": "e422d1fa90fe8b6eef48b6b2b474dc7081f7d092f932bec0b93e5cfb77ba00e6",
+    "tax_year": 2024,
+    "url": "https://www.irs.gov/pub/irs-prior/p596--2024.pdf"
+  },
+  "p946_2022.pdf": {
+    "downloaded_at": "2026-04-10T19:53:12.974648+00:00",
+    "file_size": 2235394,
+    "pub_number": "946",
+    "sha256": "b7c78db2902ad7beaedba53a35526c3c6c61d6d6977c064f93550587ae0d855a",
+    "tax_year": 2022,
+    "url": "https://www.irs.gov/pub/irs-prior/p946--2022.pdf"
+  },
+  "p946_2023.pdf": {
+    "downloaded_at": "2026-04-10T19:53:14.301388+00:00",
+    "file_size": 2274453,
+    "pub_number": "946",
+    "sha256": "b91043180e86894cf2d3c32a2a67ddecc7a579f2ad65a101691953f5f0f32ffb",
+    "tax_year": 2023,
+    "url": "https://www.irs.gov/pub/irs-prior/p946--2023.pdf"
+  },
+  "p946_2024.pdf": {
+    "downloaded_at": "2026-04-10T19:53:15.603697+00:00",
+    "file_size": 2313055,
+    "pub_number": "946",
+    "sha256": "19bf94b06d8d1b9c67d44ef2dbbb31acb5b0046f0caa925d7a97590e494384a3",
+    "tax_year": 2024,
+    "url": "https://www.irs.gov/pub/irs-prior/p946--2024.pdf"
+  },
+  "p946_2025.pdf": {
+    "downloaded_at": "2026-04-10T19:53:16.897414+00:00",
+    "file_size": 2345848,
+    "pub_number": "946",
+    "sha256": "07fadfb2a6ee34767d77b9a2d3a28413c4afa2d0bd2f0488fd6a4b1b9b5904c4",
+    "tax_year": 2025,
+    "url": "https://www.irs.gov/pub/irs-pdf/p946.pdf"
+  },
+  "p969_2022.pdf": {
+    "downloaded_at": "2026-04-10T19:53:18.206294+00:00",
+    "file_size": 1253717,
+    "pub_number": "969",
+    "sha256": "586377e2d74e7a9e765a1b7fc330f82870e7fa6a256bef0c193b9f6be71ca6dd",
+    "tax_year": 2022,
+    "url": "https://www.irs.gov/pub/irs-prior/p969--2022.pdf"
+  },
+  "p969_2023.pdf": {
+    "downloaded_at": "2026-04-10T19:53:19.488958+00:00",
+    "file_size": 1259721,
+    "pub_number": "969",
+    "sha256": "2ddb626e70d7074e94463c5cb9038a58a75dda6b3729af7061407b1965a64855",
+    "tax_year": 2023,
+    "url": "https://www.irs.gov/pub/irs-prior/p969--2023.pdf"
+  },
+  "p969_2024.pdf": {
+    "downloaded_at": "2026-04-10T19:53:20.825827+00:00",
+    "file_size": 1271199,
+    "pub_number": "969",
+    "sha256": "47d4db236ec156b56dfe36028a34311d1acabfb009217831ff829cea3fa43997",
+    "tax_year": 2024,
+    "url": "https://www.irs.gov/pub/irs-prior/p969--2024.pdf"
+  },
+  "p970_2022.pdf": {
+    "downloaded_at": "2026-04-10T19:53:22.252849+00:00",
+    "file_size": 1828236,
+    "pub_number": "970",
+    "sha256": "29084892564150dfb8b330133c2d6b519aed50644a83bf26aa3dd22dd832d8d4",
+    "tax_year": 2022,
+    "url": "https://www.irs.gov/pub/irs-prior/p970--2022.pdf"
+  },
+  "p970_2023.pdf": {
+    "downloaded_at": "2026-04-10T19:51:24.455426+00:00",
+    "file_size": 1862566,
+    "pub_number": "970",
+    "sha256": "25d0c84b97a4f136a0e1a9c0ceeeb26017d5eebe6e4ceef8f0457c2d181272e8",
+    "tax_year": 2023,
+    "url": "https://www.irs.gov/pub/irs-prior/p970--2023.pdf"
+  },
+  "p970_2024.pdf": {
+    "downloaded_at": "2026-04-10T19:51:25.746182+00:00",
+    "file_size": 1871590,
+    "pub_number": "970",
+    "sha256": "ea82d7a5f2b232001189192158b37fb3b1bb9ebe0f91b154c296d4db2489105e",
+    "tax_year": 2024,
+    "url": "https://www.irs.gov/pub/irs-prior/p970--2024.pdf"
+  },
+  "p970_2025.pdf": {
+    "downloaded_at": "2026-04-10T19:51:27.082449+00:00",
+    "file_size": 1935425,
+    "pub_number": "970",
+    "sha256": "167f3d6df0d9370a3980b25b7a2e7b479ab7f336cce763d1f0c1c4962b18285e",
+    "tax_year": 2025,
+    "url": "https://www.irs.gov/pub/irs-pdf/p970.pdf"
+  }
+}

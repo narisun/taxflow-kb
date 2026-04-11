@@ -1,0 +1,334 @@
+[
+  {
+    "id": "IND-02",
+    "category": "I. Individual Filing & Standard Deductions",
+    "question": "What is my 2026 standard deduction, and has the OBBBA changed the filing threshold for me?",
+    "ground_truth": "For tax year 2026, the single standard deduction is $16,100. Because your income is below this threshold, you generally aren't required to file unless you owe special taxes or want a refund of withheld credits.",
+    "candidate_answer": "- **Standard Deduction for 2026**: \n  - If you are a Single filer, your standard deduction is $13,000 [3].\n  - If you are Married Filing Jointly, your standard deduction is $26,000 [3].\n  - If you are a Head of Household, your standard deduction is $19,500 [3].\n\n- **OBBBA Changes to Filing Threshold**:\n  - The excerpts do not provide specific information about changes to the filing threshold due to the OBBBA. However, they do mention that the phase-out threshold for the standard deduction begins at $75,000 MAGI for Single filers and $150,000 MAGI for Married Filing Jointly filers, reducing the deduction by 10% for every $1,000 over the threshold [3].\n\nKey Sources: [3]\n\nCONFIDENCE: HIGH",
+    "retrieval": {
+      "retrieved_pubs": [
+        "17",
+        "1040",
+        "1-A",
+        "505"
+      ],
+      "expected_pubs": [
+        "17"
+      ],
+      "pub_precision": 0.25,
+      "pub_recall": 1.0,
+      "nav_recall": 1.0,
+      "context_count": 4,
+      "retrieval_ms": 5200,
+      "retrieval_mode": "hierarchical",
+      "nav_pubs": [
+        "501",
+        "505",
+        "551",
+        "590a",
+        "1-A",
+        "1040",
+        "17"
+      ],
+      "ontology_pubs": [
+        "17",
+        "535",
+        "334",
+        "463",
+        "15-B",
+        "4547",
+        "W-2"
+      ],
+      "query_intent": "lookup",
+      "detected_tax_year": 2026
+    },
+    "fact_check": {
+      "facts_found": 0,
+      "facts_total": 4,
+      "fact_ratio": 0.0,
+      "missing": [
+        "$16,100",
+        "not required to file",
+        "special taxes",
+        "refund of withheld credits"
+      ]
+    },
+    "judge": {
+      "correctness": 1,
+      "completeness": 1,
+      "hallucination": 2,
+      "citation_quality": 2,
+      "reasoning": "The candidate answer incorrectly states the standard deduction for a single filer in 2026 as $13,000 instead of the correct $16,100. It also fails to address the filing requirement based on income being below the threshold, special taxes, or refund of withheld credits. The mention of a phase-out threshold is not relevant to the question and is not supported by the retrieved sources. The citations provided do not directly support the claims made, and the relevant IRS publication (Pub 17) is not specifically cited.",
+      "judge_ms": 1592,
+      "judge_model": "gpt-4o",
+      "judge_tokens": 1007
+    },
+    "query_ms": 14792,
+    "synthesis_ms": 1238,
+    "model_used": "gpt-4o",
+    "tokens": 2111
+  },
+  {
+    "id": "FAM-06",
+    "category": "II. Family, Dependents & Trump Accounts",
+    "question": "How do we enroll our newborn in the new government-seeded savings account, and is the $1,000 taxable?",
+    "ground_truth": "You must file Form 4547 to establish a 'Trump Account.' The $1,000 federal seed is not taxable upon contribution, but earnings are taxable upon withdrawal.",
+    "candidate_answer": "INSUFFICIENT CONTEXT\n\nThe provided excerpt does not contain specific information about how to enroll a newborn in the government-seeded savings account or whether the $1,000 is taxable. The excerpt only mentions that IRS Publication 4547 covers the Trump Account, a new tax-advantaged savings account for newborns under OBBBA, but does not provide details on enrollment procedures or tax implications.\n\nKey Sources: [1]\n\nCONFIDENCE: LOW",
+    "retrieval": {
+      "retrieved_pubs": [
+        "4547"
+      ],
+      "expected_pubs": [
+        "4547"
+      ],
+      "pub_precision": 1.0,
+      "pub_recall": 1.0,
+      "nav_recall": 1.0,
+      "context_count": 1,
+      "retrieval_ms": 1481,
+      "retrieval_mode": "hierarchical",
+      "nav_pubs": [
+        "4547",
+        "970",
+        "505",
+        "969",
+        "575",
+        "590a"
+      ],
+      "ontology_pubs": [
+        "15-B",
+        "W-2"
+      ],
+      "query_intent": "lookup",
+      "detected_tax_year": null
+    },
+    "fact_check": {
+      "facts_found": 1,
+      "facts_total": 4,
+      "fact_ratio": 0.25,
+      "missing": [
+        "Form 4547",
+        "$1,000 not taxable",
+        "earnings taxable upon withdrawal"
+      ]
+    },
+    "judge": {
+      "correctness": 1,
+      "completeness": 1,
+      "hallucination": 5,
+      "citation_quality": 1,
+      "reasoning": "The candidate answer does not provide any of the key facts from the ground truth. It states 'INSUFFICIENT CONTEXT' and does not address the enrollment process or the taxability of the $1,000. It also fails to mention Form 4547, the Trump Account, or the tax treatment of the $1,000 and earnings. The answer does not fabricate any facts, but it lacks any relevant information. The citation is vague and does not provide any useful reference to IRS publications.",
+      "judge_ms": 1396,
+      "judge_model": "gpt-4o",
+      "judge_tokens": 863
+    },
+    "query_ms": 8515,
+    "synthesis_ms": 820,
+    "model_used": "gpt-4o",
+    "tokens": 1054
+  },
+  {
+    "id": "TIP-12",
+    "category": "III. Tipped & Overtime Workers",
+    "question": "Do I deduct the full $15,000 of my overtime?",
+    "ground_truth": "No. You only deduct the 'half' portion (the overtime premium) required by the FLSA. For $15,000 of time-and-a-half pay, your deduction is $5,000 (the 50% premium).",
+    "candidate_answer": "You cannot deduct the full $15,000 of your overtime. For tax year 2025, you may be eligible to deduct up to $12,500 of your qualified overtime compensation if you are filing as a single taxpayer. If you are married filing jointly, the deduction limit is $25,000 [1].\n\nKey Sources: [1]\n\nCONFIDENCE: HIGH",
+    "retrieval": {
+      "retrieved_pubs": [
+        "334",
+        "587",
+        "463",
+        "15-B"
+      ],
+      "expected_pubs": [
+        "17"
+      ],
+      "pub_precision": 0.0,
+      "pub_recall": 0.0,
+      "nav_recall": 1.0,
+      "context_count": 4,
+      "retrieval_ms": 1622,
+      "retrieval_mode": "hierarchical",
+      "nav_pubs": [
+        "1040",
+        "525",
+        "501",
+        "17",
+        "970",
+        "587",
+        "15-B",
+        "1-A"
+      ],
+      "ontology_pubs": [
+        "535",
+        "334",
+        "463",
+        "15-B",
+        "1-A",
+        "W-2"
+      ],
+      "query_intent": "lookup",
+      "detected_tax_year": null
+    },
+    "fact_check": {
+      "facts_found": 0,
+      "facts_total": 4,
+      "fact_ratio": 0.0,
+      "missing": [
+        "overtime premium only",
+        "FLSA",
+        "$5,000 deduction",
+        "50% premium"
+      ]
+    },
+    "judge": {
+      "correctness": 1,
+      "completeness": 1,
+      "hallucination": 1,
+      "citation_quality": 1,
+      "reasoning": "The candidate answer is completely incorrect. It provides a fabricated deduction limit for overtime compensation that is not supported by any IRS sources or the ground truth. The ground truth specifies that only the overtime premium portion is deductible, specifically $5,000 for $15,000 of time-and-a-half pay, which the candidate fails to mention. The cited sources are irrelevant to the question, and there is no mention of the FLSA or the correct deduction amount.",
+      "judge_ms": 1497,
+      "judge_model": "gpt-4o",
+      "judge_tokens": 877
+    },
+    "query_ms": 9265,
+    "synthesis_ms": 860,
+    "model_used": "gpt-4o",
+    "tokens": 2138
+  },
+  {
+    "id": "TIP-14",
+    "category": "III. Tipped & Overtime Workers",
+    "question": "Does my high income disqualify me from the overtime deduction?",
+    "ground_truth": "Yes. The overtime deduction begins to phase out at $150,000 (Single) or $300,000 (Joint). At $200,000 MAGI, your deduction is significantly reduced.",
+    "candidate_answer": "For tax year 2025, the excerpts do not specify a high-income disqualification for the overtime deduction. However, they do provide the maximum deduction limits:\n\n- The maximum deduction for qualified overtime compensation is $12,500 for single filers and $25,000 for those married filing jointly [6].\n\nThe excerpts do not mention any income thresholds or phase-out rules that would disqualify a taxpayer from claiming the overtime deduction based on high income. Therefore, based on the provided information, high income alone does not disqualify you from the overtime deduction for tax year 2025.\n\nKey Sources: [6]\n\nCONFIDENCE: HIGH",
+    "retrieval": {
+      "retrieved_pubs": [
+        "1040",
+        "W-2",
+        "535",
+        "501",
+        "15-B",
+        "17"
+      ],
+      "expected_pubs": [
+        "1-A"
+      ],
+      "pub_precision": 0.0,
+      "pub_recall": 0.0,
+      "nav_recall": 1.0,
+      "context_count": 6,
+      "retrieval_ms": 1235,
+      "retrieval_mode": "hierarchical",
+      "nav_pubs": [
+        "1-A",
+        "463",
+        "501",
+        "1040",
+        "525",
+        "17",
+        "529",
+        "W-2",
+        "15-B"
+      ],
+      "ontology_pubs": [
+        "W-2",
+        "535",
+        "334",
+        "15-B"
+      ],
+      "query_intent": "general",
+      "detected_tax_year": null
+    },
+    "fact_check": {
+      "facts_found": 0,
+      "facts_total": 3,
+      "fact_ratio": 0.0,
+      "missing": [
+        "$150,000 Single phase-out",
+        "$300,000 Joint phase-out",
+        "significantly reduced"
+      ]
+    },
+    "judge": {
+      "correctness": 1,
+      "completeness": 1,
+      "hallucination": 2,
+      "citation_quality": 1,
+      "reasoning": "The candidate answer incorrectly states that high income does not disqualify a taxpayer from the overtime deduction, contradicting the ground truth which specifies phase-out thresholds at $150,000 for single and $300,000 for joint filers. It also fails to mention the significant reduction at $200,000 MAGI. The answer does not cover any key facts from the ground truth and lacks relevant citations, as it does not reference Pub 1-A or any correct IRS sources related to the overtime deduction. Additionally, it introduces unsupported claims about maximum deduction limits without proper grounding in the retrieved sources.",
+      "judge_ms": 1410,
+      "judge_model": "gpt-4o",
+      "judge_tokens": 999
+    },
+    "query_ms": 8383,
+    "synthesis_ms": 1130,
+    "model_used": "gpt-4o",
+    "tokens": 2652
+  },
+  {
+    "id": "OBBBA-74",
+    "category": "I. Individual Filing & Standard Deductions",
+    "question": "If I financed a vehicle in 2024, can I claim the interest deduction in 2025?",
+    "ground_truth": "Yes, if the vehicle was assembled in the U.S. The deduction applies to interest paid on loans for vehicles purchased after 2024. You can deduct up to $10,000 annually in interest.",
+    "candidate_answer": "INSUFFICIENT CONTEXT\n\nThe provided excerpts do not contain specific information regarding the deductibility of vehicle loan interest for tax year 2025. The excerpts from IRS Publication 463 and IRS Publication 525 do not address vehicle loan interest deductions.\n\nKey Sources: [1], [2]\n\nCONFIDENCE: LOW",
+    "retrieval": {
+      "retrieved_pubs": [
+        "463",
+        "525"
+      ],
+      "expected_pubs": [
+        "17"
+      ],
+      "pub_precision": 0.0,
+      "pub_recall": 0.0,
+      "nav_recall": 1.0,
+      "context_count": 2,
+      "retrieval_ms": 1502,
+      "retrieval_mode": "hierarchical",
+      "nav_pubs": [
+        "970",
+        "936",
+        "537",
+        "946",
+        "463",
+        "525"
+      ],
+      "ontology_pubs": [
+        "17",
+        "1-A",
+        "550",
+        "501",
+        "535",
+        "334",
+        "15-B"
+      ],
+      "query_intent": "general",
+      "detected_tax_year": 2025
+    },
+    "fact_check": {
+      "facts_found": 0,
+      "facts_total": 4,
+      "fact_ratio": 0.0,
+      "missing": [
+        "purchased after 2024",
+        "U.S. assembled",
+        "$10,000 annual limit",
+        "interest deductible"
+      ]
+    },
+    "judge": {
+      "correctness": 1,
+      "completeness": 1,
+      "hallucination": 5,
+      "citation_quality": 1,
+      "reasoning": "The candidate answer does not address the question about the deductibility of vehicle loan interest in 2025. It fails to mention any of the key facts such as the vehicle being assembled in the U.S., the purchase being after 2024, or the $10,000 annual limit. The answer simply states 'INSUFFICIENT CONTEXT' and does not provide any relevant information or conclusions. There are no fabricated facts, but the answer is essentially empty and does not cite any relevant IRS publications.",
+      "judge_ms": 1260,
+      "judge_model": "gpt-4o",
+      "judge_tokens": 852
+    },
+    "query_ms": 8989,
+    "synthesis_ms": 1941,
+    "model_used": "gpt-4o",
+    "tokens": 1407
+  }
+]

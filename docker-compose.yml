@@ -1,0 +1,81 @@
+version: "3.9"
+
+# TaxFlow AI — Knowledge Base Local Development Stack
+# Starts Neo4j and PostgreSQL for Layer 1 development and testing.
+#
+# Usage:
+#   docker compose up -d
+#   docker compose down -v   # tear down and remove volumes
+
+services:
+
+  # ── Neo4j Community Edition ───────────────────────────────────────────────
+  neo4j:
+    image: neo4j:5.18-community
+    container_name: taxflow-neo4j
+    ports:
+      - "7474:7474"   # Browser UI: http://localhost:7474
+      - "7687:7687"   # Bolt protocol (used by Python driver)
+    environment:
+      NEO4J_AUTH: "neo4j/taxflow_dev"
+      NEO4J_PLUGINS: '["apoc"]'
+      NEO4J_dbms_security_procedures_unrestricted: "apoc.*"
+      NEO4J_dbms_memory_heap_initial__size: "512m"
+      NEO4J_dbms_memory_heap_max__size: "2G"
+      NEO4J_dbms_memory_pagecache_size: "512m"
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+      - ./schema:/var/lib/neo4j/import     # Schema cypher files accessible in import
+    healthcheck:
+      test: ["CMD", "neo4j", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  # ── PostgreSQL ─────────────────────────────────────────────────────────────
+  # Note: schema is NOT auto-applied via docker-entrypoint-initdb.d because
+  # Docker Desktop on Windows/WSL2 mounts host files with permissions that the
+  # container's postgres user cannot read.  Apply the schema with either:
+  #   docker exec -i taxflow-postgres psql -U taxflow -d taxflow < schema/postgres_schema.sql
+  # or via the Python CLI (recommended):
+  #   python cli.py ingest --csv <file> ... --init-schema
+  postgres:
+    # pgvector/pgvector:pg16 is postgres:16 + the pgvector extension pre-installed.
+    # Required for Layer 3 (Publications semantic search via vector embeddings).
+    # If you were previously running postgres:16-alpine, recreate the container:
+    #   docker compose down -v && docker compose up -d
+    image: pgvector/pgvector:pg16
+    container_name: taxflow-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB:       taxflow
+      POSTGRES_USER:     taxflow
+      POSTGRES_PASSWORD: taxflow_dev
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taxflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  neo4j_data:
+  neo4j_logs:
+  pg_data:
+
+# ── Connection strings for local development ──────────────────────────────────
+# Neo4j:    bolt://localhost:7687   user: neo4j   password: taxflow_dev
+# Postgres: postgresql://taxflow:taxflow_dev@localhost:5432/taxflow
+#
+# CLI example after `docker compose up -d`:
+#   python cli.py ingest \
+#     --csv data/sample/mef_1040_2024_v5_2.csv \
+#     --neo4j-uri bolt://localhost:7687 \
+#     --neo4j-user neo4j \
+#     --neo4j-password taxflow_dev \
+#     --pg-dsn "postgresql://taxflow:taxflow_dev@localhost:5432/taxflow" \
+#     --init-schema

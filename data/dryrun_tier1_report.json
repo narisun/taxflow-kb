@@ -1,0 +1,112 @@
+{
+  "timestamp": "2026-04-10T17:08:20",
+  "total_detail_chunks": 1683,
+  "total_anchor_chunks": 56,
+  "total_chunks": 1739,
+  "publications": [
+    {
+      "pub_number": "334",
+      "tax_year": 2025,
+      "title": "Tax Guide for Small Business",
+      "status": "OK",
+      "pages": 57,
+      "detail_chunks": 209,
+      "anchor_chunks": 14,
+      "section_summaries": 13,
+      "enrichment_rate": "70%",
+      "ontology_topics": 4,
+      "avg_tokens": 346
+    },
+    {
+      "pub_number": "505",
+      "tax_year": 2025,
+      "title": "Tax Withholding and Estimated Tax",
+      "status": "OK",
+      "pages": 48,
+      "detail_chunks": 179,
+      "anchor_chunks": 4,
+      "section_summaries": 3,
+      "enrichment_rate": "60%",
+      "ontology_topics": 3,
+      "avg_tokens": 356
+    },
+    {
+      "pub_number": "523",
+      "tax_year": 2025,
+      "title": "Selling Your Home",
+      "status": "OK",
+      "pages": 27,
+      "detail_chunks": 97,
+      "anchor_chunks": 6,
+      "section_summaries": 5,
+      "enrichment_rate": "90%",
+      "ontology_topics": 2,
+      "avg_tokens": 343
+    },
+    {
+      "pub_number": "527",
+      "tax_year": 2025,
+      "title": "Residential Rental Property",
+      "status": "OK",
+      "pages": 37,
+      "detail_chunks": 139,
+      "anchor_chunks": 8,
+      "section_summaries": 7,
+      "enrichment_rate": "85%",
+      "ontology_topics": 2,
+      "avg_tokens": 348
+    },
+    {
+      "pub_number": "535",
+      "tax_year": 2022,
+      "title": "Business Expenses",
+      "status": "OK",
+      "pages": 57,
+      "detail_chunks": 330,
+      "anchor_chunks": 6,
+      "section_summaries": 5,
+      "enrichment_rate": "20%",
+      "ontology_topics": 2,
+      "avg_tokens": 356
+    },
+    {
+      "pub_number": "544",
+      "tax_year": 2025,
+      "title": "Sales of Assets",
+      "status": "OK",
+      "pages": 64,
+      "detail_chunks": 264,
+      "anchor_chunks": 6,
+      "section_summaries": 5,
+      "enrichment_rate": "65%",
+      "ontology_topics": 4,
+      "avg_tokens": 344
+    },
+    {
+      "pub_number": "551",
+      "tax_year": 2025,
+      "title": "Basis of Assets",
+      "status": "OK",
+      "pages": 23,
+      "detail_chunks": 85,
+      "anchor_chunks": 5,
+      "section_summaries": 4,
+      "enrichment_rate": "10%",
+      "ontology_topics": 4,
+      "avg_tokens": 345
+    },
+    {
+      "pub_number": "946",
+      "tax_year": 2025,
+      "title": "How to Depreciate Property",
+      "status": "OK",
+      "pages": 113,
+      "detail_chunks": 380,
+      "anchor_chunks": 7,
+      "section_summaries": 6,
+      "enrichment_rate": "50%",
+      "ontology_topics": 3,
+      "avg_tokens": 340
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+[
+  {
+    "id": "MEF-27",
+    "category": "VI. MeF & Procedural Errors",
+    "question": "Why did my e-file fail because of 'Marketplace Data'?",
+    "ground_truth": "The IRS Master File shows you received an advance Premium Tax Credit. You must attach Form 8962 to reconcile it, even if you didn't receive a 1095-A.",
+    "candidate_answer": "",
+    "retrieval": {
+      "retrieved_pubs": [
+        "596",
+        "MeF",
+        "1040",
+        "W-2",
+        "527",
+        "8962"
+      ],
+      "expected_pubs": [
+        "8962",
+        "1040"
+      ],
+      "pub_precision": 0.333,
+      "pub_recall": 1.0,
+      "nav_recall": 1.0,
+      "context_count": 24,
+      "retrieval_ms": 5350,
+      "retrieval_mode": "hierarchical",
+      "nav_pubs": [
+        "596",
+        "MeF",
+        "8962",
+        "527",
+        "W-2"
+      ],
+      "ontology_pubs": [
+        "1040"
+      ],
+      "query_intent": "general",
+      "detected_tax_year": null
+    },
+    "fact_check": {
+      "facts_found": 0,
+      "facts_total": 4,
+      "fact_ratio": 0.0,
+      "missing": [
+        "advance Premium Tax Credit",
+        "Form 8962",
+        "reconcile",
+        "1095-A"
+      ]
+    },
+    "judge": {},
+    "query_ms": 5353,
+    "synthesis_ms": 0,
+    "model_used": "",
+    "tokens": 0
+  }
+]

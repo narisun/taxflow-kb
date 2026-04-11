@@ -1,0 +1,150 @@
+[
+  {
+    "id": "TIP-12",
+    "category": "III. Tipped & Overtime Workers",
+    "question": "Do I deduct the full $15,000 of my overtime?",
+    "ground_truth": "No. You only deduct the 'half' portion (the overtime premium) required by the FLSA. For $15,000 of time-and-a-half pay, your deduction is $5,000 (the 50% premium).",
+    "candidate_answer": "INSUFFICIENT CONTEXT",
+    "retrieval": {
+      "retrieved_pubs": [
+        "1040",
+        "463",
+        "334",
+        "1-A",
+        "15-B",
+        "17",
+        "501",
+        "W-2",
+        "525",
+        "970"
+      ],
+      "expected_pubs": [
+        "17"
+      ],
+      "pub_precision": 0.1,
+      "pub_recall": 1.0,
+      "nav_recall": 1.0,
+      "context_count": 29,
+      "retrieval_ms": 5830,
+      "retrieval_mode": "hierarchical",
+      "nav_pubs": [
+        "1040",
+        "525",
+        "501",
+        "17",
+        "970",
+        "1-A",
+        "587",
+        "15-B"
+      ],
+      "ontology_pubs": [
+        "535",
+        "334",
+        "463",
+        "15-B",
+        "W-2"
+      ],
+      "query_intent": "lookup",
+      "detected_tax_year": null
+    },
+    "fact_check": {
+      "facts_found": 0,
+      "facts_total": 4,
+      "fact_ratio": 0.0,
+      "missing": [
+        "overtime premium only",
+        "FLSA",
+        "$5,000 deduction",
+        "50% premium"
+      ]
+    },
+    "judge": {
+      "correctness": 1,
+      "completeness": 1,
+      "hallucination": 5,
+      "citation_quality": 1,
+      "reasoning": "The candidate answer 'INSUFFICIENT CONTEXT' does not address the question at all, providing no information about the deduction of overtime pay. It fails to mention the key facts such as the overtime premium, FLSA, $5,000 deduction, or the 50% premium. There are no fabricated facts since the answer is empty, but it also lacks any relevant citations or references to IRS publications.",
+      "judge_ms": 1466,
+      "judge_model": "gpt-4o",
+      "judge_tokens": 1104
+    },
+    "query_ms": 19518,
+    "synthesis_ms": 624,
+    "model_used": "gpt-4o",
+    "tokens": 4436
+  },
+  {
+    "id": "TIP-14",
+    "category": "III. Tipped & Overtime Workers",
+    "question": "Does my high income disqualify me from the overtime deduction?",
+    "ground_truth": "Yes. The overtime deduction begins to phase out at $150,000 (Single) or $300,000 (Joint). At $200,000 MAGI, your deduction is significantly reduced.",
+    "candidate_answer": "To determine if your high income disqualifies you from the overtime deduction, we need to consider the income thresholds mentioned in the excerpts.\n\n- The overtime deduction has a maximum amount of $12,500 for single filers and $25,000 for married filing jointly [1].\n- Key income thresholds mentioned include $150,000 and $300,000 [2], [4].\n\nHowever, the excerpts do not explicitly state that the overtime deduction phases out or is disqualified at these income levels. Without specific information on how high income affects eligibility for the overtime deduction, we cannot definitively conclude that your high income disqualifies you.\n\nKey Sources: [1], [2], [4]\n\nCONFIDENCE: MODERATE",
+    "retrieval": {
+      "retrieved_pubs": [
+        "1040",
+        "1-A",
+        "17",
+        "334",
+        "501",
+        "525",
+        "W-2",
+        "463",
+        "535",
+        "15-B"
+      ],
+      "expected_pubs": [
+        "1-A"
+      ],
+      "pub_precision": 0.1,
+      "pub_recall": 1.0,
+      "nav_recall": 1.0,
+      "context_count": 25,
+      "retrieval_ms": 2589,
+      "retrieval_mode": "hierarchical",
+      "nav_pubs": [
+        "1-A",
+        "463",
+        "501",
+        "1040",
+        "525",
+        "17",
+        "529",
+        "W-2",
+        "15-B",
+        "970"
+      ],
+      "ontology_pubs": [
+        "W-2",
+        "535",
+        "334",
+        "15-B"
+      ],
+      "query_intent": "general",
+      "detected_tax_year": null
+    },
+    "fact_check": {
+      "facts_found": 0,
+      "facts_total": 3,
+      "fact_ratio": 0.0,
+      "missing": [
+        "$150,000 Single phase-out",
+        "$300,000 Joint phase-out",
+        "significantly reduced"
+      ]
+    },
+    "judge": {
+      "correctness": 2,
+      "completeness": 2,
+      "hallucination": 3,
+      "citation_quality": 2,
+      "reasoning": "The candidate answer fails to correctly address the phase-out of the overtime deduction at the specified income levels. It mentions income thresholds of $150,000 and $300,000 but does not confirm the phase-out or disqualification, which is a key aspect of the ground truth. The answer also introduces unsupported details about maximum deduction amounts, which are not relevant to the question. The citations are vague and do not specifically reference the relevant IRS publication that would confirm the phase-out details.",
+      "judge_ms": 2211,
+      "judge_model": "gpt-4o",
+      "judge_tokens": 1279
+    },
+    "query_ms": 22270,
+    "synthesis_ms": 1635,
+    "model_used": "gpt-4o",
+    "tokens": 4082
+  }
+]

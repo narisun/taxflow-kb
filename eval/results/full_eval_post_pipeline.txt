@@ -1,0 +1,1563 @@
+Loaded 196 questions from eval/golden_set.json
+Running 196 questions
+
+============================================================================
+  TAX BRAIN — Evaluation Harness
+  Mode: FULL (retrieval + synthesis + judge)
+  Judge model: gpt-4o
+============================================================================
+
+Initializing CPAQueryAgent...
+  Agent ready in 0.4s
+
+
+[1/196] IND-01: Can we claim the new OBBBA senior deduction, and how does our joint in...
+  ✓ pubs: ['501', '505', '1040', '17']  (recall=100%, nav_recall=100%)  facts=0/4  4908ms  judge: C=4 F=4 H=5 S=3
+  Answer: Yes, you can claim the new OBBBA senior deduction for tax year 2025 if you meet the eligibility criteria. The deduction amount is $12,000 if both spouses are eligible and you file jointly [3]. However...
+
+[2/196] IND-02: What is my 2026 standard deduction, and has the OBBBA changed the fili...
+  ✓ pubs: ['501', '505', '17', '334', '1040']  (recall=100%, nav_recall=100%)  facts=0/4  1532ms  judge: C=1 F=1 H=2 S=3
+  Answer: - **Standard Deduction for 2026**: 
+  - Single filers: $13,850 [1].
+  - Married Filing Jointly: $27,700 [1].
+  - Head of Household: $20,800 [1].
+
+- **Filing Threshold for 2026**:
+  - Single filers: $1...
+
+[3/196] IND-03: I heard the SALT cap was raised. How much can I deduct on my 2025 Sche...
+  ✓ pubs: ['535', '17', '501', '505', '1-A', '15-B', '970']  (recall=100%, nav_recall=100%)  facts=0/3  1525ms  judge: C=1 F=1 H=1 S=1
+  Answer: For tax year 2025, the overall limit on the deduction for state and local taxes (SALT) is $15,750 for single filers [2]. Since your income is $300,000 and you are single, your deduction for state and ...
+
+[4/196] IND-04: Can I deduct the $4,500 in interest I paid on my car loan this year?...
+  ✗ pubs: ['970', '936', '463', '535', '550']  (recall=0%, nav_recall=100%)  facts=0/4  1354ms  judge: C=1 F=1 H=5 S=1
+  Answer: No, you cannot deduct the $4,500 in interest paid on your car loan this year.
+
+- Personal interest, such as interest paid on a car loan, is generally not deductible on your tax return [1].
+- The excer...
+
+[5/196] IND-05: How does the 'OBBBA' change my ability to deduct my $40,000 in state t...
+  ✓ pubs: ['1040', '535', '505', '551', '17']  (recall=100%, nav_recall=100%)  facts=0/4  1268ms  judge: C=1 F=1 H=1 S=2
+  Answer: For tax year 2025, the 'OBBBA' has increased the overall limit on the deduction for state and local income, sales, and property taxes to $40,000 for single filers [1]. If your modified adjusted gross ...
+
+[6/196] FAM-06: How do we enroll our newborn in the new government-seeded savings acco...
+  ✓ pubs: ['970', '575', '4547', '15-B', '969', '505', '590a']  (recall=100%, nav_recall=100%)  facts=1/4  1396ms  judge: C=3 F=3 H=3 S=3
+  Answer: To enroll your newborn in the new government-seeded savings account, known as the Trump Account, you must elect to establish the account for a child born after 2024 and before 2029 who is a U.S. citiz...
+
+[7/196] FAM-07: What is the 2026 contribution limit, and can I deduct my $5,000 contri...
+  ✓ pubs: ['560', '970', '505', '526', '535', '525', '15-B', '590a']  (recall=100%, nav_recall=100%)  facts=0/4  1562ms  judge: C=1 F=1 H=1 S=1
+  Answer: - **Contribution Limit for 2026**: The IRA contribution limit for tax year 2026 is $7,500, or $8,600 for individuals age 50 or older [10].
+
+- **Deductibility of $5,000 Contribution**: 
+  - If you are ...
+
+[8/196] FAM-08: If my company contributes $2,500 to my daughter's account, is that con...
+  ✗ pubs: ['17', 'W-2', '970', '590a', '505']  (recall=0%, nav_recall=100%)  facts=0/4  2417ms  judge: C=1 F=1 H=5 S=1
+  Answer: INSUFFICIENT CONTEXT
+
+The provided excerpts do not contain any information regarding whether a company contribution to a child's account is considered taxable income for the parent. The excerpts focus...
+
+[9/196] FAM-09: Can I still claim my child as a dependent if they are not a student?...
+  ✓ pubs: ['17', '501', '969', '596']  (recall=100%, nav_recall=100%)  facts=2/4  1287ms  judge: C=2 F=2 H=3 S=3
+  Answer: Yes, you can still claim your child as a dependent even if they are not a student, provided they meet certain criteria.
+
+- A child can be claimed as a qualifying relative if they do not meet the crite...
+
+[10/196] FAM-10: My income is $250,000. Is my CTC still $2,000 per child?...
+  ✓ pubs: ['501', '504', '523', '544', '8812', '503', '970', '551']  (recall=100%, nav_recall=100%)  facts=0/4  1365ms  judge: C=2 F=2 H=3 S=3
+  Answer: Your Child Tax Credit (CTC) is affected by your income level.
+
+- The CTC is $2,000 per qualifying child [5].
+- The phase-out for the CTC begins at $200,000 for single filers and $400,000 for married f...
+
+[11/196] TIP-11: How much of my tips are tax-free under the new law, and which form do ...
+  ✗ pubs: ['17', '1040', '334', '15']  (recall=0%, nav_recall=100%)  facts=2/4  1247ms  judge: C=3 F=3 H=4 S=2
+  Answer: For tax year 2025, you cannot deduct more than $25,000 of qualified tips, regardless of your filing status [2]. To report additional deductions for qualified tips, you must use Schedule 1-A [2].
+
+Key ...
+
+[12/196] TIP-12: Do I deduct the full $15,000 of my overtime?...
+  ✓ pubs: ['1040', '1-A', '15-B', '17', '501', '463', '587', '334']  (recall=100%, nav_recall=100%)  facts=0/4  1212ms  judge: C=1 F=1 H=5 S=1
+  Answer: INSUFFICIENT CONTEXT
+
+The provided excerpt does not contain any information about the deduction of overtime income. It only includes tax tables for different income levels and filing statuses. There i...
+
+[13/196] TIP-13: What is our max overtime deduction on our joint return?...
+  ✓ pubs: ['17', '1040', '463', '501', '514', '1-A']  (recall=100%, nav_recall=100%)  facts=0/3  1221ms  judge: C=1 F=1 H=5 S=1
+  Answer: INSUFFICIENT CONTEXT
+
+The provided excerpts do not contain any information about an "overtime deduction" or its limits. Please provide additional excerpts or clarify the context for further assistance...
+
+[14/196] TIP-14: Does my high income disqualify me from the overtime deduction?...
+  ✓ pubs: ['1040', '1-A', '17', '15-B', '501', '463', 'W-2', '535']  (recall=100%, nav_recall=100%)  facts=1/3  1300ms  judge: C=5 F=5 H=5 S=4
+  Answer: Your eligibility for the overtime deduction is affected by your income level. For tax year 2025, the overtime deduction phases out at higher income levels:
+
+- The phase-out begins at a Modified Adjust...
+
+[15/196] TIP-15: What code do I use to report the overtime I paid my employees?...
+  ✓ pubs: ['15', '17', 'W-2', '463', '926']  (recall=100%, nav_recall=100%)  facts=1/4  1271ms  judge: C=1 F=1 H=3 S=2
+  Answer: To report the overtime you paid your employees, you should use Form W-2. The overtime compensation should be included in boxes 1, 3, and 5 of Form W-2 as wages for purposes of income, social security,...
+
+[16/196] BIZ-16: Can I still write off the full cost, or is bonus depreciation phasing ...
+  ✓ pubs: ['946', '463', '527', '334']  (recall=100%, nav_recall=100%)  facts=2/4  1536ms  judge: C=2 F=2 H=2 S=3
+  Answer: For tax year 2025, you can still write off the full cost of qualified property using bonus depreciation, but it depends on when the property is acquired and placed in service:
+
+- **100% Bonus Deprecia...
+
+[17/196] BIZ-17: Do I still have to amortize my research costs over 5 years?...
+  ✓ pubs: ['946', '6765', '925', '535']  (recall=100%, nav_recall=100%)  facts=0/4  1418ms  judge: C=1 F=1 H=5 S=1
+  Answer: The provided excerpts do not contain specific information regarding the amortization of research costs over 5 years. Therefore, I cannot confirm whether you still need to amortize your research costs ...
+
+[18/196] BIZ-18: Am I exempt from the 30% business interest limitation this year?...
+  ✓ pubs: ['550', '535', '334', '537', '587', '925']  (recall=100%, nav_recall=100%)  facts=0/4  1132ms  judge: C=1 F=1 H=5 S=1
+  Answer: INSUFFICIENT CONTEXT
+
+The provided excerpts do not contain specific information about the 30% business interest limitation or any exemptions from it. None of the excerpts mention the business interest...
+
+[19/196] BIZ-19: I heard the QBI deduction was expiring. What is the status for my 2026...
+  ✓ pubs: ['501', '17', '8995-A', '15-B', '535', '946', '334']  (recall=100%, nav_recall=100%)  facts=1/5  1688ms  judge: C=1 F=1 H=5 S=1
+  Answer: INSUFFICIENT CONTEXT
+
+The provided excerpt does not contain any information regarding the status of the Qualified Business Income (QBI) deduction for the 2026 tax year. Please provide additional excer...
+
+[20/196] BIZ-20: Is there a new deduction for 'production property' under the OBBBA?...
+  ✓ pubs: ['946', '463', '527', '8995-A', '551', '501', '334', '544']  (recall=100%, nav_recall=100%)  facts=0/5  1409ms  judge: C=2 F=2 H=3 S=3
+  Answer: Yes, the One Big Beautiful Bill Act (OBBBA) introduced a new provision for a 100% additional first-year depreciation deduction for qualified property. This applies to property acquired and placed in s...
+
+[21/196] RPT-21: Will I get a 1099-K this year?...
+  ✗ pubs: ['334', '1099', '505', '525', '544', '527', '1-A', '1040']  (recall=0%, nav_recall=100%)  facts=0/4  1430ms  judge: C=1 F=1 H=5 S=1
+  Answer: To determine if you will receive a Form 1099-K this year, consider the following information from the excerpts:
+
+- Form 1099-K is issued for payment card and third-party network transactions [2].
+- Th...
+
+[22/196] RPT-22: Do I need to issue a 1099-NEC for the $1,500 I paid my plumber?...
+  ✗ pubs: ['1040', '525', '575', '15', '915', '535', '334']  (recall=0%, nav_recall=100%)  facts=0/4  1366ms  judge: C=1 F=1 H=1 S=1
+  Answer: Yes, you need to issue a Form 1099-NEC for the $1,500 you paid your plumber. According to the IRS guidelines, you must file Form 1099-NEC if you paid $600 or more to a non-employee for services [8], [...
+
+[23/196] RPT-23: Do I have to pay Social Security and Medicare taxes for my nanny this ...
+  ✓ pubs: ['15', '505', '926', '334', '17']  (recall=100%, nav_recall=100%)  facts=0/3  1273ms  judge: C=2 F=3 H=3 S=3
+  Answer: Yes, you are required to pay Social Security and Medicare taxes for your nanny in tax year 2025 if you pay them $3,000 or more in cash wages. 
+
+- The Social Security tax rate is 6.2% for both the empl...
+
+[24/196] RPT-24: Can I still zero out my winnings with my losses?...
+  ✓ pubs: ['334', '17', '525', '587', '529']  (recall=100%, nav_recall=100%)  facts=0/4  1571ms  judge: C=2 F=2 H=3 S=3
+  Answer: No, you cannot zero out your gambling winnings with your losses. You must report the full amount of your gambling winnings on Schedule 1 (Form 1040), line 8b, and you can only deduct gambling losses u...
+
+[25/196] RPT-25: How do I report the $2,500 my nonprofit employer put in my child's acc...
+  ✓ pubs: ['590a', '526', '596', '15-B', '503', '970', '505', 'W-2', '575']  (recall=100%, nav_recall=100%)  facts=1/4  2248ms  judge: C=1 F=1 H=5 S=1
+  Answer: To report the $2,500 your nonprofit employer put in your child's account, you need to determine the nature of the contribution and how it should be treated for tax purposes. However, the provided exce...
+
+[26/196] MEF-26: The IRS rejected my return saying 'Amount Owed must be significant.' W...
+  ✓ pubs: ['17', '334', '537', '1040', '561', '15', 'MeF']  (recall=100%, nav_recall=100%)  facts=0/5  1252ms  judge: C=1 F=1 H=5 S=1
+  Answer: INSUFFICIENT CONTEXT
+
+The provided excerpts do not contain any information about the IRS rejecting a return due to the reason 'Amount Owed must be significant.' None of the excerpts address this speci...
+
+[27/196] MEF-27: Why did my e-file fail because of 'Marketplace Data'?...
+  ✓ pubs: ['W-2', '8962', 'MeF', '1040', '596']  (recall=100%, nav_recall=100%)  facts=4/4  1289ms  judge: C=3 F=3 H=3 S=3
+  Answer: Your e-file may have failed due to 'Marketplace Data' because of issues related to the Premium Tax Credit (PTC) and the Advance Premium Tax Credit (APTC). Here are the possible reasons based on the pr...
+
+[28/196] MEF-28: I didn't separate qualified tips on my W-2s. What is the penalty?...
+  ✓ pubs: ['1040', '1099', '17', '926', '15', 'W-2']  (recall=100%, nav_recall=100%)  facts=0/4  2756ms  judge: C=2 F=2 H=3 S=3
+  Answer: The excerpts provided do not specify a penalty for not separating qualified tips on W-2s. However, they do mention penalties related to incorrect information returns in general:
+
+- A penalty of $60 pe...
+
+[29/196] MEF-29: We missed the new CFC alignment deadline. How do we allocate foreign t...
+  ✓ pubs: ['514', '537', '8995-A', '542', '541', '17']  (recall=100%, nav_recall=100%)  facts=2/4  1191ms  judge: C=1 F=1 H=2 S=2
+  Answer: To allocate foreign tax credits after missing the new CFC alignment deadline, you should follow these steps:
+
+- You can choose to take the amount of any qualified foreign taxes paid or accrued during ...
+
+[30/196] MEF-30: Why was my senior deduction disallowed?...
+  ✓ pubs: ['17', '1-A', '501', '1040', '596']  (recall=100%, nav_recall=100%)  facts=0/3  1141ms  judge: C=1 F=1 H=2 S=2
+  Answer: Your senior deduction may have been disallowed for the following reasons:
+
+- **Filing Status**: If you are married filing separately and your spouse itemizes deductions, you are not eligible for the s...
+
+[31/196] PRE-31: How do I calculate my self-employment tax, and what is the deductible ...
+  ✓ pubs: ['535', '334', '587', '529', '560']  (recall=100%, nav_recall=100%)  facts=0/4  1261ms  judge: C=2 F=2 H=3 S=3
+  Answer: To calculate your self-employment tax and determine the deductible portion:
+
+1. **Calculate Self-Employment Tax:**
+   - For tax year 2025, the self-employment tax is calculated by multiplying your net...
+
+[32/196] PRE-32: What types of business expenses can I deduct on my Schedule C?...
+  ✓ pubs: ['17', '535', '334', '529', '970', '463']  (recall=100%, nav_recall=100%)  facts=0/4  3498ms  judge: C=2 F=2 H=3 S=3
+  Answer: You can deduct the following types of business expenses on your Schedule C:
+
+- Advertising expenses [2].
+- Legal and professional fees [2].
+- Meals and entertainment expenses [2].
+- Use of car expense...
+
+[33/196] PRE-33: How much home office expense can I deduct?...
+  ✓ pubs: ['587', '334', '527', '529', '535']  (recall=100%, nav_recall=100%)  facts=1/4  1218ms  judge: C=3 F=3 H=3 S=3
+  Answer: The amount you can deduct for home office expenses depends on the method you choose to calculate the deduction:
+
+1. **Simplified Method**:
+   - For tax year 2023, you can use the optional simplified m...
+
+[34/196] PRE-34: Are all my $8,000 travel expenses deductible?...
+  ✗ pubs: ['463', '334', '15-B', '501', '529', '525']  (recall=0%, nav_recall=100%)  facts=0/4  1202ms  judge: C=2 F=2 H=3 S=3
+  Answer: Based on the provided excerpts, not all of your $8,000 travel expenses are deductible.
+
+- If your travel outside the United States was primarily for personal reasons, such as a vacation, the entire co...
+
+[35/196] PRE-35: Can I deduct my business insurance premiums?...
+  ✓ pubs: ['334', '502', '463', '535']  (recall=100%, nav_recall=100%)  facts=0/3  1358ms  judge: C=3 F=3 H=3 S=2
+  Answer: Yes, you can generally deduct the cost of business insurance premiums as a business expense on Schedule C (Form 1040) for tax year 2025 [1]. However, there are specific types of insurance premiums tha...
+
+[36/196] PRE-36: Can I deduct my startup costs?...
+  ✓ pubs: ['946', '17', '529', '587', '334', '535']  (recall=100%, nav_recall=100%)  facts=0/4  1966ms  judge: C=1 F=1 H=5 S=1
+  Answer: The provided excerpts do not contain specific information about the deduction of startup costs. The excerpts primarily discuss depreciation, Section 179 deductions, and miscellaneous deductions, but d...
+
+[37/196] PRE-37: Do I depreciate the equipment or deduct it all this year?...
+  ✓ pubs: ['946', '535', '527', '334']  (recall=100%, nav_recall=100%)  facts=1/4  1247ms  judge: C=1 F=1 H=2 S=2
+  Answer: For tax year 2025, you should depreciate the equipment rather than deducting it all in one year. The equipment costing $10,000 is subject to depreciation under the 200% declining balance method with a...
+
+[38/196] PRE-38: How do I depreciate a vehicle used both personally and for business?...
+  ✓ pubs: ['946', '587', '463', '15-B']  (recall=100%, nav_recall=100%)  facts=0/4  1628ms  judge: C=2 F=2 H=3 S=3
+  Answer: To depreciate a vehicle used both personally and for business, follow these guidelines:
+
+- **Business Use Requirement**: If the vehicle is used more than 50% for business, you may claim a section 179 ...
+
+[39/196] PRE-39: Does the mid-quarter convention apply to my depreciation?...
+  ✓ pubs: ['946', '587', '334', '551', '544', '527']  (recall=100%, nav_recall=100%)  facts=2/4  1626ms  judge: C=5 F=5 H=5 S=3
+  Answer: Yes, the mid-quarter convention applies to your depreciation if the total depreciable bases of property placed in service during the last 3 months of your tax year exceed 40% of the total depreciable ...
+
+[40/196] PRE-40: What is my rental income and how does depreciation affect it?...
+  ✓ pubs: ['527', '334', '946', '544', '523']  (recall=100%, nav_recall=100%)  facts=0/4  1609ms  judge: C=2 F=2 H=3 S=3
+  Answer: To determine your rental income and how depreciation affects it, consider the following:
+
+### Rental Income:
+- **Advance Rent**: Any advance rent received must be included in your rental income in the...
+
+[41/196] PRE-41: Can I deduct my $30,000 in rental losses?...
+  ✓ pubs: ['527', '17', '587', '535', '925']  (recall=100%, nav_recall=100%)  facts=0/4  1293ms  judge: C=5 F=5 H=5 S=4
+  Answer: Based on the provided excerpts, you may be able to deduct rental losses, but there are specific rules and limitations that apply.
+
+- **Passive Activity Loss Rules**: Generally, rental activities are c...
+
+[42/196] PRE-42: What is the depreciable basis of my rental property?...
+  ✓ pubs: ['527', '544', '523', '551', '946']  (recall=100%, nav_recall=100%)  facts=0/4  1459ms  judge: C=1 F=1 H=2 S=2
+  Answer: To determine the depreciable basis of your rental property for tax year 2025, follow these steps:
+
+1. **Identify the Adjusted Basis**: 
+   - The adjusted basis is calculated as the purchase price plus...
+
+[43/196] PRE-43: How are my dividends taxed?...
+  ✓ pubs: ['542', '514', '525', '575', '550']  (recall=100%, nav_recall=100%)  facts=1/4  1190ms  judge: C=2 F=2 H=3 S=2
+  Answer: Dividends are generally taxed as income to the recipient. Here are the key points regarding how dividends are taxed based on the provided excerpts:
+
+- Dividends received on restricted stock are treate...
+
+[44/196] PRE-44: What is my net capital gain or loss for the year?...
+  ✓ pubs: ['514', '544', '550', '334', '523']  (recall=100%, nav_recall=100%)  facts=0/4  1913ms  judge: C=3 F=3 H=3 S=3
+  Answer: To determine your net capital gain or loss for the year, follow these steps based on the provided excerpts:
+
+1. **Calculate Total Capital Gains and Losses:**
+   - Combine your net short-term capital g...
+
+[45/196] PRE-45: Can I deduct my stock loss if I bought the same stock 30 days later?...
+  ✓ pubs: ['547', '550', '523', '526', '544']  (recall=100%, nav_recall=100%)  facts=1/4  4598ms  judge: C=5 F=5 H=5 S=3
+  Answer: No, you cannot deduct your stock loss if you bought the same stock within 30 days after selling it at a loss.
+
+- The wash sale rule disallows the deduction of a loss on the sale of stock if you purcha...
+
+[46/196] PRE-46: How do I report Original Issue Discount income?...
+  ✓ pubs: ['550', '17', '15-B', '527', '525']  (recall=100%, nav_recall=100%)  facts=0/4  1340ms  judge: C=2 F=2 H=3 S=2
+  Answer: To report Original Issue Discount (OID) income, follow these steps:
+
+- **Form 1099-OID**: Generally, you must report the entire amount shown in Form 1099-OID, boxes 1, 2, and 8 as interest income on y...
+
+[47/196] PRE-47: What is my gain or loss on this sale?...
+  ✓ pubs: ['544', '551', '523']  (recall=100%, nav_recall=100%)  facts=0/4  926ms  judge: C=1 F=1 H=1 S=3
+  Answer: To determine your gain or loss on the sale, you need to calculate the difference between the amount realized from the sale and your adjusted basis in the property.
+
+- **Amount Realized**: This is the ...
+
+[48/196] PRE-48: How do I treat my loss from a home destroyed by fire?...
+  ✓ pubs: ['547', '523', '527', '544']  (recall=100%, nav_recall=100%)  facts=0/4  1245ms  judge: C=2 F=2 H=2 S=3
+  Answer: To treat your loss from a home destroyed by fire, follow these steps:
+
+- **Casualty Loss Calculation**: Determine the casualty loss by calculating the difference between your home's fair market value ...
+
+[49/196] PRE-49: What are the income limits for the 2025 Earned Income Credit?...
+  ✓ pubs: ['596', '17', '504', '970', '1040']  (recall=100%, nav_recall=100%)  facts=0/4  1389ms  judge: C=1 F=1 H=1 S=1
+  Answer: For tax year 2025, the income limits for the Earned Income Credit (EIC) are as follows:
+
+- **Single Filers:**
+  - 3 or more qualifying children: Earned income must be less than $61,555 [3].
+  - 2 qual...
+
+[50/196] PRE-50: Can my college student be a qualifying child for EITC purposes?...
+  ✓ pubs: ['17', '596', '8812', '970', '504']  (recall=100%, nav_recall=100%)  facts=0/4  1476ms  judge: C=3 F=3 H=4 S=3
+  Answer: Yes, your college student can be a qualifying child for Earned Income Tax Credit (EITC) purposes if certain conditions are met:
+
+- The student must be under age 24 and a full-time student at the end o...
+
+[51/196] PRE-51: Can I contribute to a traditional IRA, and is it deductible?...
+  ✓ pubs: ['590a', '560', '501', '590b']  (recall=100%, nav_recall=100%)  facts=1/4  1214ms  judge: C=2 F=2 H=2 S=2
+  Answer: Yes, you can contribute to a traditional IRA for tax year 2025, and the maximum deductible contribution is $7,000, or $8,000 if you are age 50 or older [1]. However, whether the contribution is fully ...
+
+[52/196] PRE-52: Can I convert my traditional IRA to a Roth IRA?...
+  ✓ pubs: ['590a', '560', '590b', '575']  (recall=100%, nav_recall=100%)  facts=0/4  1288ms  judge: C=2 F=2 H=3 S=3
+  Answer: Yes, you can convert your traditional IRA to a Roth IRA. 
+
+- You can convert amounts from a traditional IRA to a Roth IRA through a rollover, trustee-to-trustee transfer, or same trustee transfer [1]....
+
+[53/196] PRE-53: What is my required minimum distribution (RMD) for this year?...
+  ✓ pubs: ['590b', '590a', '915', '969', '575']  (recall=100%, nav_recall=100%)  facts=0/4  1264ms  judge: C=2 F=2 H=3 S=3
+  Answer: To calculate your required minimum distribution (RMD) for tax year 2025, follow these steps:
+
+1. **Determine the IRA Account Balance**: Use the balance of your IRA as of December 31, 2024 [1].
+
+2. **F...
+
+[54/196] PRE-54: Can I contribute to a SEP IRA, and how much?...
+  ✓ pubs: ['590a', '590b', '560']  (recall=100%, nav_recall=100%)  facts=0/4  1324ms  judge: C=4 F=4 H=5 S=3
+  Answer: Yes, you can contribute to a SEP IRA for tax year 2025. The contribution limits depend on your employment status:
+
+- **For Employees**: The contribution limit is the lesser of 25% of your compensation...
+
+[55/196] PRE-55: What is the advantage of a SIMPLE IRA plan over a regular IRA?...
+  ✓ pubs: ['590a', '590b', '560', '575']  (recall=100%, nav_recall=100%)  facts=0/4  1163ms  judge: C=3 F=3 H=3 S=3
+  Answer: A SIMPLE IRA plan offers several advantages over a regular IRA:
+
+- **Employer Contributions**: SIMPLE IRAs allow for employer contributions, either through matching contributions or nonelective contri...
+
+[56/196] PRE-56: What is a 'qualifying child' for dependent purposes?...
+  ✓ pubs: ['17', '596', '8812', '503', '501']  (recall=100%, nav_recall=100%)  facts=1/4  1329ms  judge: C=3 F=3 H=3 S=3
+  Answer: A "qualifying child" for dependent purposes must meet five specific tests: relationship, age, residency, support, and joint return.
+
+- **Relationship Test**: The child must be your son, daughter, step...
+
+[57/196] PRE-57: What is the 2025 standard deduction for a married couple filing jointl...
+  ✓ pubs: ['501', '505', '1040', '17']  (recall=100%, nav_recall=100%)  facts=0/3  1300ms  judge: C=2 F=3 H=2 S=3
+  Answer: The standard deduction for a married couple filing jointly for tax year 2025 is $31,500 [2], [5].
+
+- This amount applies to couples where both spouses are under 65 years old.
+- The presence of depende...
+
+[58/196] PRE-58: Can I file as Head of Household, and what is my standard deduction?...
+  ✓ pubs: ['501', '17', '463', '504']  (recall=100%, nav_recall=100%)  facts=0/3  1216ms  judge: C=2 F=2 H=2 S=3
+  Answer: To determine if you can file as Head of Household and what your standard deduction would be, consider the following:
+
+- **Filing as Head of Household**: For tax year 2025, you must meet these criteria...
+
+[59/196] PRE-59: Am I required to file a tax return?...
+  ✓ pubs: ['501', '17', '334', '1040']  (recall=100%, nav_recall=100%)  facts=0/4  1238ms  judge: C=2 F=2 H=3 S=3
+  Answer: To determine if you are required to file a tax return for tax year 2025, consider the following criteria based on your filing status, age, and income:
+
+- **Single Filers**:
+  - Must file if gross inco...
+
+[60/196] PRE-60: How is my gain taxed when I finance the buyer's $50,000 balance?...
+  ✓ pubs: ['544', '551', '523', '537']  (recall=100%, nav_recall=100%)  facts=0/4  1276ms  judge: C=2 F=2 H=3 S=3
+  Answer: To determine how your gain is taxed when you finance the buyer's $50,000 balance, we need to consider the rules for installment sales, which are not explicitly covered in the provided excerpts. Howeve...
+
+[61/196] PRE-61: Can I use my NOL carryforward this year?...
+  ✓ pubs: ['536', '542', '514', '334']  (recall=100%, nav_recall=100%)  facts=1/4  1514ms  judge: C=3 F=3 H=4 S=3
+  Answer: Yes, you can use your NOL carryforward this year, subject to certain limitations.
+
+- For tax years beginning after December 31, 2017, the total amount of any NOL deduction for 2021 or thereafter canno...
+
+[62/196] PRE-62: What is the excess business loss limitation?...
+  ✗ pubs: ['925', '8995-A', '527', '542', '536', '334']  (recall=0%, nav_recall=100%)  facts=0/4  1225ms  judge: C=2 F=2 H=3 S=2
+  Answer: The excess business loss limitation applies to noncorporate taxpayers for tax year 2025. After considering basis limitations, at-risk limitations (Form 6198), and passive loss limitations (Form 8582),...
+
+[63/196] PRE-63: What is the recovery period for a residential rental building?...
+  ✓ pubs: ['527', '523', '547', '946']  (recall=100%, nav_recall=100%)  facts=0/4  1162ms  judge: C=3 F=3 H=4 S=3
+  Answer: The recovery period for a residential rental building placed in service during 2025 under the General Depreciation System (GDS) is 27.5 years [1].
+
+Key Sources: IRS Pub 527
+
+CONFIDENCE: HIGH...
+
+[64/196] PRE-64: What recovery period applies to my office leasehold improvements?...
+  ✓ pubs: ['946', '544', '587', '527']  (recall=100%, nav_recall=100%)  facts=0/4  932ms  judge: C=3 F=3 H=3 S=2
+  Answer: The recovery period for your office leasehold improvements depends on the depreciation system you choose:
+
+- **General Depreciation System (GDS):** The recovery period is 15 years for leasehold improv...
+
+[65/196] PRE-65: What recovery period applies to commercial real property placed in ser...
+  ✓ pubs: ['946', '587', '537', '544', '527']  (recall=100%, nav_recall=100%)  facts=0/4  1191ms  judge: C=3 F=3 H=4 S=3
+  Answer: The recovery period for commercial real property placed in service in 2025 is 39 years under the General Depreciation System (GDS) [2], [8].
+
+Key Sources: [2], [8]
+
+CONFIDENCE: HIGH...
+
+[66/196] PRE-66: How do I allocate the sale price between the building and land?...
+  ✓ pubs: ['537', '527', '523', '334', '544', '551']  (recall=100%, nav_recall=100%)  facts=0/4  1254ms  judge: C=4 F=4 H=5 S=3
+  Answer: To allocate the sale price between the building and land, you should use the fair market value (FMV) of each asset relative to the FMV of the entire property at the time of sale.
+
+- **Step 1**: Determ...
+
+[67/196] PRE-67: Can I defer gain by exchanging my rental property for another?...
+  ✓ pubs: ['544', '523', '527', '551']  (recall=100%, nav_recall=100%)  facts=1/4  1235ms  judge: C=5 F=5 H=5 S=4
+  Answer: Yes, you can defer gain by exchanging your rental property for another through a like-kind exchange, also known as a Section 1031 exchange. The nonrecognition rules for like-kind exchanges apply only ...
+
+[68/196] PRE-68: What is the tax rate on my depreciation recapture?...
+  ✓ pubs: ['946', '334', '527', '523', '544', '535']  (recall=100%, nav_recall=100%)  facts=0/4  1276ms  judge: C=1 F=1 H=5 S=1
+  Answer: INSUFFICIENT CONTEXT
+
+The provided excerpts do not contain specific information about the tax rate on depreciation recapture. They mention depreciation recapture in general terms but do not specify th...
+
+[69/196] PRE-69: Are corporate dividends taxable to me?...
+  ✓ pubs: ['542', '550', '525', '15-B']  (recall=100%, nav_recall=100%)  facts=0/4  1431ms  judge: C=2 F=2 H=3 S=3
+  Answer: Yes, corporate dividends are generally taxable to you.
+
+- You must report all your taxable dividend income, even if you do not receive a Form 1099-DIV [2].
+- Dividends on restricted stock received fro...
+
+[70/196] PRE-70: How is my partnership distribution taxed?...
+  ✓ pubs: ['514', '541', '334', '925', '1040']  (recall=100%, nav_recall=100%)  facts=0/4  1238ms  judge: C=2 F=2 H=3 S=3
+  Answer: - **Partnership Distribution Taxation**: A partner recognizes gain on a partnership distribution only if the money (and marketable securities treated as money) distributed exceeds the partner’s adjust...
+
+[71/196] OBBBA-71: At what age can I claim the senior deduction, and does my high income ...
+  ✓ pubs: ['17', '1-A', '501', '596', '969', '1040']  (recall=100%, nav_recall=100%)  facts=0/4  1246ms  judge: C=1 F=1 H=5 S=1
+  Answer: INSUFFICIENT CONTEXT
+
+The provided excerpt does not contain any information about the age requirement for claiming the senior deduction or how high income might affect eligibility for this deduction. ...
+
+[72/196] OBBBA-72: How much senior deduction can each spouse claim when filing separately...
+  ✓ pubs: ['501', '17', '1040', '504']  (recall=100%, nav_recall=100%)  facts=0/4  1455ms  judge: C=4 F=4 H=5 S=3
+  Answer: Each spouse can claim a senior deduction of $6,000 when filing separately for tax year 2025, provided they are age 65 or older [2].
+
+Key Sources: [2]
+
+CONFIDENCE: HIGH...
+
+[73/196] OBBBA-73: At exactly $450,000 income, what is my SALT deduction?...
+  ✓ pubs: ['17', '587', '505', '1-A', '525', '501', '535']  (recall=100%, nav_recall=100%)  facts=0/4  1130ms  judge: C=1 F=1 H=5 S=1
+  Answer: INSUFFICIENT CONTEXT
+
+The provided excerpt does not contain any information about the SALT (State and Local Tax) deduction or its limits. Therefore, I cannot determine the SALT deduction for an income...
+
+[74/196] OBBBA-74: If I financed a vehicle in 2024, can I claim the interest deduction in...
+  ✗ pubs: ['970', '936', '525', '946', '463', '550']  (recall=0%, nav_recall=100%)  facts=0/4  1125ms  judge: C=1 F=1 H=5 S=1
+  Answer: The provided excerpts do not contain any information about the deductibility of interest on a vehicle loan. The excerpts primarily focus on education-related tax benefits, student loan interest deduct...
+
+[75/196] OBBBA-75: Can I deduct interest on a vehicle assembled outside the U.S.?...
+  ✗ pubs: ['970', '936', '550', '535']  (recall=0%, nav_recall=100%)  facts=0/3  1759ms  judge: C=5 F=5 H=5 S=1
+  Answer: No, you cannot deduct interest on a vehicle assembled outside the U.S. based on the provided excerpts. The excerpts do not mention any deduction for interest on vehicles, regardless of where they are ...
+
+[76/196] OBBBA-76: Are earnings in my child's Trump Account subject to the kiddie tax rul...
+  ✗ pubs: ['17', '596', '504', '505', '4547']  (recall=0%, nav_recall=100%)  facts=0/4  1236ms  judge: C=1 F=1 H=5 S=1
+  Answer: INSUFFICIENT CONTEXT
+
+The provided excerpts do not contain specific information about whether earnings in a child's Trump Account are subject to the kiddie tax rules. The excerpts mention Trump Accoun...
+
+[77/196] OBBBA-77: Can I withdraw funds from my Trump Account before age 18?...
+  ✓ pubs: ['1040', '15-B', '503', '505', '970', 'W-2', '4547']  (recall=100%, nav_recall=100%)  facts=0/4  1621ms  judge: C=1 F=1 H=5 S=1
+  Answer: The provided excerpts do not contain specific information about withdrawing funds from a Trump Account before age 18. The excerpts mention the establishment of a Trump Account for children born after ...
+
+[78/196] OBBBA-78: If I exceed the $5,000 annual contribution limit for Trump Accounts, w...
+  ✓ pubs: ['590a', 'W-2', '15-B', '525', '505', '970']  (recall=100%, nav_recall=100%)  facts=0/4  1238ms  judge: C=3 F=3 H=4 S=2
+  Answer: If you exceed the $5,000 annual contribution limit for Trump Accounts in tax year 2025, the excess contribution is subject to a 6% excise tax [9]. This tax is calculated by multiplying the excess cont...
+
+[79/196] OBBBA-79: If an employer contributes to Trump Accounts in multiple years, is the...
+  ✓ pubs: ['W-2', '17', '560', '15-B', '590a', '970', '505']  (recall=100%, nav_recall=100%)  facts=1/4  1236ms  judge: C=3 F=3 H=2 S=2
+  Answer: Yes, there is an aggregate limit on contributions to Trump Accounts. For tax years beginning July 4, 2026, employers may contribute up to $2,500 per year to a Trump Account. The total annual contribut...
+
+[80/196] OBBBA-80: Can I change the beneficiary of a Trump Account to my other child?...
+  ✓ pubs: ['970', '501', '503', '590b', '505', '4547']  (recall=100%, nav_recall=100%)  facts=0/4  3998ms  judge: C=2 F=2 H=3 S=3
+  Answer: Yes, you can change the beneficiary of a Trump Account to your other child without any income tax consequences, as long as the new beneficiary is a member of the original beneficiary's family. Members...
+
+[81/196] OBBBA-81: How much of my $40,000 total income is taxable?...
+  ✗ pubs: ['1040', '501', '17', '525', '505']  (recall=0%, nav_recall=100%)  facts=0/4  1550ms  judge: C=1 F=1 H=5 S=1
+  Answer: INSUFFICIENT CONTEXT...
+
+[82/196] OBBBA-82: Does my high MAGI from other income reduce my tips deduction?...
+  ✓ pubs: ['1040', '970', '1-A', '17']  (recall=100%, nav_recall=100%)  facts=0/4  1467ms  judge: C=2 F=2 H=3 S=2
+  Answer: Yes, your high MAGI from other income can reduce your tips deduction for tax year 2025.
+
+- If your MAGI exceeds $300,000 for married filing jointly, the deduction for qualified tips is reduced by an u...
+
+[83/196] OBBBA-83: How do I calculate my overtime deduction if I earn different pay rates...
+  ✓ pubs: ['535', '1-A', '17', '334', '501', 'W-2', '15-B', '463', '525']  (recall=100%, nav_recall=100%)  facts=0/4  1458ms  judge: C=1 F=1 H=5 S=1
+  Answer: INSUFFICIENT CONTEXT
+
+The provided excerpts do not contain specific information about calculating an overtime deduction based on different pay rates. None of the excerpts mention a method or formula f...
+
+[84/196] OBBBA-84: Is there an age limit for claiming the overtime deduction?...
+  ✓ pubs: ['501', '17', '525', '1040', '1-A', '970', '15-B']  (recall=100%, nav_recall=100%)  facts=0/4  1204ms  judge: C=3 F=2 H=4 S=3
+  Answer: The provided excerpts do not mention any age limit for claiming the overtime deduction. Therefore, based on the available information, there is no specified age restriction for claiming this deduction...
+
+[85/196] OBBBA-85: Can I combine tips and overtime deductions on my return?...
+  ✓ pubs: ['1040', '17', '535', '525', '529', '1-A']  (recall=100%, nav_recall=100%)  facts=0/4  1225ms  judge: C=1 F=1 H=5 S=1
+  Answer: Based on the provided excerpts, you cannot combine tips and overtime deductions on your tax return.
+
+- Tips can be deducted if they are qualified tips and meet certain conditions, such as being report...
+
+[86/196] OBBBA-86: Can I take the R&D Tax Credit in addition to expensing my R&D costs?...
+  ✓ pubs: ['535', '334', '925', '970', '946', '6765', '514']  (recall=100%, nav_recall=100%)  facts=0/4  1415ms  judge: C=1 F=1 H=2 S=2
+  Answer: No, you cannot take the R&D Tax Credit in addition to expensing your R&D costs in full in the current year. According to IRS Pub 535, research or experimental expenditures must be charged to a separat...
+
+[87/196] OBBBA-87: Can I deduct foreign R&D contract research?...
+  ✓ pubs: ['535', '970', '463', '514', '6765', '334']  (recall=100%, nav_recall=100%)  facts=0/4  1577ms  judge: C=1 F=1 H=5 S=1
+  Answer: INSUFFICIENT CONTEXT
+
+The provided excerpts do not contain any information regarding the deductibility of foreign R&D contract research expenses. Please refer to other IRS publications or resources fo...
+
+[88/196] OBBBA-88: Does bonus depreciation apply to used property?...
+  ✓ pubs: ['946', '544', '527', '551', '334']  (recall=100%, nav_recall=100%)  facts=1/4  1367ms  judge: C=4 F=4 H=4 S=3
+  Answer: Yes, bonus depreciation applies to used property. According to IRS Pub 946, you can take a special depreciation allowance for certain qualified property, which includes used property acquired by purch...
+
+[89/196] OBBBA-89: Can I use both Section 179 and bonus depreciation in the same year?...
+  ✓ pubs: ['946', '527', '544', '587', '334', '551']  (recall=100%, nav_recall=100%)  facts=0/4  1249ms  judge: C=2 F=2 H=2 S=2
+  Answer: Yes, you can use both Section 179 and bonus depreciation in the same year, but there are specific conditions to consider:
+
+- For tax year 2025, you can elect to deduct up to $2,500,000 under Section 1...
+
+[90/196] OBBBA-90: What is the Section 179 taxable income limit?...
+  ✓ pubs: ['946', '505', '525', '537', '8995-A', '547', '527', '17']  (recall=100%, nav_recall=100%)  facts=0/4  1405ms  judge: C=1 F=1 H=2 S=2
+  Answer: The Section 179 taxable income limit for tax year 2025 is $2,500,000. This limit applies to the taxable income from the active conduct of any trade or business during the year [1].
+
+Key Sources: [1]
+
+...
+
+[91/196] BIZ-91: Am I subject to QBI limitations as an SSTB?...
+  ✓ pubs: ['8995-A', '525', '925', '334']  (recall=100%, nav_recall=100%)  facts=0/4  1255ms  judge: C=2 F=2 H=3 S=2
+  Answer: To determine if you are subject to Qualified Business Income (QBI) limitations as a Specified Service Trade or Business (SSTB), consider the following:
+
+- Whether your trade or business is considered ...
+
+[92/196] BIZ-92: Do I calculate QBI on the partnership level or partner level?...
+  ✓ pubs: ['541', '8995-A', '334', '560', '587', '925']  (recall=100%, nav_recall=100%)  facts=0/4  1530ms  judge: C=4 F=4 H=5 S=3
+  Answer: The Qualified Business Income (QBI) deduction is calculated at the partner level, not the partnership level. This is because QBI involves items of income, gain, deduction, or loss that are effectively...
+
+[93/196] BIZ-93: Can I carry back a 2026 NOL?...
+  ✓ pubs: ['536', '514', '8995-A', '596', '537']  (recall=100%, nav_recall=100%)  facts=0/4  1645ms  judge: C=4 F=3 H=5 S=3
+  Answer: No, you cannot carry back a 2026 NOL. For tax year 2026, NOLs arising after 2017 cannot be carried back; they can only be carried forward [1].
+
+Key Sources: [1]
+
+CONFIDENCE: HIGH...
+
+[94/196] RPT-94: Will I receive a 1099-K for $18,000 in platform payments?...
+  ✓ pubs: ['1040', '15-B', '505', '334', '544', '17']  (recall=100%, nav_recall=100%)  facts=0/4  1278ms  judge: C=1 F=1 H=5 S=1
+  Answer: INSUFFICIENT CONTEXT
+
+The provided excerpts do not contain any information regarding the issuance of Form 1099-K or the thresholds for platform payments. Please provide additional excerpts or context ...
+
+[95/196] RPT-95: Do I need to issue 1099-NEC if total payments are $4,500 but each is u...
+  ✓ pubs: ['1040', '1099', '535', '915', '15', '505', '334']  (recall=100%, nav_recall=100%)  facts=0/4  1614ms  judge: C=1 F=1 H=5 S=1
+  Answer: INSUFFICIENT CONTEXT
+
+Key Sources: None
+
+CONFIDENCE: LOW...
+
+[96/196] RPT-96: Do I aggregate wages for household workers when calculating FUTA?...
+  ✓ pubs: ['15', '17', '926', '334', '15-B']  (recall=100%, nav_recall=100%)  facts=0/4  1251ms  judge: C=2 F=2 H=3 S=3
+  Answer: Yes, you aggregate wages for household workers when calculating FUTA tax. You are subject to FUTA tax if you paid total cash wages of $1,000 or more to household employees in any calendar quarter in 2...
+
+[97/196] RPT-97: What is the 2026 safe harbor for estimated tax payments?...
+  ✓ pubs: ['17', '926', '1040', '537', '505']  (recall=100%, nav_recall=100%)  facts=0/4  1484ms  judge: C=2 F=3 H=2 S=3
+  Answer: For tax year 2026, the safe harbor for estimated tax payments is determined by the following criteria:
+
+- You do not have to pay estimated tax if your withholding in each payment period is at least as...
+
+[98/196] RPT-98: What is the penalty for failing to file a return on time?...
+  ✓ pubs: ['1099', '334', '561', '542', '17']  (recall=100%, nav_recall=100%)  facts=0/4  1351ms  judge: C=1 F=1 H=2 S=1
+  Answer: The penalty for failing to file a correct information return by the due date, without showing reasonable cause, is applicable under Section 6721. The penalty applies if you fail to file timely, fail t...
+
+[99/196] RPT-99: If I file an extension, does it extend the tax payment deadline?...
+  ✓ pubs: ['505', '1040', '334', '926', '17']  (recall=100%, nav_recall=100%)  facts=0/4  1198ms  judge: C=5 F=4 H=5 S=3
+  Answer: No, filing an extension does not extend the tax payment deadline. You must pay your tax by the original due date of your return, even if you file for an extension to submit your tax return later [2], ...
+
+[100/196] RPT-100: Do I have a net profit/loss threshold that requires Schedule C filing?...
+  ✓ pubs: ['334', '535', '587', '925', '527']  (recall=100%, nav_recall=100%)  facts=0/4  1273ms  judge: C=4 F=4 H=5 S=3
+  Answer: For tax year 2025, you must file an income tax return using Schedule C if your net earnings from self-employment are $400 or more [1]. If your net earnings are less than $400, you are not required to ...
+
+[101/196] SCN-101: What deductions and credits should I prioritize to minimize tax?...
+  ✓ pubs: ['17', '970', '529', '587', '527', '334', '501', '525']  (recall=75%, nav_recall=100%)  facts=0/4  1253ms  judge: C=1 F=1 H=2 S=2
+  Answer: To minimize your tax liability for tax year 2025, consider prioritizing the following deductions and credits:
+
+1. **American Opportunity Credit**: This credit helps offset the costs of higher educatio...
+
+[102/196] SCN-102: How do I handle depreciation and recapture in the year of turnover?...
+  ✓ pubs: ['946', '523', '334', '527', '544']  (recall=100%, nav_recall=100%)  facts=0/4  1213ms  judge: C=2 F=2 H=3 S=3
+  Answer: To handle depreciation and recapture in the year of turnover, follow these steps based on the provided excerpts:
+
+1. **Depreciation Recapture for Section 1245 Property**:
+   - If the business use of s...
+
+[103/196] SCN-103: How much must I withdraw from my IRA, and how does it affect taxation ...
+  ✓ pubs: ['590a', '970', '575', '915', '590b']  (recall=100%, nav_recall=100%)  facts=0/4  1429ms  judge: C=2 F=2 H=3 S=3
+  Answer: To determine how much you must withdraw from your IRA and how it affects the taxation of your benefits, consider the following:
+
+- **Required Minimum Distributions (RMDs):** For tax year 2025, you mus...
+
+[104/196] SCN-104: What is their optimal filing status and deduction strategy?...
+  ✓ pubs: ['501', '1040', '17', '587', '504']  (recall=50%, nav_recall=100%)  facts=0/4  1299ms  judge: C=2 F=2 H=3 S=3
+  Answer: To determine the optimal filing status and deduction strategy, consider the following:
+
+- **Filing Status Options**: There are five filing statuses: Single, Married Filing Jointly, Married Filing Sepa...
+
+[105/196] SCN-105: Should I establish a SEP-IRA or a Solo 401(k), and how much can I cont...
+  ✓ pubs: ['590a', '560', '575', '590b']  (recall=100%, nav_recall=100%)  facts=0/4  1731ms  judge: C=2 F=2 H=3 S=3
+  Answer: To decide between establishing a SEP-IRA or a Solo 401(k) and determine your contribution limits for tax year 2025, consider the following:
+
+- **SEP-IRA Contribution Limits**: For self-employed indivi...
+
+[106/196] SCN-106: Can I use the $30,000 annual loss limit against my passive gains?...
+  ✓ pubs: ['514', '334', '527', '925', '8995-A']  (recall=100%, nav_recall=100%)  facts=0/4  1242ms  judge: C=3 F=3 H=4 S=3
+  Answer: The excerpts provided do not mention a $30,000 annual loss limit specifically related to passive gains. However, they do mention a $25,000 limit for passive activity loss from rental real estate activ...
+
+[107/196] SCN-107: How do I optimize first-year deductions and carryforwards?...
+  ✓ pubs: ['17', '536', '514', '587', '946', '334']  (recall=67%, nav_recall=100%)  facts=0/4  1400ms  judge: C=2 F=2 H=2 S=2
+  Answer: To optimize first-year deductions and carryforwards, consider the following strategies based on the provided excerpts:
+
+1. **Standard vs. Itemized Deductions**:
+   - Determine whether the standard ded...
+
+[108/196] SCN-108: What is my net capital gain/loss and tax liability?...
+  ✓ pubs: ['514', '550', '541', '544']  (recall=100%, nav_recall=100%)  facts=0/4  2189ms  judge: C=2 F=2 H=2 S=2
+  Answer: To determine your net capital gain/loss and tax liability, follow these steps based on the provided excerpts:
+
+1. **Net Capital Gain/Loss Calculation:**
+   - Combine your net short-term capital gain o...
+
+[109/196] MEF-109: Why was my return rejected for 'missing Form 1-A'?...
+  ✗ pubs: ['1040', '8995-A', '17', 'MeF', '1099']  (recall=0%, nav_recall=100%)  facts=0/4  1408ms  judge: C=1 F=1 H=5 S=1
+  Answer: INSUFFICIENT CONTEXT
+
+The provided excerpts do not mention "Form 1-A" or provide any information about why a tax return might be rejected for missing this form. The excerpts focus on instructions for ...
+
+[110/196] MEF-110: Why was my senior deduction rejected?...
+  ✓ pubs: ['501', '1040', '590a', '575', '1-A', '17']  (recall=100%, nav_recall=100%)  facts=0/4  1277ms  judge: C=2 F=2 H=2 S=3
+  Answer: Your senior deduction may have been rejected for one or more of the following reasons based on the provided excerpts:
+
+1. **Age Requirement**: You must have been born before January 2, 1961, to qualif...
+
+[111/196] MEF-111: If Form 8962 shows I was overpaid $500 in subsidies, how is this treat...
+  ✓ pubs: ['W-2', '1040', '8962', '525', '969']  (recall=100%, nav_recall=100%)  facts=0/4  1653ms  judge: C=4 F=4 H=5 S=3
+  Answer: If Form 8962 shows you were overpaid $500 in subsidies, this is treated as an excess advance payment of the premium tax credit (APTC). You are required to repay the excess amount when reconciling on F...
+
+[112/196] MEF-112: If my employer didn't report tips separately on the W-2, can I claim t...
+  ✓ pubs: ['17', '15', '463', '529', '970', '535', '1040']  (recall=100%, nav_recall=100%)  facts=0/4  1466ms  judge: C=1 F=1 H=5 S=2
+  Answer: No, you cannot claim tips as deductible if your employer didn't report them separately on the W-2.
+
+- Tips are considered income and should be reported as such on your tax return. There is no indicati...
+
+[113/196] MEF-113: If I don't file Form 4547 to establish a Trump Account, what happens t...
+  ✓ pubs: ['1040', '970', '4547', '590a', '550', '505']  (recall=100%, nav_recall=100%)  facts=0/4  1470ms  judge: C=1 F=1 H=1 S=1
+  Answer: If you do not file Form 4547 to establish a Trump Account, the child will not receive the $1,000 pilot program contribution to the Trump account for tax year 2025 [2].
+
+Key Sources: [2]
+
+CONFIDENCE: H...
+
+[114/196] PRE-114: Is computer equipment subject to listed property depreciation rules?...
+  ✓ pubs: ['527', '587', '535', '334', '946', '544']  (recall=100%, nav_recall=100%)  facts=0/4  1578ms  judge: C=4 F=4 H=5 S=3
+  Answer: Yes, computer equipment is subject to listed property depreciation rules.
+
+- Computer equipment is considered listed property under IRS rules [5].
+- To claim depreciation on listed property, you must ...
+
+[115/196] PRE-115: Does the timing of my Q4 asset placement trigger different depreciatio...
+  ✓ pubs: ['544', '946', '587', '334', '535', '551', '527']  (recall=100%, nav_recall=100%)  facts=1/4  1586ms  judge: C=5 F=5 H=5 S=3
+  Answer: The timing of placing an asset in service can indeed trigger different depreciation rules under the Modified Accelerated Cost Recovery System (MACRS). Specifically, the timing affects the convention u...
+
+[116/196] PRE-116: Is there gain recognition when a partnership distributes appreciated p...
+  ✓ pubs: ['541', '544', '551', '334']  (recall=100%, nav_recall=100%)  facts=0/4  1361ms  judge: C=3 F=3 H=3 S=3
+  Answer: A partner generally does not recognize gain when a partnership distributes appreciated property, unless specific conditions are met. According to IRS Pub 541, a partner recognizes gain on a partnershi...
+
+[117/196] PRE-117: Is inventory depreciated or deducted as COGS?...
+  ✗ pubs: ['334', '527', '544', '946', '15-B']  (recall=0%, nav_recall=100%)  facts=1/4  1384ms  judge: C=4 F=4 H=4 S=3
+  Answer: Inventory is not depreciated; instead, it is deducted as part of the cost of goods sold (COGS). According to IRS Pub 334, inventory must be deducted from total purchases during the year to calculate t...
+
+[118/196] PRE-118: What is the deduction percentage for business meal expenses?...
+  ✓ pubs: ['334', '535', '970', '15-B', '463']  (recall=100%, nav_recall=100%)  facts=0/4  1328ms  judge: C=3 F=3 H=4 S=3
+  Answer: The deduction percentage for business meal expenses is generally 50% for tax year 2025 [10], [11], [5]. 
+
+Key Sources: [10], [11], [5]
+
+CONFIDENCE: HIGH...
+
+[119/196] PRE-119: Can I deduct health insurance premiums I pay for employees?...
+  ✓ pubs: ['502', '1040', '15-B', '535', '334']  (recall=100%, nav_recall=100%)  facts=0/4  1301ms  judge: C=4 F=4 H=4 S=3
+  Answer: Yes, you can deduct health insurance premiums you pay for employees.
+
+- You can generally deduct premiums paid for group hospitalization and medical insurance for employees, including long-term care i...
+
+[120/196] PRE-120: Are advertising expenses deductible?...
+  ✓ pubs: ['17', '529', '463', '334', '535']  (recall=100%, nav_recall=100%)  facts=0/4  1428ms  judge: C=4 F=4 H=5 S=3
+  Answer: Yes, advertising expenses are deductible as business expenses. The excerpts provided do not list advertising expenses among the nondeductible expenses or miscellaneous itemized deductions that can no ...
+
+[121/196] PRE-121: Is professional liability insurance deductible?...
+  ✓ pubs: ['334', '535', '529', '502', '17']  (recall=100%, nav_recall=100%)  facts=1/4  1344ms  judge: C=5 F=5 H=5 S=4
+  Answer: Yes, professional liability insurance is deductible as a business expense. According to IRS Pub 334 and IRS Pub 535, you can generally deduct premiums paid for liability insurance related to your busi...
+
+[122/196] PRE-122: What depreciation method applies to the business vehicle?...
+  ✓ pubs: ['946', '334', '527', '551', '15-B', '544']  (recall=100%, nav_recall=100%)  facts=0/4  1455ms  judge: C=3 F=3 H=3 S=3
+  Answer: The depreciation method that applies to a business vehicle depends on whether it is classified as "listed property." For business vehicles, such as passenger automobiles, the Modified Accelerated Cost...
+
+[123/196] PRE-123: Can I use the simplified method instead of calculating actual home off...
+  ✓ pubs: ['587', '527', '334', '463', '501', '535']  (recall=100%, nav_recall=100%)  facts=0/4  1227ms  judge: C=5 F=5 H=5 S=3
+  Answer: Yes, you can use the simplified method instead of calculating actual home office expenses. 
+
+- The simplified method allows you to calculate your deduction by multiplying $5 by the area of your home u...
+
+[124/196] PRE-124: Are employee training and development expenses deductible?...
+  ✓ pubs: ['970', '525', '535', '334', '15-B', '463', '529']  (recall=100%, nav_recall=100%)  facts=0/4  1211ms  judge: C=2 F=2 H=3 S=3
+  Answer: Employee training and development expenses are not deductible as miscellaneous itemized deductions for tax years beginning after 2017. However, they may be deductible under certain conditions:
+
+- If y...
+
+[125/196] PRE-125: Is interest earned on business bank accounts taxable?...
+  ✓ pubs: ['550', '334', '587', '525', '537', '560']  (recall=100%, nav_recall=100%)  facts=1/4  1394ms  judge: C=4 F=4 H=5 S=3
+  Answer: Yes, interest earned on business bank accounts is taxable. According to IRS Pub 550, any interest that you receive or that is credited to your account and can be withdrawn is considered taxable income...
+
+[126/196] OBBBA-126: Can only the older spouse claim the senior deduction?...
+  ✓ pubs: ['501', '596', '17', '514', '1040']  (recall=100%, nav_recall=100%)  facts=0/4  3327ms  judge: C=2 F=3 H=2 S=2
+  Answer: No, only the older spouse cannot claim the senior deduction if both spouses are eligible. For married couples filing jointly, both spouses must meet the age requirement to claim the enhanced deduction...
+
+[127/196] OBBBA-127: At exactly the $500,000 threshold income, what is my SALT deduction?...
+  ✗ pubs: ['523', '547', '936', '501', '505']  (recall=0%, nav_recall=100%)  facts=0/4  1235ms  judge: C=1 F=1 H=5 S=1
+  Answer: INSUFFICIENT CONTEXT
+
+The provided excerpts do not contain specific information about the State and Local Tax (SALT) deduction or its treatment at the $500,000 income threshold. None of the excerpts m...
+
+[128/196] OBBBA-128: What is my SALT deduction when filing separately with high income?...
+  ✓ pubs: ['501', '17', '1040', '1-A', '936']  (recall=100%, nav_recall=100%)  facts=0/4  4512ms  judge: C=1 F=1 H=5 S=1
+  Answer: INSUFFICIENT CONTEXT
+
+The provided excerpt does not contain any information about the State and Local Tax (SALT) deduction or its limitations when filing separately with high income. Please provide ad...
+
+[129/196] OBBBA-129: Is there an age cutoff for opening a Trump Account for a newborn?...
+  ✓ pubs: ['596', '4547', '550', '505', 'W-2', '970', '590a']  (recall=100%, nav_recall=100%)  facts=0/4  1183ms  judge: C=1 F=1 H=1 S=1
+  Answer: Yes, there is an age cutoff for opening a Trump Account for a newborn. A Trump Account can be established for a child who was born after 2024 and before 2029, provided the child is a U.S. citizen and ...
+
+[130/196] OBBBA-130: Can I contribute to my child's Trump Account if the other parent has c...
+  ✓ pubs: ['504', '505', '590a', '970', '503', '4547']  (recall=100%, nav_recall=100%)  facts=0/4  1170ms  judge: C=1 F=1 H=5 S=1
+  Answer: INSUFFICIENT CONTEXT
+
+The provided excerpts do not contain any information about contributing to a "Trump Account" specifically in the context of custody arrangements. The excerpts mention various tax...
+
+[131/196] OBBBA-131: Does my spouse's income affect my tips deduction?...
+  ✗ pubs: ['501', '17', '514', '1040']  (recall=0%, nav_recall=100%)  facts=1/4  1222ms  judge: C=1 F=1 H=5 S=1
+  Answer: INSUFFICIENT CONTEXT
+
+The provided excerpt from IRS Pub 501 does not contain any information regarding a "tips deduction" or how a spouse's income might affect it. The excerpt primarily discusses fili...
+
+[132/196] OBBBA-132: Is my overtime deduction reduced by phase-out at $145,000 joint income...
+  ✓ pubs: ['1040', '970', 'W-2', '525', '1-A', '17']  (recall=100%, nav_recall=100%)  facts=0/4  1344ms  judge: C=5 F=5 H=5 S=3
+  Answer: Your overtime deduction is not reduced by a phase-out at a $145,000 joint income for tax year 2025.
+
+- The phase-out threshold for the overtime deduction for Married Filing Jointly begins at $300,000 ...
+
+[133/196] OBBBA-133: Can I claim R&D credit on foreign R&D?...
+  ✓ pubs: ['535', '17', '514', '6765', '334']  (recall=100%, nav_recall=100%)  facts=0/4  1290ms  judge: C=2 F=2 H=5 S=3
+  Answer: The provided excerpts do not contain specific information about claiming the R&D credit on foreign R&D activities. The excerpts primarily discuss general business expenses, foreign tax credits, and in...
+
+[134/196] OBBBA-134: If I sell used equipment at a loss, can I also claim bonus depreciatio...
+  ✓ pubs: ['946', '527', '334', '544', '587']  (recall=100%, nav_recall=100%)  facts=0/4  1304ms  judge: C=4 F=4 H=5 S=3
+  Answer: Yes, you can claim bonus depreciation on replacement equipment even if you sell used equipment at a loss.
+
+- Bonus depreciation is available for qualified property, which includes most tangible proper...
+
+[135/196] OBBBA-135: Do I issue 1099-NECs for two $1,200 payments to different contractors?...
+  ✓ pubs: ['1040', '915', '15', '1099', '926', '334']  (recall=100%, nav_recall=100%)  facts=0/4  1482ms  judge: C=1 F=1 H=5 S=1
+  Answer: INSUFFICIENT CONTEXT
+
+The provided excerpts do not contain any information regarding the issuance of Form 1099-NEC or the reporting requirements for payments to contractors. Please provide excerpts th...
+
+[136/196] OBBBA-136: At $2,400 annual wages, do I need to file Schedule H for nanny taxes?...
+  ✓ pubs: ['1040', '505', '926', '503']  (recall=100%, nav_recall=100%)  facts=0/4  1349ms  judge: C=5 F=5 H=5 S=3
+  Answer: No, you do not need to file Schedule H for nanny taxes based on the provided information.
+
+- For tax year 2026, you are required to file Schedule H if you pay your household employee cash wages of $3,...
+
+[137/196] SCN-137: How much of my Social Security is taxable with these income sources?...
+  ✓ pubs: ['17', '525', '1040', '505', '915']  (recall=100%, nav_recall=100%)  facts=0/4  1186ms  judge: C=2 F=2 H=3 S=3
+  Answer: To determine how much of your Social Security benefits are taxable for tax year 2025, you need to consider your filing status and total income in relation to the base amounts provided.
+
+- **Filing Sta...
+
+[138/196] SCN-138: How much can I contribute to an IRA with an employer match in the same...
+  ✗ pubs: ['590a', '575', '590b', '970', 'W-2', '15-B']  (recall=0%, nav_recall=100%)  facts=0/4  1316ms  judge: C=1 F=1 H=5 S=1
+  Answer: For tax year 2025, you can contribute up to $7,000 to a traditional IRA, or $8,000 if you are age 50 or older [1]. The contribution limit for Roth IRAs is generally the same as for traditional IRAs, w...
+
+[139/196] SCN-139: Can I offset my $50,000 business income with my $50,000 passive rental...
+  ✓ pubs: ['527', '925', '8995-A', '587', '334']  (recall=100%, nav_recall=100%)  facts=0/4  1409ms  judge: C=2 F=2 H=3 S=3
+  Answer: You cannot fully offset your $50,000 business income with your $50,000 passive rental loss for tax year 2025. The maximum special allowance for passive rental loss is $25,000 if your modified adjusted...
+
+[140/196] SCN-140: Does my Roth conversion affect my QBI deduction calculation?...
+  ✗ pubs: ['17', '1-A', '587', '590b', '590a']  (recall=0%, nav_recall=100%)  facts=0/4  1263ms  judge: C=2 F=2 H=3 S=2
+  Answer: A Roth conversion does not directly affect the calculation of the Qualified Business Income (QBI) deduction. The QBI deduction is generally based on qualified business income, taxable income, and othe...
+
+[141/196] MEF-141: Why might my senior deduction be rejected for age validation?...
+  ✓ pubs: ['17', '501', '575', '969', '596', '1040']  (recall=100%, nav_recall=100%)  facts=0/4  1435ms  judge: C=4 F=3 H=4 S=3
+  Answer: Your senior deduction might be rejected for age validation if you do not meet the age requirement of being 65 or older. The enhanced deduction for seniors is available to taxpayers who are age 65 or o...
+
+[142/196] MEF-142: Will the IRS automatically limit my SALT to the $40,000 cap or do I ne...
+  ✓ pubs: ['1040', '505', '936', '527', '587', '17']  (recall=100%, nav_recall=100%)  facts=1/4  1363ms  judge: C=2 F=2 H=2 S=2
+  Answer: The IRS will not automatically limit your SALT deduction to the $40,000 cap; you need to calculate it yourself.
+
+- For tax year 2025, the SALT deduction cap is $40,000 for married filing jointly and $...
+
+[143/196] MEF-143: Will MeF reject vehicle interest for a foreign-assembled car?...
+  ✗ pubs: ['15-B', '514', '537', '970', 'MeF', '946', '525']  (recall=0%, nav_recall=100%)  facts=0/4  1727ms  judge: C=1 F=1 H=5 S=1
+  Answer: INSUFFICIENT CONTEXT
+
+The provided excerpts do not contain any information regarding MeF rejection rules specifically related to vehicle interest for foreign-assembled cars. The excerpts focus on vari...
+
+[144/196] MEF-144: Can I deduct more in tips than my total income reported?...
+  ✗ pubs: ['1040', '334', '525', '17', '529']  (recall=0%, nav_recall=100%)  facts=0/4  1679ms  judge: C=3 F=3 H=2 S=2
+  Answer: No, you cannot deduct more in tips than your total income reported.
+
+- For tax year 2025, the maximum deduction for qualified tips is $25,000, regardless of your filing status [9].
+- Tips must be incl...
+
+[145/196] MEF-145: Can I claim both senior deduction and business deduction in same year?...
+  ✓ pubs: ['587', '535', '334', '463', '970', '17']  (recall=100%, nav_recall=100%)  facts=0/4  1647ms  judge: C=4 F=4 H=4 S=3
+  Answer: Yes, you can claim both the senior deduction and business deduction in the same year, provided you meet the eligibility requirements for each deduction.
+
+- The excerpts do not explicitly mention a "se...
+
+[146/196] PRE-146: What is the recovery period for a residential rental home purchased in...
+  ✓ pubs: ['527', '587', '523', '946']  (recall=100%, nav_recall=100%)  facts=0/4  1460ms  judge: C=4 F=4 H=5 S=4
+  Answer: The recovery period for a residential rental home purchased in 2024 is 27.5 years under the General Depreciation System (GDS) [1], [5], [6].
+
+Key Sources: IRS Pub 527, IRS Pub 946
+
+CONFIDENCE: HIGH...
+
+[147/196] PRE-147: How is gain from the sale of a business building treated?...
+  ✓ pubs: ['544', '334', '523', '551']  (recall=100%, nav_recall=100%)  facts=1/4  1229ms  judge: C=4 F=4 H=3 S=3
+  Answer: Gain from the sale of a business building is treated as follows:
+
+- **Depreciation Recapture**: If the building is depreciable property, part of the gain may be treated as ordinary income due to depre...
+
+[148/196] PRE-148: What is my tax basis in the inherited rental property?...
+  ✓ pubs: ['946', '551', '544', '527', '523']  (recall=100%, nav_recall=100%)  facts=0/4  1369ms  judge: C=4 F=4 H=3 S=3
+  Answer: Your tax basis in the inherited rental property is generally the fair market value (FMV) of the property at the date of the decedent's death. If the personal representative for the estate chooses to u...
+
+[149/196] PRE-149: What is my tax consequence if I transfer business property to my corpo...
+  ✓ pubs: ['946', '535', '544', '334', '523']  (recall=100%, nav_recall=100%)  facts=0/4  1300ms  judge: C=2 F=2 H=2 S=3
+  Answer: Transferring business property to your corporation may have specific tax consequences depending on the nature of the transfer:
+
+- If the transfer is a nontaxable exchange, such as under certain provis...
+
+[150/196] PRE-150: What is the adjusted basis of equipment with $50,000 cost and $40,000 ...
+  ✓ pubs: ['946', '551', '527', '544', '547']  (recall=100%, nav_recall=100%)  facts=0/4  1290ms  judge: C=5 F=5 H=5 S=3
+  Answer: The adjusted basis of the equipment is $10,000.
+
+- The original cost of the equipment is $50,000.
+- Total depreciation claimed is $40,000.
+- Adjusted basis is calculated as the cost minus the deprecia...
+
+[151/196] PRE-151: How are S-Corporation distributions taxed?...
+  ✓ pubs: ['542', '334', '541', '550']  (recall=100%, nav_recall=100%)  facts=0/4  1371ms  judge: C=1 F=1 H=5 S=1
+  Answer: INSUFFICIENT CONTEXT
+
+The provided excerpts do not contain specific information about how S-Corporation distributions are taxed. The excerpts primarily focus on general corporate tax filing requiremen...
+
+[152/196] PRE-152: Can I make a qualified charitable distribution (QCD) from my IRA?...
+  ✓ pubs: ['590b', '575', '590a', '560']  (recall=100%, nav_recall=100%)  facts=0/4  1210ms  judge: C=4 F=4 H=5 S=3
+  Answer: Yes, you can make a qualified charitable distribution (QCD) from your IRA if you meet certain conditions:
+
+- You must be at least age 70½ at the time the distribution is made to qualify for a QCD [1]....
+
+[153/196] PRE-153: Can I carry this NOL back to 2024?...
+  ✓ pubs: ['536', '514', '544', '542', '8995-A']  (recall=100%, nav_recall=100%)  facts=0/4  1569ms  judge: C=2 F=2 H=3 S=2
+  Answer: No, you cannot carry a nonbusiness NOL back to 2024. For tax year 2023, nonbusiness NOLs can only be carried forward to 2024, not carried back [1]. The only exception is for the farming loss portion o...
+
+[154/196] PRE-154: How much of my capital loss can I deduct this year?...
+  ✓ pubs: ['547', '544', '925', '334', '514', '523', '550']  (recall=100%, nav_recall=100%)  facts=0/4  1459ms  judge: C=3 F=3 H=3 S=3
+  Answer: For tax year 2025, you can deduct up to $3,000 of your capital loss if you are filing as single or married filing jointly (MFJ). If you are married filing separately, the limit is $1,500 [2], [8]. Any...
+
+[155/196] PRE-155: Is business software depreciated or expensed?...
+  ✓ pubs: ['334', '946', '527']  (recall=100%, nav_recall=100%)  facts=1/4  872ms  judge: C=3 F=3 H=4 S=3
+  Answer: Business software can be depreciated if it meets certain requirements. According to IRS Pub 946, computer software is generally considered a section 197 intangible and cannot be depreciated if acquire...
+
+[156/196] PRE-156: What is my depreciation recapture tax rate?...
+  ✓ pubs: ['946', '334', '523', '544', '527', '535']  (recall=100%, nav_recall=100%)  facts=0/4  2262ms  judge: C=1 F=1 H=5 S=1
+  Answer: INSUFFICIENT CONTEXT
+
+The provided excerpts do not contain specific information about the depreciation recapture tax rate. The excerpts mention depreciation and recapture in general terms but do not s...
+
+[157/196] PRE-157: Does the cash distribution create gain?...
+  ✓ pubs: ['542', '15-B', '541', '544', '551']  (recall=100%, nav_recall=100%)  facts=0/4  1228ms  judge: C=3 F=3 H=3 S=3
+  Answer: Yes, a cash distribution can create a gain if certain conditions are met. Specifically, if the distribution exceeds the adjusted basis of the stock or partnership interest, the excess is treated as a ...
+
+[158/196] PRE-158: How much of my $80,000 in meal expenses can I deduct?...
+  ✓ pubs: ['1040', '535', '15-B', '502', '463']  (recall=100%, nav_recall=100%)  facts=0/4  1250ms  judge: C=4 F=4 H=4 S=3
+  Answer: For tax year 2021, you can deduct 50% of your $80,000 in meal expenses, which amounts to $40,000. This is because the 50% limit on business meal deductions applies to most meal expenses [2]. However, ...
+
+[159/196] PRE-159: Can I deduct my health insurance as self-employed?...
+  ✓ pubs: ['334', '535', '560', '1040']  (recall=100%, nav_recall=100%)  facts=0/4  1335ms  judge: C=3 F=3 H=3 S=3
+  Answer: Yes, as a self-employed individual, you can deduct health insurance premiums for yourself, your spouse, and your dependents on your tax return.
+
+- For tax year 2022, you can generally deduct premiums ...
+
+[160/196] PRE-160: What is the recovery period for office furniture and fixtures?...
+  ✓ pubs: ['946', '334', '527', '547', '587']  (recall=100%, nav_recall=100%)  facts=1/4  1362ms  judge: C=1 F=1 H=1 S=2
+  Answer: The recovery period for office furniture and fixtures is 10 years for tax year 2025 [1].
+
+Key Sources: IRS Pub 946
+
+CONFIDENCE: HIGH...
+
+[161/196] OBBBA-161: What qualifies as 'production property' for the new 100% deduction?...
+  ✓ pubs: ['946', '15-B', '334', '501', '527', '551', '535', '463', '15']  (recall=100%, nav_recall=100%)  facts=1/4  1408ms  judge: C=1 F=1 H=1 S=1
+  Answer: Qualified production property for the new 100% deduction includes:
+
+- Property placed in service after January 19, 2025.
+- Long production period property.
+- Certain aircraft.
+
+To qualify, the propert...
+
+[162/196] OBBBA-162: If I claim production property deduction on the building, do I also de...
+  ✓ pubs: ['946', '544', '334', '501', '527', '463']  (recall=100%, nav_recall=100%)  facts=0/4  1576ms  judge: C=2 F=2 H=3 S=3
+  Answer: You cannot claim the production property deduction on both the building and the equipment as part of the Section 179 deduction. The Section 179 deduction applies to tangible personal property and cert...
+
+[163/196] OBBBA-163: Is the qualified tip deduction based on actual tips or wages?...
+  ✗ pubs: ['1040', '463', '15-B', '535', '17']  (recall=0%, nav_recall=100%)  facts=0/4  1334ms  judge: C=3 F=3 H=3 S=2
+  Answer: The qualified tip deduction is based on actual tips received, not wages. Tips are considered qualified if they are reported pursuant to a Tip Rate Determination Agreement (TRDA) or a Gaming Industry T...
+
+[164/196] OBBBA-164: Does each employee's overtime get its own Form W-2 code, or is there a...
+  ✓ pubs: ['17', '15', '926', '15-B', 'W-2']  (recall=100%, nav_recall=100%)  facts=0/4  1279ms  judge: C=1 F=1 H=5 S=1
+  Answer: The excerpts do not provide specific information about whether each employee's overtime gets its own Form W-2 code or if there is aggregate reporting. The excerpts mention general reporting requiremen...
+
+[165/196] OBBBA-165: Are household employer taxes triggered at $3,100 total wages?...
+  ✓ pubs: ['505', '15', '334', 'W-2', '15-B', '17', '926']  (recall=100%, nav_recall=100%)  facts=0/4  1617ms  judge: C=1 F=1 H=2 S=2
+  Answer: Yes, household employer taxes are triggered when total wages exceed $2,400 for tax year 2025 [5].
+
+Key Sources: [5]
+
+CONFIDENCE: HIGH...
+
+[166/196] SCN-166: What retirement plan options offer the highest deduction?...
+  ✓ pubs: ['590a', '17', '334', '525', '560']  (recall=100%, nav_recall=100%)  facts=0/4  1465ms  judge: C=2 F=2 H=3 S=3
+  Answer: For tax year 2025, the retirement plan options offering the highest deduction depend on the type of plan and the individual's circumstances:
+
+- **Traditional IRA**: 
+  - Single filers with a modified ...
+
+[167/196] SCN-167: What RMD rules apply to a spousal inherited IRA?...
+  ✓ pubs: ['590a', '560', '590b', '596', '17', '575']  (recall=100%, nav_recall=100%)  facts=0/4  1181ms  judge: C=3 F=3 H=3 S=3
+  Answer: If you inherit a traditional IRA from your spouse, you have several options regarding Required Minimum Distributions (RMDs):
+
+- **Treat as Your Own**: You can choose to treat the inherited IRA as your...
+
+[168/196] SCN-168: How does the 80% NOL limitation affect my current year deduction?...
+  ✓ pubs: ['334', '526', '542', '463', '536']  (recall=100%, nav_recall=100%)  facts=0/4  1237ms  judge: C=2 F=2 H=3 S=2
+  Answer: The 80% NOL (Net Operating Loss) limitation affects your current year deduction by restricting the amount of NOL that can be used to offset taxable income to 80% of the taxable income for the year. Th...
+
+[169/196] SCN-169: If I'm an active real estate professional, does the passive loss limit...
+  ✓ pubs: ['925', '523', '544', '527']  (recall=100%, nav_recall=100%)  facts=0/4  1239ms  judge: C=4 F=4 H=5 S=3
+  Answer: If you are an active real estate professional, the passive loss limit does not apply to your rental real estate activities.
+
+- Rental activities are generally considered passive unless you qualify as ...
+
+[170/196] SCN-170: Can I make catch-up contributions to a SEP-IRA?...
+  ✓ pubs: ['590a', '590b', '560']  (recall=100%, nav_recall=100%)  facts=1/4  1268ms  judge: C=5 F=4 H=5 S=3
+  Answer: No, you cannot make catch-up contributions to a SEP-IRA.
+
+- SEP-IRAs are funded by employer contributions, and individuals can make their own contributions to the same IRAs, but there is no mention of...
+
+[171/196] MEF-171: Will MeF reject a duplicated vehicle interest deduction?...
+  ✗ pubs: ['334', '946', '936', 'MeF', '463', '970']  (recall=0%, nav_recall=100%)  facts=0/4  1188ms  judge: C=3 F=3 H=3 S=2
+  Answer: Yes, the IRS Modernized e-File (MeF) system will likely reject a duplicated vehicle interest deduction. According to IRS Publication 334, if you claim a deduction for vehicle loan interest allocable t...
+
+[172/196] MEF-172: Are there interaction issues between Trump Account and IRA contributio...
+  ✓ pubs: ['590a', '560', '505', '970', '590b', '4547']  (recall=100%, nav_recall=100%)  facts=0/4  1173ms  judge: C=4 F=4 H=4 S=3
+  Answer: There are no interaction issues between Trump Account contributions and IRA contributions based on the provided excerpts.
+
+- Contributions to a SIMPLE IRA or a SEP IRA do not affect the amount an indi...
+
+[173/196] MEF-173: If I compute my SE tax incorrectly, will MeF catch the error?...
+  ✓ pubs: ['505', '926', '334', 'W-2', 'MeF']  (recall=100%, nav_recall=100%)  facts=0/4  1242ms  judge: C=1 F=1 H=5 S=1
+  Answer: INSUFFICIENT CONTEXT
+
+The provided excerpts do not contain specific information about whether the Modernized e-File (MeF) system will catch errors in the computation of self-employment (SE) tax. The e...
+
+[174/196] MEF-174: Can I claim QBI deduction if my QBI is negative?...
+  ✓ pubs: ['535', '587', '8995-A', '946', '334']  (recall=100%, nav_recall=100%)  facts=0/4  1445ms  judge: C=1 F=1 H=5 S=2
+  Answer: The excerpts provided do not contain specific information about whether you can claim the Qualified Business Income (QBI) deduction if your QBI is negative. The excerpts mention the QBI deduction gene...
+
+[175/196] MEF-175: On MFS, can the spouse with lower income claim the senior deduction?...
+  ✓ pubs: ['501', '504', '17', '596', '1040']  (recall=100%, nav_recall=100%)  facts=0/4  1410ms  judge: C=1 F=1 H=5 S=1
+  Answer: INSUFFICIENT CONTEXT
+
+The provided excerpts do not contain specific information about whether the spouse with lower income can claim the senior deduction when filing as Married Filing Separately (MFS)...
+
+[176/196] BIZ-176: Can my employer's $60,000 educational assistance be tax-free?...
+  ✓ pubs: ['970', '525', '334', '535', '15-B']  (recall=100%, nav_recall=100%)  facts=0/4  1136ms  judge: C=5 F=5 H=5 S=3
+  Answer: For tax year 2025, you can exclude up to $5,250 of employer-provided educational assistance benefits from your taxable income each year [1]. Therefore, only $5,250 of your employer's $60,000 education...
+
+[177/196] BIZ-177: Can I reduce the salary and increase distributions to lower SE tax?...
+  ✗ pubs: ['560', '17', '926', '334', '541']  (recall=0%, nav_recall=100%)  facts=0/4  1808ms  judge: C=2 F=2 H=4 S=2
+  Answer: The provided excerpts do not directly address the strategy of reducing salary and increasing distributions to lower self-employment (SE) tax. However, they do provide some relevant information about S...
+
+[178/196] PRE-178: Are vehicle repair and maintenance costs deductible?...
+  ✓ pubs: ['535', '15-B', '946', '970', '463', '334']  (recall=100%, nav_recall=100%)  facts=0/4  1534ms  judge: C=4 F=4 H=4 S=3
+  Answer: Yes, vehicle repair and maintenance costs are deductible if the vehicle is used for business purposes.
+
+- Repairs and maintenance costs for a business vehicle are currently deductible [1].
+- You can d...
+
+[179/196] PRE-179: Are business gifts fully deductible?...
+  ✓ pubs: ['334', '535', '970', '463']  (recall=100%, nav_recall=100%)  facts=0/4  1294ms  judge: C=4 F=4 H=5 S=4
+  Answer: Business gifts are not fully deductible. According to IRS Pub 535, you can generally deduct only up to $25 for business gifts you give to any one individual during the tax year [2]. This limit applies...
+
+[180/196] PRE-180: Is tax return preparation deductible as business expense?...
+  ✓ pubs: ['17', '334', '529', '535']  (recall=100%, nav_recall=100%)  facts=1/4  1662ms  judge: C=5 F=5 H=5 S=4
+  Answer: Yes, tax return preparation fees related to your business as a sole proprietor or statutory employee are deductible as a business expense.
+
+- You can deduct the cost of preparing the part of your tax ...
+
+[181/196] PRE-181: What portion of home utilities can I deduct?...
+  ✓ pubs: ['936', '587', '334', '535', '523', '527']  (recall=100%, nav_recall=100%)  facts=0/4  1402ms  judge: C=3 F=3 H=3 S=3
+  Answer: You can deduct the portion of your home utilities that corresponds to the business use of your home. Specifically, you can deduct utilities to the extent they are related to the business use of your h...
+
+[182/196] PRE-182: Can I deduct $15,000 in office supplies purchased at once?...
+  ✗ pubs: ['463', '334', '17', '587', '946']  (recall=0%, nav_recall=100%)  facts=0/4  1210ms  judge: C=3 F=3 H=3 S=2
+  Answer: You can potentially deduct the $15,000 in office supplies as a business expense, but it depends on whether these supplies are considered depreciable property or regular business expenses.
+
+- Regular b...
+
+[183/196] PRE-183: Are business charitable contributions deductible as business expense?...
+  ✓ pubs: ['334', '17', '529', '535']  (recall=100%, nav_recall=100%)  facts=0/4  1415ms  judge: C=1 F=1 H=5 S=2
+  Answer: No, business charitable contributions are not deductible as a business expense.
+
+- According to IRS Pub 334, charitable contributions are explicitly listed as expenses you cannot deduct as business ex...
+
+[184/196] SCN-171: How is the guaranteed payment treated for income and SE tax?...
+  ✗ pubs: ['334', '525', '544', '915', '560', '15', '17']  (recall=0%, nav_recall=100%)  facts=1/4  1544ms  judge: C=4 F=4 H=3 S=2
+  Answer: Guaranteed payments are treated as follows for income and self-employment (SE) tax:
+
+- **Income Tax**: Guaranteed payments are included in the recipient's gross income and are subject to income tax. T...
+
+[185/196] SCN-172: What is the optimal deduction strategy for this taxpayer?...
+  ✓ pubs: ['501', '535', '334', '525', '590a', '17']  (recall=100%, nav_recall=100%)  facts=0/4  1524ms  judge: C=1 F=1 H=5 S=1
+  Answer: INSUFFICIENT CONTEXT
+
+The provided excerpts do not contain specific information about the optimal deduction strategy for a taxpayer. The excerpts primarily list topics and sections from IRS publicatio...
+
+[186/196] SCN-173: What is the optimal filing strategy for this retiree?...
+  ✓ pubs: ['590a', '17', '575', '551', '915', '529']  (recall=100%, nav_recall=100%)  facts=0/4  1229ms  judge: C=2 F=2 H=3 S=3
+  Answer: To determine the optimal filing strategy for a retiree, we need to consider several factors based on the provided excerpts:
+
+1. **IRA Deduction Considerations**:
+   - If the retiree is not covered by ...
+
+[187/196] OBBBA-174: Can we establish two separate Trump Accounts and receive two federal s...
+  ✓ pubs: ['17', '505', '970', '575', '4547', '1040']  (recall=100%, nav_recall=100%)  facts=0/4  1385ms  judge: C=4 F=4 H=3 S=2
+  Answer: Yes, you can establish two separate Trump Accounts and receive two federal seeds, provided each account is for a different child who meets the eligibility criteria.
+
+- A Trump account can be establish...
+
+[188/196] OBBBA-175: Is there a per-payee or aggregate 1099-NEC threshold?...
+  ✓ pubs: ['15', '15-B', '915', '505', '535', '1099', '334']  (recall=100%, nav_recall=100%)  facts=1/4  1193ms  judge: C=4 F=4 H=5 S=3
+  Answer: The per-payee threshold for filing Form 1099-NEC is currently $600 for each person to whom you have paid non-employee compensation during the year [8]. However, for payments made after calendar year 2...
+
+[189/196] OBBBA-176: Will MeF validate that CTC is now $2,200 instead of $2,000?...
+  ✓ pubs: ['1040', 'MeF', 'W-2', '505', '8812', '525']  (recall=100%, nav_recall=100%)  facts=0/4  1350ms  judge: C=4 F=4 H=4 S=3
+  Answer: Yes, the IRS Modernized e-File (MeF) system will validate that the Child Tax Credit (CTC) is $2,200 for tax year 2025. The excerpts confirm that the maximum CTC for each qualifying child is $2,200 for...
+
+[190/196] PRE-184: Can the employee contribute to a traditional IRA despite lack of workp...
+  ✓ pubs: ['590a', '560', '575', '590b']  (recall=100%, nav_recall=100%)  facts=0/4  1257ms  judge: C=4 F=4 H=5 S=4
+  Answer: Yes, an employee can contribute to a traditional IRA even if they are not covered by a workplace retirement plan. According to IRS Pub 590a, you can have a traditional IRA regardless of whether you ar...
+
+[191/196] PRE-185: Is gain recognized when appreciated property is distributed?...
+  ✓ pubs: ['544', '551', '523', '541']  (recall=100%, nav_recall=100%)  facts=0/4  1383ms  judge: C=1 F=1 H=1 S=1
+  Answer: Yes, gain is recognized when appreciated property is distributed if certain conditions are met.
+
+- If appreciated property is transferred to a corporation in exchange for stock, and the transferors do...
+
+[192/196] OBBBA-177: Can I claim vehicle interest deduction on both vehicles?...
+  ✓ pubs: ['334', '17', '587', '936', '970', '463']  (recall=100%, nav_recall=100%)  facts=0/4  1544ms  judge: C=1 F=1 H=2 S=2
+  Answer: You can claim a vehicle interest deduction for both vehicles, but only for the portion of the interest that corresponds to business use.
+
+- If you are self-employed and use your vehicles for business,...
+
+[193/196] SCN-178: Can I claim all $50,000 in rental losses under the $25,000 active part...
+  ✓ pubs: ['925', '17', '523', '527']  (recall=100%, nav_recall=100%)  facts=0/4  1338ms  judge: C=5 F=5 H=5 S=3
+  Answer: No, you cannot claim all $50,000 in rental losses under the $25,000 active participant exception.
+
+- For tax year 2025, the maximum special allowance for rental real estate losses is $25,000 for indiv...
+
+[194/196] MEF-179: Are there validation conflicts between Trump Account and dependent cla...
+  ✓ pubs: ['970', '503', '504', '505', '537', '4547']  (recall=100%, nav_recall=100%)  facts=0/4  1179ms  judge: C=2 F=2 H=3 S=3
+  Answer: There are no explicit validation conflicts between the Trump Account and dependent claims mentioned in the provided excerpts. However, there are specific rules regarding dependent claims and education...
+
+[195/196] PRE-186: How are start-up costs treated on my first year return?...
+  ✓ pubs: ['535', '544', '334', '527', '587', '8995-A']  (recall=100%, nav_recall=100%)  facts=0/4  1378ms  judge: C=3 F=3 H=3 S=2
+  Answer: In your first year of business, you can elect to deduct up to $5,000 of business startup costs for tax year 2023. However, this $5,000 deduction is reduced by the amount your total startup costs excee...
+
+[196/196] OBBBA-180: Does high income from other sources eliminate my tips deduction?...
+  ✓ pubs: ['1040', '334', '1-A', '529', '535', '15-B', '463', '17']  (recall=100%, nav_recall=100%)  facts=0/4  2114ms  judge: C=2 F=2 H=4 S=2
+  Answer: The excerpts do not provide specific information about whether high income from other sources eliminates the tips deduction. However, they do outline some conditions and limits related to the deductio...
+
+============================================================================
+  TAX BRAIN — Evaluation Report
+  2026-04-11 09:09:33
+============================================================================
+
+  Questions: 196 total, 196 valid, 0 errors
+
+────────────────────────────────────────────────────────────────────────────
+  RETRIEVAL METRICS
+────────────────────────────────────────────────────────────────────────────
+  Pub Recall (direct):     87.2%
+  Pub Recall (nav+onto):   100.0%
+  Pub Precision:           17.8%
+  Avg Contexts:            10.8
+  Avg Retrieval Time:      1472ms
+
+────────────────────────────────────────────────────────────────────────────
+  FACT CHECK (heuristic)
+────────────────────────────────────────────────────────────────────────────
+  Avg Key-Fact Ratio:      5.5%
+
+────────────────────────────────────────────────────────────────────────────
+  LLM-AS-JUDGE (196 questions judged)
+────────────────────────────────────────────────────────────────────────────
+  correctness             mean=2.4  min=1  max=5
+  completeness            mean=2.4  min=1  max=5
+  hallucination           mean=3.6  min=1  max=5
+  citation_quality        mean=2.3  min=1  max=4
+  Total judge tokens:      206088
+
+────────────────────────────────────────────────────────────────────────────
+  BY CATEGORY
+────────────────────────────────────────────────────────────────────────────
+  I. Individual Filing & Standard Deductions           n=14  recall=71%  facts=0%  correct=1.8
+  II. Family, Dependents & Trump Accounts              n=13  recall=85%  facts=8%  correct=1.9
+  III. Tipped & Overtime Workers                       n=14  recall=71%  facts=10%  correct=2.1
+  IV. Business, R&D & Depreciation                     n=19  recall=95%  facts=6%  correct=2.2
+  V. Reporting & Thresholds                            n=17  recall=88%  facts=3%  correct=2.1
+  VI. MeF & Procedural Errors                          n=22  recall=82%  facts=8%  correct=2.1
+  VII. Pre-OBBBA Knowledge Base                        n=76  recall=95%  facts=6%  correct=2.9
+  VIII. Cross-Topic Scenarios                          n=21  recall=81%  facts=2%  correct=2.4
+
+────────────────────────────────────────────────────────────────────────────
+  PER-QUESTION DETAIL
+────────────────────────────────────────────────────────────────────────────
+  ✓ IND-01   recall=100%  nav=100%  facts=0/4  pubs=['501', '505', '1040', '17']  C=4 F=4 H=5 S=3
+           missing: $6,000 per spouse, $12,000 total, $150,000 phase-out threshold, full amount
+  ✓ IND-02   recall=100%  nav=100%  facts=0/4  pubs=['501', '505', '17', '334', '1040']  C=1 F=1 H=2 S=3
+           missing: $16,100, not required to file, special taxes, refund of withheld credits
+  ✓ IND-03   recall=100%  nav=100%  facts=0/3  pubs=['535', '17', '501', '505', '1-A', '15-B', '970']  C=1 F=1 H=1 S=1
+           missing: $40,000 cap, $500,000 income threshold, deduct $40,000
+  ✗ IND-04   recall=0%  nav=100%  facts=0/4  pubs=['970', '936', '463', '535', '550']  C=1 F=1 H=5 S=1
+           missing: above-the-line deduction, $10,000 annual limit, U.S. assembled, 2025
+  ✓ IND-05   recall=100%  nav=100%  facts=0/4  pubs=['1040', '535', '505', '551', '17']  C=1 F=1 H=1 S=2
+           missing: $500,000 threshold, 30% reduction, $10,000 floor, phase-out
+  ✓ FAM-06   recall=100%  nav=100%  facts=1/4  pubs=['970', '575', '4547', '15-B', '969', '505', '590a']  C=3 F=3 H=3 S=3
+           missing: Form 4547, $1,000 not taxable, earnings taxable upon withdrawal
+  ✓ FAM-07   recall=100%  nav=100%  facts=0/4  pubs=['560', '970', '505', '526', '535', '525', '15-B', '590a']  C=1 F=1 H=1 S=1
+           missing: $5,000 annual limit, aggregate from all sources, post-tax dollars, not deductible
+  ✗ FAM-08   recall=0%  nav=100%  facts=0/4  pubs=['17', 'W-2', '970', '590a', '505']  C=1 F=1 H=5 S=1
+           missing: $2,500 limit, tax-free to employee, deductible for employer, fringe benefit
+  ✓ FAM-09   recall=100%  nav=100%  facts=2/4  pubs=['17', '501', '969', '596']  C=2 F=2 H=3 S=3
+           missing: age 19 must be student, gross income exceeds limit
+  ✓ FAM-10   recall=100%  nav=100%  facts=0/4  pubs=['501', '504', '523', '544', '8812', '503', '970', '551']  C=2 F=2 H=3 S=3
+           missing: $2,200 per child, OBBBA increase, $200,000 phase-out, begins to phase out
+  ✗ TIP-11   recall=0%  nav=100%  facts=2/4  pubs=['17', '1040', '334', '15']  C=3 F=3 H=4 S=2
+           missing: $25,000 deduction, $5,000 taxable
+  ✓ TIP-12   recall=100%  nav=100%  facts=0/4  pubs=['1040', '1-A', '15-B', '17', '501', '463', '587', '334']  C=1 F=1 H=5 S=1
+           missing: overtime premium only, FLSA, $5,000 deduction, 50% premium
+  ✓ TIP-13   recall=100%  nav=100%  facts=0/3  pubs=['17', '1040', '463', '501', '514', '1-A']  C=1 F=1 H=5 S=1
+           missing: $25,000 joint cap, $40,000 combined, OBBBA ceiling
+  ✓ TIP-14   recall=100%  nav=100%  facts=1/3  pubs=['1040', '1-A', '17', '15-B', '501', '463', 'W-2', '535']  C=5 F=5 H=5 S=4
+           missing: $150,000 Single phase-out, $300,000 Joint phase-out
+  ✓ TIP-15   recall=100%  nav=100%  facts=1/4  pubs=['15', '17', 'W-2', '463', '926']  C=1 F=1 H=3 S=2
+           missing: Code TT, Box 12, qualified overtime income
+  ✓ BIZ-16   recall=100%  nav=100%  facts=2/4  pubs=['946', '463', '527', '334']  C=2 F=2 H=2 S=3
+           missing: permanently restored, full $50,000
+  ✓ BIZ-17   recall=100%  nav=100%  facts=0/4  pubs=['946', '6765', '925', '535']  C=1 F=1 H=5 S=1
+           missing: immediate expensing, permanently restored, domestic R&D, 2025 returns
+  ✓ BIZ-18   recall=100%  nav=100%  facts=0/4  pubs=['550', '535', '334', '537', '587', '925']  C=1 F=1 H=5 S=1
+           missing: $32 million threshold, EBITDA-based, not exempt, 30% limitation
+  ✓ BIZ-19   recall=100%  nav=100%  facts=1/5  pubs=['501', '17', '8995-A', '15-B', '535', '946', '334']  C=1 F=1 H=5 S=1
+           missing: made permanent, Section 199A, OBBBA, expanded phase-in ranges
+  ✓ BIZ-20   recall=100%  nav=100%  facts=0/5  pubs=['946', '463', '527', '8995-A', '551', '501', '334', '544']  C=2 F=2 H=3 S=3
+           missing: 100% deduction, qualified production property, nonresidential real property, manufacturing, July 4, 2025
+  ✗ RPT-21   recall=0%  nav=100%  facts=0/4  pubs=['334', '1099', '505', '525', '544', '527', '1-A', '1040']  C=1 F=1 H=5 S=1
+           missing: $20,000 threshold, 200 transactions, permanently restored, no form
+  ✗ RPT-22   recall=0%  nav=100%  facts=0/4  pubs=['1040', '525', '575', '15', '915', '535', '334']  C=1 F=1 H=1 S=1
+           missing: $2,000 threshold, increased from $600, after 2025, no 1099-NEC required
+  ✓ RPT-23   recall=100%  nav=100%  facts=0/3  pubs=['15', '505', '926', '334', '17']  C=2 F=3 H=3 S=3
+           missing: $3,000 threshold, $2,800 below threshold, taxes do not apply
+  ✓ RPT-24   recall=100%  nav=100%  facts=0/4  pubs=['334', '17', '525', '587', '529']  C=2 F=2 H=3 S=3
+           missing: 90% of winnings, $45,000 deductible, $5,000 taxable, OBBBA limitation
+  ✓ RPT-25   recall=100%  nav=100%  facts=1/4  pubs=['590a', '526', '596', '15-B', '503', '970', '505', 'W-2', '575']  C=1 F=1 H=5 S=1
+           missing: Code TA, Box 12, excluded from gross income
+  ✓ MEF-26   recall=100%  nav=100%  facts=0/5  pubs=['17', '334', '537', '1040', '561', '15', 'MeF']  C=1 F=1 H=5 S=1
+           missing: Estimated Tax Penalty, Line 38, Overpayment, Line 34, Balance Due
+  ✓ MEF-27   recall=100%  nav=100%  facts=4/4  pubs=['W-2', '8962', 'MeF', '1040', '596']  C=3 F=3 H=3 S=3
+  ✓ MEF-28   recall=100%  nav=100%  facts=0/4  pubs=['1040', '1099', '17', '926', '15', 'W-2']  C=2 F=2 H=3 S=3
+           missing: Code TP, information reporting penalties, transition relief expired, Section 6041
+  ✓ MEF-29   recall=100%  nav=100%  facts=2/4  pubs=['514', '537', '8995-A', '542', '541', '17']  C=1 F=1 H=2 S=2
+           missing: short-year allocation, 2026
+  ✓ MEF-30   recall=100%  nav=100%  facts=0/3  pubs=['17', '1-A', '501', '1040', '596']  C=1 F=1 H=2 S=2
+           missing: SSN valid for work, ITIN ineligible, OBBBA senior deduction
+  ✓ PRE-31   recall=100%  nav=100%  facts=0/4  pubs=['535', '334', '587', '529', '560']  C=2 F=2 H=3 S=3
+           missing: 15.3% rate, 92.35% threshold, $10,874 SE tax, 50% deductible
+  ✓ PRE-32   recall=100%  nav=100%  facts=0/4  pubs=['17', '535', '334', '529', '970', '463']  C=2 F=2 H=3 S=3
+           missing: ordinary and necessary, rent, utilities, supplies, wages, insurance, not personal expenses
+  ✓ PRE-33   recall=100%  nav=100%  facts=1/4  pubs=['587', '334', '527', '529', '535']  C=3 F=3 H=3 S=3
+           missing: 15% of home expenses, $5 per sq ft, $1,500 maximum
+  ✗ PRE-34   recall=0%  nav=100%  facts=0/4  pubs=['463', '334', '15-B', '501', '529', '525']  C=2 F=2 H=3 S=3
+           missing: ordinary and necessary, documented business purpose, meals 50% deductible, lodging fully deductible
+  ✓ PRE-35   recall=100%  nav=100%  facts=0/3  pubs=['334', '502', '463', '535']  C=3 F=3 H=3 S=2
+           missing: fully deductible, ordinary business expense, liability, property, workers comp
+  ✓ PRE-36   recall=100%  nav=100%  facts=0/4  pubs=['946', '17', '529', '587', '334', '535']  C=1 F=1 H=5 S=1
+           missing: $5,000 first-year deduction, 180-month amortization, Form 4562 required, election required
+  ✓ PRE-37   recall=100%  nav=100%  facts=1/4  pubs=['946', '535', '527', '334']  C=1 F=1 H=2 S=2
+           missing: $1,160,000 Section 179 limit, tangible business property, MACRS alternative
+  ✓ PRE-38   recall=100%  nav=100%  facts=0/4  pubs=['946', '587', '463', '15-B']  C=2 F=2 H=3 S=3
+           missing: 80% business portion, $16,000 depreciable, listed property rules, MACRS rates
+  ✓ PRE-39   recall=100%  nav=100%  facts=2/4  pubs=['946', '587', '334', '551', '544', '527']  C=5 F=5 H=5 S=3
+           missing: Q4 40% threshold, depreciable basis
+  ✓ PRE-40   recall=100%  nav=100%  facts=0/4  pubs=['527', '334', '946', '544', '523']  C=2 F=2 H=3 S=3
+           missing: $40,000 rental income, depreciation deductible, building only, Schedule E
+  ✓ PRE-41   recall=100%  nav=100%  facts=0/4  pubs=['527', '17', '587', '535', '925']  C=5 F=5 H=5 S=4
+           missing: $25,000 annual limit, active participation, $100,000 MAGI threshold, $150,000 phase-out
+  ✓ PRE-42   recall=100%  nav=100%  facts=0/4  pubs=['527', '544', '523', '551', '946']  C=1 F=1 H=2 S=2
+           missing: land not depreciable, $240,000 building basis, allocation necessary, appraisal method
+  ✓ PRE-43   recall=100%  nav=100%  facts=1/4  pubs=['542', '514', '525', '575', '550']  C=2 F=2 H=3 S=2
+           missing: qualified dividend rates, 0%, 15%, 20%, holding period required
+  ✓ PRE-44   recall=100%  nav=100%  facts=0/4  pubs=['514', '544', '550', '334', '523']  C=3 F=3 H=3 S=3
+           missing: $3,000 annual loss deduction, $2,000 carryforward, separate netting, indefinite carryforward
+  ✓ PRE-45   recall=100%  nav=100%  facts=1/4  pubs=['547', '550', '523', '526', '544']  C=5 F=5 H=5 S=3
+           missing: 30-day window, loss disallowed, basis adjustment
+  ✓ PRE-46   recall=100%  nav=100%  facts=0/4  pubs=['550', '17', '15-B', '527', '525']  C=2 F=2 H=3 S=2
+           missing: annually taxable, daily accrual, no cash receipt, Form 1040 interest line
+  ✓ PRE-47   recall=100%  nav=100%  facts=0/4  pubs=['544', '551', '523']  C=1 F=1 H=1 S=3
+           missing: $15,000 gain, adjusted basis $10,000, Section 1231, Form 4797
+  ✓ PRE-48   recall=100%  nav=100%  facts=0/4  pubs=['547', '523', '527', '544']  C=2 F=2 H=2 S=3
+           missing: personal residence non-deductible, Section 1033 deferral, reinvestment required, timing rules
+  ✓ PRE-49   recall=100%  nav=100%  facts=0/4  pubs=['596', '17', '504', '970', '1040']  C=1 F=1 H=1 S=1
+           missing: $46,560 limit single, $3,733-$6,935 credit, number of children, phase-out
+  ✓ PRE-50   recall=100%  nav=100%  facts=0/4  pubs=['17', '596', '8812', '970', '504']  C=3 F=3 H=4 S=3
+           missing: age 18-24 if student, under 19 non-students, residency requirement, $4,700 income limit
+  ✓ PRE-51   recall=100%  nav=100%  facts=1/4  pubs=['590a', '560', '501', '590b']  C=2 F=2 H=2 S=2
+           missing: $7,500 age 50+ limit, earned income requirement, deductibility limits
+  ✓ PRE-52   recall=100%  nav=100%  facts=0/4  pubs=['590a', '560', '590b', '575']  C=2 F=2 H=3 S=3
+           missing: no income limit, ordinary income tax owed, 5-year holding rule, conversion year
+  ✓ PRE-53   recall=100%  nav=100%  facts=0/4  pubs=['590b', '590a', '915', '969', '575']  C=2 F=2 H=3 S=3
+           missing: divisor 27.4, $18,382 RMD, December 31 deadline, 25% penalty
+  ✓ PRE-54   recall=100%  nav=100%  facts=0/4  pubs=['590a', '590b', '560']  C=4 F=4 H=5 S=3
+           missing: 20% of net SE income, $70,000 limit, higher contribution limit, self-employed eligible
+  ✓ PRE-55   recall=100%  nav=100%  facts=0/4  pubs=['590a', '590b', '560', '575']  C=3 F=3 H=3 S=3
+           missing: $16,000 employee limit, employer match required, easier admin, Pub_560
+  ✓ PRE-56   recall=100%  nav=100%  facts=1/4  pubs=['17', '596', '8812', '503', '501']  C=3 F=3 H=3 S=3
+           missing: age under 17, residency requirement, U.S. citizen/resident
+  ✓ PRE-57   recall=100%  nav=100%  facts=0/3  pubs=['501', '505', '1040', '17']  C=2 F=3 H=2 S=3
+           missing: $30,000 MFJ, dependents don't increase, no dependent exemption amount
+  ✓ PRE-58   recall=100%  nav=100%  facts=0/3  pubs=['501', '17', '463', '504']  C=2 F=2 H=2 S=3
+           missing: $24,200 HOH standard deduction, dependent child required, household expense test
+  ✓ PRE-59   recall=100%  nav=100%  facts=0/4  pubs=['501', '17', '334', '1040']  C=2 F=2 H=3 S=3
+           missing: filing requirement, $24,200 HOH threshold, dependent impact, income exceeds threshold
+  ✓ PRE-60   recall=100%  nav=100%  facts=0/4  pubs=['544', '551', '523', '537']  C=2 F=2 H=3 S=3
+           missing: 50% gross profit ratio, $25,000 gain on payment, installment method, Pub_537
+  ✓ PRE-61   recall=100%  nav=100%  facts=1/4  pubs=['536', '542', '514', '334']  C=3 F=3 H=4 S=3
+           missing: $30,000 remaining income, post-2017 NOL rules, carryforward eligible
+  ✗ PRE-62   recall=0%  nav=100%  facts=0/4  pubs=['925', '8995-A', '527', '542', '536', '334']  C=2 F=2 H=3 S=2
+           missing: $275,000 single limit, $550,000 MFJ, excess becomes NOL, 2025 threshold
+  ✓ PRE-63   recall=100%  nav=100%  facts=0/4  pubs=['527', '523', '547', '946']  C=3 F=3 H=4 S=3
+           missing: 27.5-year period, straight-line method, rental income requirement, 80% threshold
+  ✓ PRE-64   recall=100%  nav=100%  facts=0/4  pubs=['946', '544', '587', '527']  C=3 F=3 H=3 S=2
+           missing: 15-year recovery period, qualified leasehold, retail/restaurant eligible, MACRS method
+  ✓ PRE-65   recall=100%  nav=100%  facts=0/4  pubs=['946', '587', '537', '544', '527']  C=3 F=3 H=4 S=3
+           missing: 39-year period, straight-line method, mid-month convention, nonresidential
+  ✓ PRE-66   recall=100%  nav=100%  facts=0/4  pubs=['537', '527', '523', '334', '544', '551']  C=4 F=4 H=5 S=3
+           missing: fair market value allocation, appraisal method, depreciable vs non-depreciable, recapture
+  ✓ PRE-67   recall=100%  nav=100%  facts=1/4  pubs=['544', '523', '527', '551']  C=5 F=5 H=5 S=4
+           missing: real property only, post-2017 rule, like-kind requirement
+  ✓ PRE-68   recall=100%  nav=100%  facts=0/4  pubs=['946', '334', '527', '523', '544', '535']  C=1 F=1 H=5 S=1
+           missing: 25% recapture rate, ordinary income treatment, real property recapture, $40,000
+  ✓ PRE-69   recall=100%  nav=100%  facts=0/4  pubs=['542', '550', '525', '15-B']  C=2 F=2 H=3 S=3
+           missing: qualified dividend rates, preferential taxation, corporation no deduction, holding period
+  ✓ PRE-70   recall=100%  nav=100%  facts=0/4  pubs=['514', '541', '334', '925', '1040']  C=2 F=2 H=3 S=3
+           missing: basis reduction, excess is capital gain, K-1 ordinary items, tax-free treatment
+  ✓ OBBBA-71 recall=100%  nav=100%  facts=0/4  pubs=['17', '1-A', '501', '596', '969', '1040']  C=1 F=1 H=5 S=1
+           missing: age 65 requirement, $150,000 phase-out, 10% reduction per $10k over, reduced to $5,400
+  ✓ OBBBA-72 recall=100%  nav=100%  facts=0/4  pubs=['501', '17', '1040', '504']  C=4 F=4 H=5 S=3
+           missing: $6,000 per spouse MFS, $150,000 individual threshold, full amount each, not combined
+  ✓ OBBBA-73 recall=100%  nav=100%  facts=0/4  pubs=['17', '587', '505', '1-A', '525', '501', '535']  C=1 F=1 H=5 S=1
+           missing: $450,000 income, $40,000 SALT cap, $50,000 liability, threshold phase-in
+  ✗ OBBBA-74 recall=0%  nav=100%  facts=0/4  pubs=['970', '936', '525', '946', '463', '550']  C=1 F=1 H=5 S=1
+           missing: purchased after 2024, U.S. assembled, $10,000 annual limit, interest deductible
+  ✗ OBBBA-75 recall=0%  nav=100%  facts=0/3  pubs=['970', '936', '550', '535']  C=5 F=5 H=5 S=1
+           missing: U.S. assembled only, foreign vehicles ineligible, assembly location requirement
+  ✗ OBBBA-76 recall=0%  nav=100%  facts=0/4  pubs=['17', '596', '504', '505', '4547']  C=1 F=1 H=5 S=1
+           missing: kiddie tax applies, $1,250 tax-free, $2,500 threshold, child's rate above
+  ✓ OBBBA-77 recall=100%  nav=100%  facts=0/4  pubs=['1040', '15-B', '503', '505', '970', 'W-2', '4547']  C=1 F=1 H=5 S=1
+           missing: age 18 eligibility, 10% early withdrawal penalty, exception for death/disability, earnings taxable
+  ✓ OBBBA-78 recall=100%  nav=100%  facts=0/4  pubs=['590a', 'W-2', '15-B', '525', '505', '970']  C=3 F=3 H=4 S=2
+           missing: $5,000 annual limit, 6% penalty per year, $1,000 excess, until withdrawn
+  ✓ OBBBA-79 recall=100%  nav=100%  facts=1/4  pubs=['W-2', '17', '560', '15-B', '590a', '970', '505']  C=3 F=3 H=2 S=2
+           missing: $5,000 aggregate limit, all sources combined, employer + employee
+  ✓ OBBBA-80 recall=100%  nav=100%  facts=0/4  pubs=['970', '501', '503', '590b', '505', '4547']  C=2 F=2 H=3 S=3
+           missing: beneficiary change allowed, before age 18 no tax, after age 18 special rules, rollover procedures
+  ✗ OBBBA-81 recall=0%  nav=100%  facts=0/4  pubs=['1040', '501', '17', '525', '505']  C=1 F=1 H=5 S=1
+           missing: $25,000 tips deductible, $10,000 excess tips, $15,000 total taxable, w-2 income
+  ✓ OBBBA-82 recall=100%  nav=100%  facts=0/4  pubs=['1040', '970', '1-A', '17']  C=2 F=2 H=3 S=2
+           missing: tips deduction phase-out, high MAGI reduces deduction, $100,000 MAGI, progressive reduction
+  ✓ OBBBA-83 recall=100%  nav=100%  facts=0/4  pubs=['535', '1-A', '17', '334', '501', 'W-2', '15-B', '463', '525']  C=1 F=1 H=5 S=1
+           missing: premium only deductible, 50% extra portion, $10/hour premium, FLSA required
+  ✓ OBBBA-84 recall=100%  nav=100%  facts=0/4  pubs=['501', '17', '525', '1040', '1-A', '970', '15-B']  C=3 F=2 H=4 S=3
+           missing: no age limit, income-based phase-out, $150,000 Single threshold, all workers eligible
+  ✓ OBBBA-85 recall=100%  nav=100%  facts=0/4  pubs=['1040', '17', '535', '525', '529', '1-A']  C=1 F=1 H=5 S=1
+           missing: both deductible, Schedule 1-A, above-the-line, combined deductions
+  ✓ OBBBA-86 recall=100%  nav=100%  facts=0/4  pubs=['535', '334', '925', '970', '946', '6765', '514']  C=1 F=1 H=2 S=2
+           missing: R&D credit available, Form 6765, deduction reduced, Section_174_expensing
+  ✓ OBBBA-87 recall=100%  nav=100%  facts=0/4  pubs=['535', '970', '463', '514', '6765', '334']  C=1 F=1 H=5 S=1
+           missing: domestic R&D only, $250,000 expensable, $50,000 amortized, Section_174
+  ✓ OBBBA-88 recall=100%  nav=100%  facts=1/4  pubs=['946', '544', '527', '551', '334']  C=4 F=4 H=4 S=3
+           missing: used property eligible, 100% bonus, post-OBBBA rule
+  ✓ OBBBA-89 recall=100%  nav=100%  facts=0/4  pubs=['946', '527', '544', '587', '334', '551']  C=2 F=2 H=2 S=2
+           missing: Section 179 first, bonus depreciation second, MACRS remainder, stacking allowed
+  ✓ OBBBA-90 recall=100%  nav=100%  facts=0/4  pubs=['946', '505', '525', '537', '8995-A', '547', '527', '17']  C=1 F=1 H=2 S=2
+           missing: $300,000 deductible, taxable income limited, $200,000 carryforward, active business requirement
+  ✓ BIZ-91   recall=100%  nav=100%  facts=0/4  pubs=['8995-A', '525', '925', '334']  C=2 F=2 H=3 S=2
+           missing: $182,050 phase-out Single, W-2 wage limitation, SSTB definition, 20% QBI cap
+  ✓ BIZ-92   recall=100%  nav=100%  facts=0/4  pubs=['541', '8995-A', '334', '560', '587', '925']  C=4 F=4 H=5 S=3
+           missing: partner-level calculation, K-1 allocations, individual Form 8995-A, Form 1065 coordination
+  ✓ BIZ-93   recall=100%  nav=100%  facts=0/4  pubs=['536', '514', '8995-A', '596', '537']  C=4 F=3 H=5 S=3
+           missing: no carryback post-2017, 80% limitation current year, indefinite carryforward, election to waive
+  ✓ RPT-94   recall=100%  nav=100%  facts=0/4  pubs=['1040', '15-B', '505', '334', '544', '17']  C=1 F=1 H=5 S=1
+           missing: $20,000 threshold, 200 transaction threshold, self-reporting required, no form issued
+  ✓ RPT-95   recall=100%  nav=100%  facts=0/4  pubs=['1040', '1099', '535', '915', '15', '505', '334']  C=1 F=1 H=5 S=1
+           missing: annual aggregate threshold, $4,500 total, must issue form, $2,000 threshold
+  ✓ RPT-96   recall=100%  nav=100%  facts=0/4  pubs=['15', '17', '926', '334', '15-B']  C=2 F=2 H=3 S=3
+           missing: aggregate all household workers, $3,000 threshold 2026, FUTA applies, Schedule H required
+  ✓ RPT-97   recall=100%  nav=100%  facts=0/4  pubs=['17', '926', '1040', '537', '505']  C=2 F=3 H=2 S=3
+           missing: 90% current year, 100% prior year, 110% if high income, quarterly payments
+  ✓ RPT-98   recall=100%  nav=100%  facts=0/4  pubs=['1099', '334', '561', '542', '17']  C=1 F=1 H=2 S=1
+           missing: 5% failure-to-file, 0.5% failure-to-pay, 25% maximum each, monthly accrual
+  ✓ RPT-99   recall=100%  nav=100%  facts=0/4  pubs=['505', '1040', '334', '926', '17']  C=5 F=4 H=5 S=3
+           missing: filing deadline extended, payment due April 15, penalties accrue, Form 4868
+  ✓ RPT-100  recall=100%  nav=100%  facts=0/4  pubs=['334', '535', '587', '925', '527']  C=4 F=4 H=5 S=3
+           missing: $400 SE income threshold, Schedule C required, SE tax required, net profit
+  ✓ SCN-101  recall=75%  nav=100%  facts=0/4  pubs=['17', '970', '529', '587', '527', '334', '501', '525']  C=1 F=1 H=2 S=2
+           missing: $50k SE deductible, $3,825 SE tax deduction, $4,400 CTC, rental depreciation
+  ✓ SCN-102  recall=100%  nav=100%  facts=0/4  pubs=['946', '523', '334', '527', '544']  C=2 F=2 H=3 S=3
+           missing: $40,000 loss, $150,000 full deduction, bonus depreciation available, Section_179 election
+  ✓ SCN-103  recall=100%  nav=100%  facts=0/4  pubs=['590a', '970', '575', '915', '590b']  C=2 F=2 H=3 S=3
+           missing: $18,382 RMD, Social Security coordination, IRMAA impact, 85% inclusion rule
+  ✓ SCN-104  recall=50%  nav=100%  facts=0/4  pubs=['501', '1040', '17', '587', '504']  C=2 F=2 H=3 S=3
+           missing: $30,000 standard deduction, $5,657 SE deduction, $4,400 CTC, $159,343 AGI
+  ✓ SCN-105  recall=100%  nav=100%  facts=0/4  pubs=['590a', '560', '575', '590b']  C=2 F=2 H=3 S=3
+           missing: $12,000 SEP contribution, $69,000 401k max, higher limit 401k, plan selection
+  ✓ SCN-106  recall=100%  nav=100%  facts=0/4  pubs=['514', '334', '527', '925', '8995-A']  C=3 F=3 H=4 S=3
+           missing: $25,000 loss deduction, active participation required, carryforward excess, real estate professional exception
+  ✓ SCN-107  recall=67%  nav=100%  facts=0/4  pubs=['17', '536', '514', '587', '946', '334']  C=2 F=2 H=2 S=2
+           missing: R&D expensing, Section_179 max, NOL carryforward, 80% limitation
+  ✓ SCN-108  recall=100%  nav=100%  facts=0/4  pubs=['514', '550', '541', '544']  C=2 F=2 H=2 S=2
+           missing: $3,000 loss deduction, $2,000 carryforward, netting order, indefinite carryforward
+  ✗ MEF-109  recall=0%  nav=100%  facts=0/4  pubs=['1040', '8995-A', '17', 'MeF', '1099']  C=1 F=1 H=5 S=1
+           missing: Form 1-A required, e-file attachment, tips/overtime deduction, reject prevention
+  ✓ MEF-110  recall=100%  nav=100%  facts=0/4  pubs=['501', '1040', '590a', '575', '1-A', '17']  C=2 F=2 H=2 S=3
+           missing: SSN valid for work required, ITIN ineligible, reject reason, no senior deduction
+  ✓ MEF-111  recall=100%  nav=100%  facts=0/4  pubs=['W-2', '1040', '8962', '525', '969']  C=4 F=4 H=5 S=3
+           missing: overpayment reduces refund, Form 8962 reconciliation, no separate credit, APTC adjustment
+  ✓ MEF-112  recall=100%  nav=100%  facts=0/4  pubs=['17', '15', '463', '529', '970', '535', '1040']  C=1 F=1 H=5 S=2
+           missing: Code TP missing, deduction still possible, employer penalty exposure, documentation helpful
+  ✓ MEF-113  recall=100%  nav=100%  facts=0/4  pubs=['1040', '970', '4547', '590a', '550', '505']  C=1 F=1 H=1 S=1
+           missing: seed not taxable, Form 4547 recommended, official account status, documentation needed
+  ✓ PRE-114  recall=100%  nav=100%  facts=0/4  pubs=['527', '587', '535', '334', '946', '544']  C=4 F=4 H=5 S=3
+           missing: listed property classification, business use substantiation, depreciation restrictions, MACRS rules apply
+  ✓ PRE-115  recall=100%  nav=100%  facts=1/4  pubs=['544', '946', '587', '334', '535', '551', '527']  C=5 F=5 H=5 S=3
+           missing: 40% Q4 threshold, all property affected, timing rules
+  ✓ PRE-116  recall=100%  nav=100%  facts=0/4  pubs=['541', '544', '551', '334']  C=3 F=3 H=3 S=3
+           missing: no gain on in-kind distribution, basis reduction, exception for excess cash, deferred gain
+  ✗ PRE-117  recall=0%  nav=100%  facts=1/4  pubs=['334', '527', '544', '946', '15-B']  C=4 F=4 H=4 S=3
+           missing: inventory capitalized, COGS deduction, valuation methods
+  ✓ PRE-118  recall=100%  nav=100%  facts=0/4  pubs=['334', '535', '970', '15-B', '463']  C=3 F=3 H=4 S=3
+           missing: 50% deductible, documentation required, business purpose, per diem option
+  ✓ PRE-119  recall=100%  nav=100%  facts=0/4  pubs=['502', '1040', '15-B', '535', '334']  C=4 F=4 H=4 S=3
+           missing: fully deductible, employer contribution, employee withholding, fringe benefit
+  ✓ PRE-120  recall=100%  nav=100%  facts=0/4  pubs=['17', '529', '463', '334', '535']  C=4 F=4 H=5 S=3
+           missing: fully deductible, ordinary business expense, business promotion, direct marketing
+  ✓ PRE-121  recall=100%  nav=100%  facts=1/4  pubs=['334', '535', '529', '502', '17']  C=5 F=5 H=5 S=4
+           missing: fully deductible, ordinary business expense, professional coverage
+  ✓ PRE-122  recall=100%  nav=100%  facts=0/4  pubs=['946', '334', '527', '551', '15-B', '544']  C=3 F=3 H=3 S=3
+           missing: 5-year recovery, listed property rules, 100% business use, substantiation required
+  ✓ PRE-123  recall=100%  nav=100%  facts=0/4  pubs=['587', '527', '334', '463', '501', '535']  C=5 F=5 H=5 S=3
+           missing: $5 per sq ft, $1,500 maximum, simplified calculation, easier documentation
+  ✓ PRE-124  recall=100%  nav=100%  facts=0/4  pubs=['970', '525', '535', '334', '15-B', '463', '529']  C=2 F=2 H=3 S=3
+           missing: fully deductible, ordinary business expense, training costs, professional development
+  ✓ PRE-125  recall=100%  nav=100%  facts=1/4  pubs=['550', '334', '587', '525', '537', '560']  C=4 F=4 H=5 S=3
+           missing: ordinary income rates, Schedule B reporting, business accounts
+  ✓ OBBBA-126 recall=100%  nav=100%  facts=0/4  pubs=['501', '596', '17', '514', '1040']  C=2 F=3 H=2 S=2
+           missing: age 65+ requirement, one spouse only, $6,000 deduction, other spouse cannot claim
+  ✗ OBBBA-127 recall=0%  nav=100%  facts=0/4  pubs=['523', '547', '936', '501', '505']  C=1 F=1 H=5 S=1
+           missing: below $500,000 threshold, $40,000 cap applies, $35,000 deductible, full SALT amount
+  ✓ OBBBA-128 recall=100%  nav=100%  facts=0/4  pubs=['501', '17', '1040', '1-A', '936']  C=1 F=1 H=5 S=1
+           missing: MFS different threshold, $40,000 cap, phase-out rules, individual income $300k
+  ✓ OBBBA-129 recall=100%  nav=100%  facts=0/4  pubs=['596', '4547', '550', '505', 'W-2', '970', '590a']  C=1 F=1 H=1 S=1
+           missing: no opening age limit, locked until age 18, seed before age 18, government contribution
+  ✓ OBBBA-130 recall=100%  nav=100%  facts=0/4  pubs=['504', '505', '590a', '970', '503', '4547']  C=1 F=1 H=5 S=1
+           missing: custodial parent only, non-custodial requires consent, account management, custody requirement
+  ✗ OBBBA-131 recall=0%  nav=100%  facts=1/4  pubs=['501', '17', '514', '1040']  C=1 F=1 H=5 S=1
+           missing: individual MAGI only, spouse income excluded, phase-out calculation
+  ✓ OBBBA-132 recall=100%  nav=100%  facts=0/4  pubs=['1040', '970', 'W-2', '525', '1-A', '17']  C=5 F=5 H=5 S=3
+           missing: $300,000 MFJ threshold, below threshold, full deduction, no phase-out
+  ✓ OBBBA-133 recall=100%  nav=100%  facts=0/4  pubs=['535', '17', '514', '6765', '334']  C=2 F=2 H=5 S=3
+           missing: domestic R&D only, $45,000 qualified, $15,000 foreign ineligible, credit calculation
+  ✓ OBBBA-134 recall=100%  nav=100%  facts=0/4  pubs=['946', '527', '334', '544', '587']  C=4 F=4 H=5 S=3
+           missing: used equipment eligible, 100% bonus 2025+, separate transactions, loss + deduction
+  ✓ OBBBA-135 recall=100%  nav=100%  facts=0/4  pubs=['1040', '915', '15', '1099', '926', '334']  C=1 F=1 H=5 S=1
+           missing: per payee threshold, $2,000 limit, $1,200 each, no forms required
+  ✓ OBBBA-136 recall=100%  nav=100%  facts=0/4  pubs=['1040', '505', '926', '503']  C=5 F=5 H=5 S=3
+           missing: $3,000 threshold 2026, $2,400 below, no Schedule H, no FICA/FUTA
+  ✓ SCN-137  recall=100%  nav=100%  facts=0/4  pubs=['17', '525', '1040', '505', '915']  C=2 F=2 H=3 S=3
+           missing: 85% inclusion threshold, combined income $600k, maximum taxation, Social Security coordination
+  ✗ SCN-138  recall=0%  nav=100%  facts=0/4  pubs=['590a', '575', '590b', '970', 'W-2', '15-B']  C=1 F=1 H=5 S=1
+           missing: employee + employer, $8,000 catch-up, 20% employer, $70,000 total limit
+  ✓ SCN-139  recall=100%  nav=100%  facts=0/4  pubs=['527', '925', '8995-A', '587', '334']  C=2 F=2 H=3 S=3
+           missing: passive offset passive only, loss suspended, real estate pro exception, loss carryforward
+  ✗ SCN-140  recall=0%  nav=100%  facts=0/4  pubs=['17', '1-A', '587', '590b', '590a']  C=2 F=2 H=3 S=2
+           missing: conversion increases MAGI, QBI deduction affected, add-back required, higher calculation base
+  ✓ MEF-141  recall=100%  nav=100%  facts=0/4  pubs=['17', '501', '575', '969', '596', '1040']  C=4 F=3 H=4 S=3
+           missing: age 65+ required, birth date validation, both spouses if MFJ, reject prevention
+  ✓ MEF-142  recall=100%  nav=100%  facts=1/4  pubs=['1040', '505', '936', '527', '587', '17']  C=2 F=2 H=2 S=2
+           missing: Schedule A calculation, taxpayer responsible, MeF rejects excess
+  ✗ MEF-143  recall=0%  nav=100%  facts=0/4  pubs=['15-B', '514', '537', '970', 'MeF', '946', '525']  C=1 F=1 H=5 S=1
+           missing: assembly country check, foreign vehicle rejected, U.S. assembly required, documentation needed
+  ✗ MEF-144  recall=0%  nav=100%  facts=0/4  pubs=['1040', '334', '525', '17', '529']  C=3 F=3 H=2 S=2
+           missing: deduction limited to income, MeF rejects excess, net income calculation, validation rules
+  ✓ MEF-145  recall=100%  nav=100%  facts=0/4  pubs=['587', '535', '334', '463', '970', '17']  C=4 F=4 H=4 S=3
+           missing: separate deductions, above-the-line + business, both claimable, coordination allowed
+  ✓ PRE-146  recall=100%  nav=100%  facts=0/4  pubs=['527', '587', '523', '946']  C=4 F=4 H=5 S=4
+           missing: 27.5-year period, straight-line method, month placed in service, ready for occupancy
+  ✓ PRE-147  recall=100%  nav=100%  facts=1/4  pubs=['544', '334', '523', '551']  C=4 F=4 H=3 S=3
+           missing: Section 1231 asset, LTCG treatment, lookback rule
+  ✓ PRE-148  recall=100%  nav=100%  facts=0/4  pubs=['946', '551', '544', '527', '523']  C=4 F=4 H=3 S=3
+           missing: stepped-up basis, FMV at death, new depreciation, no carryover basis
+  ✓ PRE-149  recall=100%  nav=100%  facts=0/4  pubs=['946', '535', '544', '334', '523']  C=2 F=2 H=2 S=3
+           missing: Section 351, 80% control, gain deferred, basis carryover
+  ✓ PRE-150  recall=100%  nav=100%  facts=0/4  pubs=['946', '551', '527', '544', '547']  C=5 F=5 H=5 S=3
+           missing: $10,000 adjusted basis, cost $50,000, depreciation $40,000, gain/loss calculation
+  ✓ PRE-151  recall=100%  nav=100%  facts=0/4  pubs=['542', '334', '541', '550']  C=1 F=1 H=5 S=1
+           missing: tax-free to basis, basis reduction, excess capital gain, K-1 ordinary income
+  ✓ PRE-152  recall=100%  nav=100%  facts=0/4  pubs=['590b', '575', '590a', '560']  C=4 F=4 H=5 S=3
+           missing: age 70.5+ eligible, $100,000 limit, direct to charity, RMD satisfaction
+  ✓ PRE-153  recall=100%  nav=100%  facts=0/4  pubs=['536', '514', '544', '542', '8995-A']  C=2 F=2 H=3 S=2
+           missing: no carryback, post-2017 rule, carry forward, 80% limitation
+  ✓ PRE-154  recall=100%  nav=100%  facts=0/4  pubs=['547', '544', '925', '334', '514', '523', '550']  C=3 F=3 H=3 S=3
+           missing: $3,000 annual limit, $297,000 carryforward, indefinite carryforward, loss deduction
+  ✓ PRE-155  recall=100%  nav=100%  facts=1/4  pubs=['334', '946', '527']  C=3 F=3 H=4 S=3
+           missing: 3-year recovery, licensing expensed, useful life test
+  ✓ PRE-156  recall=100%  nav=100%  facts=0/4  pubs=['946', '334', '523', '544', '527', '535']  C=1 F=1 H=5 S=1
+           missing: 25% recapture rate, Section 1250 property, real property, separate calculation
+  ✓ PRE-157  recall=100%  nav=100%  facts=0/4  pubs=['542', '15-B', '541', '544', '551']  C=3 F=3 H=3 S=3
+           missing: $50,000 capital gain, basis reduction first, excess is gain, LTCG treatment
+  ✓ PRE-158  recall=100%  nav=100%  facts=0/4  pubs=['1040', '535', '15-B', '502', '463']  C=4 F=4 H=4 S=3
+           missing: 50% deductible, $40,000 allowed, documentation required, meal limitation
+  ✓ PRE-159  recall=100%  nav=100%  facts=0/4  pubs=['334', '535', '560', '1040']  C=3 F=3 H=3 S=3
+           missing: fully deductible, above-the-line deduction, medical/dental/vision, self-employed eligible
+  ✓ PRE-160  recall=100%  nav=100%  facts=1/4  pubs=['946', '334', '527', '547', '587']  C=1 F=1 H=1 S=2
+           missing: 7-year recovery period, fixtures included, MACRS method
+  ✓ OBBBA-161 recall=100%  nav=100%  facts=1/4  pubs=['946', '15-B', '334', '501', '527', '551', '535', '463', '15']  C=1 F=1 H=1 S=1
+           missing: nonresidential real property, manufacturing use, July 4, 2025 date
+  ✓ OBBBA-162 recall=100%  nav=100%  facts=0/4  pubs=['946', '544', '334', '501', '527', '463']  C=2 F=2 H=3 S=3
+           missing: building 100% deductible, equipment separate treatment, real vs tangible, combined deduction
+  ✗ OBBBA-163 recall=0%  nav=100%  facts=0/4  pubs=['1040', '463', '15-B', '535', '17']  C=3 F=3 H=3 S=2
+           missing: tips basis, $22,000 deductible, wages not included, qualified tips only
+  ✓ OBBBA-164 recall=100%  nav=100%  facts=0/4  pubs=['17', '15', '926', '15-B', 'W-2']  C=1 F=1 H=5 S=1
+           missing: Code TT per employee, Box 12 reporting, individual W-2s, aggregate not allowed
+  ✓ OBBBA-165 recall=100%  nav=100%  facts=0/4  pubs=['505', '15', '334', 'W-2', '15-B', '17', '926']  C=1 F=1 H=2 S=2
+           missing: $3,000 threshold, $3,100 exceeds, Schedule H required, FICA/FUTA apply
+  ✓ SCN-166  recall=100%  nav=100%  facts=0/4  pubs=['590a', '17', '334', '525', '560']  C=2 F=2 H=3 S=3
+           missing: $69,000 401k max, $70,000 SEP max, high income benefit, plan selection
+  ✓ SCN-167  recall=100%  nav=100%  facts=0/4  pubs=['590a', '560', '590b', '596', '17', '575']  C=3 F=3 H=3 S=3
+           missing: treat as own, spouse RMD rules, age-based calculation, no beneficiary treatment
+  ✓ SCN-168  recall=100%  nav=100%  facts=0/4  pubs=['334', '526', '542', '463', '536']  C=2 F=2 H=3 S=2
+           missing: 80% of income, $240,000 allowed, $50,000 NOL used, $210,000 taxable
+  ✓ SCN-169  recall=100%  nav=100%  facts=0/4  pubs=['925', '523', '544', '527']  C=4 F=4 H=5 S=3
+           missing: 50% business time, 750 hours annual, exception applies, losses fully deductible
+  ✓ SCN-170  recall=100%  nav=100%  facts=1/4  pubs=['590a', '590b', '560']  C=5 F=4 H=5 S=3
+           missing: no catch-up allowed, 20% limit, 401k allows catch-up
+  ✗ MEF-171  recall=0%  nav=100%  facts=0/4  pubs=['334', '946', '936', 'MeF', '463', '970']  C=3 F=3 H=3 S=2
+           missing: claim once only, Schedule 1-A location, duplicate rejection, above-the-line only
+  ✓ MEF-172  recall=100%  nav=100%  facts=0/4  pubs=['590a', '560', '505', '970', '590b', '4547']  C=4 F=4 H=4 S=3
+           missing: separate accounts, combined contributions allowed, no phaseout interaction, both deductible
+  ✓ MEF-173  recall=100%  nav=100%  facts=0/4  pubs=['505', '926', '334', 'W-2', 'MeF']  C=1 F=1 H=5 S=1
+           missing: SE tax self-calculated, MeF relies on input, audit risk if wrong, taxpayer responsibility
+  ✓ MEF-174  recall=100%  nav=100%  facts=0/4  pubs=['535', '587', '8995-A', '946', '334']  C=1 F=1 H=5 S=2
+           missing: positive QBI required, losses = negative QBI, no deduction available, deferred to profit years
+  ✓ MEF-175  recall=100%  nav=100%  facts=0/4  pubs=['501', '504', '17', '596', '1040']  C=1 F=1 H=5 S=1
+           missing: individual eligibility, each spouse separate, age 65+ each, income separate
+  ✓ BIZ-176  recall=100%  nav=100%  facts=0/4  pubs=['970', '525', '334', '535', '15-B']  C=5 F=5 H=5 S=3
+           missing: $5,250 annual limit, excess taxable, employer deductible, fringe benefit
+  ✗ BIZ-177  recall=0%  nav=100%  facts=0/4  pubs=['560', '17', '926', '334', '541']  C=2 F=2 H=4 S=2
+           missing: reasonable compensation required, reclassification risk, IRS scrutiny, wage threshold
+  ✓ PRE-178  recall=100%  nav=100%  facts=0/4  pubs=['535', '15-B', '946', '970', '463', '334']  C=4 F=4 H=4 S=3
+           missing: repairs deductible, maintenance deductible, improvements depreciated, capitalization threshold
+  ✓ PRE-179  recall=100%  nav=100%  facts=0/4  pubs=['334', '535', '970', '463']  C=4 F=4 H=5 S=4
+           missing: $25 per recipient limit, annual limit, $5,000 may exceed, excess non-deductible
+  ✓ PRE-180  recall=100%  nav=100%  facts=1/4  pubs=['17', '334', '529', '535']  C=5 F=5 H=5 S=4
+           missing: business return deductible, personal return non-deductible, professional fees
+  ✓ PRE-181  recall=100%  nav=100%  facts=0/4  pubs=['936', '587', '334', '535', '523', '527']  C=3 F=3 H=3 S=3
+           missing: proportional deduction, percentage of space, regular method, utility costs
+  ✗ PRE-182  recall=0%  nav=100%  facts=0/4  pubs=['463', '334', '17', '587', '946']  C=3 F=3 H=3 S=2
+           missing: 12-month rule, consumed deductible, $2,500 de minimis, supplies capitalization
+  ✓ PRE-183  recall=100%  nav=100%  facts=0/4  pubs=['334', '17', '529', '535']  C=1 F=1 H=5 S=2
+           missing: deductible business expense, qualified organizations, AGI limitations, documentation required
+  ✗ SCN-171  recall=0%  nav=100%  facts=1/4  pubs=['334', '525', '544', '915', '560', '15', '17']  C=4 F=4 H=3 S=2
+           missing: ordinary income treatment, SE tax applicable, partnership deduction
+  ✓ SCN-172  recall=100%  nav=100%  facts=0/4  pubs=['501', '535', '334', '525', '590a', '17']  C=1 F=1 H=5 S=1
+           missing: $50,000 home office, $15,000 charitable, $85,000 AGI, $79,000 taxable
+  ✓ SCN-173  recall=100%  nav=100%  facts=0/4  pubs=['590a', '17', '575', '551', '915', '529']  C=2 F=2 H=3 S=3
+           missing: $6,000 senior deduction, $164,000 AGI, IRMAA threshold, Social Security coordination
+  ✓ OBBBA-174 recall=100%  nav=100%  facts=0/4  pubs=['17', '505', '970', '575', '4547', '1040']  C=4 F=4 H=3 S=2
+           missing: per-child account, per-child $1,000 seed, $10,000 combined limit, separate tax treatment
+  ✓ OBBBA-175 recall=100%  nav=100%  facts=1/4  pubs=['15', '15-B', '915', '505', '535', '1099', '334']  C=4 F=4 H=5 S=3
+           missing: $2,000 individual, aggregate not considered, payee identification
+  ✓ OBBBA-176 recall=100%  nav=100%  facts=0/4  pubs=['1040', 'MeF', 'W-2', '505', '8812', '525']  C=4 F=4 H=4 S=3
+           missing: $2,200 per child, OBBBA updated, MeF accepts, validation check
+  ✓ PRE-184  recall=100%  nav=100%  facts=0/4  pubs=['590a', '560', '575', '590b']  C=4 F=4 H=5 S=4
+           missing: $7,500 contribution, fully deductible, no plan required, employee eligible
+  ✓ PRE-185  recall=100%  nav=100%  facts=0/4  pubs=['544', '551', '523', '541']  C=1 F=1 H=1 S=1
+           missing: no gain recognized, basis carryover, deferred gain, partner basis
+  ✓ OBBBA-177 recall=100%  nav=100%  facts=0/4  pubs=['334', '17', '587', '936', '970', '463']  C=1 F=1 H=2 S=2
+           missing: U.S. assembled only, $10,000 annual cap, foreign ineligible, aggregate limit
+  ✓ SCN-178  recall=100%  nav=100%  facts=0/4  pubs=['925', '17', '523', '527']  C=5 F=5 H=5 S=3
+           missing: $25,000 annual limit, active participation, $100,000 AGI threshold, carryforward indefinite
+  ✓ MEF-179  recall=100%  nav=100%  facts=0/4  pubs=['970', '503', '504', '505', '537', '4547']  C=2 F=2 H=3 S=3
+           missing: no conflict, separate provisions, both claimable, child can have both
+  ✓ PRE-186  recall=100%  nav=100%  facts=0/4  pubs=['535', '544', '334', '527', '587', '8995-A']  C=3 F=3 H=3 S=2
+           missing: $5,000 first-year deduction, 180-month amortization, Form 4562, election required
+  ✓ OBBBA-180 recall=100%  nav=100%  facts=0/4  pubs=['1040', '334', '1-A', '529', '535', '15-B', '463', '17']  C=2 F=2 H=4 S=2
+           missing: high income phase-out, reduced deduction, $150,000 MAGI, progressive reduction
+
+============================================================================
+
+────────────────────────────────────────────────────────────────────────────
+  CONTENT GAP ANALYSIS
+  Questions where no expected pub was retrieved — likely missing from KB
+────────────────────────────────────────────────────────────────────────────
+  Pub 1-A      needed by: TIP-11, OBBBA-81, MEF-109, OBBBA-131, MEF-144, OBBBA-163
+  Pub 1099     needed by: RPT-22
+  Pub 15-B     needed by: FAM-08
+  Pub 17       needed by: IND-04, RPT-21, OBBBA-74, OBBBA-75, OBBBA-127, MEF-143, MEF-171
+  Pub 535      needed by: PRE-34, PRE-62, PRE-117, PRE-182
+  Pub 541      needed by: SCN-171
+  Pub 542      needed by: BIZ-177
+  Pub 560      needed by: SCN-138
+  Pub 590a     needed by: OBBBA-76
+  Pub 8995-A   needed by: SCN-140
+
+  → 10 publications need to be ingested or updated
+
+
+Results saved to: eval/results/20260411_090933/
+  scores.json   — per-question detail
+  summary.json  — aggregate metrics
+  report.txt    — this report

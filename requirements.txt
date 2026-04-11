@@ -1,0 +1,38 @@
+# Core
+pydantic>=2.0
+pydantic-settings>=2.0
+
+# Database drivers (optional — required only for Neo4j/PostgreSQL ingestion)
+neo4j>=5.0
+psycopg2-binary>=2.9
+
+# Layer 2 — HTML parsing uses Python standard library (html.parser)
+# No extra dependencies required for synthetic HTML.
+# For real IRS pages with complex HTML structure, optionally install:
+# beautifulsoup4>=4.12
+
+# Layer 3 — IRS Publications PDF pipeline
+# PDF text extraction (paragraph-aware chunking)
+pdfplumber>=0.10
+
+# OpenAI embedding API (text-embedding-3-small)
+openai>=1.0
+
+# Accurate token counting for cl100k_base (same encoder as text-embedding-3-small)
+tiktoken>=0.6
+
+# pgvector Python adapter — registers psycopg2 type adapters for vector columns
+# and provides numpy-based vector type.  Install with:
+#   pip install pgvector --break-system-packages
+pgvector>=0.2
+
+# numpy — used by pgvector adapter for efficient vector serialisation
+numpy>=1.24
+
+# Layer 4 — CPA Query Agent
+# openai>=1.0 already listed above (used for both embeddings and chat synthesis)
+# No additional runtime dependencies required for Layer 4.
+
+# Dev / test
+pytest>=7.4
+pytest-cov>=4.1

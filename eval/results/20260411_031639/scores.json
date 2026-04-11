@@ -1,0 +1,77 @@
+[
+  {
+    "id": "OBBBA-74",
+    "category": "I. Individual Filing & Standard Deductions",
+    "question": "If I financed a vehicle in 2024, can I claim the interest deduction in 2025?",
+    "ground_truth": "Yes, if the vehicle was assembled in the U.S. The deduction applies to interest paid on loans for vehicles purchased after 2024. You can deduct up to $10,000 annually in interest.",
+    "candidate_answer": "You cannot claim the interest deduction for a vehicle financed in 2024 on your 2025 tax return. Personal interest, including vehicle loan interest, is generally not deductible on your tax return [1].\n\nKey Sources: IRS Pub 970, IRS Pub 936\n\nCONFIDENCE: HIGH",
+    "retrieval": {
+      "retrieved_pubs": [
+        "970",
+        "936",
+        "550",
+        "535",
+        "17",
+        "1-A",
+        "334",
+        "463",
+        "501",
+        "525",
+        "537",
+        "946"
+      ],
+      "expected_pubs": [
+        "17"
+      ],
+      "pub_precision": 0.083,
+      "pub_recall": 1.0,
+      "nav_recall": 1.0,
+      "context_count": 47,
+      "retrieval_ms": 8766,
+      "retrieval_mode": "hierarchical",
+      "nav_pubs": [
+        "970",
+        "936",
+        "537",
+        "946",
+        "463",
+        "525"
+      ],
+      "ontology_pubs": [
+        "17",
+        "1-A",
+        "550",
+        "501",
+        "535",
+        "334"
+      ],
+      "query_intent": "general",
+      "detected_tax_year": 2025
+    },
+    "fact_check": {
+      "facts_found": 0,
+      "facts_total": 4,
+      "fact_ratio": 0.0,
+      "missing": [
+        "purchased after 2024",
+        "U.S. assembled",
+        "$10,000 annual limit",
+        "interest deductible"
+      ]
+    },
+    "judge": {
+      "correctness": 1,
+      "completeness": 1,
+      "hallucination": 5,
+      "citation_quality": 1,
+      "reasoning": "The candidate answer is completely incorrect as it contradicts the ground truth. It states that vehicle loan interest is not deductible, whereas the ground truth specifies conditions under which it is deductible. The candidate answer does not cover any key facts from the ground truth, such as the vehicle being assembled in the U.S., the purchase being after 2024, or the $10,000 annual limit. There are no hallucinated facts, but the citations provided are irrelevant to the question, as they pertain to student loan interest and mortgage interest, not vehicle loan interest.",
+      "judge_ms": 1846,
+      "judge_model": "gpt-4o",
+      "judge_tokens": 1458
+    },
+    "query_ms": 10494,
+    "synthesis_ms": 1725,
+    "model_used": "gpt-4o-mini",
+    "tokens": 2513
+  }
+]

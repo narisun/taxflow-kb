@@ -1,0 +1,451 @@
+============================================================================
+  TAX BRAIN — Evaluation Report
+  2026-04-10 23:32:00
+============================================================================
+
+  Questions: 196 total, 196 valid, 0 errors
+
+────────────────────────────────────────────────────────────────────────────
+  RETRIEVAL METRICS
+────────────────────────────────────────────────────────────────────────────
+  Pub Recall (direct):     82.0%
+  Pub Recall (nav+onto):   94.6%
+  Pub Precision:           22.4%
+  Avg Contexts:            21.2
+  Avg Retrieval Time:      1364ms
+  Missing Pubs (never retrieved): MeF
+
+────────────────────────────────────────────────────────────────────────────
+  FACT CHECK (heuristic)
+────────────────────────────────────────────────────────────────────────────
+  Avg Key-Fact Ratio:      0.0%
+
+────────────────────────────────────────────────────────────────────────────
+  BY CATEGORY
+────────────────────────────────────────────────────────────────────────────
+  I. Individual Filing & Standard Deductions           n=14  recall=71%  facts=0%
+  II. Family, Dependents & Trump Accounts              n=13  recall=69%  facts=0%
+  III. Tipped & Overtime Workers                       n=14  recall=29%  facts=0%
+  IV. Business, R&D & Depreciation                     n=19  recall=95%  facts=0%
+  V. Reporting & Thresholds                            n=17  recall=82%  facts=0%
+  VI. MeF & Procedural Errors                          n=22  recall=75%  facts=0%
+  VII. Pre-OBBBA Knowledge Base                        n=76  recall=96%  facts=0%
+  VIII. Cross-Topic Scenarios                          n=21  recall=77%  facts=0%
+
+────────────────────────────────────────────────────────────────────────────
+  PER-QUESTION DETAIL
+────────────────────────────────────────────────────────────────────────────
+  ✓ IND-01   recall=100%  nav=100%  facts=0/4  pubs=['501', '1040', '17', '505', '525', '334', '535', '15-B']
+           missing: $6,000 per spouse, $12,000 total, $150,000 phase-out threshold, full amount
+  ✗ IND-02   recall=0%  nav=100%  facts=0/4  pubs=['501', '505', '334', '1040', '15-B', '535', 'W-2']
+           missing: $16,100, not required to file, special taxes, refund of withheld credits
+  ✓ IND-03   recall=100%  nav=100%  facts=0/3  pubs=['1-A', '505', '17', '970', '334', '501', '525', '15-B', '535']
+           missing: $40,000 cap, $500,000 income threshold, deduct $40,000
+  ✗ IND-04   recall=0%  nav=100%  facts=0/4  pubs=['970', '501', '550', '936', '535']
+           missing: above-the-line deduction, $10,000 annual limit, U.S. assembled, 2025
+  ✓ IND-05   recall=100%  nav=100%  facts=0/4  pubs=['525', '505', '17', '1040', '334', '501', '535', '15-B']
+           missing: $500,000 threshold, 30% reduction, $10,000 floor, phase-out
+  ✓ FAM-06   recall=100%  nav=100%  facts=0/4  pubs=['4547', '970', '505', '575']
+           missing: Form 4547, Trump Account, $1,000 not taxable, earnings taxable upon withdrawal
+  ✓ FAM-07   recall=100%  nav=100%  facts=0/4  pubs=['590a', '560', '970']
+           missing: $5,000 annual limit, aggregate from all sources, post-tax dollars, not deductible
+  ✗ FAM-08   recall=0%  nav=0%  facts=0/4  pubs=['970', '590a', '17']
+           missing: $2,500 limit, tax-free to employee, deductible for employer, fringe benefit
+  ✓ FAM-09   recall=100%  nav=100%  facts=0/4  pubs=['17', '504', '501', '503', '596']
+           missing: age 19 must be student, Qualifying Child, Qualifying Relative, gross income exceeds limit
+  ✗ FAM-10   recall=0%  nav=100%  facts=0/4  pubs=['505', '501', '503', '970']
+           missing: $2,200 per child, OBBBA increase, $200,000 phase-out, begins to phase out
+  ✗ TIP-11   recall=0%  nav=100%  facts=0/4  pubs=['529', '17', '15', '1040', 'W-2', '334', '527']
+           missing: $25,000 deduction, Schedule 1-A, $5,000 taxable, qualified tips
+  ✗ TIP-12   recall=0%  nav=100%  facts=0/4  pubs=['1040', '525', '334', '463']
+           missing: overtime premium only, FLSA, $5,000 deduction, 50% premium
+  ✗ TIP-13   recall=0%  nav=100%  facts=0/3  pubs=['501', '1040', '17']
+           missing: $25,000 joint cap, $40,000 combined, OBBBA ceiling
+  ✓ TIP-14   recall=100%  nav=100%  facts=0/3  pubs=['1-A', '501', '1040', '463', '334', '535']
+           missing: $150,000 Single phase-out, $300,000 Joint phase-out, significantly reduced
+  ✓ TIP-15   recall=100%  nav=100%  facts=0/4  pubs=['W-2', '926', '463', '15', '17', '15-B']
+           missing: Code TT, Box 12, Form W-2, qualified overtime income
+  ✓ BIZ-16   recall=100%  nav=100%  facts=0/4  pubs=['946', '463', '334']
+           missing: 100% bonus depreciation, permanently restored, January 19, 2025, full $50,000
+  ✓ BIZ-17   recall=100%  nav=100%  facts=0/4  pubs=['535', '6765', '946', '544']
+           missing: immediate expensing, permanently restored, domestic R&D, 2025 returns
+  ✓ BIZ-18   recall=100%  nav=100%  facts=0/4  pubs=['537', '8995-A', '334', '525', '550', '535']
+           missing: $32 million threshold, EBITDA-based, not exempt, 30% limitation
+  ✓ BIZ-19   recall=100%  nav=100%  facts=0/5  pubs=['8995-A', '946', '334', '501', '17', '15-B', '536', '535']
+           missing: made permanent, Section 199A, OBBBA, expanded phase-in ranges, 2026
+  ✓ BIZ-20   recall=100%  nav=100%  facts=0/5  pubs=['535', '946', '544', '8995-A']
+           missing: 100% deduction, qualified production property, nonresidential real property, manufacturing, July 4, 2025
+  ✗ RPT-21   recall=0%  nav=0%  facts=0/4  pubs=['1099', '527', '334', '1040']
+           missing: $20,000 threshold, 200 transactions, permanently restored, no form
+  ✓ RPT-22   recall=100%  nav=100%  facts=0/4  pubs=['15', '1099', '334', '1040']
+           missing: $2,000 threshold, increased from $600, after 2025, no 1099-NEC required
+  ✓ RPT-23   recall=100%  nav=100%  facts=0/3  pubs=['926', '334', '15']
+           missing: $3,000 threshold, $2,800 below threshold, taxes do not apply
+  ✓ RPT-24   recall=100%  nav=100%  facts=0/4  pubs=['334', '587', '17', '529', '525', '1040']
+           missing: 90% of winnings, $45,000 deductible, $5,000 taxable, OBBBA limitation
+  ✗ RPT-25   recall=0%  nav=0%  facts=0/4  pubs=['505', '526', '503', '970']
+           missing: Code TA, Box 12, W-2, excluded from gross income
+  ✗ MEF-26   recall=0%  nav=0%  facts=0/5  pubs=['334', '1040', '17', '15', '561']
+           missing: Estimated Tax Penalty, Line 38, Overpayment, Line 34, Balance Due
+  ✓ MEF-27   recall=50%  nav=50%  facts=0/4  pubs=['596', '8962', 'W-2', '334']
+           missing: advance Premium Tax Credit, Form 8962, reconcile, 1095-A
+  ✓ MEF-28   recall=100%  nav=100%  facts=0/4  pubs=['1040', 'W-2', '1099', '17', '15', '926', '15-B']
+           missing: Code TP, information reporting penalties, transition relief expired, Section 6041
+  ✓ MEF-29   recall=100%  nav=100%  facts=0/4  pubs=['514', '542', '17', '541']
+           missing: CFC alignment, short-year allocation, 2026, foreign tax credits
+  ✓ MEF-30   recall=100%  nav=100%  facts=0/3  pubs=['596', '501', '17', '1040']
+           missing: SSN valid for work, ITIN ineligible, OBBBA senior deduction
+  ✓ PRE-31   recall=100%  nav=100%  facts=0/4  pubs=['560', '334', '535']
+           missing: 15.3% rate, 92.35% threshold, $10,874 SE tax, 50% deductible
+  ✓ PRE-32   recall=100%  nav=100%  facts=0/4  pubs=['535', '334', '529', '17']
+           missing: ordinary and necessary, rent, utilities, supplies, wages, insurance, not personal expenses
+  ✓ PRE-33   recall=100%  nav=100%  facts=0/4  pubs=['587', '334', '535', '529', '527']
+           missing: 15% of home expenses, simplified method, $5 per sq ft, $1,500 maximum
+  ✗ PRE-34   recall=0%  nav=100%  facts=0/4  pubs=['463', '334']
+           missing: ordinary and necessary, documented business purpose, meals 50% deductible, lodging fully deductible
+  ✓ PRE-35   recall=100%  nav=100%  facts=0/3  pubs=['535', '587', '334', '502']
+           missing: fully deductible, ordinary business expense, liability, property, workers comp
+  ✓ PRE-36   recall=100%  nav=100%  facts=0/4  pubs=['535', '946']
+           missing: $5,000 first-year deduction, 180-month amortization, Form 4562 required, election required
+  ✓ PRE-37   recall=100%  nav=100%  facts=0/4  pubs=['946', '334', '527', '535']
+           missing: $1,160,000 Section 179 limit, 2025, tangible business property, MACRS alternative
+  ✓ PRE-38   recall=100%  nav=100%  facts=0/4  pubs=['946', '15-B', '463']
+           missing: 80% business portion, $16,000 depreciable, listed property rules, MACRS rates
+  ✓ PRE-39   recall=100%  nav=100%  facts=0/4  pubs=['527', '946', '587']
+           missing: Q4 40% threshold, mid-quarter convention, half-year convention, depreciable basis
+  ✓ PRE-40   recall=100%  nav=100%  facts=0/4  pubs=['527', '544', '946', '587', '535']
+           missing: $40,000 rental income, depreciation deductible, building only, Schedule E
+  ✓ PRE-41   recall=100%  nav=100%  facts=0/4  pubs=['925', '527', '551', '334', '535']
+           missing: $25,000 annual limit, active participation, $100,000 MAGI threshold, $150,000 phase-out
+  ✓ PRE-42   recall=100%  nav=100%  facts=0/4  pubs=['527', '946', '551', '544', '523']
+           missing: land not depreciable, $240,000 building basis, allocation necessary, appraisal method
+  ✓ PRE-43   recall=100%  nav=100%  facts=0/4  pubs=['542', '550', '514', '525', '575']
+           missing: qualified dividend rates, 0%, 15%, 20%, holding period required, Schedule B
+  ✓ PRE-44   recall=100%  nav=100%  facts=0/4  pubs=['544', '334', '550', '514', '541', '523']
+           missing: $3,000 annual loss deduction, $2,000 carryforward, separate netting, indefinite carryforward
+  ✓ PRE-45   recall=100%  nav=100%  facts=0/4  pubs=['544', '550', '547']
+           missing: 30-day window, substantially identical, loss disallowed, basis adjustment
+  ✓ PRE-46   recall=100%  nav=100%  facts=0/4  pubs=['550', '15-B', '17']
+           missing: annually taxable, daily accrual, no cash receipt, Form 1040 interest line
+  ✓ PRE-47   recall=100%  nav=100%  facts=0/4  pubs=['544', '523', '551']
+           missing: $15,000 gain, adjusted basis $10,000, Section 1231, Form 4797
+  ✗ PRE-48   recall=0%  nav=0%  facts=0/4  pubs=['547', '527', '523', '551']
+           missing: personal residence non-deductible, Section 1033 deferral, reinvestment required, timing rules
+  ✓ PRE-49   recall=100%  nav=100%  facts=0/4  pubs=['596', '505', '1040']
+           missing: $46,560 limit single, $3,733-$6,935 credit, number of children, phase-out
+  ✓ PRE-50   recall=100%  nav=100%  facts=0/4  pubs=['596', '17', '970', '8812']
+           missing: age 18-24 if student, under 19 non-students, residency requirement, $4,700 income limit
+  ✓ PRE-51   recall=100%  nav=100%  facts=0/4  pubs=['590a', '560']
+           missing: $7,500 age 50+ limit, earned income requirement, deductibility limits, 2025
+  ✓ PRE-52   recall=100%  nav=100%  facts=0/4  pubs=['590b', '590a']
+           missing: no income limit, ordinary income tax owed, 5-year holding rule, conversion year
+  ✓ PRE-53   recall=100%  nav=100%  facts=0/4  pubs=['590b', '575']
+           missing: divisor 27.4, $18,382 RMD, December 31 deadline, 25% penalty
+  ✓ PRE-54   recall=100%  nav=100%  facts=0/4  pubs=['560', '590a', '590b']
+           missing: 20% of net SE income, $70,000 limit, higher contribution limit, self-employed eligible
+  ✓ PRE-55   recall=100%  nav=100%  facts=0/4  pubs=['560', '590a', '590b', '970']
+           missing: $16,000 employee limit, employer match required, easier admin, Pub_560
+  ✓ PRE-56   recall=100%  nav=100%  facts=0/4  pubs=['596', '504', '17', '503', '501', '8812']
+           missing: age under 17, residency requirement, support test, U.S. citizen/resident
+  ✓ PRE-57   recall=100%  nav=100%  facts=0/3  pubs=['501', '17', '1040', '505', '8812']
+           missing: $30,000 MFJ, dependents don't increase, no dependent exemption amount
+  ✓ PRE-58   recall=100%  nav=100%  facts=0/3  pubs=['504', '501', '17']
+           missing: $24,200 HOH standard deduction, dependent child required, household expense test
+  ✓ PRE-59   recall=100%  nav=100%  facts=0/4  pubs=['17', '1040', '501']
+           missing: filing requirement, $24,200 HOH threshold, dependent impact, income exceeds threshold
+  ✓ PRE-60   recall=100%  nav=100%  facts=0/4  pubs=['537', '523', '544', '551']
+           missing: 50% gross profit ratio, $25,000 gain on payment, installment method, Pub_537
+  ✓ PRE-61   recall=100%  nav=100%  facts=0/4  pubs=['536', '514', '334', '535', '542', '8995-A']
+           missing: $30,000 remaining income, 80% limitation, post-2017 NOL rules, carryforward eligible
+  ✓ PRE-62   recall=100%  nav=100%  facts=0/4  pubs=['334', '536', '925', '8995-A', '535', '542']
+           missing: $275,000 single limit, $550,000 MFJ, excess becomes NOL, 2025 threshold
+  ✓ PRE-63   recall=100%  nav=100%  facts=0/4  pubs=['527', '946', '587', '547', '523']
+           missing: 27.5-year period, straight-line method, rental income requirement, 80% threshold
+  ✓ PRE-64   recall=100%  nav=100%  facts=0/4  pubs=['527', '946', '587', '544']
+           missing: 15-year recovery period, qualified leasehold, retail/restaurant eligible, MACRS method
+  ✓ PRE-65   recall=100%  nav=100%  facts=0/4  pubs=['946', '527', '544']
+           missing: 39-year period, straight-line method, mid-month convention, nonresidential
+  ✓ PRE-66   recall=100%  nav=100%  facts=0/4  pubs=['523', '551', '527', '544', '537']
+           missing: fair market value allocation, appraisal method, depreciable vs non-depreciable, recapture
+  ✓ PRE-67   recall=100%  nav=100%  facts=0/4  pubs=['523', '544', '551']
+           missing: real property only, Section 1031, post-2017 rule, like-kind requirement
+  ✓ PRE-68   recall=100%  nav=100%  facts=0/4  pubs=['946', '544', '527', '334', '587', '535']
+           missing: 25% recapture rate, ordinary income treatment, real property recapture, $40,000
+  ✓ PRE-69   recall=100%  nav=100%  facts=0/4  pubs=['542', '550', '525']
+           missing: qualified dividend rates, preferential taxation, corporation no deduction, holding period
+  ✓ PRE-70   recall=100%  nav=100%  facts=0/4  pubs=['541', '514']
+           missing: basis reduction, excess is capital gain, K-1 ordinary items, tax-free treatment
+  ✓ OBBBA-71 recall=100%  nav=100%  facts=0/4  pubs=['501', '596', '1040', '17']
+           missing: age 65 requirement, $150,000 phase-out, 10% reduction per $10k over, reduced to $5,400
+  ✓ OBBBA-72 recall=100%  nav=100%  facts=0/4  pubs=['501', '1040', '17', '504']
+           missing: $6,000 per spouse MFS, $150,000 individual threshold, full amount each, not combined
+  ✓ OBBBA-73 recall=100%  nav=100%  facts=0/4  pubs=['505', '525', '17', '501', '1-A', '535']
+           missing: $450,000 income, $40,000 SALT cap, $50,000 liability, threshold phase-in
+  ✗ OBBBA-74 recall=0%  nav=100%  facts=0/4  pubs=['970', '936', '334']
+           missing: purchased after 2024, U.S. assembled, $10,000 annual limit, interest deductible
+  ✗ OBBBA-75 recall=0%  nav=100%  facts=0/3  pubs=['970', '525', '936', '550', '535']
+           missing: U.S. assembled only, foreign vehicles ineligible, assembly location requirement
+  ✗ OBBBA-76 recall=0%  nav=0%  facts=0/4  pubs=['505', '4547', '596', '970']
+           missing: kiddie tax applies, $1,250 tax-free, $2,500 threshold, child's rate above
+  ✓ OBBBA-77 recall=100%  nav=100%  facts=0/4  pubs=['4547', '505', '970']
+           missing: age 18 eligibility, 10% early withdrawal penalty, exception for death/disability, earnings taxable
+  ✓ OBBBA-78 recall=100%  nav=100%  facts=0/4  pubs=['505', '590a', '970', '525']
+           missing: $5,000 annual limit, 6% penalty per year, $1,000 excess, until withdrawn
+  ✗ OBBBA-79 recall=0%  nav=100%  facts=0/4  pubs=['505', '4547', 'W-2', '560', '970', '17']
+           missing: $5,000 aggregate limit, all sources combined, employer + employee, per year
+  ✓ OBBBA-80 recall=100%  nav=100%  facts=0/4  pubs=['4547', '505', '970', '590b']
+           missing: beneficiary change allowed, before age 18 no tax, after age 18 special rules, rollover procedures
+  ✓ OBBBA-81 recall=100%  nav=100%  facts=0/4  pubs=['1040', '505', '17', '1-A', '501', '970', '525']
+           missing: $25,000 tips deductible, $10,000 excess tips, $15,000 total taxable, w-2 income
+  ✓ OBBBA-82 recall=100%  nav=100%  facts=0/4  pubs=['1040', '1-A', '970']
+           missing: tips deduction phase-out, high MAGI reduces deduction, $100,000 MAGI, progressive reduction
+  ✗ OBBBA-83 recall=0%  nav=100%  facts=0/4  pubs=['560', '1-A', '463', '535', '15-B']
+           missing: premium only deductible, 50% extra portion, $10/hour premium, FLSA required
+  ✗ OBBBA-84 recall=0%  nav=100%  facts=0/4  pubs=['463', '970', '1040', '525', '501', '334', 'W-2', '15-B']
+           missing: no age limit, income-based phase-out, $150,000 Single threshold, all workers eligible
+  ✗ OBBBA-85 recall=0%  nav=100%  facts=0/4  pubs=['1040', '525', '17', '535', '529']
+           missing: both deductible, Schedule 1-A, above-the-line, combined deductions
+  ✓ OBBBA-86 recall=100%  nav=100%  facts=0/4  pubs=['6765', '946', '535']
+           missing: R&D credit available, Form 6765, deduction reduced, Section_174_expensing
+  ✓ OBBBA-87 recall=100%  nav=100%  facts=0/4  pubs=['535', '525', '334', '463', '970']
+           missing: domestic R&D only, $250,000 expensable, $50,000 amortized, Section_174
+  ✓ OBBBA-88 recall=100%  nav=100%  facts=0/4  pubs=['946', '544']
+           missing: used property eligible, 100% bonus, January 19, 2025, post-OBBBA rule
+  ✓ OBBBA-89 recall=100%  nav=100%  facts=0/4  pubs=['946', '334']
+           missing: Section 179 first, bonus depreciation second, MACRS remainder, stacking allowed
+  ✓ OBBBA-90 recall=100%  nav=100%  facts=0/4  pubs=['946', '505']
+           missing: $300,000 deductible, taxable income limited, $200,000 carryforward, active business requirement
+  ✓ BIZ-91   recall=100%  nav=100%  facts=0/4  pubs=['334', '535', '8995-A', '925']
+           missing: $182,050 phase-out Single, W-2 wage limitation, SSTB definition, 20% QBI cap
+  ✓ BIZ-92   recall=100%  nav=100%  facts=0/4  pubs=['8995-A', '541']
+           missing: partner-level calculation, K-1 allocations, individual Form 8995-A, Form 1065 coordination
+  ✓ BIZ-93   recall=100%  nav=100%  facts=0/4  pubs=['536', '514', '535', '542', '8995-A']
+           missing: no carryback post-2017, 80% limitation current year, indefinite carryforward, election to waive
+  ✗ RPT-94   recall=0%  nav=0%  facts=0/4  pubs=['1099', '334', '1040', '15']
+           missing: $20,000 threshold, 200 transaction threshold, self-reporting required, no form issued
+  ✓ RPT-95   recall=100%  nav=100%  facts=0/4  pubs=['15', '1099', '334', '1040']
+           missing: annual aggregate threshold, $4,500 total, must issue form, $2,000 threshold
+  ✓ RPT-96   recall=100%  nav=100%  facts=0/4  pubs=['926', '15', '334', '535']
+           missing: aggregate all household workers, $3,000 threshold 2026, FUTA applies, Schedule H required
+  ✓ RPT-97   recall=100%  nav=100%  facts=0/4  pubs=['505', '17', '1040', '926', '15', '537']
+           missing: 90% current year, 100% prior year, 110% if high income, quarterly payments
+  ✓ RPT-98   recall=100%  nav=100%  facts=0/4  pubs=['542', '17', '1099', '561']
+           missing: 5% failure-to-file, 0.5% failure-to-pay, 25% maximum each, monthly accrual
+  ✓ RPT-99   recall=100%  nav=100%  facts=0/4  pubs=['926', '505', '17', '334', '1040', '15']
+           missing: filing deadline extended, payment due April 15, penalties accrue, Form 4868
+  ✓ RPT-100  recall=100%  nav=100%  facts=0/4  pubs=['334', '587', '527', '463']
+           missing: $400 SE income threshold, Schedule C required, SE tax required, net profit
+  ✓ SCN-101  recall=100%  nav=100%  facts=0/4  pubs=['501', '525', '1040', '17', '970', '527', '535', '334']
+           missing: $50k SE deductible, $3,825 SE tax deduction, $4,400 CTC, rental depreciation
+  ✓ SCN-102  recall=100%  nav=100%  facts=0/4  pubs=['946', '544', '587', '334', '527', '535']
+           missing: $40,000 loss, $150,000 full deduction, bonus depreciation available, Section_179 election
+  ✓ SCN-103  recall=50%  nav=100%  facts=0/4  pubs=['590b', '590a', '575', '970']
+           missing: $18,382 RMD, Social Security coordination, IRMAA impact, 85% inclusion rule
+  ✓ SCN-104  recall=50%  nav=100%  facts=0/4  pubs=['501', '17', '504', '1040']
+           missing: $30,000 standard deduction, $5,657 SE deduction, $4,400 CTC, $159,343 AGI
+  ✓ SCN-105  recall=100%  nav=100%  facts=0/4  pubs=['560', '590a', '590b']
+           missing: $12,000 SEP contribution, $69,000 401k max, higher limit 401k, plan selection
+  ✗ SCN-106  recall=0%  nav=0%  facts=0/4  pubs=['925', '514', '334', '8995-A']
+           missing: $25,000 loss deduction, active participation required, carryforward excess, real estate professional exception
+  ✓ SCN-107  recall=67%  nav=100%  facts=0/4  pubs=['536', '535', '514', '17', '525', '501', '8995-A']
+           missing: R&D expensing, Section_179 max, NOL carryforward, 80% limitation
+  ✓ SCN-108  recall=100%  nav=100%  facts=0/4  pubs=['544', '550', '334', '514', '523', '541']
+           missing: $3,000 loss deduction, $2,000 carryforward, netting order, indefinite carryforward
+  ✓ MEF-109  recall=100%  nav=100%  facts=0/4  pubs=['1-A', '8995-A', '1099', '1040', '17', 'W-2', '550']
+           missing: Form 1-A required, e-file attachment, tips/overtime deduction, reject prevention
+  ✓ MEF-110  recall=100%  nav=100%  facts=0/4  pubs=['501', '1-A', '1040', '590a', '17']
+           missing: SSN valid for work required, ITIN ineligible, reject reason, no senior deduction
+  ✓ MEF-111  recall=100%  nav=100%  facts=0/4  pubs=['8962', '969', 'W-2', '525']
+           missing: overpayment reduces refund, Form 8962 reconciliation, no separate credit, APTC adjustment
+  ✓ MEF-112  recall=100%  nav=100%  facts=0/4  pubs=['1040', '463', '529', '535', '970', '15']
+           missing: Code TP missing, deduction still possible, employer penalty exposure, documentation helpful
+  ✓ MEF-113  recall=100%  nav=100%  facts=0/4  pubs=['4547', '505', '550', '1040', '525', '970']
+           missing: seed not taxable, Form 4547 recommended, official account status, documentation needed
+  ✓ PRE-114  recall=100%  nav=100%  facts=0/4  pubs=['946', '527', '587', '535', '334', '544']
+           missing: listed property classification, business use substantiation, depreciation restrictions, MACRS rules apply
+  ✓ PRE-115  recall=100%  nav=100%  facts=0/4  pubs=['946', '544', '527']
+           missing: 40% Q4 threshold, mid-quarter convention, all property affected, timing rules
+  ✓ PRE-116  recall=100%  nav=100%  facts=0/4  pubs=['541', '544', '551', '334']
+           missing: no gain on in-kind distribution, basis reduction, exception for excess cash, deferred gain
+  ✗ PRE-117  recall=0%  nav=100%  facts=0/4  pubs=['334']
+           missing: inventory capitalized, COGS deduction, not depreciated, valuation methods
+  ✓ PRE-118  recall=100%  nav=100%  facts=0/4  pubs=['463', '15-B', '535', '970']
+           missing: 50% deductible, documentation required, business purpose, per diem option
+  ✓ PRE-119  recall=100%  nav=100%  facts=0/4  pubs=['15-B', 'W-2', '334', '502', '535']
+           missing: fully deductible, employer contribution, employee withholding, fringe benefit
+  ✓ PRE-120  recall=100%  nav=100%  facts=0/4  pubs=['334', '535', '529', '17', '463']
+           missing: fully deductible, ordinary business expense, business promotion, direct marketing
+  ✓ PRE-121  recall=100%  nav=100%  facts=0/4  pubs=['535', '17', '334', '502']
+           missing: fully deductible, liability insurance, ordinary business expense, professional coverage
+  ✓ PRE-122  recall=100%  nav=100%  facts=0/4  pubs=['946', '334', '544', '551']
+           missing: 5-year recovery, listed property rules, 100% business use, substantiation required
+  ✓ PRE-123  recall=100%  nav=100%  facts=0/4  pubs=['587', '535', '334']
+           missing: $5 per sq ft, $1,500 maximum, simplified calculation, easier documentation
+  ✓ PRE-124  recall=100%  nav=100%  facts=0/4  pubs=['535', '970', '15-B', '463', '334']
+           missing: fully deductible, ordinary business expense, training costs, professional development
+  ✓ PRE-125  recall=100%  nav=100%  facts=0/4  pubs=['334', '550', '525', '537']
+           missing: taxable income, ordinary income rates, Schedule B reporting, business accounts
+  ✓ OBBBA-126 recall=100%  nav=100%  facts=0/4  pubs=['501', '596', '17', '1040']
+           missing: age 65+ requirement, one spouse only, $6,000 deduction, other spouse cannot claim
+  ✓ OBBBA-127 recall=100%  nav=100%  facts=0/4  pubs=['505', '523', '17', '525', '1-A', '501', '535', '526']
+           missing: below $500,000 threshold, $40,000 cap applies, $35,000 deductible, full SALT amount
+  ✓ OBBBA-128 recall=100%  nav=100%  facts=0/4  pubs=['501', '1040', '17']
+           missing: MFS different threshold, $40,000 cap, phase-out rules, individual income $300k
+  ✓ OBBBA-129 recall=100%  nav=100%  facts=0/4  pubs=['505', '970', '550', '503', '596', '4547']
+           missing: no opening age limit, locked until age 18, seed before age 18, government contribution
+  ✓ OBBBA-130 recall=100%  nav=100%  facts=0/4  pubs=['505', '4547', '504', '503']
+           missing: custodial parent only, non-custodial requires consent, account management, custody requirement
+  ✗ OBBBA-131 recall=0%  nav=100%  facts=0/4  pubs=['1040', '501', '17', '334', '514']
+           missing: individual MAGI only, spouse income excluded, tips deduction, phase-out calculation
+  ✗ OBBBA-132 recall=0%  nav=100%  facts=0/4  pubs=['501', '525', '970', '1040']
+           missing: $300,000 MFJ threshold, below threshold, full deduction, no phase-out
+  ✓ OBBBA-133 recall=100%  nav=100%  facts=0/4  pubs=['6765', '535']
+           missing: domestic R&D only, $45,000 qualified, $15,000 foreign ineligible, credit calculation
+  ✓ OBBBA-134 recall=100%  nav=100%  facts=0/4  pubs=['946', '527', '587', '544', '334', '535']
+           missing: used equipment eligible, 100% bonus 2025+, separate transactions, loss + deduction
+  ✓ OBBBA-135 recall=100%  nav=100%  facts=0/4  pubs=['15', '1099', '334', '1040']
+           missing: per payee threshold, $2,000 limit, $1,200 each, no forms required
+  ✓ OBBBA-136 recall=100%  nav=100%  facts=0/4  pubs=['926', '503', '1040', '15-B', '505']
+           missing: $3,000 threshold 2026, $2,400 below, no Schedule H, no FICA/FUTA
+  ✓ SCN-137  recall=100%  nav=100%  facts=0/4  pubs=['915', '1040', '17', '505']
+           missing: 85% inclusion threshold, combined income $600k, maximum taxation, Social Security coordination
+  ✓ SCN-138  recall=100%  nav=100%  facts=0/4  pubs=['590a', '560', '970']
+           missing: employee + employer, $8,000 catch-up, 20% employer, $70,000 total limit
+  ✓ SCN-139  recall=100%  nav=100%  facts=0/4  pubs=['925', '527', '514', '334', '8995-A']
+           missing: passive offset passive only, loss suspended, real estate pro exception, loss carryforward
+  ✓ SCN-140  recall=100%  nav=100%  facts=0/4  pubs=['590a', '8995-A', '17']
+           missing: conversion increases MAGI, QBI deduction affected, add-back required, higher calculation base
+  ✓ MEF-141  recall=100%  nav=100%  facts=0/4  pubs=['17', '969', '596', '1040']
+           missing: age 65+ required, birth date validation, both spouses if MFJ, reject prevention
+  ✓ MEF-142  recall=100%  nav=100%  facts=0/4  pubs=['527', '1040', '505', '17', '535', '501', '334']
+           missing: Schedule A calculation, $40,000 cap, taxpayer responsible, MeF rejects excess
+  ✗ MEF-143  recall=0%  nav=100%  facts=0/4  pubs=['15-B', '946']
+           missing: assembly country check, foreign vehicle rejected, U.S. assembly required, documentation needed
+  ✗ MEF-144  recall=0%  nav=100%  facts=0/4  pubs=['1040', '463', '525', '17', '529', '535']
+           missing: deduction limited to income, MeF rejects excess, net income calculation, validation rules
+  ✗ MEF-145  recall=0%  nav=100%  facts=0/4  pubs=['587', '970', '334', '535']
+           missing: separate deductions, above-the-line + business, both claimable, coordination allowed
+  ✓ PRE-146  recall=100%  nav=100%  facts=0/4  pubs=['527', '946', '587']
+           missing: 27.5-year period, straight-line method, month placed in service, ready for occupancy
+  ✓ PRE-147  recall=100%  nav=100%  facts=0/4  pubs=['544', '523', '334', '551']
+           missing: Section 1231 asset, LTCG treatment, depreciation recapture, lookback rule
+  ✓ PRE-148  recall=100%  nav=100%  facts=0/4  pubs=['551', '544', '523', '946']
+           missing: stepped-up basis, FMV at death, new depreciation, no carryover basis
+  ✓ PRE-149  recall=100%  nav=100%  facts=0/4  pubs=['334', '551', '946', '544', '542', '525', '535']
+           missing: Section 351, 80% control, gain deferred, basis carryover
+  ✓ PRE-150  recall=100%  nav=100%  facts=0/4  pubs=['946', '551', '527', '544', '547', '587']
+           missing: $10,000 adjusted basis, cost $50,000, depreciation $40,000, gain/loss calculation
+  ✓ PRE-151  recall=100%  nav=100%  facts=0/4  pubs=['541', '550', '542']
+           missing: tax-free to basis, basis reduction, excess capital gain, K-1 ordinary income
+  ✓ PRE-152  recall=100%  nav=100%  facts=0/4  pubs=['970', '590b', '560', '590a', '575']
+           missing: age 70.5+ eligible, $100,000 limit, direct to charity, RMD satisfaction
+  ✓ PRE-153  recall=100%  nav=100%  facts=0/4  pubs=['536', '514']
+           missing: no carryback, post-2017 rule, carry forward, 80% limitation
+  ✓ PRE-154  recall=100%  nav=100%  facts=0/4  pubs=['544', '550', '547', '514', '334']
+           missing: $3,000 annual limit, $297,000 carryforward, indefinite carryforward, loss deduction
+  ✓ PRE-155  recall=100%  nav=100%  facts=0/4  pubs=['946', '334', '527']
+           missing: 3-year recovery, Section 197 intangible, licensing expensed, useful life test
+  ✓ PRE-156  recall=100%  nav=100%  facts=0/4  pubs=['946', '523', '544', '527', '587', '334', '535']
+           missing: 25% recapture rate, Section 1250 property, real property, separate calculation
+  ✓ PRE-157  recall=100%  nav=100%  facts=0/4  pubs=['541', '544', '542']
+           missing: $50,000 capital gain, basis reduction first, excess is gain, LTCG treatment
+  ✓ PRE-158  recall=100%  nav=100%  facts=0/4  pubs=['463', '15-B', '535']
+           missing: 50% deductible, $40,000 allowed, documentation required, meal limitation
+  ✓ PRE-159  recall=100%  nav=100%  facts=0/4  pubs=['587', '560', '535']
+           missing: fully deductible, above-the-line deduction, medical/dental/vision, self-employed eligible
+  ✓ PRE-160  recall=100%  nav=100%  facts=0/4  pubs=['946', '527']
+           missing: 7-year recovery period, office furniture, fixtures included, MACRS method
+  ✓ OBBBA-161 recall=100%  nav=100%  facts=0/4  pubs=['946', '544', '8995-A']
+           missing: nonresidential real property, manufacturing use, 100% deduction, July 4, 2025 date
+  ✓ OBBBA-162 recall=100%  nav=100%  facts=0/4  pubs=['527', '946']
+           missing: building 100% deductible, equipment separate treatment, real vs tangible, combined deduction
+  ✗ OBBBA-163 recall=0%  nav=100%  facts=0/4  pubs=['1040', '17', '463', '15-B', '535']
+           missing: tips basis, $22,000 deductible, wages not included, qualified tips only
+  ✓ OBBBA-164 recall=100%  nav=100%  facts=0/4  pubs=['W-2', '15', '17', '15-B', '926']
+           missing: Code TT per employee, Box 12 reporting, individual W-2s, aggregate not allowed
+  ✓ OBBBA-165 recall=100%  nav=100%  facts=0/4  pubs=['926', '505']
+           missing: $3,000 threshold, $3,100 exceeds, Schedule H required, FICA/FUTA apply
+  ✓ SCN-166  recall=100%  nav=100%  facts=0/4  pubs=['560', '334', '17', '590a', '15-B']
+           missing: $69,000 401k max, $70,000 SEP max, high income benefit, plan selection
+  ✓ SCN-167  recall=100%  nav=100%  facts=0/4  pubs=['590b', '970', '575', '560']
+           missing: treat as own, spouse RMD rules, age-based calculation, no beneficiary treatment
+  ✓ SCN-168  recall=100%  nav=100%  facts=0/4  pubs=['536', '542', '463', '334']
+           missing: 80% of income, $240,000 allowed, $50,000 NOL used, $210,000 taxable
+  ✓ SCN-169  recall=100%  nav=100%  facts=0/4  pubs=['925', '527']
+           missing: 50% business time, 750 hours annual, exception applies, losses fully deductible
+  ✓ SCN-170  recall=100%  nav=100%  facts=0/4  pubs=['560', '590a', '590b']
+           missing: no catch-up allowed, 20% limit, SEP-IRA, 401k allows catch-up
+  ✗ MEF-171  recall=0%  nav=100%  facts=0/4  pubs=['936', '970', '334', '946', '463']
+           missing: claim once only, Schedule 1-A location, duplicate rejection, above-the-line only
+  ✓ MEF-172  recall=100%  nav=100%  facts=0/4  pubs=['505', '4547', '590a', '970', '560']
+           missing: separate accounts, combined contributions allowed, no phaseout interaction, both deductible
+  ✓ MEF-173  recall=100%  nav=100%  facts=0/4  pubs=['W-2', '15', '334', '1040']
+           missing: SE tax self-calculated, MeF relies on input, audit risk if wrong, taxpayer responsibility
+  ✓ MEF-174  recall=100%  nav=100%  facts=0/4  pubs=['8995-A', '334', '535']
+           missing: positive QBI required, losses = negative QBI, no deduction available, deferred to profit years
+  ✓ MEF-175  recall=100%  nav=100%  facts=0/4  pubs=['501', '514', '17', '1040', '596', '504']
+           missing: individual eligibility, each spouse separate, age 65+ each, income separate
+  ✓ BIZ-176  recall=100%  nav=100%  facts=0/4  pubs=['970', '15-B', '525']
+           missing: $5,250 annual limit, excess taxable, employer deductible, fringe benefit
+  ✗ BIZ-177  recall=0%  nav=0%  facts=0/4  pubs=['560', '334']
+           missing: reasonable compensation required, reclassification risk, IRS scrutiny, wage threshold
+  ✓ PRE-178  recall=100%  nav=100%  facts=0/4  pubs=['535', '463', '15-B', '334', '970']
+           missing: repairs deductible, maintenance deductible, improvements depreciated, capitalization threshold
+  ✓ PRE-179  recall=100%  nav=100%  facts=0/4  pubs=['463', '15-B', '535']
+           missing: $25 per recipient limit, annual limit, $5,000 may exceed, excess non-deductible
+  ✓ PRE-180  recall=100%  nav=100%  facts=0/4  pubs=['535', '334', '17', '529']
+           missing: business return deductible, personal return non-deductible, professional fees, business expense
+  ✓ PRE-181  recall=100%  nav=100%  facts=0/4  pubs=['527', '936', '587', '334', '535']
+           missing: proportional deduction, percentage of space, regular method, utility costs
+  ✓ PRE-182  recall=100%  nav=100%  facts=0/4  pubs=['535', '334', '463', '946']
+           missing: 12-month rule, consumed deductible, $2,500 de minimis, supplies capitalization
+  ✓ PRE-183  recall=100%  nav=100%  facts=0/4  pubs=['535', '334', '529', '463', '17']
+           missing: deductible business expense, qualified organizations, AGI limitations, documentation required
+  ✗ SCN-171  recall=0%  nav=100%  facts=0/4  pubs=['560', '15', '334']
+           missing: guaranteed payment, ordinary income treatment, SE tax applicable, partnership deduction
+  ✓ SCN-172  recall=50%  nav=100%  facts=0/4  pubs=['525', '587', '501', '17', '590a', '535']
+           missing: $50,000 home office, $15,000 charitable, $85,000 AGI, $79,000 taxable
+  ✗ SCN-173  recall=0%  nav=0%  facts=0/4  pubs=['575', '590a', '969', '529', '551']
+           missing: $6,000 senior deduction, $164,000 AGI, IRMAA threshold, Social Security coordination
+  ✓ OBBBA-174 recall=100%  nav=100%  facts=0/4  pubs=['505', '4547', '17', '1040']
+           missing: per-child account, per-child $1,000 seed, $10,000 combined limit, separate tax treatment
+  ✓ OBBBA-175 recall=100%  nav=100%  facts=0/4  pubs=['15', '1099', '334', '15-B', '505', '535', '525']
+           missing: per-payee threshold, $2,000 individual, aggregate not considered, payee identification
+  ✓ OBBBA-176 recall=100%  nav=100%  facts=0/4  pubs=['505', '8812', '1040', '926', '17', '8962', 'W-2', '525']
+           missing: $2,200 per child, OBBBA updated, MeF accepts, validation check
+  ✓ PRE-184  recall=100%  nav=100%  facts=0/4  pubs=['560', '590a', '590b', '575']
+           missing: $7,500 contribution, fully deductible, no plan required, employee eligible
+  ✓ PRE-185  recall=100%  nav=100%  facts=0/4  pubs=['541', '551', '544']
+           missing: no gain recognized, basis carryover, deferred gain, partner basis
+  ✓ OBBBA-177 recall=100%  nav=100%  facts=0/4  pubs=['970', '17', '334']
+           missing: U.S. assembled only, $10,000 annual cap, foreign ineligible, aggregate limit
+  ✓ SCN-178  recall=100%  nav=100%  facts=0/4  pubs=['925', '527']
+           missing: $25,000 annual limit, active participation, $100,000 AGI threshold, carryforward indefinite
+  ✓ MEF-179  recall=100%  nav=100%  facts=0/4  pubs=['4547', '505', '970']
+           missing: no conflict, separate provisions, both claimable, child can have both
+  ✓ PRE-186  recall=100%  nav=100%  facts=0/4  pubs=['535', '587', '544']
+           missing: $5,000 first-year deduction, 180-month amortization, Form 4562, election required
+  ✗ OBBBA-180 recall=0%  nav=100%  facts=0/4  pubs=['1040', '529', '463', '15-B', '535']
+           missing: high income phase-out, reduced deduction, $150,000 MAGI, progressive reduction
+
+============================================================================
+
+────────────────────────────────────────────────────────────────────────────
+  CONTENT GAP ANALYSIS
+  Questions where no expected pub was retrieved — likely missing from KB
+────────────────────────────────────────────────────────────────────────────
+  Pub 1-A      needed by: TIP-11, TIP-13, OBBBA-85, OBBBA-131, OBBBA-132, MEF-144, OBBBA-163, OBBBA-180
+  Pub 15-B     needed by: FAM-08
+  Pub 17       needed by: IND-02, IND-04, TIP-12, RPT-21, OBBBA-74, OBBBA-75, OBBBA-83, OBBBA-84, RPT-94, MEF-143, MEF-145, MEF-171, SCN-173
+  Pub 527      needed by: SCN-106
+  Pub 535      needed by: PRE-34, PRE-117
+  Pub 541      needed by: SCN-171
+  Pub 542      needed by: BIZ-177
+  Pub 544      needed by: PRE-48
+  Pub 590a     needed by: OBBBA-76, OBBBA-79
+  Pub 8812     needed by: FAM-10
+  Pub 915      needed by: SCN-173
+  Pub MeF      needed by: MEF-26
+  Pub W-2      needed by: RPT-25
+
+  → 13 publications need to be ingested or updated

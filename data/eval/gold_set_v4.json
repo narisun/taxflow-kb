@@ -1,0 +1,2318 @@
+{
+  "version": "1.0.0",
+  "description": "TaxFlow AI evaluation gold set",
+  "created_at": "2026-04-09T15:24:48.686224+00:00",
+  "total": 102,
+  "entries": [
+    {
+      "question": "Which tax forms does the excerpt state individuals should use to file their return?",
+      "ground_truth": "Use Form 1040 or Form 1040-SR to file the return.",
+      "expected_pub": "17",
+      "gold_chunk_ids": [
+        "p17-2025::0040",
+        "p17-2025::0039",
+        "p17-2025::0041"
+      ],
+      "tax_year": 2025,
+      "difficulty": "simple",
+      "topic_tags": [
+        "Form 1040",
+        "Form 1040-SR",
+        "filing requirements"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "207a2409"
+    },
+    {
+      "question": "For 2025, must an individual file a return if they had $350 of net earnings from self-employment, received $120 of wages from a church exempt from employer social security and Medicare taxes, and also received health savings account distributions?",
+      "ground_truth": "Yes. A 2025 return is required because the individual received health savings account distributions and had church wages of $108.28 or more from a church or qualified church-controlled organization exempt from employer social security and Medicare taxes. The $350 of net earnings from self-employment alone would not meet the filing trigger because the threshold is at least $400.",
+      "expected_pub": "17",
+      "gold_chunk_ids": [
+        "p17-2025::0048",
+        "p17-2025::0047",
+        "p17-2025::0049"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "filing-requirement",
+        "self-employment",
+        "church-wages",
+        "HSA-distributions"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "51fe3d5d"
+    },
+    {
+      "question": "A taxpayer with a foreign address is preparing a paper return and asks how to complete the address section. Specifically, what must be entered on the city line, what information must not be entered on that line, what additional fields below it must be completed, and is the country name allowed to be abbreviated?",
+      "ground_truth": "If the taxpayer has a foreign address, they must enter the city name on the appropriate line. They should not enter any other information on that line. They must complete the spaces below that line for the foreign country name, foreign province/state/county, and foreign postal code. The country name must not be abbreviated.",
+      "expected_pub": "17",
+      "gold_chunk_ids": [
+        "p17-2025::0084",
+        "p17-2025::0083",
+        "p17-2025::0085"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "filing-address",
+        "foreign-address",
+        "paper-return"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "fb533848"
+    },
+    {
+      "question": "Under the overview rules for claiming a dependent, can you claim a person as a dependent if that person is neither a U.S. citizen, U.S. resident alien, U.S. national, nor a resident of Canada or Mexico?",
+      "ground_truth": "No. You can't claim a person as a dependent unless that person is a U.S. citizen, U.S. resident alien, U.S. national, or a resident of Canada or Mexico.",
+      "expected_pub": "17",
+      "gold_chunk_ids": [
+        "p17-2025::0142",
+        "p17-2025::0141",
+        "p17-2025::0143"
+      ],
+      "tax_year": 2025,
+      "difficulty": "simple",
+      "topic_tags": [
+        "dependents",
+        "eligibility",
+        "citizenship-residency"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "a3fb5f4a"
+    },
+    {
+      "question": "A taxpayer files a joint return and provides more than half of the support for the taxpayer's spouse's stepparent, who does not live with them. Based on the excerpt, can the spouse's stepparent be the taxpayer's qualifying relative, and does the stepparent have to be related to the spouse who provides the support?",
+      "ground_truth": "Yes. If the taxpayer files a joint return, the person can be related to either spouse, and the person does not need to be related to the spouse who provides the support. Therefore, the spouse's stepparent may be the taxpayer's qualifying relative even if the stepparent does not live with them.",
+      "expected_pub": "17",
+      "gold_chunk_ids": [
+        "p17-2025::0182",
+        "p17-2025::0181",
+        "p17-2025::0183"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "qualifying-relative",
+        "joint-return",
+        "relationship-test",
+        "support-test"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "5016f524"
+    },
+    {
+      "question": "A taxpayer has no income subject to estimated tax in the first payment period, but begins receiving such income in a later payment period. Based solely on the excerpt, when must the first estimated tax payment be made, what options does the taxpayer have for paying the full year's estimated tax after that point, and what publication section is specifically identified as potentially helping avoid a penalty in this situation?",
+      "ground_truth": "The first estimated tax payment must be made by the due date for the later period in which the taxpayer first has income subject to estimated tax. After that, the taxpayer can either pay the entire estimated tax by the due date for that period or pay it in installments by that period's due date and the due dates for the remaining periods. The excerpt says the taxpayer may benefit from reading the Annualized Income Installment Method in chapter 2 of Pub. 505 for information on how to avoid a penalty.",
+      "expected_pub": "17",
+      "gold_chunk_ids": [
+        "p17-2025::0223",
+        "p17-2025::0222",
+        "p17-2025::0224"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "estimated-tax",
+        "payment-timing",
+        "annualized-income-installment-method",
+        "underpayment-penalty"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "c5efd48e"
+    },
+    {
+      "question": "If an individual uses the cash method of accounting and owns Series I savings bonds, when is the accrued interest payable, and can the taxpayer defer reporting that interest until redemption or maturity?",
+      "ground_truth": "For Series I bonds, the face value plus all accrued interest is payable at redemption. The taxpayer cannot postpone reporting interest until the bonds are redeemed or mature.",
+      "expected_pub": "17",
+      "gold_chunk_ids": [
+        "p17-2025::0299",
+        "p17-2025::0298",
+        "p17-2025::0300"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "interest-income",
+        "savings-bonds",
+        "cash-method"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "10d3ef25"
+    },
+    {
+      "question": "A cash-method taxpayer bought property on credit, and after the purchase the seller agreed to reduce the amount of debt still owed on that property. Based on the excerpt, should the taxpayer include the reduction in income, and what is the tax treatment of the reduction?",
+      "ground_truth": "No. In most cases, if the seller reduces the amount of debt owed for property purchased, the taxpayer does not have income from the reduction. Instead, the reduction is treated as a purchase price adjustment and reduces the taxpayer's basis in the property.",
+      "expected_pub": "17",
+      "gold_chunk_ids": [
+        "p17-2025::0369",
+        "p17-2025::0368",
+        "p17-2025::0370"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "cancellation-of-debt",
+        "purchase-price-adjustment",
+        "basis",
+        "cash-method"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "460db342"
+    },
+    {
+      "question": "A taxpayer obtained an extension of time to file and wants to withdraw an IRA contribution by the extended due date without tax. Under the excerpt, what two conditions must be met for each contribution withdrawn, and how is any loss on the contribution treated in determining the amount that must be withdrawn?",
+      "ground_truth": "For each contribution withdrawn, the taxpayer must (1) not have taken a deduction for the contribution, and (2) withdraw any interest or other income earned on the contribution. In figuring the amount that must be withdrawn, the taxpayer can take into account any loss on the contribution while it was in the IRA; if there was a loss, the net income earned on the contribution may be a negative amount.",
+      "expected_pub": "17",
+      "gold_chunk_ids": [
+        "p17-2025::0455",
+        "p17-2025::0454",
+        "p17-2025::0456"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "IRA",
+        "withdrawal-of-contributions",
+        "extensions",
+        "net-income-attributable"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "53bbf55f"
+    },
+    {
+      "question": "You are preparing a 2025 return for a taxpayer who died in 2025. The taxpayer was born before January 2, 1961, but had not yet reached age 65 at the time of death. For purposes of using Table 10-2 or Table 10-3 to determine the standard deduction, is the taxpayer treated as age 65 or older at the end of 2025?",
+      "ground_truth": "No. For a taxpayer who died in 2025, they are considered 65 or older at the end of 2025 only if they were 65 or older at the time of death. Even if born before January 2, 1961, they are not treated as 65 or older unless they had already reached age 65 when they died.",
+      "expected_pub": "17",
+      "gold_chunk_ids": [
+        "p17-2025::0488",
+        "p17-2025::0487",
+        "p17-2025::0489"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "standard deduction",
+        "death of taxpayer",
+        "age 65 rule"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "011ccfbd"
+    },
+    {
+      "question": "Can a taxpayer claim a deduction or credit for foreign income taxes paid on income that is exempt from U.S. tax under the foreign earned income exclusion or the foreign housing exclusion?",
+      "ground_truth": "No. You can't take a deduction or credit for foreign income taxes paid on income that is exempt from U.S. tax under the foreign earned income exclusion or the foreign housing exclusion.",
+      "expected_pub": "17",
+      "gold_chunk_ids": [
+        "p17-2025::0504",
+        "p17-2025::0503",
+        "p17-2025::0505"
+      ],
+      "tax_year": 2025,
+      "difficulty": "simple",
+      "topic_tags": [
+        "foreign-income-taxes",
+        "deduction-vs-credit",
+        "exclusions"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "84043c80"
+    },
+    {
+      "question": "For a taxpayer substantiating gambling winnings and losses, what specific information about the gambling establishment and the people present must be recorded, in addition to the amount won or lost?",
+      "ground_truth": "The taxpayer must record the name and address or location of the gambling establishment, the names of other persons present with the taxpayer at the gambling establishment, and the amount(s) won or lost.",
+      "expected_pub": "17",
+      "gold_chunk_ids": [
+        "p17-2025::0546",
+        "p17-2025::0545",
+        "p17-2025::0547"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "gambling",
+        "recordkeeping",
+        "itemized-deductions"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "690e8be6"
+    },
+    {
+      "question": "A taxpayer with taxable income of $220,000 wants to compare the 2025 tax shown in the rate schedules if filing as Single versus Head of household. Using the schedules in the excerpt, what is the tax under each status, and by how much is the Head of household tax lower?",
+      "ground_truth": "Single: $40,199.00 + 32% of ($220,000 - $197,300) = $40,199.00 + $7,264.00 = $47,463.00. Head of household: $38,460.00 + 32% of ($220,000 - $197,300) = $38,460.00 + $7,264.00 = $45,724.00. The Head of household tax is lower by $1,739.00.",
+      "expected_pub": "17",
+      "gold_chunk_ids": [
+        "p17-2025::0614",
+        "p17-2025::0613",
+        "p17-2025::0615"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "tax-rate-schedules",
+        "filing-status",
+        "tax-computation",
+        "2025"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "5d09c74e"
+    },
+    {
+      "question": "A taxpayer's spouse was born on February 14, 1960, and died on February 13, 2025. For purposes of determining whether the taxpayer must file a 2025 federal income tax return, is the spouse treated as age 65 or older at the end of 2025?",
+      "ground_truth": "Yes. A person is considered to reach age 65 on the day before the 65th birthday, so the spouse reached age 65 on February 13, 2025. Because the spouse was 65 or older at the time of death, the spouse is considered 65 or older at the end of 2025 for filing requirement purposes.",
+      "expected_pub": "501",
+      "gold_chunk_ids": [
+        "p501-2025::0009",
+        "p501-2025::0008",
+        "p501-2025::0010"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "filing-requirements",
+        "age-65-rule",
+        "deceased-spouse"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "331ba1a4"
+    },
+    {
+      "question": "A taxpayer's spouse died during the tax year. Before year-end, the taxpayer entered into a registered domestic partnership with another person, but did not enter into a marriage recognized under the laws of a state or territory of the United States. Based solely on the excerpt, is the taxpayer still considered married for the whole year for filing status purposes because of the deceased spouse, and with whom, if anyone, may the taxpayer file a joint return?",
+      "ground_truth": "Yes. The excerpt states that if a spouse died during the year, the taxpayer is considered married for the whole year for filing status purposes. Because the taxpayer did not remarry before the end of the tax year, the taxpayer can file a joint return for themself and the deceased spouse. A registered domestic partnership is not a marriage for federal tax purposes, so it does not count as remarriage.",
+      "expected_pub": "501",
+      "gold_chunk_ids": [
+        "p501-2025::0022",
+        "p501-2025::0021",
+        "p501-2025::0023"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "filing-status",
+        "spouse-died",
+        "joint-return",
+        "registered-domestic-partnership",
+        "marital-status"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "eccdf5b6"
+    },
+    {
+      "question": "A taxpayer wants to file as head of household based on supporting a parent who lived all year in a rest home. Under the excerpt, what two conditions must be met for the rest home costs to count toward the head of household home-maintenance test for the parent?",
+      "ground_truth": "The taxpayer must be able to claim the parent as a dependent, and the taxpayer must pay more than half the cost of keeping up the parent’s main home for the entire year. If the parent’s main home is a rest home or home for the elderly, paying more than half the cost of keeping the parent there counts as paying more than half the cost of keeping up the parent’s main home.",
+      "expected_pub": "501",
+      "gold_chunk_ids": [
+        "p501-2025::0039",
+        "p501-2025::0038",
+        "p501-2025::0040"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "head-of-household",
+        "parent-dependent",
+        "rest-home",
+        "keeping-up-home"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "05fe59a9"
+    },
+    {
+      "question": "A taxpayer's 18-year-old child lived with the taxpayer all year, and the child's spouse was in the Armed Forces. The spouse earned $35,000 during the year, and the couple filed a joint return. Based solely on the excerpt, can the taxpayer claim the child as a dependent, and why?",
+      "ground_truth": "No. The taxpayer can't claim the child as a dependent because, under Example 1, the 18-year-old child lived with the taxpayer all year, the child's spouse earned $35,000, and the couple filed a joint return; the excerpt specifically states that in this situation you can't claim your child as a dependent.",
+      "expected_pub": "501",
+      "gold_chunk_ids": [
+        "p501-2025::0047",
+        "p501-2025::0046",
+        "p501-2025::0048"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "dependents",
+        "joint-return-test",
+        "qualifying-child",
+        "examples"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "15f8bf23"
+    },
+    {
+      "question": "For purposes of the age test in this excerpt, what is the maximum age a child can be at the end of the year and still qualify as a student?",
+      "ground_truth": "Under age 24 at the end of the year.",
+      "expected_pub": "501",
+      "gold_chunk_ids": [
+        "p501-2025::0055",
+        "p501-2025::0054",
+        "p501-2025::0056"
+      ],
+      "tax_year": 2025,
+      "difficulty": "simple",
+      "topic_tags": [
+        "age test",
+        "student",
+        "qualifying child"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "495dadc2"
+    },
+    {
+      "question": "In Worksheet 2 for determining support, how should you treat amounts provided by the state and the fair rental value of a home owned by the person you supported when completing the worksheet?",
+      "ground_truth": "Amounts provided by the state are not included on line 1; they are included on line 23 instead. If the person you supported owned the home, you enter the fair rental value on line 6b and also include that amount on line 21.",
+      "expected_pub": "501",
+      "gold_chunk_ids": [
+        "p501-2025::0071",
+        "p501-2025::0070",
+        "p501-2025::0072"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "Worksheet 2",
+        "support test",
+        "state-provided funds",
+        "fair rental value"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "c53067d2"
+    },
+    {
+      "question": "A taxpayer is completing the support worksheet for an individual. The individual does not meet the tests to be the taxpayer’s qualifying child, so the taxpayer completes lines 23–26. Line 21 is $4,200, line 23 is $1,800, line 19 is $10,000, and line 20 is $3,900. Based on the worksheet, does the taxpayer meet the support test for the individual to be a qualifying relative, and if not, what limited exceptions does the excerpt say could still allow the taxpayer to claim the person as a dependent?",
+      "ground_truth": "No. Line 24 is $6,000 ($4,200 + $1,800). Line 25 is $4,000 ($10,000 - $6,000). Because line 25 is more than line 20 ($4,000 > $3,900), the taxpayer does meet the support test for the person to be a qualifying relative. Therefore, no exception is needed. If line 25 had not been more than line 20, the excerpt says the person could still be claimed only under a multiple support agreement, the support test for children of divorced or separated parents (or parents who live apart), or the special rule for kidnapped children.",
+      "expected_pub": "501",
+      "gold_chunk_ids": [
+        "p501-2025::0073",
+        "p501-2025::0072",
+        "p501-2025::0074"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "support test",
+        "qualifying relative",
+        "worksheet lines 23-26",
+        "dependency exceptions"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "7373c1f0"
+    },
+    {
+      "question": "For purposes of the member of household test, what types of special circumstances are listed as temporary absences during which a person is still considered to live with you?",
+      "ground_truth": "Illness, education, business, vacation, military service, or detention in a juvenile facility.",
+      "expected_pub": "501",
+      "gold_chunk_ids": [
+        "p501-2025::0087",
+        "p501-2025::0086",
+        "p501-2025::0088"
+      ],
+      "tax_year": 2025,
+      "difficulty": "simple",
+      "topic_tags": [
+        "dependents",
+        "member-of-household-test",
+        "temporary-absences"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "55a9407e"
+    },
+    {
+      "question": "In 2019, a taxpayer and the taxpayer's spouse began supporting the spouse's unmarried parent, Gene. The spouse died in 2024, and Gene does not live with the taxpayer. Under the relationship test in the excerpt, does Gene still meet that test, and what additional tests must be satisfied for the taxpayer to claim Gene as a dependent?",
+      "ground_truth": "Yes. Gene still meets the relationship test because relationships established by marriage aren't ended by death or divorce. The taxpayer can claim Gene as a dependent if all other tests are met, including the gross income test and the support test.",
+      "expected_pub": "501",
+      "gold_chunk_ids": [
+        "p501-2025::0090",
+        "p501-2025::0089",
+        "p501-2025::0091"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "qualifying-relative",
+        "relationship-test",
+        "support-test",
+        "gross-income-test"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "ffea521d"
+    },
+    {
+      "question": "A taxpayer owns a house where the taxpayer's parents live rent free. The furnished fair rental value is $5,400 per year, consisting of $3,600 for the house and $1,800 for furniture, but the furniture belongs to the parents. The taxpayer also pays $600 of the parents' utility bills, and utilities are not usually included in rent in that area. For support purposes, what is the total fair rental value of the lodging, and how much of that amount is treated as support provided by the taxpayer?",
+      "ground_truth": "The total fair rental value of the lodging is $6,000, computed as $3,600 for the unfurnished house + $1,800 for furnishings provided by the parents + $600 of utilities. Of that amount, the taxpayer is considered to provide $4,200, consisting of $3,600 for the house plus $600 for utilities.",
+      "expected_pub": "501",
+      "gold_chunk_ids": [
+        "p501-2025::0099",
+        "p501-2025::0098",
+        "p501-2025::0100"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "support-test",
+        "lodging",
+        "fair-rental-value",
+        "parents-as-dependents"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "68cd37a0"
+    },
+    {
+      "question": "For 2025, a taxpayer is considered age 65 for purposes of the higher standard deduction if born before what date?",
+      "ground_truth": "Before January 2, 1961.",
+      "expected_pub": "501",
+      "gold_chunk_ids": [
+        "p501-2025::0110",
+        "p501-2025::0109",
+        "p501-2025::0111"
+      ],
+      "tax_year": 2025,
+      "difficulty": "simple",
+      "topic_tags": [
+        "standard deduction",
+        "age 65",
+        "birth date rule"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "253ff4b1"
+    },
+    {
+      "question": "A taxpayer wants to complete an IRS mobile-friendly form that requires a signature and is deciding between electronic submission and mailing. Based solely on the excerpt, what must the taxpayer have to complete the form, what supporting material is required, and what filing options are available after completion?",
+      "ground_truth": "The taxpayer must have an IRS Online Account (OLA) to complete mobile-friendly forms that require signatures. They will need scans of their documents to support the submission. After completing the form, they can either submit the form online or download a copy for mailing.",
+      "expected_pub": "501",
+      "gold_chunk_ids": [
+        "p501-2025::0130",
+        "p501-2025::0129",
+        "p501-2025::0131"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "mobile-friendly forms",
+        "IRS Online Account",
+        "filing options",
+        "supporting documents"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "738f002e"
+    },
+    {
+      "question": "For differential wage payments to qualify under the excerpt, how long must the individual be an active duty member of the uniformed services?",
+      "ground_truth": "For a period of more than 30 days.",
+      "expected_pub": "525",
+      "gold_chunk_ids": [
+        "p525-2025::0011",
+        "p525-2025::0010",
+        "p525-2025::0012"
+      ],
+      "tax_year": 2025,
+      "difficulty": "simple",
+      "topic_tags": [
+        "differential wage payments",
+        "active duty",
+        "uniformed services"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "efa0c296"
+    },
+    {
+      "question": "An employer uses the special accounting period rule for a particular fringe benefit. If the benefit is provided during November and December, in which calendar year is it treated as paid, and what consistency rule applies to the employer's use of accounting periods for that benefit?",
+      "ground_truth": "Under the special accounting period rule, benefits provided during the last 2 months of the calendar year are treated as paid during the following calendar year. The employer may use different accounting periods for different fringe benefits, but must use the same accounting period for all employees who receive that particular benefit.",
+      "expected_pub": "525",
+      "gold_chunk_ids": [
+        "p525-2025::0016",
+        "p525-2025::0015",
+        "p525-2025::0017"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "fringe-benefits",
+        "accounting-periods",
+        "special-accounting-period-rule"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "ab811946"
+    },
+    {
+      "question": "A university employee rents qualified campus lodging from the educational institution. The lodging is appraised at $200,000, and the average annual rent for comparable university lodging paid by persons other than employees or students is $14,000. If the employee pays $11,000 annual rent, must any amount be included in income, and why?",
+      "ground_truth": "No amount is included in income. For qualified campus lodging, if the amount paid is less than the lesser of the appraised rental value or the average rent paid for comparable lodging, the difference is included in income. Here, the relevant comparison amount is the lesser amount of $14,000, and the excerpt’s example concludes that paying $11,000 results in no rental value being included in income.",
+      "expected_pub": "525",
+      "gold_chunk_ids": [
+        "p525-2025::0029",
+        "p525-2025::0028",
+        "p525-2025::0030"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "meals-and-lodging",
+        "qualified-campus-lodging",
+        "income-inclusion",
+        "educational-institution-housing"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "8e71c27b"
+    },
+    {
+      "question": "For a nonstatutory stock option, when is the fair market value of the option considered readily determinable under the excerpt?",
+      "ground_truth": "The FMV of an option can be readily determined if it is actively traded on an established market.",
+      "expected_pub": "525",
+      "gold_chunk_ids": [
+        "p525-2025::0054",
+        "p525-2025::0053",
+        "p525-2025::0055"
+      ],
+      "tax_year": 2025,
+      "difficulty": "simple",
+      "topic_tags": [
+        "nonstatutory stock options",
+        "fair market value",
+        "readily determinable value"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "92a35e82"
+    },
+    {
+      "question": "If a taxpayer sells stock acquired by exercising an incentive stock option and the ISO holding period requirement is satisfied, how is the resulting gain or loss characterized, and what additional determination is required before reporting the sale?",
+      "ground_truth": "If the holding period requirement is satisfied, the gain or loss from the sale is capital gain or loss. Before reporting the sale, the taxpayer must determine whether the holding period requirement was satisfied.",
+      "expected_pub": "525",
+      "gold_chunk_ids": [
+        "p525-2025::0061",
+        "p525-2025::0060",
+        "p525-2025::0062"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "ISO",
+        "holding-period",
+        "capital-gain-loss"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "5b964077"
+    },
+    {
+      "question": "A taxpayer wants to make the choice described in the excerpt after property is transferred. What filing methods are permitted, where must the filing be sent, and what is the latest deadline for making the choice?",
+      "ground_truth": "The taxpayer can make the choice by filing either a written statement or Form 15620. It must be filed with the Internal Revenue Service Center where the taxpayer files the return, and it must be filed no later than 30 days after the date the property was transferred.",
+      "expected_pub": "525",
+      "gold_chunk_ids": [
+        "p525-2025::0074",
+        "p525-2025::0073",
+        "p525-2025::0075"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "elections",
+        "filing-deadlines",
+        "property-transfers"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "c889f156"
+    },
+    {
+      "question": "If you pay the entire cost of an accident or health plan, must you include amounts received from the plan for personal injury or sickness in income on your tax return?",
+      "ground_truth": "No. If you pay the entire cost of the accident or health plan, you do not include amounts received from the plan for personal injury or sickness in income.",
+      "expected_pub": "525",
+      "gold_chunk_ids": [
+        "p525-2025::0088",
+        "p525-2025::0087",
+        "p525-2025::0089"
+      ],
+      "tax_year": 2025,
+      "difficulty": "simple",
+      "topic_tags": [
+        "accident-and-health-plan",
+        "nontaxable-income",
+        "personal-injury-or-sickness"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "caf4b5f5"
+    },
+    {
+      "question": "An employee qualified for workers’ compensation and later returned to work on light duty. While receiving workers’ compensation, part of that compensation also reduced the employee’s social security benefits. How are the light-duty salary payments and the portion of workers’ compensation that reduced social security benefits treated for federal income tax purposes under the excerpt?",
+      "ground_truth": "The salary payments for performing light duties are taxable as wages. The part of the workers’ compensation that reduced the employee’s social security benefits is treated as social security benefits and may be taxable.",
+      "expected_pub": "525",
+      "gold_chunk_ids": [
+        "p525-2025::0101",
+        "p525-2025::0100",
+        "p525-2025::0102"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "workers-compensation",
+        "social-security-benefits",
+        "wages",
+        "taxability"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "91a03852"
+    },
+    {
+      "question": "A corporation wants to insure an individual under a policy described in the excerpt. To satisfy the stated notice-and-consent requirement before the policy is issued, what two actions must occur, and what relationships listed in the excerpt would make the individual someone whose life can be insured under this rule?",
+      "ground_truth": "Before the policy is issued, the corporation must provide written notice about the insurance to the employee, and the employee must provide written consent to be insured. The excerpt lists the qualifying relationships as an insured who is a director, officer, or employee of the person, or who has a financial interest in the person's business.",
+      "expected_pub": "525",
+      "gold_chunk_ids": [
+        "p525-2025::0124",
+        "p525-2025::0123",
+        "p525-2025::0125"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "notice-and-consent",
+        "life-insurance",
+        "employee-benefit-rules"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "d9b96ca5"
+    },
+    {
+      "question": "A taxpayer repaid unemployment benefits in a later year rather than in the year received. Based on the excerpt, how is the repayment treated for tax purposes, where is it reported, and what additional rule applies if the repayment exceeds $3,000?",
+      "ground_truth": "If unemployment benefits are repaid in a later year, the taxpayer must include the full amount of the benefits in income for the year they were received. The repayment is deducted in the later year as an adjustment to gross income on Form 1040 or 1040-SR, and it is reported on Schedule 1 (Form 1040), line 24e. If the amount repaid in the later year is more than $3,000, the taxpayer may be able to take a credit against tax for the later year instead of deducting the amount repaid.",
+      "expected_pub": "525",
+      "gold_chunk_ids": [
+        "p525-2025::0151",
+        "p525-2025::0150",
+        "p525-2025::0152"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "unemployment-compensation",
+        "repayments",
+        "adjustments-to-income"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "823a36ea"
+    },
+    {
+      "question": "A taxpayer receives amounts under a divorce or separation instrument that was executed in 2017 and modified in 2020. The modification expressly states that the alimony is not deductible to the payer and not includible in the recipient's income. Based solely on the excerpt, are those amounts includible in the recipient's income?",
+      "ground_truth": "No. The excerpt states that amounts received under a divorce or separation instrument are not includible in income if the instrument was executed before 2019 but modified after 2018 and the modification expressly states the alimony isn't deductible to the payer or includible in the recipient's income.",
+      "expected_pub": "525",
+      "gold_chunk_ids": [
+        "p525-2025::0166",
+        "p525-2025::0165",
+        "p525-2025::0167"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "alimony",
+        "divorce-or-separation-instrument",
+        "income-inclusion"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "b3e1146e"
+    },
+    {
+      "question": "If a taxpayer receives Form W-2G for gambling winnings, which line should the amount from box 1 be reported on?",
+      "ground_truth": "Schedule 1 (Form 1040), line 8b.",
+      "expected_pub": "525",
+      "gold_chunk_ids": [
+        "p525-2025::0177",
+        "p525-2025::0176",
+        "p525-2025::0178"
+      ],
+      "tax_year": 2025,
+      "difficulty": "simple",
+      "topic_tags": [
+        "gambling-winnings",
+        "Form-W-2G",
+        "Schedule-1"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "3b89fb2a"
+    },
+    {
+      "question": "A taxpayer receives manufacturer incentive payments for selling a particular model of car while working as a salesperson at an automobile dealership. The payments are sent by the manufacturer through the employer rather than paid directly to the taxpayer. Based on the excerpt, where must the taxpayer report these payments, and does the method of payment affect their taxability?",
+      "ground_truth": "The taxpayer must include the manufacturer incentive payments as other income on Schedule 1 (Form 1040), line 8z, or on Schedule C (Form 1040) if self-employed. The method of payment does not affect taxability; the payments are includible in income whether received directly from the manufacturer or through the employer.",
+      "expected_pub": "525",
+      "gold_chunk_ids": [
+        "p525-2025::0184",
+        "p525-2025::0183",
+        "p525-2025::0185"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "manufacturer incentive payments",
+        "other income",
+        "Schedule 1",
+        "Schedule C"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "e7e10805"
+    },
+    {
+      "question": "A taxpayer's 2023 federal return claims both the earned income tax credit and the additional child tax credit. She expects that only the portion of her refund attributable to those credits will be delayed, and she wants to use an IRS-provided mobile method to monitor the refund. Based on the excerpt, is her expectation about a partial delay correct, and what IRS mobile option is specifically listed for checking refund status?",
+      "ground_truth": "No. The IRS can't issue refunds before mid-February for returns that claimed the EITC or the ACTC, and this applies to the entire refund, not just the portion associated with those credits. The listed IRS mobile option is to download the official IRS2Go app to a mobile device to check refund status.",
+      "expected_pub": "525",
+      "gold_chunk_ids": [
+        "p525-2025::0206",
+        "p525-2025::0205",
+        "p525-2025::0207"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "refunds",
+        "EITC",
+        "ACTC",
+        "IRS2Go",
+        "timing-rules"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "df5129ef"
+    },
+    {
+      "question": "On which line of Form 1040 or 1040-SR is taxable interest reported according to the excerpt?",
+      "ground_truth": "Taxable interest is reported on line 2b of Form 1040 or 1040-SR.",
+      "expected_pub": "550",
+      "gold_chunk_ids": [
+        "p550-2025::0021",
+        "p550-2025::0020",
+        "p550-2025::0022"
+      ],
+      "tax_year": 2025,
+      "difficulty": "simple",
+      "topic_tags": [
+        "taxable interest",
+        "Form 1040",
+        "reporting lines"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "0df12233"
+    },
+    {
+      "question": "Under the exception for loans of $10,000 or less, when do the below-market loan rules not apply to a gift loan between individuals, and what specific limitation in the excerpt prevents the exception from applying?",
+      "ground_truth": "The below-market loan rules do not apply on any day the total outstanding amount of loans between the borrower and lender is $10,000 or less, but for a gift loan between individuals this applies only if the loan is not directly used to buy or carry income-producing assets. In addition, the exception does not apply to term loans.",
+      "expected_pub": "550",
+      "gold_chunk_ids": [
+        "p550-2025::0033",
+        "p550-2025::0032",
+        "p550-2025::0034"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "below-market-loans",
+        "gift-loans",
+        "exceptions",
+        "loan-thresholds"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "4873f4b7"
+    },
+    {
+      "question": "A taxpayer buys a Treasury note at auction in a $100 denomination with a 7-year term and receives semiannual interest payments during the year. At maturity, the taxpayer elects to use the proceeds to purchase another security of the same type and term rather than taking cash. Based solely on the excerpt, how should the taxpayer report the interest, and what amount can be redeemed or reinvested at maturity?",
+      "ground_truth": "The taxpayer reports the Treasury note interest for the year it is paid, even though the note pays interest every 6 months. At maturity, the security can be redeemed for face value, or the proceeds from the maturing note can be used to reinvest in another note of the same type and term. In this case, the face value is $100, so $100 can be redeemed or reinvested.",
+      "expected_pub": "550",
+      "gold_chunk_ids": [
+        "p550-2025::0058",
+        "p550-2025::0057",
+        "p550-2025::0059"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "Treasury notes",
+        "interest reporting",
+        "maturity and redemption"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "c2bf813d"
+    },
+    {
+      "question": "Under the holding-period rule described in the excerpt, can a taxpayer count a day on which the taxpayer had an option to sell substantially identical stock or securities when determining whether the minimum holding period was met?",
+      "ground_truth": "No. A day during which the taxpayer had an option to sell substantially identical stock or securities cannot be counted toward the minimum holding period.",
+      "expected_pub": "550",
+      "gold_chunk_ids": [
+        "p550-2025::0110",
+        "p550-2025::0109",
+        "p550-2025::0111"
+      ],
+      "tax_year": 2025,
+      "difficulty": "simple",
+      "topic_tags": [
+        "qualified-dividends",
+        "holding-period",
+        "risk-of-loss"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "0a5450e6"
+    },
+    {
+      "question": "A taxpayer receives exempt-interest dividends from a mutual fund and is required to file a return. Based on the excerpt, are those dividends included in taxable income, must they still be reported on the return, and where should they appear on Form 1099-DIV?",
+      "ground_truth": "They are not included in taxable income, but they must still be shown on the tax return if the taxpayer has to file a return. They should be shown on Form 1099-DIV, box 12.",
+      "expected_pub": "550",
+      "gold_chunk_ids": [
+        "p550-2025::0123",
+        "p550-2025::0122",
+        "p550-2025::0124"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "exempt-interest-dividends",
+        "information-reporting",
+        "form-1099-div"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "0b055cca"
+    },
+    {
+      "question": "A promoter structures a package deal intended from the outset to generate losses and credits far exceeding the investor's present or future investment, using inflated appraisals and nonrecourse-loan losses so that, despite appearances, the investor bears little real risk. Under the excerpt, how is this arrangement characterized, and what disclosure obligations are identified for both a participant and a material advisor with respect to a reportable transaction?",
+      "ground_truth": "The arrangement is characterized as an abusive tax shelter, which is described as a marketing scheme involving artificial transactions with little or no economic reality and often using unrealistic allocations, inflated appraisals, losses tied to nonrecourse loans, mismatching of income and deductions, nonstandard financing techniques, or mischaracterization of the transaction's substance, while the taxpayer generally takes little risk. For a reportable transaction, a participant must disclose information for each reportable transaction in which the participant participates. A material advisor must disclose information about the transaction on Form 8918, Material Advisor Disclosure Statement, will receive a reportable transaction number for the disclosed transaction, and must provide that number to all persons to whom the advisor acted as a material advisor.",
+      "expected_pub": "550",
+      "gold_chunk_ids": [
+        "p550-2025::0150",
+        "p550-2025::0149",
+        "p550-2025::0151"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "abusive-tax-shelters",
+        "reportable-transactions",
+        "material-advisor",
+        "form-8918",
+        "disclosure-requirements"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "3a908205"
+    },
+    {
+      "question": "Under the excerpt, how does a taxpayer make the election to include qualified dividends in investment income?",
+      "ground_truth": "By completing Form 4952, line 4g, according to its instructions.",
+      "expected_pub": "550",
+      "gold_chunk_ids": [
+        "p550-2025::0178",
+        "p550-2025::0177",
+        "p550-2025::0179"
+      ],
+      "tax_year": 2025,
+      "difficulty": "simple",
+      "topic_tags": [
+        "investment income",
+        "qualified dividends",
+        "Form 4952",
+        "election"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "a4cfe261"
+    },
+    {
+      "question": "Under the excerpt, when is a corporate stock redemption treated as a sale or trade of stock? List the qualifying circumstances.",
+      "ground_truth": "A redemption is treated as a sale or trade of stock if any of these circumstances applies: (1) the redemption is not essentially equivalent to a dividend, (2) there is a substantially disproportionate redemption of stock, (3) there is a complete redemption of all the stock of the corporation owned by the shareholder, or (4) the redemption is a distribution in partial liquidation of a corporation.",
+      "expected_pub": "550",
+      "gold_chunk_ids": [
+        "p550-2025::0205",
+        "p550-2025::0204",
+        "p550-2025::0206"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "stock-redemptions",
+        "sale-or-trade-treatment",
+        "corporate-distributions"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "7a0ec7bc"
+    },
+    {
+      "question": "A taxpayer sells property and receives a debt instrument from the buyer as consideration. In one case, the note is newly issued by the buyer as part of the sale and does not provide for adequate stated interest. In a second case, the note transferred to the seller was previously issued by an unrelated third party. Based solely on the excerpt, how is the amount realized determined in each case, and what effect does any unstated interest have?",
+      "ground_truth": "Amount realized generally includes the money received plus the fair market value of any property or services received. If the buyer issues a debt instrument to the seller, the amount realized is determined by reference to the issue price of that debt instrument, which may or may not equal its fair market value. If the debt instrument does not provide for adequate stated interest, the unstated interest that must be reported as ordinary income reduces the amount realized from the sale. However, if the debt instrument was previously issued by a third party not part of the sale transaction, the fair market value of that debt instrument is used to determine the amount realized.",
+      "expected_pub": "550",
+      "gold_chunk_ids": [
+        "p550-2025::0252",
+        "p550-2025::0251",
+        "p550-2025::0253"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "amount-realized",
+        "debt-instruments",
+        "unstated-interest",
+        "issue-price",
+        "fair-market-value"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "1a8464b1"
+    },
+    {
+      "question": "When determining ordinary loss on section 1244 stock received in a trade for property, under what two conditions must the taxpayer reduce the stock's basis, and by what amount is the basis reduced?",
+      "ground_truth": "The basis must be reduced if both of these conditions are met: (1) the adjusted basis of the property immediately before the trade was more than its fair market value, and (2) the basis of the stock is determined by the basis of the property. The stock's basis is reduced by the difference between the adjusted basis of the property and its fair market value at the time of the trade.",
+      "expected_pub": "550",
+      "gold_chunk_ids": [
+        "p550-2025::0308",
+        "p550-2025::0307",
+        "p550-2025::0309"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "section 1244 stock",
+        "basis adjustment",
+        "property-for-stock exchange"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "0774065d"
+    },
+    {
+      "question": "A taxpayer buys an option to purchase 100 shares of XYZ stock, but never exercises it. The option expires worthless. Based solely on the excerpt, how is the loss characterized and on what date is the option treated as sold or traded?",
+      "ground_truth": "The loss is a capital loss, assuming the underlying XYZ stock would have been a capital asset in the taxpayer's hands. Because the option was not exercised, the taxpayer is considered to have sold or traded the option on the date it expired.",
+      "expected_pub": "550",
+      "gold_chunk_ids": [
+        "p550-2025::0338",
+        "p550-2025::0337",
+        "p550-2025::0339"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "options",
+        "capital-loss",
+        "expiration",
+        "character-of-gain-or-loss"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "c7b9c9cc"
+    },
+    {
+      "question": "Under the excerpt, what is the time period during which a successor position must be entered into in relation to the sale of the loss position?",
+      "ground_truth": "The successor position must be entered into during the period beginning 30 days before and ending 30 days after the sale of the loss position.",
+      "expected_pub": "550",
+      "gold_chunk_ids": [
+        "p550-2025::0360",
+        "p550-2025::0359",
+        "p550-2025::0361"
+      ],
+      "tax_year": 2025,
+      "difficulty": "simple",
+      "topic_tags": [
+        "successor position",
+        "30-day period",
+        "loss position"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "99ed1aae"
+    },
+    {
+      "question": "To keep an election valid if the taxpayer has not yet purchased qualified replacement property, what document must be attached to the return, for which tax year must it be attached, and by when must that document have been notarized?",
+      "ground_truth": "The taxpayer must attach the notarized statement of purchase to the income tax return for the year following the election year. The statement must have been notarized no later than 30 days after the purchase. If it is not attached for that year, the election will not be valid.",
+      "expected_pub": "550",
+      "gold_chunk_ids": [
+        "p550-2025::0374",
+        "p550-2025::0373",
+        "p550-2025::0375"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "section-1042",
+        "qualified-replacement-property",
+        "election-validity"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "4585fca9"
+    },
+    {
+      "question": "A taxpayer wants assistance with an IRS problem they have not been able to resolve on their own and also wants to report a systemic issue affecting many taxpayers without disclosing personal identifiable information. Based solely on the excerpt, which TAS resource should they use for each purpose, and what caution applies to the systemic issue report?",
+      "ground_truth": "For help with a problem the taxpayer has not been able to resolve with the IRS on their own, they should contact the Taxpayer Advocate Service, which can be reached by going to www.TaxpayerAdvocate.IRS.gov/Contact-Us, checking the local directory, or calling toll free at 877-777-4778. To report a systemic issue affecting many taxpayers, they should use www.IRS.gov/SAMS. When reporting the systemic issue, they should not include any personal identifiable information.",
+      "expected_pub": "550",
+      "gold_chunk_ids": [
+        "p550-2025::0421",
+        "p550-2025::0420",
+        "p550-2025::0422"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "Taxpayer Advocate Service",
+        "systemic issues",
+        "IRS contacts"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "45ac7101"
+    },
+    {
+      "question": "A taxpayer asks whether contributing to a Roth IRA allows a deduction and whether any separate form must be filed solely because of that Roth IRA contribution. Based on the excerpt, what is the correct answer to both issues?",
+      "ground_truth": "Contributions to a Roth IRA can never be deducted, and no form is required solely because the taxpayer contributes to a Roth IRA.",
+      "expected_pub": "590a",
+      "gold_chunk_ids": [
+        "p590a-2025::0014",
+        "p590a-2025::0013",
+        "p590a-2025::0015"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "Roth IRA",
+        "deductibility",
+        "filing requirements"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "0931d8d4"
+    },
+    {
+      "question": "According to the example in the excerpt, what modified AGI amount causes the 29-year-old single taxpayer covered by a retirement plan at work to be unable to deduct the $7,000 traditional IRA contribution for 2025?",
+      "ground_truth": "$90,000, which is above $89,000.",
+      "expected_pub": "590a",
+      "gold_chunk_ids": [
+        "p590a-2025::0049",
+        "p590a-2025::0048",
+        "p590a-2025::0050"
+      ],
+      "tax_year": 2025,
+      "difficulty": "simple",
+      "topic_tags": [
+        "traditional IRA",
+        "modified AGI",
+        "deduction limit",
+        "example"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "d676d648"
+    },
+    {
+      "question": "For 2025, if a married couple files jointly, the taxpayer is not covered by an employer plan but the spouse is covered, and both spouses contributed to IRAs, what modified AGI range makes Worksheet 1-2 applicable, and how must the deductions be figured?",
+      "ground_truth": "Worksheet 1-2 applies if modified AGI is over $236,000 but below $246,000 for married filing jointly when the taxpayer is not covered by an employer plan but the spouse is covered. If both spouses contributed to IRAs, each spouse's deduction must be figured separately.",
+      "expected_pub": "590a",
+      "gold_chunk_ids": [
+        "p590a-2025::0055",
+        "p590a-2025::0054",
+        "p590a-2025::0056"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "IRA deduction",
+        "Worksheet 1-2",
+        "modified AGI",
+        "married filing jointly"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "8f583c28"
+    },
+    {
+      "question": "A taxpayer receives a distribution from her deceased spouse's IRA. She is not the sole beneficiary. Under the excerpt, can she roll that distribution into her own IRA, and if so, what conditions must be satisfied?",
+      "ground_truth": "Yes. She can roll the distribution over into her own IRA within the 60-day time limit, even if she isn’t the sole beneficiary of her deceased spouse’s IRA, as long as the distribution is not a required distribution.",
+      "expected_pub": "590a",
+      "gold_chunk_ids": [
+        "p590a-2025::0066",
+        "p590a-2025::0065",
+        "p590a-2025::0067"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "inherited-ira",
+        "spouse-beneficiary",
+        "60-day-rollover",
+        "required-minimum-distributions"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "0d89221a"
+    },
+    {
+      "question": "On which lines of Form 1040, 1040-SR, or 1040-NR should a taxpayer report a rollover from one traditional IRA to the same or another traditional IRA?",
+      "ground_truth": "Report the rollover on lines 4a and 4b.",
+      "expected_pub": "590a",
+      "gold_chunk_ids": [
+        "p590a-2025::0079",
+        "p590a-2025::0078",
+        "p590a-2025::0080"
+      ],
+      "tax_year": 2025,
+      "difficulty": "simple",
+      "topic_tags": [
+        "traditional IRA",
+        "rollovers",
+        "reporting",
+        "Form 1040"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "1eab42dd"
+    },
+    {
+      "question": "A taxpayer receives distributed property from an employer retirement plan, sells the property, and rolls over all of the sale proceeds into a traditional IRA. Under the excerpt, how is the gain or loss on the sale treated, and how are the sale proceeds handled for gross income purposes?",
+      "ground_truth": "No gain or loss is recognized if all of the sale proceeds are rolled over into a traditional IRA. The sale proceeds, including any increase in value, are treated as part of the distribution and are not included in gross income.",
+      "expected_pub": "590a",
+      "gold_chunk_ids": [
+        "p590a-2025::0090",
+        "p590a-2025::0089",
+        "p590a-2025::0091"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "rollovers",
+        "traditional-ira",
+        "gain-or-loss",
+        "gross-income"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "6e85d646"
+    },
+    {
+      "question": "Assume a traditional IRA owner personally engages in a prohibited transaction by using the IRA as security for a loan. Based solely on the excerpt, does the owner owe the 15% tax on the amount involved and the 100% additional tax if the transaction is not corrected, or is a different consequence described?",
+      "ground_truth": "The owner is not liable for the 15% tax or the 100% additional tax in that situation. The excerpt states those excise taxes generally apply if someone other than the owner or beneficiary engages in a prohibited transaction. If the IRA ceases to be an IRA because of a prohibited transaction by the owner or beneficiary, the consequence is loss of IRA status, and the owner or beneficiary may have to pay other taxes instead.",
+      "expected_pub": "590a",
+      "gold_chunk_ids": [
+        "p590a-2025::0112",
+        "p590a-2025::0111",
+        "p590a-2025::0113"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "prohibited-transactions",
+        "excise-taxes",
+        "loss-of-ira-status"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "47941aa3"
+    },
+    {
+      "question": "A taxpayer contributes only to Roth IRAs for the year, is age 52, and has taxable compensation of $6,500. Under the excerpt, what is the general Roth IRA contribution limit before considering any modified AGI reduction, and when could that limit be reduced?",
+      "ground_truth": "The general limit is the lesser of $8,000 (because the taxpayer is age 50 or older) or taxable compensation. Since taxable compensation is $6,500, the limit is $6,500 before any AGI-based reduction. That limit could be reduced if the taxpayer's modified AGI is above a certain amount.",
+      "expected_pub": "590a",
+      "gold_chunk_ids": [
+        "p590a-2025::0136",
+        "p590a-2025::0135",
+        "p590a-2025::0137"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "Roth IRA",
+        "contribution limits",
+        "modified AGI",
+        "age-50 catch-up"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "dc3e158c"
+    },
+    {
+      "question": "A designated beneficiary who is not the surviving spouse inherits a deceased employee's plan account and wants to move part of an eligible rollover distribution into a Roth IRA. Under the excerpt, how must the rollover be completed, what type of Roth IRA must receive it, and what rule determines the beneficiary's RMDs in later years?",
+      "ground_truth": "The rollover must be completed by a direct trustee-to-trustee transfer, and it must go into an inherited Roth IRA. After the rollover, the beneficiary's RMDs for later years are determined based on whether the employee died before the required beginning date for taking distributions from the plan.",
+      "expected_pub": "590a",
+      "gold_chunk_ids": [
+        "p590a-2025::0149",
+        "p590a-2025::0148",
+        "p590a-2025::0150"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "nonspouse beneficiary",
+        "Roth IRA rollover",
+        "inherited Roth IRA",
+        "RMDs"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "a5a19d6e"
+    },
+    {
+      "question": "A taxpayer wants to complete an IRS mobile-friendly form that requires signatures and submit it electronically. Based on the excerpt, what account is required, what submission options are available, and what supporting materials must the taxpayer have?",
+      "ground_truth": "The taxpayer needs an IRS Online Account (OLA). The form can be submitted online or a copy can be downloaded for mailing. The taxpayer will need scans of documents to support the submission.",
+      "expected_pub": "590a",
+      "gold_chunk_ids": [
+        "p590a-2025::0164",
+        "p590a-2025::0163",
+        "p590a-2025::0165"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "IRS Online Account",
+        "mobile-friendly forms",
+        "electronic filing"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "e277d952"
+    },
+    {
+      "question": "If a taxpayer inherits a traditional IRA from their spouse, what is one of the two choices generally available to the surviving spouse under the excerpt?",
+      "ground_truth": "The surviving spouse can treat it as their own IRA by designating themselves as the account owner.",
+      "expected_pub": "590b",
+      "gold_chunk_ids": [
+        "p590b-2025::0011",
+        "p590b-2025::0010",
+        "p590b-2025::0012"
+      ],
+      "tax_year": 2025,
+      "difficulty": "simple",
+      "topic_tags": [
+        "traditional IRA",
+        "inherited IRA",
+        "spouse beneficiary"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "494f9726"
+    },
+    {
+      "question": "A beneficiary receives a distribution from a decedent's traditional IRA. Under the excerpt, when may the beneficiary claim a deduction for estate tax on that distribution, when is the deduction taken, and what is the rule if the taxable part of the distribution is not income in respect of a decedent?",
+      "ground_truth": "The beneficiary may deduct estate tax paid on any part of the distribution that is income with respect to a decedent. The deduction is taken for the tax year the income is reported. If the taxable part of the distribution is not income with respect to a decedent, the beneficiary must include that payment in income but cannot take any deduction for estate tax.",
+      "expected_pub": "590b",
+      "gold_chunk_ids": [
+        "p590b-2025::0016",
+        "p590b-2025::0015",
+        "p590b-2025::0017"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "beneficiaries",
+        "estate-tax-deduction",
+        "income-in-respect-of-a-decedent"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "801a4456"
+    },
+    {
+      "question": "A surviving spouse inherits an IRA and elects in the same year as the decedent's death to be treated as the owner rather than the beneficiary. For that year only, how must the required minimum distribution be determined, and can that required minimum distribution be rolled over without triggering the excess contribution rules?",
+      "ground_truth": "For the year the deceased spouse died, the surviving spouse does not determine the required minimum distribution using the spouse's own life expectancy. Instead, the spouse must take the deceased owner's required minimum distribution for that year, to the extent it was not already distributed to the owner before death. That required minimum distribution cannot be rolled over; any rollover contribution of a required minimum distribution is subject to the 6% tax on excess contributions.",
+      "expected_pub": "590b",
+      "gold_chunk_ids": [
+        "p590b-2025::0028",
+        "p590b-2025::0027",
+        "p590b-2025::0029"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "spousal-inherited-IRA",
+        "required-minimum-distributions",
+        "rollovers",
+        "excess-contributions"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "2043583e"
+    },
+    {
+      "question": "If a taxpayer first fails to be an eligible individual during the testing period for a qualified HSA funding distribution, in which tax year is that distribution included in gross income?",
+      "ground_truth": "It is included in gross income in the tax year the taxpayer first fails to be an eligible individual.",
+      "expected_pub": "590b",
+      "gold_chunk_ids": [
+        "p590b-2025::0052",
+        "p590b-2025::0051",
+        "p590b-2025::0053"
+      ],
+      "tax_year": 2025,
+      "difficulty": "simple",
+      "topic_tags": [
+        "HSA",
+        "qualified HSA funding distribution",
+        "testing period",
+        "gross income"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "962b21a4"
+    },
+    {
+      "question": "When reporting a nontaxable distribution from a traditional IRA on Form 8606, what must be completed first to determine both the nontaxable portion and the remaining basis after distributions, and what publication worksheet is referenced in the follow-up steps for completing Form 8606?",
+      "ground_truth": "You must complete Worksheet 1-1 before completing Form 8606 in order to report the nontaxable distribution and figure the remaining basis in the traditional IRA after distributions. Then, the instructions say to use Worksheet 1-2 in chapter 1 of Pub. 590-A, or the IRA Deduction Worksheet in the Form 1040 instructions.",
+      "expected_pub": "590b",
+      "gold_chunk_ids": [
+        "p590b-2025::0058",
+        "p590b-2025::0057",
+        "p590b-2025::0059"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "Form 8606",
+        "traditional IRA",
+        "nontaxable distribution",
+        "basis",
+        "worksheets"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "8cbf9be7"
+    },
+    {
+      "question": "A taxpayer under age 59½ in 2025 converted $5,000 from a traditional IRA to a Roth IRA and had $460 of basis in the converted amount. Based on the excerpt, what amount is taxable, where must it also be reported, and what additional tax warning applies?",
+      "ground_truth": "The taxable amount is $4,540, computed as $5,000 minus $460. If more than zero, it must also be included on 2025 Form 1040, 1040-SR, or 1040-NR, line 4b. The excerpt also notes that the taxpayer may be subject to an additional 10% tax on the amount on line 15c if the taxpayer was under age 59½ at the time of the distribution.",
+      "expected_pub": "590b",
+      "gold_chunk_ids": [
+        "p590b-2025::0071",
+        "p590b-2025::0070",
+        "p590b-2025::0072"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "Form 8606",
+        "Roth conversions",
+        "taxable amount",
+        "basis",
+        "additional 10% tax"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "ddcfcd15"
+    },
+    {
+      "question": "If an IRA invests in collectibles, how is the amount invested treated for tax purposes in the year of the investment?",
+      "ground_truth": "The amount invested is considered distributed to you in the year invested.",
+      "expected_pub": "590b",
+      "gold_chunk_ids": [
+        "p590b-2025::0084",
+        "p590b-2025::0083",
+        "p590b-2025::0085"
+      ],
+      "tax_year": 2025,
+      "difficulty": "simple",
+      "topic_tags": [
+        "IRA",
+        "collectibles",
+        "deemed-distribution"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "c8b2a7e0"
+    },
+    {
+      "question": "For purposes of determining the portion of an IRA distribution that is not subject to the 10% additional tax for qualified higher education expenses, whose education may qualify, and which funding sources used to pay those expenses are specifically included versus specifically excluded under the excerpt?",
+      "ground_truth": "The education must be for you, your spouse, or the children or grandchildren of you or your spouse. In determining the amount of the distribution that isn't subject to the 10% additional tax, qualified higher education expenses paid with the following funds are included: payment for services, such as wages; a loan; a gift; an inheritance given to either the student or the individual making the withdrawal; and a withdrawal from personal savings, including savings from a qualified tuition program. Expenses paid with tax-free distributions from a Coverdell education savings account are not included.",
+      "expected_pub": "590b",
+      "gold_chunk_ids": [
+        "p590b-2025::0097",
+        "p590b-2025::0096",
+        "p590b-2025::0098"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "IRA-distributions",
+        "10%-additional-tax",
+        "qualified-higher-education-expenses"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "3780ab02"
+    },
+    {
+      "question": "A taxpayer made a Roth IRA contribution for the year and then withdrew the entire contribution plus its net earnings before the due date of the return, using the extended due date because the taxpayer had an extension to file. Based solely on the excerpt, how is that withdrawal treated for tax purposes, and what, if anything, must be included in income and for which year?",
+      "ground_truth": "If the contribution and its net earnings are withdrawn by the due date of the return, including the extended due date when the taxpayer has an extension, the contribution is treated as if it was never made. The withdrawal of the contribution itself is tax free, but the net earnings on the contribution must be included in income for the year in which the contribution was made.",
+      "expected_pub": "590b",
+      "gold_chunk_ids": [
+        "p590b-2025::0119",
+        "p590b-2025::0118",
+        "p590b-2025::0120"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "Roth IRA",
+        "withdrawal by due date",
+        "extensions",
+        "earnings inclusion",
+        "contributions"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "448bbd46"
+    },
+    {
+      "question": "A taxpayer wants to amend a previously filed return using Form 1040-X. Based on the excerpt, what is the general deadline for filing Form 1040-X, and how is that deadline measured?",
+      "ground_truth": "Generally, Form 1040-X must be filed within 3 years after the date the original return was filed, or within 2 years after the date the tax was paid, whichever is later.",
+      "expected_pub": "590b",
+      "gold_chunk_ids": [
+        "p590b-2025::0145",
+        "p590b-2025::0144",
+        "p590b-2025::0146"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "Form 1040-X",
+        "amended returns",
+        "filing deadlines"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "71c984ed"
+    },
+    {
+      "question": "A taxpayer needs help computing a required minimum distribution and has not taken all assets from all traditional IRAs before the applicable beginning age. Based on the excerpt, which appendix contains the life expectancy tables for that computation, what are the three specific tables listed there, and which appendices are identified as worksheets for determining required minimum distributions?",
+      "ground_truth": "The life expectancy tables are in Appendix B. The three tables listed are Table I (Single Life Expectancy), Table II (Joint Life and Last Survivor Expectancy), and Table III (Uniform Lifetime). The worksheets for determining required minimum distributions are in Appendices A-1, A-2, and A-3.",
+      "expected_pub": "590b",
+      "gold_chunk_ids": [
+        "p590b-2025::0160",
+        "p590b-2025::0159",
+        "p590b-2025::0161"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "required minimum distributions",
+        "appendices",
+        "life expectancy tables",
+        "worksheets"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "535df51a"
+    },
+    {
+      "question": "Under Appendix B, Table II, what life expectancy factor applies if the IRA owner is age 70 and the spouse is age 47, assuming the spouse is more than 10 years younger and is the sole beneficiary of the IRA?",
+      "ground_truth": "For an owner age 70 and spouse age 47, the Table II joint and last survivor life expectancy factor is 39.7. This table is for use only when the spouse is more than 10 years younger and is the sole beneficiary of the IRA.",
+      "expected_pub": "590b",
+      "gold_chunk_ids": [
+        "p590b-2025::0182",
+        "p590b-2025::0181",
+        "p590b-2025::0183"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "IRA",
+        "life expectancy table",
+        "sole beneficiary",
+        "spouse more than 10 years younger"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "c9294286"
+    },
+    {
+      "question": "For 2025, what are the earned income and AGI limits for a married couple filing jointly with two qualifying children who have valid SSNs to be eligible for the Earned Income Credit, and what is the maximum investment income they can have?",
+      "ground_truth": "They must have earned less than $64,430, their AGI must also be less than $64,430, and their investment income must be $11,950 or less.",
+      "expected_pub": "596",
+      "gold_chunk_ids": [
+        "p596-2025::0008",
+        "p596-2025::0007",
+        "p596-2025::0009"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "EIC",
+        "income-limits",
+        "AGI",
+        "investment-income",
+        "married-filing-jointly",
+        "qualifying-children"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "03a573a3"
+    },
+    {
+      "question": "A taxpayer is completing Worksheet 1 for EIC investment income. Form 1040, line 7a shows a $1,200 capital gain. Form 4797, line 7 shows a $1,800 gain, and the taxpayer also completed lines 8 and 9 of Form 4797, with line 9 showing a $900 gain. What amount should be entered on Worksheet 1, line 7?",
+      "ground_truth": "Worksheet 1, line 6 uses Form 4797, line 9 instead of line 7 because lines 8 and 9 of Form 4797 were completed, so line 6 is $900. Line 5 is $1,200 from Form 1040, line 7a. Line 7 is line 5 minus line 6, or $300. Because the result is not less than zero, the amount entered on Worksheet 1, line 7 is $300.",
+      "expected_pub": "596",
+      "gold_chunk_ids": [
+        "p596-2025::0020",
+        "p596-2025::0019",
+        "p596-2025::0021"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "EIC",
+        "Worksheet 1",
+        "investment income",
+        "capital gain net income",
+        "Form 4797"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "cb9fb202"
+    },
+    {
+      "question": "For purposes of figuring the Earned Income Credit, are amounts received for services performed while an inmate in a penal institution treated as earned income?",
+      "ground_truth": "No. Amounts received for services performed while an inmate in a penal institution aren't earned income when figuring the EIC.",
+      "expected_pub": "596",
+      "gold_chunk_ids": [
+        "p596-2025::0027",
+        "p596-2025::0026",
+        "p596-2025::0028"
+      ],
+      "tax_year": 2025,
+      "difficulty": "simple",
+      "topic_tags": [
+        "EIC",
+        "earned-income",
+        "inmate-income"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "cb5fb7ea"
+    },
+    {
+      "question": "For a taxpayer claiming EIC with a qualifying child who lived with the taxpayer in the United States for more than half of 2025, what boxes on Form 1040 or 1040-SR must be checked, and what additional page 1 checkbox is required?",
+      "ground_truth": "The taxpayer must check both box (a) and box (b) on row (5) of the Dependents section on page 1 of Form 1040 or 1040-SR, and also check the box to the right of the address block on page 1 of Form 1040 or 1040-SR.",
+      "expected_pub": "596",
+      "gold_chunk_ids": [
+        "p596-2025::0035",
+        "p596-2025::0034",
+        "p596-2025::0036"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "EIC",
+        "qualifying-child",
+        "Form-1040",
+        "residency-test"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "1c7753c0"
+    },
+    {
+      "question": "A taxpayer's 18-year-old child lived with the taxpayer all year and otherwise meets the EIC qualifying child tests. The child and the child's 17-year-old spouse earned $800 total from part-time jobs, had no other income, had no child, were not required to file, and filed a joint return solely to obtain a refund of taxes withheld from their wages. Under the excerpt, does the joint return prevent the child from being the taxpayer's qualifying child for EIC purposes?",
+      "ground_truth": "No. The joint return does not prevent the child from being the taxpayer's qualifying child in this case because the exception to the joint return test applies when the couple files jointly only to get a refund of withheld taxes and all other tests are met.",
+      "expected_pub": "596",
+      "gold_chunk_ids": [
+        "p596-2025::0042",
+        "p596-2025::0041",
+        "p596-2025::0043"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "EIC",
+        "qualifying child",
+        "joint return test",
+        "exception",
+        "refund of withheld taxes"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "14345009"
+    },
+    {
+      "question": "Under the excerpt, for a spouse filing married filing separately to claim the EIC as a separated spouse not filing a joint return, how long must the spouses have lived apart in 2025?",
+      "ground_truth": "They must have lived apart for the last 6 months of 2025.",
+      "expected_pub": "596",
+      "gold_chunk_ids": [
+        "p596-2025::0049",
+        "p596-2025::0048",
+        "p596-2025::0050"
+      ],
+      "tax_year": 2025,
+      "difficulty": "simple",
+      "topic_tags": [
+        "EIC",
+        "married-filing-separately",
+        "separated-spouse",
+        "eligibility"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "8b757187"
+    },
+    {
+      "question": "A married taxpayer files a joint 2025 return with a spouse who died during 2025. For purposes of the EIC age test when the taxpayer has no qualifying child, under what circumstances is the age test met based on either spouse's age?",
+      "ground_truth": "The age test is met if, at the end of 2025, the taxpayer is at least age 25 but under age 65, or if the deceased spouse was at least age 25 but under age 65 at the time of death.",
+      "expected_pub": "596",
+      "gold_chunk_ids": [
+        "p596-2025::0057",
+        "p596-2025::0056",
+        "p596-2025::0058"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "EIC",
+        "age test",
+        "joint return",
+        "death of spouse",
+        "no qualifying child"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "3d6af3ec"
+    },
+    {
+      "question": "A taxpayer asks the IRS to compute their earned income credit on Form 1040. Based solely on this excerpt, under what eligibility conditions should the taxpayer request that the IRS figure the EIC, and what additional limitation applies if the taxpayer’s credit was reduced or disallowed for a year after 1996?",
+      "ground_truth": "The taxpayer should ask the IRS to figure the EIC only if they are eligible for it. To be eligible, they must meet Rule 15 in this chapter, the rules in chapter 1, and either chapter 2 or chapter 3, whichever applies. In addition, if their credit was reduced or disallowed for any year after 1996, the rules in chapter 5 may also apply.",
+      "expected_pub": "596",
+      "gold_chunk_ids": [
+        "p596-2025::0070",
+        "p596-2025::0069",
+        "p596-2025::0071"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "EIC",
+        "IRS-computed-credit",
+        "eligibility-rules",
+        "disallowed-credit"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "a378320b"
+    },
+    {
+      "question": "At what amount of net earnings from self-employment does the excerpt say you must be sure to correctly fill out Schedule SE (Form 1040) and pay the proper amount of self-employment tax to avoid losing part of the EIC?",
+      "ground_truth": "$400 or more of net earnings from self-employment.",
+      "expected_pub": "596",
+      "gold_chunk_ids": [
+        "p596-2025::0072",
+        "p596-2025::0071",
+        "p596-2025::0073"
+      ],
+      "tax_year": 2025,
+      "difficulty": "simple",
+      "topic_tags": [
+        "EIC",
+        "self-employment",
+        "Schedule SE",
+        "thresholds"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "09ebd7a6"
+    },
+    {
+      "question": "A taxpayer itemizes deductions on Schedule A (Form 1040), wants to compute a deductible sales tax amount, and also wants to estimate how changing Form W-4 withholding would affect both refund or tax due and take-home pay. Based solely on the excerpt, which two IRS online tools should the taxpayer use, and what does each tool specifically do?",
+      "ground_truth": "The taxpayer should use the Sales Tax Deduction Calculator at IRS.gov/SalesTax, which figures the amount the taxpayer can claim if they itemize deductions on Schedule A (Form 1040), and the Tax Withholding Estimator at IRS.gov/W4App, which helps estimate the federal income tax the taxpayer wants an employer to withhold from a paycheck and shows how withholding affects refund, take-home pay, or tax due.",
+      "expected_pub": "596",
+      "gold_chunk_ids": [
+        "p596-2025::0089",
+        "p596-2025::0088",
+        "p596-2025::0090"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "IRS online tools",
+        "withholding",
+        "Schedule A",
+        "sales tax deduction"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "1c5a8594"
+    },
+    {
+      "question": "A taxpayer has no qualifying children with valid SSNs. If the amount looked up from the worksheet is $26,210, what Earned Income Credit is allowed, and how does the result change if the worksheet amount is $26,214?",
+      "ground_truth": "If the worksheet amount is $26,210, the credit is $1 because the amount is at least $26,200 but less than $26,214 and the taxpayer has no qualifying children with valid SSNs. If the worksheet amount is $26,214, the taxpayer can't take the credit.",
+      "expected_pub": "596",
+      "gold_chunk_ids": [
+        "p596-2025::0114",
+        "p596-2025::0113",
+        "p596-2025::0115"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "EIC",
+        "worksheet-thresholds",
+        "no-qualifying-children",
+        "valid-SSN"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "48254097"
+    },
+    {
+      "question": "A taxpayer has one qualifying child with a valid SSN. Based on the worksheet amount, determine the Earned Income Credit in each of these edge cases: $50,433, $50,434, and $50,500.",
+      "ground_truth": "If the worksheet amount is $50,433, the credit is $3 because it is at least $50,400 but less than $50,434. If the worksheet amount is $50,434 or $50,500, the taxpayer can't take the credit because amounts of $50,434 or more are not eligible.",
+      "expected_pub": "596",
+      "gold_chunk_ids": [
+        "p596-2025::0126",
+        "p596-2025::0125",
+        "p596-2025::0127"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "EIC",
+        "income-thresholds",
+        "qualifying-child",
+        "valid-SSN"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "99173f27"
+    },
+    {
+      "question": "For what plan years do the amendments regarding telehealth and other remote care services apply under Public Law 119-21?",
+      "ground_truth": "The amendments apply to plan years beginning after 2024.",
+      "expected_pub": "969",
+      "gold_chunk_ids": [
+        "p969-2025::0000",
+        "p969-2025::0001"
+      ],
+      "tax_year": 2025,
+      "difficulty": "simple",
+      "topic_tags": [
+        "HSA",
+        "telehealth",
+        "effective-date"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "088603c6"
+    },
+    {
+      "question": "For 2023, an eligible individual receives HSA contributions from a family member and from the individual's employer. How are those contributions treated for federal income tax purposes, and does the individual's ability to deduct nonemployer contributions depend on itemizing deductions?",
+      "ground_truth": "An HSA may receive contributions from any other person, including a family member and an employer, on behalf of an eligible individual. Employer contributions are not included in income. Contributions other than employer contributions are deductible on the eligible individual's return whether or not the individual itemizes deductions.",
+      "expected_pub": "969",
+      "gold_chunk_ids": [
+        "p969-2025::0005",
+        "p969-2025::0004",
+        "p969-2025::0006"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "HSA",
+        "contributions",
+        "deduction",
+        "employer-contributions"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "4b258857"
+    },
+    {
+      "question": "Assume a taxpayer has HDHP family coverage. The taxpayer's spouse is enrolled in a non-HDHP plan, but the taxpayer is not covered by that spouse's plan. In addition, the taxpayer separately carries insurance that pays only for liabilities incurred under workers' compensation laws and for a specific disease. Based solely on the excerpt, does the taxpayer fail HSA eligibility because of other health coverage?",
+      "ground_truth": "No. The excerpt states that if you (and your spouse, if you have family coverage) have HDHP coverage, you generally can't have other health coverage, but you can still be an eligible individual if your spouse has non-HDHP coverage provided you aren't covered by that plan. It also states you can have additional insurance that provides benefits only for liabilities incurred under workers' compensation laws and for a specific disease or illness. Therefore, those facts do not by themselves cause the taxpayer to fail eligibility.",
+      "expected_pub": "969",
+      "gold_chunk_ids": [
+        "p969-2025::0013",
+        "p969-2025::0012",
+        "p969-2025::0014"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "HSA eligibility",
+        "other health coverage",
+        "spousal coverage",
+        "permitted insurance"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "3fe6c072"
+    },
+    {
+      "question": "After retirement, if an individual has an HRA that pays or reimburses only medical expenses incurred after retirement, are they still eligible to make contributions to an HSA?",
+      "ground_truth": "No. After retirement with such an HRA, the individual is no longer eligible to make contributions to an HSA.",
+      "expected_pub": "969",
+      "gold_chunk_ids": [
+        "p969-2025::0018",
+        "p969-2025::0017",
+        "p969-2025::0019"
+      ],
+      "tax_year": 2025,
+      "difficulty": "simple",
+      "topic_tags": [
+        "HRA",
+        "HSA eligibility",
+        "retirement"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "2d781828"
+    },
+    {
+      "question": "For 2025, if both spouses are age 55 or older, neither is enrolled in Medicare, and both are eligible individuals with family coverage, what is the maximum total HSA contribution allowed, and how must the additional contribution be made?",
+      "ground_truth": "The maximum total HSA contribution under family coverage is $10,550. Each spouse must make their own additional contribution to their own HSA.",
+      "expected_pub": "969",
+      "gold_chunk_ids": [
+        "p969-2025::0023",
+        "p969-2025::0022",
+        "p969-2025::0024"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "HSA",
+        "married-taxpayers",
+        "catch-up-contributions",
+        "family-coverage"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "d5acd7d2"
+    },
+    {
+      "question": "A taxpayer begins the year with $2,400 of excess HSA contributions still in the account. For the current year, the taxpayer's maximum HSA contribution limit is $4,150. During the year, $3,000 is contributed to the HSA, consisting of the taxpayer's own contributions, employer contributions, and a qualified HSA funding distribution. Based solely on the rule for deducting an excess contribution in a later year, what is the maximum excess contribution from prior years that the taxpayer may deduct for the current year, and how is that amount determined?",
+      "ground_truth": "The maximum deductible excess contribution is $1,150. The deductible amount is the lesser of: (1) the year's maximum HSA contribution limit minus all amounts contributed for the year, and (2) the total excess contributions in the HSA at the beginning of the year. Here, $4,150 minus $3,000 equals $1,150, and the beginning excess is $2,400, so the lesser amount is $1,150. Amounts contributed for the year include contributions by the taxpayer, the employer, any other person, and any qualified HSA funding distribution.",
+      "expected_pub": "969",
+      "gold_chunk_ids": [
+        "p969-2025::0028",
+        "p969-2025::0027",
+        "p969-2025::0029"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "HSA",
+        "excess-contributions",
+        "deduction-limit",
+        "qualified-HSA-funding-distribution"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "df286727"
+    },
+    {
+      "question": "What additional tax applies to deemed distributions from an HSA that are included in income and not treated as used to pay qualified medical expenses?",
+      "ground_truth": "An additional 20% tax applies.",
+      "expected_pub": "969",
+      "gold_chunk_ids": [
+        "p969-2025::0032",
+        "p969-2025::0031",
+        "p969-2025::0033"
+      ],
+      "tax_year": 2025,
+      "difficulty": "simple",
+      "topic_tags": [
+        "HSA",
+        "deemed distributions",
+        "additional tax"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "b6a60196"
+    },
+    {
+      "question": "A small employer started Archer MSAs when it had 50 or fewer employees and made an excludable or deductible Archer MSA contribution for the last year it had 50 or fewer employees. After that, the employer expanded. Under the growing employer rule in the excerpt, what additional employee-count condition must be met for the employer to continue to satisfy the small employer requirement?",
+      "ground_truth": "The employer must have had an average of 200 or fewer employees each year after 1996.",
+      "expected_pub": "969",
+      "gold_chunk_ids": [
+        "p969-2025::0041",
+        "p969-2025::0040",
+        "p969-2025::0042"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "Archer MSA",
+        "small employer",
+        "growing employer"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "cb6f874f"
+    },
+    {
+      "question": "A taxpayer is covered by a 2025 family HDHP with a $6,000 annual deductible and a $10,400 maximum annual out-of-pocket limit. Based solely on the excerpt's 2025 HDHP limits table, does this plan fall within the stated family-coverage deductible and out-of-pocket parameters, and what are those parameters?",
+      "ground_truth": "Yes. For 2025 family coverage, the excerpt states the minimum annual deductible is $5,700, the maximum annual deductible is $8,550, and the maximum annual out-of-pocket expenses are $10,500. A $6,000 deductible is within the $5,700 to $8,550 range, and a $10,400 out-of-pocket limit does not exceed the $10,500 maximum.",
+      "expected_pub": "969",
+      "gold_chunk_ids": [
+        "p969-2025::0042",
+        "p969-2025::0041",
+        "p969-2025::0043"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "HDHP",
+        "family coverage",
+        "2025 limits",
+        "deductible limits",
+        "out-of-pocket maximum"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "858a3db4"
+    },
+    {
+      "question": "Within how many days must a distribution from an Archer MSA be rolled over into another Archer MSA or an HSA for the rollover to be nontaxable?",
+      "ground_truth": "The rollover must be completed within 60 days.",
+      "expected_pub": "969",
+      "gold_chunk_ids": [
+        "p969-2025::0051",
+        "p969-2025::0050",
+        "p969-2025::0052"
+      ],
+      "tax_year": 2025,
+      "difficulty": "simple",
+      "topic_tags": [
+        "Archer MSA",
+        "rollovers",
+        "60-day rule"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "11434030"
+    },
+    {
+      "question": "Under an FSA, how are employee salary reduction contributions and general employer contributions treated for federal income and employment tax purposes, and what is the exception for employer contributions related to long-term care coverage?",
+      "ground_truth": "You do not pay federal income tax or employment taxes on the salary you contribute to the FSA or on amounts your employer contributes to the FSA. However, employer contributions made to provide coverage for long-term care must be included in income.",
+      "expected_pub": "969",
+      "gold_chunk_ids": [
+        "p969-2025::0056",
+        "p969-2025::0055",
+        "p969-2025::0057"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "FSA",
+        "tax-treatment",
+        "employer-contributions",
+        "long-term-care"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "51e78ddb"
+    },
+    {
+      "question": "An employee who is a reservist is ordered to active duty for 150 days. The employer's health FSA has been amended to allow qualified reservist distributions, and the employee requests a distribution during the period beginning on the date of the order. Based solely on the excerpt, does the requested distribution qualify as a qualified reservist distribution, and if not, which specific requirement is not met?",
+      "ground_truth": "No. It does not qualify because a qualified reservist distribution is allowed only if the reservist is ordered or called to active duty for a period of more than 179 days or for an indefinite period. A 150-day active duty order does not meet that requirement.",
+      "expected_pub": "969",
+      "gold_chunk_ids": [
+        "p969-2025::0058",
+        "p969-2025::0057",
+        "p969-2025::0059"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "health FSA",
+        "qualified reservist distribution",
+        "active duty requirement"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "89917c02"
+    },
+    {
+      "question": "Can a self-employed individual qualify for a Health Reimbursement Arrangement (HRA)?",
+      "ground_truth": "No. Self-employed persons aren't eligible for HRAs.",
+      "expected_pub": "969",
+      "gold_chunk_ids": [
+        "p969-2025::0063",
+        "p969-2025::0062",
+        "p969-2025::0064"
+      ],
+      "tax_year": 2025,
+      "difficulty": "simple",
+      "topic_tags": [
+        "HRA",
+        "eligibility",
+        "self-employed"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "b2d3a138"
+    },
+    {
+      "question": "A taxpayer with limited English proficiency asks where the IRS Over-the-Phone Interpreter (OPI) Service is available and whether Haitian Creole is one of the languages offered. Based on the excerpt, what locations provide the service and is Haitian Creole included?",
+      "ground_truth": "The OPI Service is available at Taxpayer Assistance Centers (TACs), most IRS offices, and every VITA/TCE tax return site. Yes, Haitian Creole is one of the languages offered.",
+      "expected_pub": "969",
+      "gold_chunk_ids": [
+        "p969-2025::0068",
+        "p969-2025::0067",
+        "p969-2025::0069"
+      ],
+      "tax_year": 2025,
+      "difficulty": "medium",
+      "topic_tags": [
+        "IRS services",
+        "language assistance",
+        "OPI Service"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "c705c920"
+    },
+    {
+      "question": "A taxpayer receives an unsolicited text message with a shortened link asking them to verify their bank account password and PIN to release a refund. Based solely on the excerpt, how should this contact be characterized, and what specific types of information does the IRS state it does not request through that method?",
+      "ground_truth": "The contact should be treated as tax-related identity theft or a fraudulent attempt to obtain personal information, because the IRS does not initiate contact with taxpayers by text messages, including shortened links, to request or verify personal or financial information. The IRS specifically says this includes requests for PINs, passwords, or similar information for credit cards, banks, or other financial accounts.",
+      "expected_pub": "969",
+      "gold_chunk_ids": [
+        "p969-2025::0074",
+        "p969-2025::0073",
+        "p969-2025::0075"
+      ],
+      "tax_year": 2025,
+      "difficulty": "complex",
+      "topic_tags": [
+        "identity-theft",
+        "irs-contact-methods",
+        "fraud-prevention"
+      ],
+      "created_by": "generated",
+      "verified_by": null,
+      "verified_at": null,
+      "notes": "",
+      "id": "6177a0b5"
+    }
+  ]
+}

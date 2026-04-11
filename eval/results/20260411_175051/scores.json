@@ -1,0 +1,74 @@
+[
+  {
+    "id": "TIP-14",
+    "category": "III. Tipped & Overtime Workers",
+    "question": "Does my high income disqualify me from the overtime deduction?",
+    "ground_truth": "Yes. The overtime deduction begins to phase out at $150,000 (Single) or $300,000 (Joint). At $200,000 MAGI, your deduction is significantly reduced.",
+    "candidate_answer": "Based on the provided excerpts, your high income may affect your eligibility for the overtime deduction due to specific income thresholds.\n\n- The overtime deduction has a phase-out threshold starting at $150,000 for single filers and $300,000 for married filing jointly [2].\n- If your income exceeds these thresholds, the deduction is significantly reduced [2].\n\nTherefore, if your income is above these thresholds, it may disqualify or reduce your ability to claim the overtime deduction.\n\nKey Sources: [2]\n\nCONFIDENCE: HIGH",
+    "retrieval": {
+      "retrieved_pubs": [
+        "1040",
+        "1-A",
+        "17",
+        "334",
+        "501",
+        "525",
+        "W-2",
+        "463",
+        "535",
+        "15-B"
+      ],
+      "expected_pubs": [
+        "1-A"
+      ],
+      "pub_precision": 0.1,
+      "pub_recall": 1.0,
+      "nav_recall": 1.0,
+      "context_count": 25,
+      "retrieval_ms": 6472,
+      "retrieval_mode": "hierarchical",
+      "nav_pubs": [
+        "1-A",
+        "463",
+        "501",
+        "1040",
+        "525",
+        "17",
+        "529",
+        "W-2",
+        "15-B"
+      ],
+      "ontology_pubs": [
+        "W-2",
+        "535",
+        "334",
+        "15-B"
+      ],
+      "query_intent": "general",
+      "detected_tax_year": null
+    },
+    "fact_check": {
+      "facts_found": 1,
+      "facts_total": 3,
+      "fact_ratio": 0.333,
+      "missing": [
+        "$150,000 Single phase-out",
+        "$300,000 Joint phase-out"
+      ]
+    },
+    "judge": {
+      "correctness": 5,
+      "completeness": 5,
+      "hallucination": 5,
+      "citation_quality": 3,
+      "reasoning": "The candidate answer correctly states the phase-out thresholds for the overtime deduction ($150,000 for single filers and $300,000 for joint filers) and notes that the deduction is significantly reduced if income exceeds these thresholds, matching the ground truth. There are no fabricated facts, and the answer is grounded in the retrieved sources. However, the citation quality is lower because it does not specify the exact section or page from IRS Pub 1-A, which is expected.",
+      "judge_ms": 1375,
+      "judge_model": "gpt-4o",
+      "judge_tokens": 1237
+    },
+    "query_ms": 24049,
+    "synthesis_ms": 1727,
+    "model_used": "gpt-4o",
+    "tokens": 4162
+  }
+]

@@ -1,0 +1,50 @@
+{
+  "total_questions": 1,
+  "valid_questions": 1,
+  "errors": 0,
+  "retrieval": {
+    "avg_pub_recall": 1.0,
+    "avg_nav_recall": 1.0,
+    "avg_pub_precision": 0.143,
+    "avg_context_count": 7.0,
+    "avg_retrieval_ms": 7436,
+    "total_retrieval_ms": 7436,
+    "missing_pubs": []
+  },
+  "fact_check": {
+    "avg_fact_ratio": 0.0
+  },
+  "judge": {
+    "correctness": {
+      "mean": 2.0,
+      "min": 2,
+      "max": 2
+    },
+    "completeness": {
+      "mean": 2.0,
+      "min": 2,
+      "max": 2
+    },
+    "hallucination": {
+      "mean": 3.0,
+      "min": 3,
+      "max": 3
+    },
+    "citation_quality": {
+      "mean": 2.0,
+      "min": 2,
+      "max": 2
+    },
+    "n_judged": 1,
+    "total_judge_tokens": 1054
+  },
+  "by_category": {
+    "III. Tipped & Overtime Workers": {
+      "count": 1,
+      "avg_pub_recall": 1.0,
+      "avg_nav_recall": 1.0,
+      "avg_fact_ratio": 0.0,
+      "avg_correctness": 2.0
+    }
+  }
+}

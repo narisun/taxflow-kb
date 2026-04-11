@@ -1,0 +1,72 @@
+[
+  {
+    "id": "TIP-14",
+    "category": "III. Tipped & Overtime Workers",
+    "question": "Does my high income disqualify me from the overtime deduction?",
+    "ground_truth": "Yes. The overtime deduction begins to phase out at $150,000 (Single) or $300,000 (Joint). At $200,000 MAGI, your deduction is significantly reduced.",
+    "candidate_answer": "Your high income may affect your eligibility for the overtime deduction. For tax year 2025, the maximum deduction for qualified overtime compensation is $12,500 for single filers and $25,000 for married filing jointly [6]. However, the excerpts do not specify a direct income limit that disqualifies you from claiming the overtime deduction.\n\n- The key threshold for Modified Adjusted Gross Income (MAGI) is $176,100 [7]. While this threshold is mentioned, it does not explicitly state that exceeding it disqualifies you from the overtime deduction.\n- The deduction is available for qualified overtime compensation as defined under the Fair Labor Standards Act [6].\n\nIn conclusion, while your high income may not automatically disqualify you from the overtime deduction, the specifics of your situation and any other applicable deductions or credits should be considered.\n\nKey Sources: [6], [7]\n\nCONFIDENCE: [MODERATE]",
+    "retrieval": {
+      "retrieved_pubs": [
+        "1040",
+        "17",
+        "15-B",
+        "501",
+        "535",
+        "W-2",
+        "1-A"
+      ],
+      "expected_pubs": [
+        "1-A"
+      ],
+      "pub_precision": 0.143,
+      "pub_recall": 1.0,
+      "nav_recall": 1.0,
+      "context_count": 7,
+      "retrieval_ms": 7436,
+      "retrieval_mode": "hierarchical",
+      "nav_pubs": [
+        "1-A",
+        "463",
+        "501",
+        "1040",
+        "525",
+        "17",
+        "529",
+        "W-2",
+        "15-B"
+      ],
+      "ontology_pubs": [
+        "W-2",
+        "535",
+        "334",
+        "15-B"
+      ],
+      "query_intent": "general",
+      "detected_tax_year": null
+    },
+    "fact_check": {
+      "facts_found": 0,
+      "facts_total": 3,
+      "fact_ratio": 0.0,
+      "missing": [
+        "$150,000 Single phase-out",
+        "$300,000 Joint phase-out",
+        "significantly reduced"
+      ]
+    },
+    "judge": {
+      "correctness": 2,
+      "completeness": 2,
+      "hallucination": 3,
+      "citation_quality": 2,
+      "reasoning": "The candidate answer incorrectly states that there is no direct income limit for the overtime deduction, missing the phase-out thresholds of $150,000 for single and $300,000 for joint filers. It also introduces unsupported figures like $176,100 MAGI and deduction amounts of $12,500 and $25,000, which are not mentioned in the ground truth or supported by the retrieved sources. The citations are vague and do not reference the specific IRS publication expected (Pub 1-A).",
+      "judge_ms": 1651,
+      "judge_model": "gpt-4o",
+      "judge_tokens": 1054
+    },
+    "query_ms": 25408,
+    "synthesis_ms": 3309,
+    "model_used": "gpt-4o-mini",
+    "tokens": 2775
+  }
+]

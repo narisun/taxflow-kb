@@ -1,0 +1,4508 @@
+[
+  {
+    "id": "IND-01",
+    "category": "I. Individual Filing & Standard Deductions",
+    "scenario": "A married couple, both aged 68, with a 2025 MAGI of $140,000.",
+    "question": "Can we claim the new OBBBA senior deduction, and how does our joint income affect the amount?",
+    "ground_truth": "Yes. For 2025, each spouse over 65 can claim a $6,000 senior deduction (total $12,000). Since your joint MAGI is $140,000, you are below the $150,000 phase-out threshold and receive the full amount.",
+    "hierarchy_path": "Pub 17 \u2192 Chapter 10: Deductions \u2192 Senior Deduction Phase-out (Detail)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "$6,000 per spouse",
+      "$12,000 total",
+      "$150,000 phase-out threshold",
+      "full amount"
+    ],
+    "topic_tags": [
+      "senior_deduction",
+      "OBBBA",
+      "phase_out",
+      "married_filing_jointly"
+    ]
+  },
+  {
+    "id": "IND-02",
+    "category": "I. Individual Filing & Standard Deductions",
+    "scenario": "A single filer with $16,000 in income.",
+    "question": "What is my 2026 standard deduction, and has the OBBBA changed the filing threshold for me?",
+    "ground_truth": "For tax year 2026, the single standard deduction is $16,100. Because your income is below this threshold, you generally aren't required to file unless you owe special taxes or want a refund of withheld credits.",
+    "hierarchy_path": "Pub 17 \u2192 Chapter 1: Filing Information \u2192 Standard Deduction Tables (Summary)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "$16,100",
+      "not required to file",
+      "special taxes",
+      "refund of withheld credits"
+    ],
+    "topic_tags": [
+      "standard_deduction",
+      "filing_threshold",
+      "OBBBA",
+      "2026"
+    ]
+  },
+  {
+    "id": "IND-03",
+    "category": "I. Individual Filing & Standard Deductions",
+    "scenario": "A taxpayer with a $45,000 SALT (State and Local Tax) liability.",
+    "question": "I heard the SALT cap was raised. How much can I deduct on my 2025 Schedule A if my income is $300,000?",
+    "ground_truth": "The SALT cap was raised to $40,000 for taxpayers with income under $500,000. You can deduct $40,000 of your $45,000 liability.",
+    "hierarchy_path": "Pub 17 \u2192 Schedule A Instructions \u2192 Taxes You Paid (Section Summary)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "$40,000 cap",
+      "$500,000 income threshold",
+      "deduct $40,000"
+    ],
+    "topic_tags": [
+      "SALT",
+      "itemized_deductions",
+      "OBBBA",
+      "Schedule_A"
+    ]
+  },
+  {
+    "id": "IND-04",
+    "category": "I. Individual Filing & Standard Deductions",
+    "scenario": "A taxpayer buying a new U.S.-assembled SUV with a $60,000 loan.",
+    "question": "Can I deduct the $4,500 in interest I paid on my car loan this year?",
+    "ground_truth": "Yes, if the vehicle was purchased in 2025 and assembled in the U.S. You can claim an above-the-line deduction for up to $10,000 in annual interest.",
+    "hierarchy_path": "Pub 17 \u2192 New Deductions \u2192 Qualified Vehicle Interest (Detail)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "above-the-line deduction",
+      "$10,000 annual limit",
+      "U.S. assembled",
+      "2025"
+    ],
+    "topic_tags": [
+      "vehicle_interest",
+      "OBBBA",
+      "above_the_line",
+      "new_deduction"
+    ]
+  },
+  {
+    "id": "IND-05",
+    "category": "I. Individual Filing & Standard Deductions",
+    "scenario": "A high-earner with $600,000 MAGI.",
+    "question": "How does the 'OBBBA' change my ability to deduct my $40,000 in state taxes?",
+    "ground_truth": "Because your MAGI exceeds $500,000, the $40,000 SALT cap is reduced by 30% for every dollar over the threshold, gradually returning toward the $10,000 floor.",
+    "hierarchy_path": "Pub 17 \u2192 Schedule A Instructions \u2192 High-Income Phase-outs (Detail)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "$500,000 threshold",
+      "30% reduction",
+      "$10,000 floor",
+      "phase-out"
+    ],
+    "topic_tags": [
+      "SALT",
+      "high_income",
+      "phase_out",
+      "OBBBA"
+    ]
+  },
+  {
+    "id": "FAM-06",
+    "category": "II. Family, Dependents & Trump Accounts",
+    "scenario": "Parents of a baby born in July 2025.",
+    "question": "How do we enroll our newborn in the new government-seeded savings account, and is the $1,000 taxable?",
+    "ground_truth": "You must file Form 4547 to establish a 'Trump Account.' The $1,000 federal seed is not taxable upon contribution, but earnings are taxable upon withdrawal.",
+    "hierarchy_path": "Form 4547 Instructions \u2192 Enrollment Procedures (Section Summary)",
+    "expected_pubs": [
+      "4547"
+    ],
+    "key_facts": [
+      "Form 4547",
+      "Trump Account",
+      "$1,000 not taxable",
+      "earnings taxable upon withdrawal"
+    ],
+    "topic_tags": [
+      "trump_account",
+      "OBBBA",
+      "newborn",
+      "savings"
+    ]
+  },
+  {
+    "id": "FAM-07",
+    "category": "II. Family, Dependents & Trump Accounts",
+    "scenario": "A grandmother wanting to contribute to her grandson's Trump Account in 2026.",
+    "question": "What is the 2026 contribution limit, and can I deduct my $5,000 contribution?",
+    "ground_truth": "The 2026 annual limit is $5,000 (aggregate from all sources). Contributions are made with post-tax dollars and are not deductible.",
+    "hierarchy_path": "Pub 590-A \u2192 Specialized Savings \u2192 Trump Account Limits (Detail)",
+    "expected_pubs": [
+      "590a"
+    ],
+    "key_facts": [
+      "$5,000 annual limit",
+      "aggregate from all sources",
+      "post-tax dollars",
+      "not deductible"
+    ],
+    "topic_tags": [
+      "trump_account",
+      "contribution_limits",
+      "OBBBA",
+      "2026"
+    ]
+  },
+  {
+    "id": "FAM-08",
+    "category": "II. Family, Dependents & Trump Accounts",
+    "scenario": "An employer offering a Trump Account fringe benefit.",
+    "question": "If my company contributes $2,500 to my daughter's account, is that considered taxable income for me?",
+    "ground_truth": "No. Employer contributions up to $2,500 are tax-free to the employee and deductible for the employer as a fringe benefit.",
+    "hierarchy_path": "Pub 15-B \u2192 Fringe Benefits \u2192 Employer-Provided Child Savings (Summary)",
+    "expected_pubs": [
+      "15-B"
+    ],
+    "key_facts": [
+      "$2,500 limit",
+      "tax-free to employee",
+      "deductible for employer",
+      "fringe benefit"
+    ],
+    "topic_tags": [
+      "trump_account",
+      "fringe_benefit",
+      "employer",
+      "OBBBA"
+    ]
+  },
+  {
+    "id": "FAM-09",
+    "category": "II. Family, Dependents & Trump Accounts",
+    "scenario": "A 19-year-old child who lives at home and earned $12,000.",
+    "question": "Can I still claim my child as a dependent if they are not a student?",
+    "ground_truth": "No. To be a 'Qualifying Child' at age 19, they must be a student. Otherwise, they must meet the 'Qualifying Relative' test, which they fail because their gross income exceeds the limit.",
+    "hierarchy_path": "Pub 501 \u2192 Dependents \u2192 Qualifying Child vs. Relative (Section Summary)",
+    "expected_pubs": [
+      "501"
+    ],
+    "key_facts": [
+      "age 19 must be student",
+      "Qualifying Child",
+      "Qualifying Relative",
+      "gross income exceeds limit"
+    ],
+    "topic_tags": [
+      "dependents",
+      "qualifying_child",
+      "qualifying_relative",
+      "Pub_501"
+    ]
+  },
+  {
+    "id": "FAM-10",
+    "category": "II. Family, Dependents & Trump Accounts",
+    "scenario": "A parent claiming the Child Tax Credit (CTC) for two children.",
+    "question": "My income is $250,000. Is my CTC still $2,000 per child?",
+    "ground_truth": "Under OBBBA, the CTC is increased to $2,200 per child. However, since your income is over $200,000 (Single), the credit begins to phase out.",
+    "hierarchy_path": "Form 8812 Instructions \u2192 Child Tax Credit Calculation (Detail)",
+    "expected_pubs": [
+      "8812"
+    ],
+    "key_facts": [
+      "$2,200 per child",
+      "OBBBA increase",
+      "$200,000 phase-out",
+      "begins to phase out"
+    ],
+    "topic_tags": [
+      "child_tax_credit",
+      "CTC",
+      "OBBBA",
+      "phase_out"
+    ]
+  },
+  {
+    "id": "TIP-11",
+    "category": "III. Tipped & Overtime Workers",
+    "scenario": "A waitress who earned $30,000 in tips in 2025.",
+    "question": "How much of my tips are tax-free under the new law, and which form do I use?",
+    "ground_truth": "You can deduct up to $25,000 of qualified tips on Schedule 1-A. The remaining $5,000 is taxable income.",
+    "hierarchy_path": "Schedule 1-A Instructions \u2192 Qualified Tips Deduction (Summary)",
+    "expected_pubs": [
+      "1-A"
+    ],
+    "key_facts": [
+      "$25,000 deduction",
+      "Schedule 1-A",
+      "$5,000 taxable",
+      "qualified tips"
+    ],
+    "topic_tags": [
+      "tips",
+      "OBBBA",
+      "no_tax_on_tips",
+      "Schedule_1A"
+    ]
+  },
+  {
+    "id": "TIP-12",
+    "category": "III. Tipped & Overtime Workers",
+    "scenario": "A factory worker with $15,000 in 'time-and-a-half' overtime pay.",
+    "question": "Do I deduct the full $15,000 of my overtime?",
+    "ground_truth": "No. You only deduct the 'half' portion (the overtime premium) required by the FLSA. For $15,000 of time-and-a-half pay, your deduction is $5,000 (the 50% premium).",
+    "hierarchy_path": "Pub 17 \u2192 What's New \u2192 No Tax on Overtime Logic (Detail)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "overtime premium only",
+      "FLSA",
+      "$5,000 deduction",
+      "50% premium"
+    ],
+    "topic_tags": [
+      "overtime",
+      "OBBBA",
+      "no_tax_on_overtime",
+      "FLSA"
+    ]
+  },
+  {
+    "id": "TIP-13",
+    "category": "III. Tipped & Overtime Workers",
+    "scenario": "A married couple where both work overtime, earning $20,000 each in premiums.",
+    "question": "What is our max overtime deduction on our joint return?",
+    "ground_truth": "The joint deduction cap for qualified overtime is $25,000. Although you earned $40,000 combined, you are limited to the OBBBA ceiling.",
+    "hierarchy_path": "Schedule 1-A Instructions \u2192 Joint Filing Caps (Detail)",
+    "expected_pubs": [
+      "1-A"
+    ],
+    "key_facts": [
+      "$25,000 joint cap",
+      "$40,000 combined",
+      "OBBBA ceiling"
+    ],
+    "topic_tags": [
+      "overtime",
+      "joint_filing",
+      "OBBBA",
+      "deduction_cap"
+    ]
+  },
+  {
+    "id": "TIP-14",
+    "category": "III. Tipped & Overtime Workers",
+    "scenario": "A nurse with $200,000 MAGI.",
+    "question": "Does my high income disqualify me from the overtime deduction?",
+    "ground_truth": "Yes. The overtime deduction begins to phase out at $150,000 (Single) or $300,000 (Joint). At $200,000 MAGI, your deduction is significantly reduced.",
+    "hierarchy_path": "Schedule 1-A Instructions \u2192 Phase-out Worksheets (Summary)",
+    "expected_pubs": [
+      "1-A"
+    ],
+    "key_facts": [
+      "$150,000 Single phase-out",
+      "$300,000 Joint phase-out",
+      "significantly reduced"
+    ],
+    "topic_tags": [
+      "overtime",
+      "phase_out",
+      "high_income",
+      "OBBBA"
+    ]
+  },
+  {
+    "id": "TIP-15",
+    "category": "III. Tipped & Overtime Workers",
+    "scenario": "An employer checking the new 2026 W-2 codes.",
+    "question": "What code do I use to report the overtime I paid my employees?",
+    "ground_truth": "You must use Code 'TT' in Box 12 of the 2026 Form W-2 to report qualified overtime income.",
+    "hierarchy_path": "Form W-2 General Instructions \u2192 Box 12 Codes (Detail)",
+    "expected_pubs": [
+      "W-2"
+    ],
+    "key_facts": [
+      "Code TT",
+      "Box 12",
+      "Form W-2",
+      "qualified overtime income"
+    ],
+    "topic_tags": [
+      "W2",
+      "employer",
+      "reporting",
+      "overtime",
+      "OBBBA"
+    ]
+  },
+  {
+    "id": "BIZ-16",
+    "category": "IV. Business, R&D & Depreciation",
+    "scenario": "A business that bought a $50,000 machine in February 2025.",
+    "question": "Can I still write off the full cost, or is bonus depreciation phasing out?",
+    "ground_truth": "The OBBBA restored 100% bonus depreciation permanently for property acquired after January 19, 2025. You can write off the full $50,000.",
+    "hierarchy_path": "Pub 946 \u2192 Chapter 3: Bonus Depreciation \u2192 Post-OBBBA Rules (Section Summary)",
+    "expected_pubs": [
+      "946"
+    ],
+    "key_facts": [
+      "100% bonus depreciation",
+      "permanently restored",
+      "January 19, 2025",
+      "full $50,000"
+    ],
+    "topic_tags": [
+      "bonus_depreciation",
+      "OBBBA",
+      "Section_168",
+      "Pub_946"
+    ]
+  },
+  {
+    "id": "BIZ-17",
+    "category": "IV. Business, R&D & Depreciation",
+    "scenario": "A tech startup with $100,000 in domestic R&D costs.",
+    "question": "Do I still have to amortize my research costs over 5 years?",
+    "ground_truth": "No. OBBBA permanently restored immediate expensing for domestic R&D expenditures starting with 2025 returns.",
+    "hierarchy_path": "Pub 535 \u2192 Chapter 7: R&D Expenses \u2192 Amortization Repeal (Detail)",
+    "expected_pubs": [
+      "535"
+    ],
+    "key_facts": [
+      "immediate expensing",
+      "permanently restored",
+      "domestic R&D",
+      "2025 returns"
+    ],
+    "topic_tags": [
+      "R&D",
+      "Section_174",
+      "OBBBA",
+      "amortization",
+      "Pub_535"
+    ]
+  },
+  {
+    "id": "BIZ-18",
+    "category": "IV. Business, R&D & Depreciation",
+    "scenario": "A small business with $35 million in gross receipts.",
+    "question": "Am I exempt from the 30% business interest limitation this year?",
+    "ground_truth": "No. For 2026, the small business exemption threshold is $32 million. At $35 million, you are subject to the EBITDA-based interest cap.",
+    "hierarchy_path": "Pub 535 \u2192 Business Interest Expense \u2192 Gross Receipts Test (Summary)",
+    "expected_pubs": [
+      "535"
+    ],
+    "key_facts": [
+      "$32 million threshold",
+      "EBITDA-based",
+      "not exempt",
+      "30% limitation"
+    ],
+    "topic_tags": [
+      "business_interest",
+      "Section_163j",
+      "OBBBA",
+      "gross_receipts"
+    ]
+  },
+  {
+    "id": "BIZ-19",
+    "category": "IV. Business, R&D & Depreciation",
+    "scenario": "An S-Corp owner evaluating the QBI deduction.",
+    "question": "I heard the QBI deduction was expiring. What is the status for my 2026 filing?",
+    "ground_truth": "The Section 199A QBI deduction was made permanent by the OBBBA, with expanded phase-in ranges beginning in 2026.",
+    "hierarchy_path": "Form 8995-A Instructions \u2192 Qualified Business Income (Section Summary)",
+    "expected_pubs": [
+      "8995-A"
+    ],
+    "key_facts": [
+      "made permanent",
+      "Section 199A",
+      "OBBBA",
+      "expanded phase-in ranges",
+      "2026"
+    ],
+    "topic_tags": [
+      "QBI",
+      "Section_199A",
+      "OBBBA",
+      "S_Corp"
+    ]
+  },
+  {
+    "id": "BIZ-20",
+    "category": "IV. Business, R&D & Depreciation",
+    "scenario": "A manufacturing company building a new factory.",
+    "question": "Is there a new deduction for 'production property' under the OBBBA?",
+    "ground_truth": "Yes. A 100% deduction is available for 'qualified production property' (nonresidential real property used in manufacturing) placed into service after July 4, 2025.",
+    "hierarchy_path": "Pub 946 \u2192 Special Depreciation \u2192 Production Property (Detail)",
+    "expected_pubs": [
+      "946"
+    ],
+    "key_facts": [
+      "100% deduction",
+      "qualified production property",
+      "nonresidential real property",
+      "manufacturing",
+      "July 4, 2025"
+    ],
+    "topic_tags": [
+      "production_property",
+      "OBBBA",
+      "depreciation",
+      "manufacturing"
+    ]
+  },
+  {
+    "id": "RPT-21",
+    "category": "V. Reporting & Thresholds",
+    "scenario": "A casual eBay seller who sold $5,000 of used gear.",
+    "question": "Will I get a 1099-K this year?",
+    "ground_truth": "No. Congress permanently restored the 1099-K threshold to $20,000 and 200 transactions. You will not receive a form for $5,000.",
+    "hierarchy_path": "Pub 17 \u2192 Chapter 1: 1099-K Reporting \u2192 New Thresholds (Summary)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "$20,000 threshold",
+      "200 transactions",
+      "permanently restored",
+      "no form"
+    ],
+    "topic_tags": [
+      "1099K",
+      "reporting_threshold",
+      "OBBBA",
+      "gig_economy"
+    ]
+  },
+  {
+    "id": "RPT-22",
+    "category": "V. Reporting & Thresholds",
+    "scenario": "A contractor who was paid $1,500 for a job in 2026.",
+    "question": "Do I need to issue a 1099-NEC for the $1,500 I paid my plumber?",
+    "ground_truth": "No. For payments made after 2025, the OBBBA increased the 1099-NEC reporting threshold from $600 to $2,000.",
+    "hierarchy_path": "General Instructions for Certain Information Returns \u2192 1099-NEC Threshold (Detail)",
+    "expected_pubs": [
+      "1099"
+    ],
+    "key_facts": [
+      "$2,000 threshold",
+      "increased from $600",
+      "after 2025",
+      "no 1099-NEC required"
+    ],
+    "topic_tags": [
+      "1099NEC",
+      "reporting_threshold",
+      "OBBBA",
+      "contractor"
+    ]
+  },
+  {
+    "id": "RPT-23",
+    "category": "V. Reporting & Thresholds",
+    "scenario": "A household employer paying a nanny $2,800 in 2026.",
+    "question": "Do I have to pay Social Security and Medicare taxes for my nanny this year?",
+    "ground_truth": "No. The 2026 threshold for household workers is $3,000. Since you paid $2,800, these taxes do not apply.",
+    "hierarchy_path": "Pub 926 \u2192 Household Employer's Guide \u2192 Wage Thresholds (Summary)",
+    "expected_pubs": [
+      "926"
+    ],
+    "key_facts": [
+      "$3,000 threshold",
+      "$2,800 below threshold",
+      "taxes do not apply"
+    ],
+    "topic_tags": [
+      "household_employer",
+      "nanny_tax",
+      "OBBBA",
+      "Pub_926"
+    ]
+  },
+  {
+    "id": "RPT-24",
+    "category": "V. Reporting & Thresholds",
+    "scenario": "A professional gambler with $50,000 in winnings and $50,000 in losses.",
+    "question": "Can I still zero out my winnings with my losses?",
+    "ground_truth": "No. OBBBA limits the deduction of wagering losses to 90% of winnings. You can only deduct $45,000, leaving $5,000 in taxable gains.",
+    "hierarchy_path": "Pub 529 \u2192 Miscellaneous Deductions \u2192 Gambling Loss Limitations (Detail)",
+    "expected_pubs": [
+      "529"
+    ],
+    "key_facts": [
+      "90% of winnings",
+      "$45,000 deductible",
+      "$5,000 taxable",
+      "OBBBA limitation"
+    ],
+    "topic_tags": [
+      "gambling",
+      "wagering_losses",
+      "OBBBA",
+      "Pub_529"
+    ]
+  },
+  {
+    "id": "RPT-25",
+    "category": "V. Reporting & Thresholds",
+    "scenario": "A worker at a nonprofit receiving a Trump Account contribution.",
+    "question": "How do I report the $2,500 my nonprofit employer put in my child's account?",
+    "ground_truth": "This should be reported using Code 'TA' in Box 12 of your W-2. It is excluded from your gross income.",
+    "hierarchy_path": "Form W-2 General Instructions \u2192 Box 12 Code TA (Detail)",
+    "expected_pubs": [
+      "W-2"
+    ],
+    "key_facts": [
+      "Code TA",
+      "Box 12",
+      "W-2",
+      "excluded from gross income"
+    ],
+    "topic_tags": [
+      "trump_account",
+      "W2",
+      "employer_reporting",
+      "OBBBA"
+    ]
+  },
+  {
+    "id": "MEF-26",
+    "category": "VI. MeF & Procedural Errors",
+    "scenario": "A return rejected with MeF Error F1040-001.",
+    "question": "The IRS rejected my return saying 'Amount Owed must be significant.' What does this mean?",
+    "ground_truth": "This error occurs when your Estimated Tax Penalty (Line 38) is greater than your Overpayment (Line 34). The logic requires you to show a Balance Due rather than a refund.",
+    "hierarchy_path": "MeF Business Rule Crosswalk \u2192 F1040-001 Logic (Detail)",
+    "expected_pubs": [
+      "MeF"
+    ],
+    "key_facts": [
+      "Estimated Tax Penalty",
+      "Line 38",
+      "Overpayment",
+      "Line 34",
+      "Balance Due"
+    ],
+    "topic_tags": [
+      "MeF",
+      "reject_code",
+      "F1040",
+      "e-file"
+    ]
+  },
+  {
+    "id": "MEF-27",
+    "category": "VI. MeF & Procedural Errors",
+    "scenario": "A return rejected with code F8962-070.",
+    "question": "Why did my e-file fail because of 'Marketplace Data'?",
+    "ground_truth": "The IRS Master File shows you received an advance Premium Tax Credit. You must attach Form 8962 to reconcile it, even if you didn't receive a 1095-A.",
+    "hierarchy_path": "1040 Instructions \u2192 MeF Reject Troubleshooting \u2192 F8962 Logic (Section Summary)",
+    "expected_pubs": [
+      "8962",
+      "1040"
+    ],
+    "key_facts": [
+      "advance Premium Tax Credit",
+      "Form 8962",
+      "reconcile",
+      "1095-A"
+    ],
+    "topic_tags": [
+      "MeF",
+      "ACA",
+      "premium_tax_credit",
+      "Form_8962"
+    ]
+  },
+  {
+    "id": "MEF-28",
+    "category": "VI. MeF & Procedural Errors",
+    "scenario": "A 2026 payroll system failure.",
+    "question": "I didn't separate qualified tips on my W-2s. What is the penalty?",
+    "ground_truth": "Failure to track and report qualified tips using Code 'TP' for 2026 may result in information reporting penalties as transition relief has expired.",
+    "hierarchy_path": "Pub 15 \u2192 Employer Penalties \u2192 Section 6041 Compliance (Detail)",
+    "expected_pubs": [
+      "15"
+    ],
+    "key_facts": [
+      "Code TP",
+      "information reporting penalties",
+      "transition relief expired",
+      "Section 6041"
+    ],
+    "topic_tags": [
+      "tips",
+      "employer_penalty",
+      "W2",
+      "OBBBA",
+      "compliance"
+    ]
+  },
+  {
+    "id": "MEF-29",
+    "category": "VI. MeF & Procedural Errors",
+    "scenario": "An S-Corp that failed to align its tax year with its U.S. parent.",
+    "question": "We missed the new CFC alignment deadline. How do we allocate foreign tax credits?",
+    "ground_truth": "Recent guidance requires Controlled Foreign Corporations to align their years with U.S. parents. You must follow specific short-year allocation rules for 2026.",
+    "hierarchy_path": "Pub 514 \u2192 Foreign Tax Credit \u2192 CFC Timing Rules (Summary)",
+    "expected_pubs": [
+      "514"
+    ],
+    "key_facts": [
+      "CFC alignment",
+      "short-year allocation",
+      "2026",
+      "foreign tax credits"
+    ],
+    "topic_tags": [
+      "CFC",
+      "foreign_tax_credit",
+      "tax_year_alignment",
+      "Pub_514"
+    ]
+  },
+  {
+    "id": "MEF-30",
+    "category": "VI. MeF & Procedural Errors",
+    "scenario": "A taxpayer with an invalid SSN for the Senior Deduction.",
+    "question": "Why was my senior deduction disallowed?",
+    "ground_truth": "The OBBBA senior deduction requires a Social Security Number valid for work. If you are using an ITIN, you are ineligible.",
+    "hierarchy_path": "Pub 17 \u2192 Senior Deduction \u2192 Eligibility Requirements (Detail)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "SSN valid for work",
+      "ITIN ineligible",
+      "OBBBA senior deduction"
+    ],
+    "topic_tags": [
+      "senior_deduction",
+      "SSN",
+      "ITIN",
+      "eligibility",
+      "OBBBA"
+    ]
+  },
+  {
+    "id": "PRE-31",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A self-employed consultant earning $75,000.",
+    "question": "How do I calculate my self-employment tax, and what is the deductible portion?",
+    "ground_truth": "Your self-employment tax is 15.3% of 92.35% of net self-employment income (approximately $10,874). You can deduct 50% of your SE tax ($5,437) as an above-the-line deduction.",
+    "hierarchy_path": "Pub 334 \u2192 Self-Employment Income \u2192 SE Tax Calculation (Detail)",
+    "expected_pubs": [
+      "334"
+    ],
+    "key_facts": [
+      "15.3% rate",
+      "92.35% threshold",
+      "$10,874 SE tax",
+      "50% deductible"
+    ],
+    "topic_tags": [
+      "self_employment",
+      "SE_tax",
+      "Schedule_C",
+      "Pub_334"
+    ]
+  },
+  {
+    "id": "PRE-32",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A small business owner with $200,000 in gross profit.",
+    "question": "What types of business expenses can I deduct on my Schedule C?",
+    "ground_truth": "Ordinary and necessary business expenses are deductible, including: rent, utilities, supplies, wages, insurance, and travel. Personal expenses like commuting are not deductible.",
+    "hierarchy_path": "Pub 535 \u2192 Chapter 1: General Business Expenses \u2192 What Is Deductible (Section Summary)",
+    "expected_pubs": [
+      "535"
+    ],
+    "key_facts": [
+      "ordinary and necessary",
+      "rent, utilities, supplies",
+      "wages, insurance",
+      "not personal expenses"
+    ],
+    "topic_tags": [
+      "business_expenses",
+      "Schedule_C",
+      "deductions",
+      "Pub_535"
+    ]
+  },
+  {
+    "id": "PRE-33",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business owner working from home with 300 sq ft of office space in a 2,000 sq ft home.",
+    "question": "How much home office expense can I deduct?",
+    "ground_truth": "Using the regular method, you deduct the percentage of home expenses proportional to office space: 300/2000 = 15%. If simplified method, you can deduct $5 per sq ft up to 300 sq ft ($1,500 max).",
+    "hierarchy_path": "Pub 587 \u2192 Home Office Deduction \u2192 Calculation Methods (Detail)",
+    "expected_pubs": [
+      "587"
+    ],
+    "key_facts": [
+      "15% of home expenses",
+      "simplified method",
+      "$5 per sq ft",
+      "$1,500 maximum"
+    ],
+    "topic_tags": [
+      "home_office",
+      "business_deduction",
+      "Pub_587",
+      "regular_method"
+    ]
+  },
+  {
+    "id": "PRE-34",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business that spent $8,000 on travel to client sites during the tax year.",
+    "question": "Are all my $8,000 travel expenses deductible?",
+    "ground_truth": "Yes, if the travel is ordinary and necessary for business and you can document the business purpose, destination, dates, and amounts. Travel costs include airfare, lodging, and meals (meals are 50% deductible).",
+    "hierarchy_path": "Pub 535 \u2192 Chapter 2: Travel & Meals \u2192 What Qualifies (Summary)",
+    "expected_pubs": [
+      "535"
+    ],
+    "key_facts": [
+      "ordinary and necessary",
+      "documented business purpose",
+      "meals 50% deductible",
+      "lodging fully deductible"
+    ],
+    "topic_tags": [
+      "travel_expenses",
+      "business_deduction",
+      "documentation",
+      "Pub_535"
+    ]
+  },
+  {
+    "id": "PRE-35",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business purchasing business liability insurance for $3,000 annually.",
+    "question": "Can I deduct my business insurance premiums?",
+    "ground_truth": "Yes. Business insurance premiums for liability, property, and workers' compensation are fully deductible as ordinary business expenses.",
+    "hierarchy_path": "Pub 535 \u2192 Business Insurance \u2192 Deductible Premiums (Section Summary)",
+    "expected_pubs": [
+      "535"
+    ],
+    "key_facts": [
+      "fully deductible",
+      "ordinary business expense",
+      "liability, property, workers comp"
+    ],
+    "topic_tags": [
+      "business_insurance",
+      "business_deduction",
+      "Pub_535"
+    ]
+  },
+  {
+    "id": "PRE-36",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A startup spending $12,000 on legal and accounting fees in the first year.",
+    "question": "Can I deduct my startup costs?",
+    "ground_truth": "You can deduct up to $5,000 in startup costs in the first year, with the remainder amortized over 180 months. You must elect to do this on Form 4562.",
+    "hierarchy_path": "Pub 535 \u2192 Chapter 3: Business Start-up Costs \u2192 Amortization Election (Detail)",
+    "expected_pubs": [
+      "535"
+    ],
+    "key_facts": [
+      "$5,000 first-year deduction",
+      "180-month amortization",
+      "Form 4562 required",
+      "election required"
+    ],
+    "topic_tags": [
+      "startup_costs",
+      "business_deduction",
+      "amortization",
+      "Form_4562"
+    ]
+  },
+  {
+    "id": "PRE-37",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business purchasing office equipment for $8,000.",
+    "question": "Do I depreciate the equipment or deduct it all this year?",
+    "ground_truth": "If the equipment is tangible business property, you can elect Section 179 expensing to deduct up to $1,160,000 (2025 limit) in the year of purchase, or use MACRS depreciation.",
+    "hierarchy_path": "Pub 946 \u2192 Chapter 2: Section 179 Election \u2192 Limits & Properties (Section Summary)",
+    "expected_pubs": [
+      "946"
+    ],
+    "key_facts": [
+      "$1,160,000 Section 179 limit",
+      "2025",
+      "tangible business property",
+      "MACRS alternative"
+    ],
+    "topic_tags": [
+      "Section_179",
+      "depreciation",
+      "business_property",
+      "Pub_946"
+    ]
+  },
+  {
+    "id": "PRE-38",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business purchasing a $20,000 truck used 80% for business.",
+    "question": "How do I depreciate a vehicle used both personally and for business?",
+    "ground_truth": "Only the business-use portion is depreciable. At 80% business use, you depreciate $16,000. Listed property like vehicles have special MACRS rules with lower deductions in year 1.",
+    "hierarchy_path": "Pub 946 \u2192 Chapter 4: Listed Property \u2192 Vehicle Depreciation (Detail)",
+    "expected_pubs": [
+      "946"
+    ],
+    "key_facts": [
+      "80% business portion",
+      "$16,000 depreciable",
+      "listed property rules",
+      "MACRS rates"
+    ],
+    "topic_tags": [
+      "vehicle_depreciation",
+      "listed_property",
+      "business_use_percentage",
+      "Pub_946"
+    ]
+  },
+  {
+    "id": "PRE-39",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business with machinery placed in service in 2025, starting in Q3.",
+    "question": "Does the mid-quarter convention apply to my depreciation?",
+    "ground_truth": "Yes. If property placed in service in Q4 exceeds 40% of total 2025 depreciable basis, all property uses mid-quarter convention. Otherwise, half-year convention applies.",
+    "hierarchy_path": "Pub 946 \u2192 Chapter 1: Depreciation Methods \u2192 Mid-Quarter Convention (Detail)",
+    "expected_pubs": [
+      "946"
+    ],
+    "key_facts": [
+      "Q4 40% threshold",
+      "mid-quarter convention",
+      "half-year convention",
+      "depreciable basis"
+    ],
+    "topic_tags": [
+      "depreciation",
+      "MACRS",
+      "mid_quarter_convention",
+      "Pub_946"
+    ]
+  },
+  {
+    "id": "PRE-40",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A rental property with $60,000 in rents and $20,000 in expenses.",
+    "question": "What is my rental income and how does depreciation affect it?",
+    "ground_truth": "Your rental income is $40,000 ($60,000 rents minus $20,000 expenses). You can further deduct depreciation of the building (not land), reducing taxable income. Report on Schedule E.",
+    "hierarchy_path": "Pub 527 \u2192 Chapter 1: Rental Income \u2192 Calculating Rental Income (Section Summary)",
+    "expected_pubs": [
+      "527"
+    ],
+    "key_facts": [
+      "$40,000 rental income",
+      "depreciation deductible",
+      "building only",
+      "Schedule E"
+    ],
+    "topic_tags": [
+      "rental_income",
+      "rental_property",
+      "depreciation",
+      "Pub_527"
+    ]
+  },
+  {
+    "id": "PRE-41",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A landlord with a rental property subject to passive activity limitations.",
+    "question": "Can I deduct my $30,000 in rental losses?",
+    "ground_truth": "Generally no. Passive activity losses are limited to $25,000 per year if you actively participate and have modified AGI under $100,000. Phase-out occurs $100,000-$150,000.",
+    "hierarchy_path": "Pub 527 \u2192 Chapter 3: Passive Activity Losses \u2192 Loss Limitations (Detail)",
+    "expected_pubs": [
+      "527"
+    ],
+    "key_facts": [
+      "$25,000 annual limit",
+      "active participation",
+      "$100,000 MAGI threshold",
+      "$150,000 phase-out"
+    ],
+    "topic_tags": [
+      "passive_activity",
+      "rental_losses",
+      "limitations",
+      "Pub_527"
+    ]
+  },
+  {
+    "id": "PRE-42",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A property owner calculating basis for depreciation of a rental home purchased for $300,000.",
+    "question": "What is the depreciable basis of my rental property?",
+    "ground_truth": "You must allocate the $300,000 between land and building. Only the building portion is depreciable. Land is never depreciable. Typical allocation is 20% land, 80% building ($240,000).",
+    "hierarchy_path": "Pub 527 \u2192 Chapter 2: Rental Property Depreciation \u2192 Basis Allocation (Section Summary)",
+    "expected_pubs": [
+      "527"
+    ],
+    "key_facts": [
+      "land not depreciable",
+      "$240,000 building basis",
+      "allocation necessary",
+      "appraisal method"
+    ],
+    "topic_tags": [
+      "rental_depreciation",
+      "basis_allocation",
+      "Pub_527"
+    ]
+  },
+  {
+    "id": "PRE-43",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "An investor receiving $500 in dividend income from stocks.",
+    "question": "How are my dividends taxed?",
+    "ground_truth": "Qualified dividends are taxed at preferential rates: 0%, 15%, or 20% depending on income. Non-qualified dividends are taxed as ordinary income. Report on Schedule B and Form 1040.",
+    "hierarchy_path": "Pub 550 \u2192 Chapter 1: Investment Income \u2192 Dividends (Detail)",
+    "expected_pubs": [
+      "550"
+    ],
+    "key_facts": [
+      "qualified dividend rates",
+      "0%, 15%, 20%",
+      "holding period required",
+      "Schedule B"
+    ],
+    "topic_tags": [
+      "dividend_income",
+      "qualified_dividends",
+      "capital_gains_rates",
+      "Pub_550"
+    ]
+  },
+  {
+    "id": "PRE-44",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "An investor with a $10,000 short-term capital gain and $15,000 long-term loss.",
+    "question": "What is my net capital gain or loss for the year?",
+    "ground_truth": "Net short-term and long-term losses separately: short-term $0, long-term loss $5,000. You can deduct $3,000 of the loss this year and carry forward the remaining $2,000.",
+    "hierarchy_path": "Pub 550 \u2192 Chapter 2: Capital Gains & Losses \u2192 Calculating Net Gain/Loss (Detail)",
+    "expected_pubs": [
+      "550"
+    ],
+    "key_facts": [
+      "$3,000 annual loss deduction",
+      "$2,000 carryforward",
+      "separate netting",
+      "indefinite carryforward"
+    ],
+    "topic_tags": [
+      "capital_gains",
+      "capital_losses",
+      "net_capital_loss",
+      "Pub_550"
+    ]
+  },
+  {
+    "id": "PRE-45",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "An investor selling stock for a loss after buying similar stock 30 days later.",
+    "question": "Can I deduct my stock loss if I bought the same stock 30 days later?",
+    "ground_truth": "No. The wash sale rule disallows the loss if you buy substantially identical stock within 30 days before or after the sale. Your loss is added to the new purchase basis.",
+    "hierarchy_path": "Pub 550 \u2192 Chapter 4: Wash Sales \u2192 Recognition Rules (Detail)",
+    "expected_pubs": [
+      "550"
+    ],
+    "key_facts": [
+      "30-day window",
+      "substantially identical",
+      "loss disallowed",
+      "basis adjustment"
+    ],
+    "topic_tags": [
+      "wash_sale",
+      "capital_loss",
+      "timing_rules",
+      "Pub_550"
+    ]
+  },
+  {
+    "id": "PRE-46",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "An investor receiving Treasury bonds with Original Issue Discount (OID).",
+    "question": "How do I report Original Issue Discount income?",
+    "ground_truth": "OID is taxable interest income reportable each year, even if not paid until maturity. The amount included in income is the daily OID accrual. Report on Form 1040 as interest income.",
+    "hierarchy_path": "Pub 550 \u2192 Chapter 3: Original Issue Discount \u2192 Accrual & Reporting (Summary)",
+    "expected_pubs": [
+      "550"
+    ],
+    "key_facts": [
+      "annually taxable",
+      "daily accrual",
+      "no cash receipt",
+      "Form 1040 interest line"
+    ],
+    "topic_tags": [
+      "OID",
+      "bond_income",
+      "interest_income",
+      "Pub_550"
+    ]
+  },
+  {
+    "id": "PRE-47",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business selling machinery for $25,000 that cost $30,000 and was depreciated to $10,000.",
+    "question": "What is my gain or loss on this sale?",
+    "ground_truth": "Your amount realized is $25,000 and your adjusted basis is $10,000, creating a $15,000 gain. This may be Section 1231 gain (capital gain if no losses), reported on Form 4797.",
+    "hierarchy_path": "Pub 544 \u2192 Chapter 1: Gains & Losses \u2192 Calculating Gain/Loss (Detail)",
+    "expected_pubs": [
+      "544"
+    ],
+    "key_facts": [
+      "$15,000 gain",
+      "adjusted basis $10,000",
+      "Section 1231",
+      "Form 4797"
+    ],
+    "topic_tags": [
+      "property_sales",
+      "Section_1231",
+      "business_property",
+      "Pub_544"
+    ]
+  },
+  {
+    "id": "PRE-48",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A property owner losing their home to a casualty.",
+    "question": "How do I treat my loss from a home destroyed by fire?",
+    "ground_truth": "Personal residences are not deductible for losses. However, if the loss results in an involuntary conversion (insurance proceeds received), special Section 1033 deferral rules may apply if you reinvest.",
+    "hierarchy_path": "Pub 544 \u2192 Chapter 3: Involuntary Conversions \u2192 Casualty Rules (Section Summary)",
+    "expected_pubs": [
+      "544"
+    ],
+    "key_facts": [
+      "personal residence non-deductible",
+      "Section 1033 deferral",
+      "reinvestment required",
+      "timing rules"
+    ],
+    "topic_tags": [
+      "casualty_loss",
+      "involuntary_conversion",
+      "Pub_544"
+    ]
+  },
+  {
+    "id": "PRE-49",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "An investor receiving the Earned Income Credit (EITC) as a low-income worker.",
+    "question": "What are the income limits for the 2025 Earned Income Credit?",
+    "ground_truth": "For single filers with one qualifying child, income must be under $46,560 (phase-out ends). Maximum credit varies by number of children: $3,733 (one), $6,164 (two), $6,935 (three+).",
+    "hierarchy_path": "Pub 596 \u2192 Chapter 1: EITC Eligibility \u2192 Income Limits (Detail)",
+    "expected_pubs": [
+      "596"
+    ],
+    "key_facts": [
+      "$46,560 limit single",
+      "$3,733-$6,935 credit",
+      "number of children",
+      "phase-out"
+    ],
+    "topic_tags": [
+      "EITC",
+      "earned_income_credit",
+      "income_limits",
+      "Pub_596"
+    ]
+  },
+  {
+    "id": "PRE-50",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A parent determining if their 18-year-old college student qualifies for the EITC.",
+    "question": "Can my college student be a qualifying child for EITC purposes?",
+    "ground_truth": "Yes, if they are under 19, or a full-time student under 24. They must live with you for more than half the year and have gross income under $4,700 (2025).",
+    "hierarchy_path": "Pub 596 \u2192 Chapter 2: Qualifying Children \u2192 Age & Status Requirements (Summary)",
+    "expected_pubs": [
+      "596"
+    ],
+    "key_facts": [
+      "age 18-24 if student",
+      "under 19 non-students",
+      "residency requirement",
+      "$4,700 income limit"
+    ],
+    "topic_tags": [
+      "EITC",
+      "qualifying_child",
+      "student_status",
+      "Pub_596"
+    ]
+  },
+  {
+    "id": "PRE-51",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A retiree contributing to a traditional IRA with $70,000 earned income.",
+    "question": "Can I contribute to a traditional IRA, and is it deductible?",
+    "ground_truth": "Yes, you can contribute $7,500 (2025 limit for age 50+). The contribution is fully deductible if you have no workplace retirement plan. If covered, limits apply based on income.",
+    "hierarchy_path": "Pub 590-A \u2192 Chapter 1: IRA Contributions \u2192 Limits & Deductibility (Detail)",
+    "expected_pubs": [
+      "590a"
+    ],
+    "key_facts": [
+      "$7,500 age 50+ limit",
+      "earned income requirement",
+      "deductibility limits",
+      "2025"
+    ],
+    "topic_tags": [
+      "IRA_contribution",
+      "traditional_IRA",
+      "deductibility",
+      "Pub_590a"
+    ]
+  },
+  {
+    "id": "PRE-52",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A high-income earner with $200,000 income considering a Roth conversion.",
+    "question": "Can I convert my traditional IRA to a Roth IRA?",
+    "ground_truth": "Yes, there is no income limit for conversions. You will owe income tax on the converted amount in the conversion year. The converted funds cannot be withdrawn for 5 years without penalty.",
+    "hierarchy_path": "Pub 590-A \u2192 Chapter 2: Conversions \u2192 Mechanics & Timing (Section Summary)",
+    "expected_pubs": [
+      "590a"
+    ],
+    "key_facts": [
+      "no income limit",
+      "ordinary income tax owed",
+      "5-year holding rule",
+      "conversion year"
+    ],
+    "topic_tags": [
+      "Roth_conversion",
+      "traditional_IRA",
+      "conversion_income",
+      "Pub_590a"
+    ]
+  },
+  {
+    "id": "PRE-53",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A retiree age 73 with an IRA balance of $500,000.",
+    "question": "What is my required minimum distribution (RMD) for this year?",
+    "ground_truth": "Your 2025 RMD is approximately $18,382 ($500,000 \u00f7 27.4, the 2025 divisor for age 73). You must withdraw this by December 31 to avoid a 25% penalty.",
+    "hierarchy_path": "Pub 590-B \u2192 Chapter 1: RMDs \u2192 Calculation & Timeline (Detail)",
+    "expected_pubs": [
+      "590b"
+    ],
+    "key_facts": [
+      "divisor 27.4",
+      "$18,382 RMD",
+      "December 31 deadline",
+      "25% penalty"
+    ],
+    "topic_tags": [
+      "RMD",
+      "required_minimum_distribution",
+      "age_73",
+      "Pub_590b"
+    ]
+  },
+  {
+    "id": "PRE-54",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business owner with $100,000 in net self-employment income.",
+    "question": "Can I contribute to a SEP IRA, and how much?",
+    "ground_truth": "Yes. You can contribute up to 20% of net self-employment income (after SE tax deduction), approximately $18,000 (2025 limit is $70,000). SEP-IRAs have high contribution limits.",
+    "hierarchy_path": "Pub 560 \u2192 Chapter 3: SEP Plans \u2192 Contributions (Detail)",
+    "expected_pubs": [
+      "560"
+    ],
+    "key_facts": [
+      "20% of net SE income",
+      "$70,000 limit",
+      "higher contribution limit",
+      "self-employed eligible"
+    ],
+    "topic_tags": [
+      "SEP_IRA",
+      "retirement_plan",
+      "self_employed",
+      "Pub_560"
+    ]
+  },
+  {
+    "id": "PRE-55",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A small business with 10 employees considering a SIMPLE plan.",
+    "question": "What is the advantage of a SIMPLE IRA plan over a regular IRA?",
+    "ground_truth": "SIMPLE plans allow higher contributions ($16,000 in 2025), require employer matching/non-elective contributions, and have easier administration. Employer deducts contributions.",
+    "hierarchy_path": "Pub 560 \u2192 Chapter 2: SIMPLE Plans \u2192 Contributions & Benefits (Section Summary)",
+    "expected_pubs": [
+      "560"
+    ],
+    "key_facts": [
+      "$16,000 employee limit",
+      "employer match required",
+      "easier admin",
+      "Pub_560"
+    ],
+    "topic_tags": [
+      "SIMPLE_plan",
+      "small_business",
+      "retirement",
+      "Pub_560"
+    ]
+  },
+  {
+    "id": "PRE-56",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A dependent with no income and parents claiming dependent exemption.",
+    "question": "What is a 'qualifying child' for dependent purposes?",
+    "ground_truth": "A qualifying child must be under 17 (or under 24 if full-time student), live with you for over half the year, be a U.S. citizen/resident, and not provide more than half their own support.",
+    "hierarchy_path": "Pub 501 \u2192 Chapter 2: Dependents \u2192 Qualifying Child Definition (Detail)",
+    "expected_pubs": [
+      "501"
+    ],
+    "key_facts": [
+      "age under 17",
+      "residency requirement",
+      "support test",
+      "U.S. citizen/resident"
+    ],
+    "topic_tags": [
+      "dependent",
+      "qualifying_child",
+      "requirements",
+      "Pub_501"
+    ]
+  },
+  {
+    "id": "PRE-57",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A parent filing as married filing jointly with two children.",
+    "question": "What is the 2025 standard deduction for a married couple filing jointly with two dependents?",
+    "ground_truth": "The standard deduction is $30,000 (2025) regardless of the number of dependents. Dependents do not increase the standard deduction, but the parents may claim dependent exemptions.",
+    "hierarchy_path": "Pub 17 \u2192 Chapter 1: Filing Status & Standard Deduction \u2192 MFJ (Summary)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "$30,000 MFJ",
+      "dependents don't increase",
+      "no dependent exemption amount"
+    ],
+    "topic_tags": [
+      "standard_deduction",
+      "married_filing_jointly",
+      "Pub_17"
+    ]
+  },
+  {
+    "id": "PRE-58",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A single parent claiming one child as a dependent.",
+    "question": "Can I file as Head of Household, and what is my standard deduction?",
+    "ground_truth": "Yes, if your child qualifies as a dependent and you paid over half household expenses. Your 2025 standard deduction is $24,200 (Head of Household is higher than Single).",
+    "hierarchy_path": "Pub 17 \u2192 Chapter 1: Filing Status \u2192 Head of Household Qualification (Detail)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "$24,200 HOH standard deduction",
+      "dependent child required",
+      "household expense test"
+    ],
+    "topic_tags": [
+      "head_of_household",
+      "filing_status",
+      "standard_deduction",
+      "Pub_17"
+    ]
+  },
+  {
+    "id": "PRE-59",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A taxpayer with income of $32,000 and two dependent children.",
+    "question": "Am I required to file a tax return?",
+    "ground_truth": "With two dependents, your filing requirement threshold is higher. For Head of Household, you must file if income is $24,200 or more. At $32,000, you must file.",
+    "hierarchy_path": "Pub 17 \u2192 Chapter 1: Filing Requirements \u2192 Dependent Status Impact (Summary)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "filing requirement",
+      "$24,200 HOH threshold",
+      "dependent impact",
+      "income exceeds threshold"
+    ],
+    "topic_tags": [
+      "filing_requirement",
+      "threshold",
+      "dependents",
+      "Pub_17"
+    ]
+  },
+  {
+    "id": "PRE-60",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "An installment seller with $50,000 gain on property sold for $100,000 down $50,000.",
+    "question": "How is my gain taxed when I finance the buyer's $50,000 balance?",
+    "ground_truth": "You report gain using the installment method. Your gain percentage is 50% ($50,000 gain \u00f7 $100,000 sale price). Each payment of $50,000 principal recognizes $25,000 gain in the year received.",
+    "hierarchy_path": "Pub 537 \u2192 Chapter 2: Installment Method \u2192 Calculations (Detail)",
+    "expected_pubs": [
+      "537"
+    ],
+    "key_facts": [
+      "50% gross profit ratio",
+      "$25,000 gain on payment",
+      "installment method",
+      "Pub_537"
+    ],
+    "topic_tags": [
+      "installment_sale",
+      "deferred_gain",
+      "financing",
+      "Pub_537"
+    ]
+  },
+  {
+    "id": "PRE-61",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business owner with $80,000 in ordinary business income and a $50,000 net operating loss (NOL) carryforward.",
+    "question": "Can I use my NOL carryforward this year?",
+    "ground_truth": "Yes. You can offset the $80,000 income with $50,000 of your NOL carryforward, resulting in $30,000 taxable income. However, post-2017 NOLs are limited to 80% of taxable income.",
+    "hierarchy_path": "Pub 536 \u2192 Net Operating Losses \u2192 Current Year Utilization (Detail)",
+    "expected_pubs": [
+      "536"
+    ],
+    "key_facts": [
+      "$30,000 remaining income",
+      "80% limitation",
+      "post-2017 NOL rules",
+      "carryforward eligible"
+    ],
+    "topic_tags": [
+      "NOL",
+      "net_operating_loss",
+      "carryforward",
+      "Pub_536"
+    ]
+  },
+  {
+    "id": "PRE-62",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business owner with sole proprietorship earning $200,000.",
+    "question": "What is the excess business loss limitation?",
+    "ground_truth": "For 2025, individual excess business losses are limited to $275,000 ($550,000 MFJ). Any excess is treated as NOL carryback/forward. Taxable income cannot go below zero.",
+    "hierarchy_path": "Pub 535 \u2192 Chapter 8: Excess Business Loss Limitation (Summary)",
+    "expected_pubs": [
+      "535"
+    ],
+    "key_facts": [
+      "$275,000 single limit",
+      "$550,000 MFJ",
+      "excess becomes NOL",
+      "2025 threshold"
+    ],
+    "topic_tags": [
+      "excess_business_loss",
+      "business_deduction",
+      "limitation",
+      "Pub_535"
+    ]
+  },
+  {
+    "id": "PRE-63",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A landlord deducting depreciation on a residential rental property.",
+    "question": "What is the recovery period for a residential rental building?",
+    "ground_truth": "Residential rental property has a 27.5-year recovery period using the straight-line method. The building must be held for rental and at least 80% of gross income must be from rentals.",
+    "hierarchy_path": "Pub 946 \u2192 Chapter 3: Recovery Periods \u2192 Residential Property (Detail)",
+    "expected_pubs": [
+      "946"
+    ],
+    "key_facts": [
+      "27.5-year period",
+      "straight-line method",
+      "rental income requirement",
+      "80% threshold"
+    ],
+    "topic_tags": [
+      "residential_rental",
+      "depreciation",
+      "recovery_period",
+      "Pub_946"
+    ]
+  },
+  {
+    "id": "PRE-64",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business owner depreciating qualified leasehold property improvements.",
+    "question": "What recovery period applies to my office leasehold improvements?",
+    "ground_truth": "Qualified leasehold improvements have a 15-year recovery period under MACRS. This applies to permanent improvements made to leased retail, restaurant, or qualified retail space.",
+    "hierarchy_path": "Pub 946 \u2192 Chapter 3: Special Property Classes \u2192 Leasehold Improvements (Summary)",
+    "expected_pubs": [
+      "946"
+    ],
+    "key_facts": [
+      "15-year recovery period",
+      "qualified leasehold",
+      "retail/restaurant eligible",
+      "MACRS method"
+    ],
+    "topic_tags": [
+      "leasehold_improvements",
+      "recovery_period",
+      "depreciation",
+      "Pub_946"
+    ]
+  },
+  {
+    "id": "PRE-65",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "An investor purchasing commercial real property for $500,000.",
+    "question": "What recovery period applies to commercial real property placed in service in 2025?",
+    "ground_truth": "Nonresidential real property (office buildings, retail stores) has a 39-year recovery period using the straight-line method and mid-month convention.",
+    "hierarchy_path": "Pub 946 \u2192 Chapter 3: Recovery Periods \u2192 Commercial Property (Detail)",
+    "expected_pubs": [
+      "946"
+    ],
+    "key_facts": [
+      "39-year period",
+      "straight-line method",
+      "mid-month convention",
+      "nonresidential"
+    ],
+    "topic_tags": [
+      "commercial_property",
+      "depreciation",
+      "recovery_period",
+      "Pub_946"
+    ]
+  },
+  {
+    "id": "PRE-66",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business selling a building and land together.",
+    "question": "How do I allocate the sale price between the building and land?",
+    "ground_truth": "You must allocate based on fair market value. Use appraisals, tax assessments, or comparable sales. The building (depreciable) is subject to depreciation recapture; land is not.",
+    "hierarchy_path": "Pub 544 \u2192 Chapter 1: Property Allocation \u2192 Basis Methods (Summary)",
+    "expected_pubs": [
+      "544"
+    ],
+    "key_facts": [
+      "fair market value allocation",
+      "appraisal method",
+      "depreciable vs non-depreciable",
+      "recapture"
+    ],
+    "topic_tags": [
+      "property_allocation",
+      "depreciation_recapture",
+      "Pub_544"
+    ]
+  },
+  {
+    "id": "PRE-67",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A taxpayer with like-kind property exchange interest.",
+    "question": "Can I defer gain by exchanging my rental property for another?",
+    "ground_truth": "For exchanges after 2017, only real property exchanges qualify for like-kind treatment under Section 1031. Personal property does not qualify. The properties must be of like kind (e.g., real estate for real estate).",
+    "hierarchy_path": "Pub 544 \u2192 Chapter 2: Like-Kind Exchanges \u2192 Real Property Rules (Detail)",
+    "expected_pubs": [
+      "544"
+    ],
+    "key_facts": [
+      "real property only",
+      "Section 1031",
+      "post-2017 rule",
+      "like-kind requirement"
+    ],
+    "topic_tags": [
+      "like_kind_exchange",
+      "Section_1031",
+      "Pub_544"
+    ]
+  },
+  {
+    "id": "PRE-68",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A taxpayer realizing $40,000 in recapture gains and $20,000 in long-term capital gains.",
+    "question": "What is the tax rate on my depreciation recapture?",
+    "ground_truth": "Depreciation recapture is taxed as ordinary income (up to 25% for real property recapture; up to 25% for Section 1231 recapture). The $40,000 recapture is ordinary; the $20,000 LTCG at preferential rates.",
+    "hierarchy_path": "Pub 544 \u2192 Chapter 4: Depreciation Recapture \u2192 Rates & Calculations (Detail)",
+    "expected_pubs": [
+      "544"
+    ],
+    "key_facts": [
+      "25% recapture rate",
+      "ordinary income treatment",
+      "real property recapture",
+      "$40,000"
+    ],
+    "topic_tags": [
+      "depreciation_recapture",
+      "Section_1245",
+      "tax_rate",
+      "Pub_544"
+    ]
+  },
+  {
+    "id": "PRE-69",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A C-Corporation declaring a dividend to shareholders.",
+    "question": "Are corporate dividends taxable to me?",
+    "ground_truth": "Yes. Qualified dividends are taxable to shareholders and taxed at preferential rates (0%, 15%, or 20%) if held for requisite periods. The corporation does not get a deduction.",
+    "hierarchy_path": "Pub 550 \u2192 Chapter 1: Dividends \u2192 Taxation of Qualified Dividends (Summary)",
+    "expected_pubs": [
+      "550"
+    ],
+    "key_facts": [
+      "qualified dividend rates",
+      "preferential taxation",
+      "corporation no deduction",
+      "holding period"
+    ],
+    "topic_tags": [
+      "dividend_income",
+      "qualified_dividends",
+      "C_Corporation",
+      "Pub_550"
+    ]
+  },
+  {
+    "id": "PRE-70",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A taxpayer receiving a distribution from a partnership.",
+    "question": "How is my partnership distribution taxed?",
+    "ground_truth": "Partnership distributions are generally tax-free to the extent of your basis. Distributions in excess of basis result in capital gain. Distributions of ordinary income items (K-1 allocations) are reportable on your return.",
+    "hierarchy_path": "Pub 541 \u2192 Chapter 1: Partnership Distributions \u2192 Tax Treatment (Summary)",
+    "expected_pubs": [
+      "541"
+    ],
+    "key_facts": [
+      "basis reduction",
+      "excess is capital gain",
+      "K-1 ordinary items",
+      "tax-free treatment"
+    ],
+    "topic_tags": [
+      "partnership_distribution",
+      "basis",
+      "capital_gain",
+      "Pub_541"
+    ]
+  },
+  {
+    "id": "OBBBA-71",
+    "category": "I. Individual Filing & Standard Deductions",
+    "scenario": "A single filer age 62 with $155,000 MAGI.",
+    "question": "At what age can I claim the senior deduction, and does my high income completely disqualify it?",
+    "ground_truth": "The senior deduction begins at age 65. You are below that threshold at age 62. However, if you were 65+, your income of $155,000 would be $5,000 above the $150,000 threshold, reducing your deduction by 10%, to $5,400.",
+    "hierarchy_path": "Pub 17 \u2192 Senior Deduction \u2192 Age 65+ Requirement (Detail)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "age 65 requirement",
+      "$150,000 phase-out",
+      "10% reduction per $10k over",
+      "reduced to $5,400"
+    ],
+    "topic_tags": [
+      "senior_deduction",
+      "OBBBA",
+      "age_requirement",
+      "phase_out_calculation"
+    ]
+  },
+  {
+    "id": "OBBBA-72",
+    "category": "I. Individual Filing & Standard Deductions",
+    "scenario": "A married couple filing separately with each spouse aged 68 and $90,000 individual income.",
+    "question": "How much senior deduction can each spouse claim when filing separately?",
+    "ground_truth": "Each spouse can claim $6,000 (not $12,000) when filing separately. The $150,000 threshold applies to individual income, not combined. At $90,000 each, both spouses claim the full $6,000.",
+    "hierarchy_path": "Pub 17 \u2192 Senior Deduction \u2192 Married Filing Separately (Detail)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "$6,000 per spouse MFS",
+      "$150,000 individual threshold",
+      "full amount each",
+      "not combined"
+    ],
+    "topic_tags": [
+      "senior_deduction",
+      "married_filing_separately",
+      "OBBBA"
+    ]
+  },
+  {
+    "id": "OBBBA-73",
+    "category": "I. Individual Filing & Standard Deductions",
+    "scenario": "A SALT liability of $50,000 for a taxpayer with $450,000 income.",
+    "question": "At exactly $450,000 income, what is my SALT deduction?",
+    "ground_truth": "At $450,000 income, you are exactly at the threshold where the cap begins transition to the $10,000 floor. You can deduct $40,000 of SALT.",
+    "hierarchy_path": "Pub 17 \u2192 SALT Cap \u2192 Income Threshold Interaction (Detail)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "$450,000 income",
+      "$40,000 SALT cap",
+      "$50,000 liability",
+      "threshold phase-in"
+    ],
+    "topic_tags": [
+      "SALT",
+      "OBBBA",
+      "phase_out",
+      "Schedule_A"
+    ]
+  },
+  {
+    "id": "OBBBA-74",
+    "category": "I. Individual Filing & Standard Deductions",
+    "scenario": "A taxpayer with a U.S.-assembled vehicle purchased in December 2024.",
+    "question": "If I financed a vehicle in 2024, can I claim the interest deduction in 2025?",
+    "ground_truth": "Yes, if the vehicle was assembled in the U.S. The deduction applies to interest paid on loans for vehicles purchased after 2024. You can deduct up to $10,000 annually in interest.",
+    "hierarchy_path": "Pub 17 \u2192 Vehicle Interest Deduction \u2192 Effective Date & Timing (Detail)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "purchased after 2024",
+      "U.S. assembled",
+      "$10,000 annual limit",
+      "interest deductible"
+    ],
+    "topic_tags": [
+      "vehicle_interest",
+      "OBBBA",
+      "above_the_line"
+    ]
+  },
+  {
+    "id": "OBBBA-75",
+    "category": "I. Individual Filing & Standard Deductions",
+    "scenario": "A taxpayer with $8,000 in vehicle interest paid on a foreign-assembled vehicle.",
+    "question": "Can I deduct interest on a vehicle assembled outside the U.S.?",
+    "ground_truth": "No. The OBBBA vehicle interest deduction is limited to U.S.-assembled vehicles only. Foreign-assembled vehicles do not qualify.",
+    "hierarchy_path": "Pub 17 \u2192 Vehicle Interest \u2192 Assembly Country Requirement (Summary)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "U.S. assembled only",
+      "foreign vehicles ineligible",
+      "assembly location requirement"
+    ],
+    "topic_tags": [
+      "vehicle_interest",
+      "OBBBA",
+      "assembly_requirement"
+    ]
+  },
+  {
+    "id": "OBBBA-76",
+    "category": "II. Family, Dependents & Trump Accounts",
+    "scenario": "A parent with a newborn establishing a Trump Account and wanting to check earnings.",
+    "question": "Are earnings in my child's Trump Account subject to the kiddie tax rules?",
+    "ground_truth": "Yes. Earnings in a Trump Account are subject to kiddie tax rules under Section 1(g). The first $1,250 of unearned income (2025) is tax-free; amounts above $2,500 are taxed at the child's rate.",
+    "hierarchy_path": "Pub 590-A \u2192 Trump Account Taxation \u2192 Kiddie Tax Rules (Detail)",
+    "expected_pubs": [
+      "590a"
+    ],
+    "key_facts": [
+      "kiddie tax applies",
+      "$1,250 tax-free",
+      "$2,500 threshold",
+      "child's rate above"
+    ],
+    "topic_tags": [
+      "trump_account",
+      "kiddie_tax",
+      "unearned_income",
+      "OBBBA"
+    ]
+  },
+  {
+    "id": "OBBBA-77",
+    "category": "II. Family, Dependents & Trump Accounts",
+    "scenario": "A Trump Account holder age 18 requesting a withdrawal from their account.",
+    "question": "Can I withdraw funds from my Trump Account before age 18?",
+    "ground_truth": "No. Trump Account funds are locked until the beneficiary reaches age 18. Early withdrawals (except for death/disability) are subject to 10% penalty plus income tax on earnings.",
+    "hierarchy_path": "Form 4547 Instructions \u2192 Withdrawal Restrictions (Detail)",
+    "expected_pubs": [
+      "4547"
+    ],
+    "key_facts": [
+      "age 18 eligibility",
+      "10% early withdrawal penalty",
+      "exception for death/disability",
+      "earnings taxable"
+    ],
+    "topic_tags": [
+      "trump_account",
+      "withdrawal_rules",
+      "penalty",
+      "OBBBA"
+    ]
+  },
+  {
+    "id": "OBBBA-78",
+    "category": "II. Family, Dependents & Trump Accounts",
+    "scenario": "A parent contributing $6,000 to a child's Trump Account in 2026.",
+    "question": "If I exceed the $5,000 annual contribution limit for Trump Accounts, what happens?",
+    "ground_truth": "Excess contributions are penalized at 6% per year until withdrawn. The excess $1,000 stays in the account but grows at a 6% penalty each year until removed.",
+    "hierarchy_path": "Pub 590-A \u2192 Trump Account Penalties \u2192 Excess Contribution Penalty (Detail)",
+    "expected_pubs": [
+      "590a"
+    ],
+    "key_facts": [
+      "$5,000 annual limit",
+      "6% penalty per year",
+      "$1,000 excess",
+      "until withdrawn"
+    ],
+    "topic_tags": [
+      "trump_account",
+      "contribution_limit",
+      "excess_penalty",
+      "OBBBA"
+    ]
+  },
+  {
+    "id": "OBBBA-79",
+    "category": "II. Family, Dependents & Trump Accounts",
+    "scenario": "A parent receiving employer contributions to child's Trump Account in subsequent years.",
+    "question": "If an employer contributes to Trump Accounts in multiple years, is there an aggregate limit?",
+    "ground_truth": "Yes. The $5,000 annual limit is per account from all sources (employee + employer contributions). If the employer contributes $3,000 and you contribute $2,000, you've met the $5,000 limit.",
+    "hierarchy_path": "Pub 590-A \u2192 Trump Account Limits \u2192 Aggregate Contribution Rule (Summary)",
+    "expected_pubs": [
+      "590a"
+    ],
+    "key_facts": [
+      "$5,000 aggregate limit",
+      "all sources combined",
+      "employer + employee",
+      "per year"
+    ],
+    "topic_tags": [
+      "trump_account",
+      "contribution_limit",
+      "employer_contribution",
+      "OBBBA"
+    ]
+  },
+  {
+    "id": "OBBBA-80",
+    "category": "II. Family, Dependents & Trump Accounts",
+    "scenario": "A parent wanting to rollover a Trump Account to another beneficiary.",
+    "question": "Can I change the beneficiary of a Trump Account to my other child?",
+    "ground_truth": "Yes. You can change the beneficiary without tax consequences if done before the original beneficiary reaches age 18. After age 18, rollovers require special procedures.",
+    "hierarchy_path": "Form 4547 Instructions \u2192 Beneficiary Changes (Detail)",
+    "expected_pubs": [
+      "4547"
+    ],
+    "key_facts": [
+      "beneficiary change allowed",
+      "before age 18 no tax",
+      "after age 18 special rules",
+      "rollover procedures"
+    ],
+    "topic_tags": [
+      "trump_account",
+      "beneficiary_change",
+      "rollover",
+      "OBBBA"
+    ]
+  },
+  {
+    "id": "OBBBA-81",
+    "category": "III. Tipped & Overtime Workers",
+    "scenario": "A bartender with $35,000 in tips and $5,000 in wages.",
+    "question": "How much of my $40,000 total income is taxable?",
+    "ground_truth": "You can deduct $25,000 of qualified tips on Schedule 1-A. Your taxable income is: $5,000 wages + $10,000 tips (excess) = $15,000 taxable W-2 income.",
+    "hierarchy_path": "Schedule 1-A Instructions \u2192 Tips Deduction Calculation (Detail)",
+    "expected_pubs": [
+      "1-A"
+    ],
+    "key_facts": [
+      "$25,000 tips deductible",
+      "$10,000 excess tips",
+      "$15,000 total taxable",
+      "w-2 income"
+    ],
+    "topic_tags": [
+      "tips",
+      "Schedule_1A",
+      "OBBBA",
+      "no_tax_on_tips"
+    ]
+  },
+  {
+    "id": "OBBBA-82",
+    "category": "III. Tipped & Overtime Workers",
+    "scenario": "A server with $28,000 in tips and $100,000 MAGI from other sources.",
+    "question": "Does my high MAGI from other income reduce my tips deduction?",
+    "ground_truth": "Yes. The tips deduction is subject to income phase-out. At $100,000 MAGI, your $25,000 tips deduction begins phase-out, reducing your deductible amount.",
+    "hierarchy_path": "Schedule 1-A Instructions \u2192 Phase-out Rules (Detail)",
+    "expected_pubs": [
+      "1-A"
+    ],
+    "key_facts": [
+      "tips deduction phase-out",
+      "high MAGI reduces deduction",
+      "$100,000 MAGI",
+      "progressive reduction"
+    ],
+    "topic_tags": [
+      "tips",
+      "phase_out",
+      "high_income",
+      "OBBBA"
+    ]
+  },
+  {
+    "id": "OBBBA-83",
+    "category": "III. Tipped & Overtime Workers",
+    "scenario": "A worker earning time-and-a-half overtime with mixed regular and overtime hours.",
+    "question": "How do I calculate my overtime deduction if I earn different pay rates?",
+    "ground_truth": "You deduct only the overtime premium (the extra 50%). If you earn $20/hour regular and $30/hour for overtime, the $10/hour premium on overtime hours is deductible.",
+    "hierarchy_path": "Pub 17 \u2192 Overtime Deduction \u2192 Premium Calculation (Detail)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "premium only deductible",
+      "50% extra portion",
+      "$10/hour premium",
+      "FLSA required"
+    ],
+    "topic_tags": [
+      "overtime",
+      "premium_calculation",
+      "OBBBA",
+      "FLSA"
+    ]
+  },
+  {
+    "id": "OBBBA-84",
+    "category": "III. Tipped & Overtime Workers",
+    "scenario": "A single worker age 30 with $50,000 in overtime deduction.",
+    "question": "Is there an age limit for claiming the overtime deduction?",
+    "ground_truth": "No. The overtime deduction applies to all workers regardless of age. The phase-out begins at $150,000 MAGI (Single) based on income, not age.",
+    "hierarchy_path": "Pub 17 \u2192 Overtime Deduction \u2192 Eligibility & Limits (Summary)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "no age limit",
+      "income-based phase-out",
+      "$150,000 Single threshold",
+      "all workers eligible"
+    ],
+    "topic_tags": [
+      "overtime",
+      "eligibility",
+      "OBBBA"
+    ]
+  },
+  {
+    "id": "OBBBA-85",
+    "category": "III. Tipped & Overtime Workers",
+    "scenario": "An employee receiving both tips and overtime compensation.",
+    "question": "Can I combine tips and overtime deductions on my return?",
+    "ground_truth": "Yes. You report tips deduction on Schedule 1-A and overtime deduction on the same form. Both are above-the-line deductions, combining to reduce your AGI.",
+    "hierarchy_path": "Schedule 1-A Instructions \u2192 Multiple Deductions (Summary)",
+    "expected_pubs": [
+      "1-A"
+    ],
+    "key_facts": [
+      "both deductible",
+      "Schedule 1-A",
+      "above-the-line",
+      "combined deductions"
+    ],
+    "topic_tags": [
+      "tips",
+      "overtime",
+      "combined_deduction",
+      "Schedule_1A"
+    ]
+  },
+  {
+    "id": "OBBBA-86",
+    "category": "IV. Business, R&D & Depreciation",
+    "scenario": "A startup with $200,000 in qualifying R&D expenditures in 2026.",
+    "question": "Can I take the R&D Tax Credit in addition to expensing my R&D costs?",
+    "ground_truth": "Yes. You can expense the R&D costs under Section 174 and also claim the Research & Development Tax Credit on Form 6765. You cannot double-benefit though\u2014if you claim the credit, your deduction is reduced.",
+    "hierarchy_path": "Pub 535 \u2192 R&D Expenses \u2192 Credit Interaction (Detail)",
+    "expected_pubs": [
+      "535"
+    ],
+    "key_facts": [
+      "R&D credit available",
+      "Form 6765",
+      "deduction reduced",
+      "Section_174_expensing"
+    ],
+    "topic_tags": [
+      "R&D",
+      "research_credit",
+      "expensing",
+      "Section_174"
+    ]
+  },
+  {
+    "id": "OBBBA-87",
+    "category": "IV. Business, R&D & Depreciation",
+    "scenario": "A business spending $300,000 on research with $50,000 by foreign contractors.",
+    "question": "Can I deduct foreign R&D contract research?",
+    "ground_truth": "Only domestic R&D is eligible for immediate expensing under OBBBA. The $50,000 foreign contract research must be capitalized and amortized over 5 years.",
+    "hierarchy_path": "Pub 535 \u2192 R&D Expense \u2192 Domestic Requirement (Detail)",
+    "expected_pubs": [
+      "535"
+    ],
+    "key_facts": [
+      "domestic R&D only",
+      "$250,000 expensable",
+      "$50,000 amortized",
+      "Section_174"
+    ],
+    "topic_tags": [
+      "R&D",
+      "domestic_requirement",
+      "Section_174",
+      "OBBBA"
+    ]
+  },
+  {
+    "id": "OBBBA-88",
+    "category": "IV. Business, R&D & Depreciation",
+    "scenario": "A manufacturing company with used equipment acquired in 2025.",
+    "question": "Does bonus depreciation apply to used property?",
+    "ground_truth": "Yes. Under OBBBA, bonus depreciation is not limited to new property. Used property acquired after January 19, 2025 is eligible for 100% bonus depreciation.",
+    "hierarchy_path": "Pub 946 \u2192 Bonus Depreciation \u2192 Used Property Eligibility (Detail)",
+    "expected_pubs": [
+      "946"
+    ],
+    "key_facts": [
+      "used property eligible",
+      "100% bonus",
+      "January 19, 2025",
+      "post-OBBBA rule"
+    ],
+    "topic_tags": [
+      "bonus_depreciation",
+      "used_property",
+      "OBBBA",
+      "Pub_946"
+    ]
+  },
+  {
+    "id": "OBBBA-89",
+    "category": "IV. Business, R&D & Depreciation",
+    "scenario": "A business with $2,000,000 in Section 179 purchases and $800,000 in bonus depreciation.",
+    "question": "Can I use both Section 179 and bonus depreciation in the same year?",
+    "ground_truth": "Yes. You can claim both. Section 179 is taken first to reduce basis, then bonus depreciation applies to the remaining basis. Any excess is subject to MACRS depreciation.",
+    "hierarchy_path": "Pub 946 \u2192 Chapter 2: Section 179 & Bonus \u2192 Interaction Rules (Summary)",
+    "expected_pubs": [
+      "946"
+    ],
+    "key_facts": [
+      "Section 179 first",
+      "bonus depreciation second",
+      "MACRS remainder",
+      "stacking allowed"
+    ],
+    "topic_tags": [
+      "Section_179",
+      "bonus_depreciation",
+      "interaction",
+      "Pub_946"
+    ]
+  },
+  {
+    "id": "OBBBA-90",
+    "category": "IV. Business, R&D & Depreciation",
+    "scenario": "A business in its first year with $500,000 Section 179 elections.",
+    "question": "What is the Section 179 taxable income limit?",
+    "ground_truth": "Section 179 deductions cannot exceed taxable income from the active conduct of any trade/business. If your business income is $300,000, you can only deduct $300,000, carrying forward the $200,000.",
+    "hierarchy_path": "Pub 946 \u2192 Chapter 2: Section 179 \u2192 Taxable Income Limitation (Detail)",
+    "expected_pubs": [
+      "946"
+    ],
+    "key_facts": [
+      "$300,000 deductible",
+      "taxable income limited",
+      "$200,000 carryforward",
+      "active business requirement"
+    ],
+    "topic_tags": [
+      "Section_179",
+      "limitation",
+      "carryforward",
+      "Pub_946"
+    ]
+  },
+  {
+    "id": "BIZ-91",
+    "category": "IV. Business, R&D & Depreciation",
+    "scenario": "A business with QBI income from a Specified Service Trade or Business (SSTB).",
+    "question": "Am I subject to QBI limitations as an SSTB?",
+    "ground_truth": "Yes. SSTB owners are subject to phase-out of the QBI deduction above $182,050 (Single, 2025). The QBI deduction may be limited to 20% of W-2 wages paid if above phase-out threshold.",
+    "hierarchy_path": "Form 8995-A \u2192 SSTB Phase-out (Detail)",
+    "expected_pubs": [
+      "8995-A"
+    ],
+    "key_facts": [
+      "$182,050 phase-out Single",
+      "W-2 wage limitation",
+      "SSTB definition",
+      "20% QBI cap"
+    ],
+    "topic_tags": [
+      "QBI",
+      "SSTB",
+      "phase_out",
+      "Section_199A"
+    ]
+  },
+  {
+    "id": "BIZ-92",
+    "category": "IV. Business, R&D & Depreciation",
+    "scenario": "A partnership allocating qualified business income (QBI) to partners.",
+    "question": "Do I calculate QBI on the partnership level or partner level?",
+    "ground_truth": "QBI is calculated at the partner level using K-1 allocations from the partnership. Each partner computes their own Section 199A deduction on Form 8995-A.",
+    "hierarchy_path": "Form 8995-A Instructions \u2192 Partner Reporting (Summary)",
+    "expected_pubs": [
+      "8995-A"
+    ],
+    "key_facts": [
+      "partner-level calculation",
+      "K-1 allocations",
+      "individual Form 8995-A",
+      "Form 1065 coordination"
+    ],
+    "topic_tags": [
+      "QBI",
+      "partnership",
+      "K-1",
+      "Section_199A"
+    ]
+  },
+  {
+    "id": "BIZ-93",
+    "category": "IV. Business, R&D & Depreciation",
+    "scenario": "A business considering net operating loss election under TCJA.",
+    "question": "Can I carry back a 2026 NOL?",
+    "ground_truth": "Post-2017 NOLs generally cannot be carried back (80% of income limit applies). However, taxpayers can elect to waive carryback and carry forward indefinitely.",
+    "hierarchy_path": "Pub 536 \u2192 NOL Carryback Rules (Summary)",
+    "expected_pubs": [
+      "536"
+    ],
+    "key_facts": [
+      "no carryback post-2017",
+      "80% limitation current year",
+      "indefinite carryforward",
+      "election to waive"
+    ],
+    "topic_tags": [
+      "NOL",
+      "carryback",
+      "carryforward",
+      "TCJA"
+    ]
+  },
+  {
+    "id": "RPT-94",
+    "category": "V. Reporting & Thresholds",
+    "scenario": "A gig economy worker receiving $18,000 in payments via PayPal in 2026.",
+    "question": "Will I receive a 1099-K for $18,000 in platform payments?",
+    "ground_truth": "No. The 1099-K threshold is permanently $20,000 and 200 transactions. At $18,000, you won't receive a 1099-K, but you must still report the income.",
+    "hierarchy_path": "Pub 17 \u2192 1099-K Reporting \u2192 Threshold Details (Summary)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "$20,000 threshold",
+      "200 transaction threshold",
+      "self-reporting required",
+      "no form issued"
+    ],
+    "topic_tags": [
+      "1099K",
+      "gig_economy",
+      "reporting_threshold",
+      "self_employment"
+    ]
+  },
+  {
+    "id": "RPT-95",
+    "category": "V. Reporting & Thresholds",
+    "scenario": "A business paying multiple $1,800 payments to the same contractor.",
+    "question": "Do I need to issue 1099-NEC if total payments are $4,500 but each is under $2,000?",
+    "ground_truth": "Yes. The 1099-NEC requirement is based on total payments to the same payee in a calendar year, not individual transaction amounts. At $4,500 total, you must issue 1099-NEC.",
+    "hierarchy_path": "1099-NEC Instructions \u2192 Threshold Calculation (Detail)",
+    "expected_pubs": [
+      "1099"
+    ],
+    "key_facts": [
+      "annual aggregate threshold",
+      "$4,500 total",
+      "must issue form",
+      "$2,000 threshold"
+    ],
+    "topic_tags": [
+      "1099NEC",
+      "contractor",
+      "aggregate_threshold",
+      "reporting"
+    ]
+  },
+  {
+    "id": "RPT-96",
+    "category": "V. Reporting & Thresholds",
+    "scenario": "A household employer with multiple household workers earning $2,500 each.",
+    "question": "Do I aggregate wages for household workers when calculating FUTA?",
+    "ground_truth": "Yes. Household employer FUTA tax applies to total wages paid to all household workers. At $5,000 combined ($2,500 + $2,500), you must file Schedule H and pay FUTA.",
+    "hierarchy_path": "Pub 926 \u2192 Household Employer Tax \u2192 Wage Aggregation (Summary)",
+    "expected_pubs": [
+      "926"
+    ],
+    "key_facts": [
+      "aggregate all household workers",
+      "$3,000 threshold 2026",
+      "FUTA applies",
+      "Schedule H required"
+    ],
+    "topic_tags": [
+      "household_employer",
+      "FUTA",
+      "nanny_tax",
+      "aggregate_wages"
+    ]
+  },
+  {
+    "id": "RPT-97",
+    "category": "V. Reporting & Thresholds",
+    "scenario": "A business planning estimated tax payments for 2026.",
+    "question": "What is the 2026 safe harbor for estimated tax payments?",
+    "ground_truth": "The safe harbor is 90% of 2026 tax or 100% of 2025 tax (110% if 2025 AGI > $150,000). You must pay in four quarterly installments.",
+    "hierarchy_path": "Pub 505 \u2192 Estimated Tax \u2192 Safe Harbor Rules (Detail)",
+    "expected_pubs": [
+      "505"
+    ],
+    "key_facts": [
+      "90% current year",
+      "100% prior year",
+      "110% if high income",
+      "quarterly payments"
+    ],
+    "topic_tags": [
+      "estimated_tax",
+      "safe_harbor",
+      "quarterly_payment",
+      "Pub_505"
+    ]
+  },
+  {
+    "id": "RPT-98",
+    "category": "V. Reporting & Thresholds",
+    "scenario": "A taxpayer filing a late return with underpayment.",
+    "question": "What is the penalty for failing to file a return on time?",
+    "ground_truth": "The failure-to-file penalty is 5% per month (up to 25%) of unpaid tax. The failure-to-pay penalty is 0.5% per month (up to 25%). Late filing penalties are reduced by late payment penalties.",
+    "hierarchy_path": "Pub 17 \u2192 Filing Penalties & Interest (Summary)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "5% failure-to-file",
+      "0.5% failure-to-pay",
+      "25% maximum each",
+      "monthly accrual"
+    ],
+    "topic_tags": [
+      "penalty",
+      "filing_requirement",
+      "interest",
+      "IRS_compliance"
+    ]
+  },
+  {
+    "id": "RPT-99",
+    "category": "V. Reporting & Thresholds",
+    "scenario": "A taxpayer requesting a filing extension until October 15.",
+    "question": "If I file an extension, does it extend the tax payment deadline?",
+    "ground_truth": "No. Form 4868 extends the filing deadline but not the payment deadline. Tax is due April 15 regardless. Failure to pay by April 15 incurs penalties and interest.",
+    "hierarchy_path": "Pub 17 \u2192 Filing Extensions \u2192 Payment Due Date (Summary)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "filing deadline extended",
+      "payment due April 15",
+      "penalties accrue",
+      "Form 4868"
+    ],
+    "topic_tags": [
+      "extension",
+      "filing_deadline",
+      "payment_deadline",
+      "Pub_17"
+    ]
+  },
+  {
+    "id": "RPT-100",
+    "category": "V. Reporting & Thresholds",
+    "scenario": "A taxpayer with a business that grossed $50,000 in 2026.",
+    "question": "Do I have a net profit/loss threshold that requires Schedule C filing?",
+    "ground_truth": "If you have net profit of $400+, you must file Schedule C and pay self-employment tax. At $50,000 gross, you definitely have sufficient income to require Schedule C.",
+    "hierarchy_path": "Pub 334 \u2192 Schedule C Filing Requirement (Summary)",
+    "expected_pubs": [
+      "334"
+    ],
+    "key_facts": [
+      "$400 SE income threshold",
+      "Schedule C required",
+      "SE tax required",
+      "net profit"
+    ],
+    "topic_tags": [
+      "Schedule_C",
+      "self_employment",
+      "SE_tax",
+      "filing_requirement"
+    ]
+  },
+  {
+    "id": "SCN-101",
+    "category": "VIII. Cross-Topic Scenarios",
+    "scenario": "A 62-year-old client with $250,000 in rental property income, $50,000 self-employment income, and two dependents.",
+    "question": "What deductions and credits should I prioritize to minimize tax?",
+    "ground_truth": "Prioritize: (1) Maximize business expense deductions ($50k SE income), (2) Deduct 50% of SE tax ($3,825), (3) Depreciate rental property, (4) Claim Child Tax Credit ($4,400 for two children). At 62, senior deduction not yet available; must wait until 65.",
+    "hierarchy_path": "Pub 17 \u2192 Planning & Coordination (Summary)",
+    "expected_pubs": [
+      "17",
+      "334",
+      "527",
+      "535"
+    ],
+    "key_facts": [
+      "$50k SE deductible",
+      "$3,825 SE tax deduction",
+      "$4,400 CTC",
+      "rental depreciation"
+    ],
+    "topic_tags": [
+      "tax_planning",
+      "multi_income",
+      "deduction_strategy",
+      "scenario"
+    ]
+  },
+  {
+    "id": "SCN-102",
+    "category": "VIII. Cross-Topic Scenarios",
+    "scenario": "A business owner selling equipment for $100,000 (cost $120,000, depreciated to $60,000), buying $150,000 new equipment same year.",
+    "question": "How do I handle depreciation and recapture in the year of turnover?",
+    "ground_truth": "Selling equipment: $40,000 loss + $0 recapture (loss property). New equipment: Eligible for 100% bonus depreciation ($150,000) or Section 179 ($1,160,000 limit). Net: $110,000 gain/loss position, substantial depreciation benefit.",
+    "hierarchy_path": "Pub 946 \u2192 Bonus & Section 179 Interaction with Sales (Detail)",
+    "expected_pubs": [
+      "946",
+      "544"
+    ],
+    "key_facts": [
+      "$40,000 loss",
+      "$150,000 full deduction",
+      "bonus depreciation available",
+      "Section_179 election"
+    ],
+    "topic_tags": [
+      "depreciation",
+      "property_sales",
+      "bonus_depreciation",
+      "Section_179"
+    ]
+  },
+  {
+    "id": "SCN-103",
+    "category": "VIII. Cross-Topic Scenarios",
+    "scenario": "A retiree (age 72) with $500,000 in Traditional IRA, $150,000 pension, $80,000 Social Security, and $50,000 rental income.",
+    "question": "How much must I withdraw from my IRA, and how does it affect taxation of my benefits?",
+    "ground_truth": "RMD at age 72 is ~$18,382 ($500,000 \u00f7 27.4). This RMD plus other income triggers Modified AGI calculations affecting Social Security taxation (up to 85% taxable) and Medicare premiums (IRMAA).",
+    "hierarchy_path": "Pub 590-B \u2192 RMDs and Tax Coordination (Summary)",
+    "expected_pubs": [
+      "590b",
+      "915"
+    ],
+    "key_facts": [
+      "$18,382 RMD",
+      "Social Security coordination",
+      "IRMAA impact",
+      "85% inclusion rule"
+    ],
+    "topic_tags": [
+      "RMD",
+      "Social_Security",
+      "IRMAA",
+      "retirement_planning"
+    ]
+  },
+  {
+    "id": "SCN-104",
+    "category": "VIII. Cross-Topic Scenarios",
+    "scenario": "A married couple (one 55, one 45) with $200,000 household income, two children, $25,000 SALT, one spouse self-employed ($80k SE income).",
+    "question": "What is their optimal filing status and deduction strategy?",
+    "ground_truth": "File MFJ for maximum benefits: (1) Standard deduction $30,000, (2) Deduct 50% of SE tax (~$5,657), (3) CTC $4,400 (two children, some phase-out at $200k), (4) SALT $25,000 deductible fully. AGI approximately $159,343.",
+    "hierarchy_path": "Pub 17 \u2192 Multiple Income Coordination (Detail)",
+    "expected_pubs": [
+      "17",
+      "334"
+    ],
+    "key_facts": [
+      "$30,000 standard deduction",
+      "$5,657 SE deduction",
+      "$4,400 CTC",
+      "$159,343 AGI"
+    ],
+    "topic_tags": [
+      "filing_status",
+      "MFJ",
+      "multiple_income",
+      "tax_planning"
+    ]
+  },
+  {
+    "id": "SCN-105",
+    "category": "VIII. Cross-Topic Scenarios",
+    "scenario": "A self-employed consultant with $100,000 income, $40,000 in legitimate business expenses, considering retirement contribution options.",
+    "question": "Should I establish a SEP-IRA or a Solo 401(k), and how much can I contribute?",
+    "ground_truth": "SEP-IRA: ~$12,000 (20% of $60,000 net SE income). Solo 401(k): Up to $69,000 (employee deferral $23,500 + employer 20% + catch-up). 401(k) is superior if you can defer $23,500+.",
+    "hierarchy_path": "Pub 560 \u2192 Retirement Plan Comparison (Summary)",
+    "expected_pubs": [
+      "560"
+    ],
+    "key_facts": [
+      "$12,000 SEP contribution",
+      "$69,000 401k max",
+      "higher limit 401k",
+      "plan selection"
+    ],
+    "topic_tags": [
+      "retirement_planning",
+      "SEP_IRA",
+      "Solo_401k",
+      "deduction_strategy"
+    ]
+  },
+  {
+    "id": "SCN-106",
+    "category": "VIII. Cross-Topic Scenarios",
+    "scenario": "A landlord with three rental properties: one loss-making, two profitable ($15k gain each).",
+    "question": "Can I use the $30,000 annual loss limit against my passive gains?",
+    "ground_truth": "Yes. If you actively participate in rental real estate, you can offset $25,000 of gains with losses annually (under $100k MAGI threshold). Excess losses carry forward indefinitely.",
+    "hierarchy_path": "Pub 527 \u2192 Passive Activity Loss Rules \u2192 Active Participation Exception (Detail)",
+    "expected_pubs": [
+      "527"
+    ],
+    "key_facts": [
+      "$25,000 loss deduction",
+      "active participation required",
+      "carryforward excess",
+      "real estate professional exception"
+    ],
+    "topic_tags": [
+      "rental_property",
+      "passive_loss",
+      "active_participation",
+      "loss_limitation"
+    ]
+  },
+  {
+    "id": "SCN-107",
+    "category": "VIII. Cross-Topic Scenarios",
+    "scenario": "A startup founder with $200,000 R&D expenses, $300,000 in pre-revenue operating losses, and equipment purchases.",
+    "question": "How do I optimize first-year deductions and carryforwards?",
+    "ground_truth": "Expense $200k R&D under Section 174 (OBBBA), Section 179 equipment to $1,160,000 limit, carry forward NOL ($300k+ total) under 80% limitation rule. No federal tax due; valuable NOL asset created.",
+    "hierarchy_path": "Pub 535 \u2192 Startup Deductions; Pub 946 \u2192 Bonus; Pub 536 \u2192 NOL (Summary)",
+    "expected_pubs": [
+      "535",
+      "946",
+      "536"
+    ],
+    "key_facts": [
+      "R&D expensing",
+      "Section_179 max",
+      "NOL carryforward",
+      "80% limitation"
+    ],
+    "topic_tags": [
+      "startup_planning",
+      "R&D_expensing",
+      "NOL",
+      "Section_179"
+    ]
+  },
+  {
+    "id": "SCN-108",
+    "category": "VIII. Cross-Topic Scenarios",
+    "scenario": "An investor with $10,000 short-term gains, $5,000 long-term gains, $20,000 long-term losses.",
+    "question": "What is my net capital gain/loss and tax liability?",
+    "ground_truth": "Net long-term: ($15,000) loss. Net short-term: $10,000 gain. Combine: ($5,000) overall loss. Deduct $3,000 this year; carry forward $2,000. Tax on $0 capital gains, other income taxed normally.",
+    "hierarchy_path": "Pub 550 \u2192 Capital Gains & Losses \u2192 Netting Rules (Detail)",
+    "expected_pubs": [
+      "550"
+    ],
+    "key_facts": [
+      "$3,000 loss deduction",
+      "$2,000 carryforward",
+      "netting order",
+      "indefinite carryforward"
+    ],
+    "topic_tags": [
+      "capital_gains",
+      "capital_losses",
+      "netting",
+      "loss_limitation"
+    ]
+  },
+  {
+    "id": "MEF-109",
+    "category": "VI. MeF & Procedural Errors",
+    "scenario": "A return with mixed OBBBA provisions and missing Form 1-A.",
+    "question": "Why was my return rejected for 'missing Form 1-A'?",
+    "ground_truth": "If you claim tips or overtime deductions (Schedule 1-A), the form must be attached to e-file. Electronic filers cannot bypass the form requirement.",
+    "hierarchy_path": "Schedule 1-A Instructions \u2192 E-file Requirements (Summary)",
+    "expected_pubs": [
+      "1-A"
+    ],
+    "key_facts": [
+      "Form 1-A required",
+      "e-file attachment",
+      "tips/overtime deduction",
+      "reject prevention"
+    ],
+    "topic_tags": [
+      "MeF",
+      "reject_code",
+      "e-file",
+      "Schedule_1A"
+    ]
+  },
+  {
+    "id": "MEF-110",
+    "category": "VI. MeF & Procedural Errors",
+    "scenario": "A taxpayer reporting senior deduction with ITIN.",
+    "question": "Why was my senior deduction rejected?",
+    "ground_truth": "The OBBBA senior deduction requires SSN valid for work (not ITIN). ITIN holders cannot claim the deduction; it will be rejected in e-file validation.",
+    "hierarchy_path": "Pub 17 \u2192 Senior Deduction Eligibility (Summary)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "SSN valid for work required",
+      "ITIN ineligible",
+      "reject reason",
+      "no senior deduction"
+    ],
+    "topic_tags": [
+      "senior_deduction",
+      "ITIN",
+      "SSN",
+      "eligibility"
+    ]
+  },
+  {
+    "id": "MEF-111",
+    "category": "VI. MeF & Procedural Errors",
+    "scenario": "A Form 8962 reconciliation revealing ACA premium overpayment.",
+    "question": "If Form 8962 shows I was overpaid $500 in subsidies, how is this treated?",
+    "ground_truth": "Form 8962 reconciles APTC (Advance Premium Tax Credit). If you were overpaid $500, this is entered on Form 8962 reducing your refund or increasing tax owed. Cannot claim as separate credit.",
+    "hierarchy_path": "Form 8962 Instructions \u2192 Overpayment Treatment (Summary)",
+    "expected_pubs": [
+      "8962"
+    ],
+    "key_facts": [
+      "overpayment reduces refund",
+      "Form 8962 reconciliation",
+      "no separate credit",
+      "APTC adjustment"
+    ],
+    "topic_tags": [
+      "ACA",
+      "APTC",
+      "Form_8962",
+      "reconciliation"
+    ]
+  },
+  {
+    "id": "MEF-112",
+    "category": "VI. MeF & Procedural Errors",
+    "scenario": "An employer missing Code 'TP' for tips on W-2s.",
+    "question": "If my employer didn't report tips separately on the W-2, can I claim them as deductible?",
+    "ground_truth": "You can still deduct qualified tips on Schedule 1-A even without Code TP on the W-2, but your employer faces penalties. You may need to provide documentation of tips received.",
+    "hierarchy_path": "Pub 15 \u2192 W-2 Reporting \u2192 Code TP (Summary)",
+    "expected_pubs": [
+      "15"
+    ],
+    "key_facts": [
+      "Code TP missing",
+      "deduction still possible",
+      "employer penalty exposure",
+      "documentation helpful"
+    ],
+    "topic_tags": [
+      "tips",
+      "W-2",
+      "reporting",
+      "Code_TP"
+    ]
+  },
+  {
+    "id": "MEF-113",
+    "category": "VI. MeF & Procedural Errors",
+    "scenario": "A Form 4547 (Trump Account) not filed but $1,000 federal seed received.",
+    "question": "If I don't file Form 4547 to establish a Trump Account, what happens to the $1,000 seed?",
+    "ground_truth": "The $1,000 federal seed is not taxable whether or not Form 4547 is filed. However, the account won't be official without the form. Best practice is to file Form 4547 immediately to document the account.",
+    "hierarchy_path": "Form 4547 Instructions \u2192 Filing Requirements (Summary)",
+    "expected_pubs": [
+      "4547"
+    ],
+    "key_facts": [
+      "seed not taxable",
+      "Form 4547 recommended",
+      "official account status",
+      "documentation needed"
+    ],
+    "topic_tags": [
+      "trump_account",
+      "Form_4547",
+      "federal_seed",
+      "tax_treatment"
+    ]
+  },
+  {
+    "id": "PRE-114",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business buying computer equipment for $5,000.",
+    "question": "Is computer equipment subject to listed property depreciation rules?",
+    "ground_truth": "Yes. Computer equipment is classified as listed property and requires special depreciation rules including substantiation of business use percentage and restrictions on accelerated depreciation.",
+    "hierarchy_path": "Pub 946 \u2192 Chapter 4: Listed Property \u2192 Computer Equipment (Detail)",
+    "expected_pubs": [
+      "946"
+    ],
+    "key_facts": [
+      "listed property classification",
+      "business use substantiation",
+      "depreciation restrictions",
+      "MACRS rules apply"
+    ],
+    "topic_tags": [
+      "listed_property",
+      "computer",
+      "depreciation",
+      "Pub_946"
+    ]
+  },
+  {
+    "id": "PRE-115",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business owner calculating depreciation on equipment placed in service Q4.",
+    "question": "Does the timing of my Q4 asset placement trigger different depreciation rules?",
+    "ground_truth": "Yes. If property placed in Q4 exceeds 40% of total 2025 basis, mid-quarter convention applies to all property (depreciable from mid-quarter rather than mid-year).",
+    "hierarchy_path": "Pub 946 \u2192 Chapter 1: Mid-Quarter Convention \u2192 Calculation (Detail)",
+    "expected_pubs": [
+      "946"
+    ],
+    "key_facts": [
+      "40% Q4 threshold",
+      "mid-quarter convention",
+      "all property affected",
+      "timing rules"
+    ],
+    "topic_tags": [
+      "depreciation",
+      "mid_quarter_convention",
+      "timing",
+      "Pub_946"
+    ]
+  },
+  {
+    "id": "PRE-116",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A partnership distributing appreciated property to a partner.",
+    "question": "Is there gain recognition when a partnership distributes appreciated property?",
+    "ground_truth": "No. Distributions in kind are generally not taxable events. Gain is recognized only if cash distributed exceeds the partner's basis, creating a deemed sale.",
+    "hierarchy_path": "Pub 541 \u2192 Partnership Distributions \u2192 In-Kind Distributions (Summary)",
+    "expected_pubs": [
+      "541"
+    ],
+    "key_facts": [
+      "no gain on in-kind distribution",
+      "basis reduction",
+      "exception for excess cash",
+      "deferred gain"
+    ],
+    "topic_tags": [
+      "partnership_distribution",
+      "appreciated_property",
+      "basis",
+      "Pub_541"
+    ]
+  },
+  {
+    "id": "PRE-117",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business with $100,000 in inventory.",
+    "question": "Is inventory depreciated or deducted as COGS?",
+    "ground_truth": "Inventory is not depreciated. It is capitalized and recovered through cost of goods sold (COGS) calculations on Form 1040 Schedule C. Only fixed assets (equipment) are depreciated.",
+    "hierarchy_path": "Pub 535 \u2192 Chapter 1: Inventory Rules (Summary)",
+    "expected_pubs": [
+      "535"
+    ],
+    "key_facts": [
+      "inventory capitalized",
+      "COGS deduction",
+      "not depreciated",
+      "valuation methods"
+    ],
+    "topic_tags": [
+      "inventory",
+      "COGS",
+      "capitalization",
+      "Pub_535"
+    ]
+  },
+  {
+    "id": "PRE-118",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business owner deducting meals during business travel.",
+    "question": "What is the deduction percentage for business meal expenses?",
+    "ground_truth": "Business meals are 50% deductible (100% for certain pandemic-related meals through 2025 per prior law, 50% thereafter). Documentation of business purpose, date, place, and attendees is required.",
+    "hierarchy_path": "Pub 535 \u2192 Chapter 2: Meals & Entertainment (Detail)",
+    "expected_pubs": [
+      "535"
+    ],
+    "key_facts": [
+      "50% deductible",
+      "documentation required",
+      "business purpose",
+      "per diem option"
+    ],
+    "topic_tags": [
+      "meal_expenses",
+      "business_deduction",
+      "substantiation",
+      "Pub_535"
+    ]
+  },
+  {
+    "id": "PRE-119",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business offering a health insurance plan to employees.",
+    "question": "Can I deduct health insurance premiums I pay for employees?",
+    "ground_truth": "Yes. Employer health insurance premiums are fully deductible as a business expense. Employee contributions are withheld from wages; employer contributions reduce business income.",
+    "hierarchy_path": "Pub 535 \u2192 Fringe Benefits \u2192 Health Insurance (Summary)",
+    "expected_pubs": [
+      "535"
+    ],
+    "key_facts": [
+      "fully deductible",
+      "employer contribution",
+      "employee withholding",
+      "fringe benefit"
+    ],
+    "topic_tags": [
+      "health_insurance",
+      "fringe_benefit",
+      "business_deduction",
+      "Pub_535"
+    ]
+  },
+  {
+    "id": "PRE-120",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A freelancer paying $8,000 in advertising costs.",
+    "question": "Are advertising expenses deductible?",
+    "ground_truth": "Yes. Advertising expenses (online ads, website, social media marketing, business cards) are fully deductible as ordinary business expenses.",
+    "hierarchy_path": "Pub 535 \u2192 Chapter 1: Deductible Expenses (Summary)",
+    "expected_pubs": [
+      "535"
+    ],
+    "key_facts": [
+      "fully deductible",
+      "ordinary business expense",
+      "business promotion",
+      "direct marketing"
+    ],
+    "topic_tags": [
+      "advertising",
+      "marketing_expense",
+      "business_deduction",
+      "Pub_535"
+    ]
+  },
+  {
+    "id": "PRE-121",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business paying $15,000 annually for professional liability insurance.",
+    "question": "Is professional liability insurance deductible?",
+    "ground_truth": "Yes. Professional liability insurance (malpractice, errors & omissions) is fully deductible as a business insurance expense.",
+    "hierarchy_path": "Pub 535 \u2192 Business Insurance (Summary)",
+    "expected_pubs": [
+      "535"
+    ],
+    "key_facts": [
+      "fully deductible",
+      "liability insurance",
+      "ordinary business expense",
+      "professional coverage"
+    ],
+    "topic_tags": [
+      "insurance",
+      "business_expense",
+      "liability",
+      "Pub_535"
+    ]
+  },
+  {
+    "id": "PRE-122",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business purchasing a company vehicle for $50,000, used 100% for business.",
+    "question": "What depreciation method applies to the business vehicle?",
+    "ground_truth": "Vehicles are listed property. You can elect straight-line or accelerated MACRS, but business use must be substantiated. A 5-year recovery period typically applies for automobiles.",
+    "hierarchy_path": "Pub 946 \u2192 Chapter 4: Listed Property \u2192 Vehicles (Detail)",
+    "expected_pubs": [
+      "946"
+    ],
+    "key_facts": [
+      "5-year recovery",
+      "listed property rules",
+      "100% business use",
+      "substantiation required"
+    ],
+    "topic_tags": [
+      "vehicle",
+      "depreciation",
+      "listed_property",
+      "business_use"
+    ]
+  },
+  {
+    "id": "PRE-123",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A freelancer with home office tracking utility and rent expenses.",
+    "question": "Can I use the simplified method instead of calculating actual home office expenses?",
+    "ground_truth": "Yes. The simplified method allows $5 per sq ft (up to 300 sq ft = $1,500 max/year). This is easier than calculating the actual expense percentage but may give a smaller deduction.",
+    "hierarchy_path": "Pub 587 \u2192 Home Office Deduction \u2192 Simplified Method (Summary)",
+    "expected_pubs": [
+      "587"
+    ],
+    "key_facts": [
+      "$5 per sq ft",
+      "$1,500 maximum",
+      "simplified calculation",
+      "easier documentation"
+    ],
+    "topic_tags": [
+      "home_office",
+      "simplified_method",
+      "deduction",
+      "Pub_587"
+    ]
+  },
+  {
+    "id": "PRE-124",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business spending $10,000 on professional development courses.",
+    "question": "Are employee training and development expenses deductible?",
+    "ground_truth": "Yes. Ordinary and necessary business training and professional development are fully deductible. This includes seminars, courses, and certifications related to the business.",
+    "hierarchy_path": "Pub 535 \u2192 Chapter 1: Professional Development (Summary)",
+    "expected_pubs": [
+      "535"
+    ],
+    "key_facts": [
+      "fully deductible",
+      "ordinary business expense",
+      "training costs",
+      "professional development"
+    ],
+    "topic_tags": [
+      "training_expense",
+      "employee_development",
+      "business_deduction",
+      "Pub_535"
+    ]
+  },
+  {
+    "id": "PRE-125",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A small business with $15,000 in bank interest on business accounts.",
+    "question": "Is interest earned on business bank accounts taxable?",
+    "ground_truth": "Yes. All interest income, including business bank account interest, is taxable income. It is reported on Schedule B (Form 1040) or Schedule C interest box.",
+    "hierarchy_path": "Pub 550 \u2192 Chapter 1: Interest Income (Summary)",
+    "expected_pubs": [
+      "550"
+    ],
+    "key_facts": [
+      "taxable income",
+      "ordinary income rates",
+      "Schedule B reporting",
+      "business accounts"
+    ],
+    "topic_tags": [
+      "interest_income",
+      "ordinary_income",
+      "Schedule_B",
+      "Pub_550"
+    ]
+  },
+  {
+    "id": "OBBBA-126",
+    "category": "I. Individual Filing & Standard Deductions",
+    "scenario": "A married couple, one spouse age 68, one age 40, with $145,000 MAGI.",
+    "question": "Can only the older spouse claim the senior deduction?",
+    "ground_truth": "Yes. Only the spouse over age 65 can claim the $6,000 senior deduction. The 40-year-old spouse cannot claim it. Total deduction is $6,000 (one spouse only).",
+    "hierarchy_path": "Pub 17 \u2192 Senior Deduction \u2192 Individual Spouse Eligibility (Detail)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "age 65+ requirement",
+      "one spouse only",
+      "$6,000 deduction",
+      "other spouse cannot claim"
+    ],
+    "topic_tags": [
+      "senior_deduction",
+      "OBBBA",
+      "age_requirement",
+      "MFJ"
+    ]
+  },
+  {
+    "id": "OBBBA-127",
+    "category": "I. Individual Filing & Standard Deductions",
+    "scenario": "A single taxpayer with $35,000 in SALT paid and $180,000 MAGI.",
+    "question": "At exactly the $500,000 threshold income, what is my SALT deduction?",
+    "ground_truth": "At $180,000 MAGI, you are well below the $500,000 phase-out threshold. You can deduct up to $40,000 of your $35,000 SALT liability. Full $35,000 deductible.",
+    "hierarchy_path": "Pub 17 \u2192 SALT Cap \u2192 Below-Threshold Treatment (Summary)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "below $500,000 threshold",
+      "$40,000 cap applies",
+      "$35,000 deductible",
+      "full SALT amount"
+    ],
+    "topic_tags": [
+      "SALT",
+      "OBBBA",
+      "Schedule_A",
+      "itemized_deductions"
+    ]
+  },
+  {
+    "id": "OBBBA-128",
+    "category": "I. Individual Filing & Standard Deductions",
+    "scenario": "A taxpayer married filing separately with $35,000 SALT and $300,000 individual income.",
+    "question": "What is my SALT deduction when filing separately with high income?",
+    "ground_truth": "Filing separately, you are subject to different phase-out thresholds. The $40,000 cap still applies, but phase-out toward $10,000 begins differently based on MFS vs MFJ rates.",
+    "hierarchy_path": "Pub 17 \u2192 SALT Cap \u2192 Married Filing Separately Rules (Detail)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "MFS different threshold",
+      "$40,000 cap",
+      "phase-out rules",
+      "individual income $300k"
+    ],
+    "topic_tags": [
+      "SALT",
+      "married_filing_separately",
+      "OBBBA"
+    ]
+  },
+  {
+    "id": "OBBBA-129",
+    "category": "II. Family, Dependents & Trump Accounts",
+    "scenario": "A taxpayer establishing a Trump Account for a newborn in 2025, wanting to know age cutoffs.",
+    "question": "Is there an age cutoff for opening a Trump Account for a newborn?",
+    "ground_truth": "No age limit to open the account, but funds are locked until age 18. Account must be established before the child reaches age 18 to qualify for government seed deposit.",
+    "hierarchy_path": "Form 4547 \u2192 Eligibility Requirements (Detail)",
+    "expected_pubs": [
+      "4547"
+    ],
+    "key_facts": [
+      "no opening age limit",
+      "locked until age 18",
+      "seed before age 18",
+      "government contribution"
+    ],
+    "topic_tags": [
+      "trump_account",
+      "age_requirement",
+      "OBBBA"
+    ]
+  },
+  {
+    "id": "OBBBA-130",
+    "category": "II. Family, Dependents & Trump Accounts",
+    "scenario": "A divorced parent attempting to contribute to a child's Trump Account without custodial rights.",
+    "question": "Can I contribute to my child's Trump Account if the other parent has custody?",
+    "ground_truth": "Only the custodial parent can establish and manage the Trump Account. Non-custodial parent contributions require consent and must be added by the custodial parent.",
+    "hierarchy_path": "Form 4547 \u2192 Custodial Account Rules (Summary)",
+    "expected_pubs": [
+      "4547"
+    ],
+    "key_facts": [
+      "custodial parent only",
+      "non-custodial requires consent",
+      "account management",
+      "custody requirement"
+    ],
+    "topic_tags": [
+      "trump_account",
+      "custody",
+      "custodial_account",
+      "OBBBA"
+    ]
+  },
+  {
+    "id": "OBBBA-131",
+    "category": "III. Tipped & Overtime Workers",
+    "scenario": "A tipped employee with $20,000 in tips and $30,000 MAGI from spouse's income.",
+    "question": "Does my spouse's income affect my tips deduction?",
+    "ground_truth": "No. The tips deduction is based on the tip earner's individual MAGI, not household MAGI. Spouse's income is not considered for the tips deduction phase-out.",
+    "hierarchy_path": "Schedule 1-A Instructions \u2192 MAGI Definition (Detail)",
+    "expected_pubs": [
+      "1-A"
+    ],
+    "key_facts": [
+      "individual MAGI only",
+      "spouse income excluded",
+      "tips deduction",
+      "phase-out calculation"
+    ],
+    "topic_tags": [
+      "tips",
+      "MAGI",
+      "income_exclusion",
+      "OBBBA"
+    ]
+  },
+  {
+    "id": "OBBBA-132",
+    "category": "III. Tipped & Overtime Workers",
+    "scenario": "A worker with $12,000 in overtime deduction and $145,000 MAGI (married filing jointly).",
+    "question": "Is my overtime deduction reduced by phase-out at $145,000 joint income?",
+    "ground_truth": "Yes. For MFJ, the $300,000 phase-out threshold is used. At $145,000, you are well below and receive the full overtime deduction without reduction.",
+    "hierarchy_path": "Schedule 1-A Instructions \u2192 MFJ Phase-out Rules (Summary)",
+    "expected_pubs": [
+      "1-A"
+    ],
+    "key_facts": [
+      "$300,000 MFJ threshold",
+      "below threshold",
+      "full deduction",
+      "no phase-out"
+    ],
+    "topic_tags": [
+      "overtime",
+      "MFJ",
+      "OBBBA",
+      "phase_out"
+    ]
+  },
+  {
+    "id": "OBBBA-133",
+    "category": "IV. Business, R&D & Depreciation",
+    "scenario": "A business with $60,000 in qualified R&D with $15,000 by foreign subsidiaries.",
+    "question": "Can I claim R&D credit on foreign R&D?",
+    "ground_truth": "No. The R&D Tax Credit (Form 6765) only applies to domestic R&D. Foreign R&D is ineligible. Only the $45,000 domestic portion qualifies for credit.",
+    "hierarchy_path": "Form 6765 Instructions \u2192 Domestic Requirement (Detail)",
+    "expected_pubs": [
+      "6765"
+    ],
+    "key_facts": [
+      "domestic R&D only",
+      "$45,000 qualified",
+      "$15,000 foreign ineligible",
+      "credit calculation"
+    ],
+    "topic_tags": [
+      "R&D_credit",
+      "foreign_R&D",
+      "Form_6765",
+      "domestic_requirement"
+    ]
+  },
+  {
+    "id": "OBBBA-134",
+    "category": "IV. Business, R&D & Depreciation",
+    "scenario": "A business selling used equipment acquired in 2023 for a loss.",
+    "question": "If I sell used equipment at a loss, can I also claim bonus depreciation on replacement equipment?",
+    "ground_truth": "Yes. The loss on old equipment (if any) is separate from the new equipment purchase. New used equipment placed in service after 1/19/2025 is eligible for 100% bonus depreciation.",
+    "hierarchy_path": "Pub 946 \u2192 Bonus Depreciation \u2192 Used Property (Detail)",
+    "expected_pubs": [
+      "946"
+    ],
+    "key_facts": [
+      "used equipment eligible",
+      "100% bonus 2025+",
+      "separate transactions",
+      "loss + deduction"
+    ],
+    "topic_tags": [
+      "bonus_depreciation",
+      "used_property",
+      "property_sales",
+      "Pub_946"
+    ]
+  },
+  {
+    "id": "OBBBA-135",
+    "category": "V. Reporting & Thresholds",
+    "scenario": "A business paying $1,200 to Contractor A and $1,200 to Contractor B in 2026.",
+    "question": "Do I issue 1099-NECs for two $1,200 payments to different contractors?",
+    "ground_truth": "No. The 1099-NEC threshold is per payee at $2,000. Each contractor received only $1,200, so no 1099-NECs are required.",
+    "hierarchy_path": "1099-NEC Instructions \u2192 Per-Payee Threshold (Summary)",
+    "expected_pubs": [
+      "1099"
+    ],
+    "key_facts": [
+      "per payee threshold",
+      "$2,000 limit",
+      "$1,200 each",
+      "no forms required"
+    ],
+    "topic_tags": [
+      "1099NEC",
+      "reporting_threshold",
+      "contractor",
+      "OBBBA"
+    ]
+  },
+  {
+    "id": "OBBBA-136",
+    "category": "V. Reporting & Thresholds",
+    "scenario": "A household employer paying a babysitter $200/month for 12 months ($2,400 total).",
+    "question": "At $2,400 annual wages, do I need to file Schedule H for nanny taxes?",
+    "ground_truth": "No. The 2026 household worker threshold is $3,000. At $2,400, you are below the threshold and do not owe FICA or FUTA taxes.",
+    "hierarchy_path": "Pub 926 \u2192 Household Worker Threshold (Summary)",
+    "expected_pubs": [
+      "926"
+    ],
+    "key_facts": [
+      "$3,000 threshold 2026",
+      "$2,400 below",
+      "no Schedule H",
+      "no FICA/FUTA"
+    ],
+    "topic_tags": [
+      "household_employer",
+      "nanny_tax",
+      "Schedule_H",
+      "OBBBA"
+    ]
+  },
+  {
+    "id": "SCN-137",
+    "category": "VIII. Cross-Topic Scenarios",
+    "scenario": "An investor age 70 with $300,000 in Traditional IRA (no RMD yet), $200,000 pension, $100,000 Social Security.",
+    "question": "How much of my Social Security is taxable with these income sources?",
+    "ground_truth": "Combined income: $300k + $200k + $100k = $600k. Modified adjusted gross income for SS taxation is ~$500k. Up to 85% of Social Security ($85,000) is taxable; effective rate is high.",
+    "hierarchy_path": "Pub 915 \u2192 Social Security Taxation \u2192 Combined Income Formula (Detail)",
+    "expected_pubs": [
+      "915"
+    ],
+    "key_facts": [
+      "85% inclusion threshold",
+      "combined income $600k",
+      "maximum taxation",
+      "Social Security coordination"
+    ],
+    "topic_tags": [
+      "Social_Security",
+      "taxable_benefits",
+      "combined_income",
+      "retirement_planning"
+    ]
+  },
+  {
+    "id": "SCN-138",
+    "category": "VIII. Cross-Topic Scenarios",
+    "scenario": "A business owner age 50 earning $120,000 with no retirement plan, considering contributions.",
+    "question": "How much can I contribute to an IRA with an employer match in the same year?",
+    "ground_truth": "If self-employed, you contribute both as employee ($8,000 age 50+ catch-up) and employer (20% of net SE income). Total could exceed SEP limit of $70,000.",
+    "hierarchy_path": "Pub 560 \u2192 Retirement Plan Contributions \u2192 Multiple Plans (Summary)",
+    "expected_pubs": [
+      "560"
+    ],
+    "key_facts": [
+      "employee + employer",
+      "$8,000 catch-up",
+      "20% employer",
+      "$70,000 total limit"
+    ],
+    "topic_tags": [
+      "retirement_contributions",
+      "age_50",
+      "catch_up",
+      "multiple_contributions"
+    ]
+  },
+  {
+    "id": "SCN-139",
+    "category": "VIII. Cross-Topic Scenarios",
+    "scenario": "A married couple with significant passive losses and active business income in same year.",
+    "question": "Can I offset my $50,000 business income with my $50,000 passive rental loss?",
+    "ground_truth": "No. Passive losses can offset passive income only, not active business income. The $50,000 loss is suspended unless you qualify for real estate professional exception.",
+    "hierarchy_path": "Pub 527 \u2192 Passive Activity Rules \u2192 Offset Limitations (Detail)",
+    "expected_pubs": [
+      "527"
+    ],
+    "key_facts": [
+      "passive offset passive only",
+      "loss suspended",
+      "real estate pro exception",
+      "loss carryforward"
+    ],
+    "topic_tags": [
+      "passive_loss",
+      "business_income",
+      "suspension_rules",
+      "Pub_527"
+    ]
+  },
+  {
+    "id": "SCN-140",
+    "category": "VIII. Cross-Topic Scenarios",
+    "scenario": "A small business owner with $50,000 net income and $30,000 in Roth IRA conversion.",
+    "question": "Does my Roth conversion affect my QBI deduction calculation?",
+    "ground_truth": "Yes. The $30,000 Roth conversion is added back to AGI for QBI purposes. Your QBI deduction is calculated on the higher income base.",
+    "hierarchy_path": "Form 8995-A \u2192 QBI Calculation with Conversions (Summary)",
+    "expected_pubs": [
+      "8995-A"
+    ],
+    "key_facts": [
+      "conversion increases MAGI",
+      "QBI deduction affected",
+      "add-back required",
+      "higher calculation base"
+    ],
+    "topic_tags": [
+      "QBI",
+      "Roth_conversion",
+      "MAGI",
+      "income_coordination"
+    ]
+  },
+  {
+    "id": "MEF-141",
+    "category": "VI. MeF & Procedural Errors",
+    "scenario": "A return rejected for 'Invalid Senior Deduction Age'.",
+    "question": "Why might my senior deduction be rejected for age validation?",
+    "ground_truth": "If taxpayer is under 65, the senior deduction is rejected. IRS uses birth date from tax records. The system verifies age 65+ for both spouses when claimed.",
+    "hierarchy_path": "Pub 17 \u2192 Senior Deduction \u2192 Age Verification (Summary)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "age 65+ required",
+      "birth date validation",
+      "both spouses if MFJ",
+      "reject prevention"
+    ],
+    "topic_tags": [
+      "senior_deduction",
+      "age_verification",
+      "MeF",
+      "reject_code"
+    ]
+  },
+  {
+    "id": "MEF-142",
+    "category": "VI. MeF & Procedural Errors",
+    "scenario": "A high-income taxpayer with SALT deduction that exceeds the new cap.",
+    "question": "Will the IRS automatically limit my SALT to the $40,000 cap or do I need to calculate it?",
+    "ground_truth": "You must calculate and limit SALT on Schedule A. MeF validation will reject SALT exceeding the cap ($40,000 for income under $500,000).",
+    "hierarchy_path": "Schedule A Instructions \u2192 SALT Limitation Validation (Summary)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "Schedule A calculation",
+      "$40,000 cap",
+      "taxpayer responsible",
+      "MeF rejects excess"
+    ],
+    "topic_tags": [
+      "SALT",
+      "OBBBA",
+      "Schedule_A",
+      "e-file_validation"
+    ]
+  },
+  {
+    "id": "MEF-143",
+    "category": "VI. MeF & Procedural Errors",
+    "scenario": "A return with vehicle interest deduction for a foreign-assembled vehicle.",
+    "question": "Will MeF reject vehicle interest for a foreign-assembled car?",
+    "ground_truth": "MeF should validate the vehicle assembly location and may reject the deduction. You should provide documentation of U.S. assembly to support the deduction.",
+    "hierarchy_path": "Pub 17 \u2192 Vehicle Interest \u2192 Assembly Country Documentation (Summary)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "assembly country check",
+      "foreign vehicle rejected",
+      "U.S. assembly required",
+      "documentation needed"
+    ],
+    "topic_tags": [
+      "vehicle_interest",
+      "foreign_vehicle",
+      "MeF",
+      "validation"
+    ]
+  },
+  {
+    "id": "MEF-144",
+    "category": "VI. MeF & Procedural Errors",
+    "scenario": "A return with tips deduction exceeding income.",
+    "question": "Can I deduct more in tips than my total income reported?",
+    "ground_truth": "No. The tips deduction cannot exceed total income reported on the return. If you attempt this, MeF will reject for 'Deduction Exceeds Income' error.",
+    "hierarchy_path": "Schedule 1-A Instructions \u2192 Income Limitation (Summary)",
+    "expected_pubs": [
+      "1-A"
+    ],
+    "key_facts": [
+      "deduction limited to income",
+      "MeF rejects excess",
+      "net income calculation",
+      "validation rules"
+    ],
+    "topic_tags": [
+      "tips",
+      "Schedule_1A",
+      "MeF",
+      "deduction_limit"
+    ]
+  },
+  {
+    "id": "MEF-145",
+    "category": "VI. MeF & Procedural Errors",
+    "scenario": "A business owner filing both Schedule C and claiming Senior Deduction.",
+    "question": "Can I claim both senior deduction and business deduction in same year?",
+    "ground_truth": "Yes. Senior deduction is an above-the-line deduction; Schedule C income is business income. They are separate calculations. Both can be claimed.",
+    "hierarchy_path": "Pub 17 \u2192 Deduction Coordination (Summary)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "separate deductions",
+      "above-the-line + business",
+      "both claimable",
+      "coordination allowed"
+    ],
+    "topic_tags": [
+      "senior_deduction",
+      "Schedule_C",
+      "business_income",
+      "deduction_stacking"
+    ]
+  },
+  {
+    "id": "PRE-146",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A landlord with positive rental income attempting to claim depreciation.",
+    "question": "What is the recovery period for a residential rental home purchased in 2024?",
+    "ground_truth": "Residential rental property has a 27.5-year straight-line recovery period. Depreciation begins the month the property is ready for occupancy.",
+    "hierarchy_path": "Pub 946 \u2192 Chapter 3: Residential Property Recovery (Detail)",
+    "expected_pubs": [
+      "946"
+    ],
+    "key_facts": [
+      "27.5-year period",
+      "straight-line method",
+      "month placed in service",
+      "ready for occupancy"
+    ],
+    "topic_tags": [
+      "residential_rental",
+      "depreciation",
+      "recovery_period",
+      "Pub_946"
+    ]
+  },
+  {
+    "id": "PRE-147",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business purchasing a Section 1231 asset (building) for sale.",
+    "question": "How is gain from the sale of a business building treated?",
+    "ground_truth": "Building sales are typically Section 1231 property. If no Section 1231 losses in current/prior 5 years, the gain is long-term capital gain. Otherwise, ordinary income to extent of recapture.",
+    "hierarchy_path": "Pub 544 \u2192 Section 1231 Property \u2192 Buildings (Detail)",
+    "expected_pubs": [
+      "544"
+    ],
+    "key_facts": [
+      "Section 1231 asset",
+      "LTCG treatment",
+      "depreciation recapture",
+      "lookback rule"
+    ],
+    "topic_tags": [
+      "Section_1231",
+      "property_sales",
+      "capital_gain",
+      "Pub_544"
+    ]
+  },
+  {
+    "id": "PRE-148",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A widow inheriting rental property from her deceased spouse.",
+    "question": "What is my tax basis in the inherited rental property?",
+    "ground_truth": "Your basis is the fair market value of the property on the spouse's date of death (stepped-up basis). You do not inherit the spouse's depreciation schedule.",
+    "hierarchy_path": "Pub 551 \u2192 Basis Rules \u2192 Property from Decedent (Detail)",
+    "expected_pubs": [
+      "551"
+    ],
+    "key_facts": [
+      "stepped-up basis",
+      "FMV at death",
+      "new depreciation",
+      "no carryover basis"
+    ],
+    "topic_tags": [
+      "inherited_property",
+      "basis_step_up",
+      "death",
+      "Pub_551"
+    ]
+  },
+  {
+    "id": "PRE-149",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business owner transferring appreciated property to a corporation.",
+    "question": "What is my tax consequence if I transfer business property to my corporation?",
+    "ground_truth": "Under Section 351 (corporate reorganization), if you transfer property in exchange for stock and have control (80%+), gain recognition is deferred. Your basis transfers to the corporation.",
+    "hierarchy_path": "Pub 544 \u2192 Transfers to Corporation (Summary)",
+    "expected_pubs": [
+      "544"
+    ],
+    "key_facts": [
+      "Section 351",
+      "80% control",
+      "gain deferred",
+      "basis carryover"
+    ],
+    "topic_tags": [
+      "business_property",
+      "corporate_transfer",
+      "Section_351",
+      "reorganization"
+    ]
+  },
+  {
+    "id": "PRE-150",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business owner with equipment purchased in 2020 and depreciated over 5 years.",
+    "question": "What is the adjusted basis of equipment with $50,000 cost and $40,000 depreciation claimed?",
+    "ground_truth": "Adjusted basis = Cost ($50,000) - Accumulated Depreciation ($40,000) = $10,000. This is the basis for determining gain/loss on sale.",
+    "hierarchy_path": "Pub 551 \u2192 Adjusted Basis \u2192 Depreciation Impact (Summary)",
+    "expected_pubs": [
+      "551"
+    ],
+    "key_facts": [
+      "$10,000 adjusted basis",
+      "cost $50,000",
+      "depreciation $40,000",
+      "gain/loss calculation"
+    ],
+    "topic_tags": [
+      "adjusted_basis",
+      "depreciation",
+      "depreciated_property",
+      "Pub_551"
+    ]
+  },
+  {
+    "id": "PRE-151",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "An S-Corporation distributing cash to shareholders.",
+    "question": "How are S-Corporation distributions taxed?",
+    "ground_truth": "S-Corp distributions are generally tax-free to extent of basis. Distributions exceeding basis result in capital gain. Ordinary income from K-1 allocations is taxed separately.",
+    "hierarchy_path": "Pub 542 \u2192 S-Corp Distributions (Summary)",
+    "expected_pubs": [
+      "542"
+    ],
+    "key_facts": [
+      "tax-free to basis",
+      "basis reduction",
+      "excess capital gain",
+      "K-1 ordinary income"
+    ],
+    "topic_tags": [
+      "S_Corporation",
+      "distribution",
+      "basis",
+      "capital_gain"
+    ]
+  },
+  {
+    "id": "PRE-152",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A taxpayer receiving a qualified charitable distribution from an IRA at age 73.",
+    "question": "Can I make a qualified charitable distribution (QCD) from my IRA?",
+    "ground_truth": "Yes. At age 73, you can make QCD up to $100,000/year (inflation-adjusted). The distribution is not taxable and satisfies RMD requirements if used for charity.",
+    "hierarchy_path": "Pub 590-B \u2192 Qualified Charitable Distribution (Detail)",
+    "expected_pubs": [
+      "590b"
+    ],
+    "key_facts": [
+      "age 70.5+ eligible",
+      "$100,000 limit",
+      "direct to charity",
+      "RMD satisfaction"
+    ],
+    "topic_tags": [
+      "IRA",
+      "QCD",
+      "charitable_distribution",
+      "RMD"
+    ]
+  },
+  {
+    "id": "PRE-153",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business with a net operating loss of $75,000 in 2025.",
+    "question": "Can I carry this NOL back to 2024?",
+    "ground_truth": "No. Post-2017 NOLs cannot be carried back. The $75,000 NOL must be carried forward, subject to the 80% limitation in future profitable years.",
+    "hierarchy_path": "Pub 536 \u2192 NOL Carryback Prohibition (Summary)",
+    "expected_pubs": [
+      "536"
+    ],
+    "key_facts": [
+      "no carryback",
+      "post-2017 rule",
+      "carry forward",
+      "80% limitation"
+    ],
+    "topic_tags": [
+      "NOL",
+      "net_operating_loss",
+      "carryforward",
+      "Pub_536"
+    ]
+  },
+  {
+    "id": "PRE-154",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A taxpayer with $200,000 in capital gains realizing $300,000 in capital losses.",
+    "question": "How much of my capital loss can I deduct this year?",
+    "ground_truth": "You can deduct $3,000 of losses in the current year. The remaining $297,000 is carried forward indefinitely to future years.",
+    "hierarchy_path": "Pub 550 \u2192 Capital Losses \u2192 Annual Limitation (Detail)",
+    "expected_pubs": [
+      "550"
+    ],
+    "key_facts": [
+      "$3,000 annual limit",
+      "$297,000 carryforward",
+      "indefinite carryforward",
+      "loss deduction"
+    ],
+    "topic_tags": [
+      "capital_loss",
+      "loss_limitation",
+      "carryforward",
+      "Pub_550"
+    ]
+  },
+  {
+    "id": "PRE-155",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business buying software for $8,000 with annual licensing.",
+    "question": "Is business software depreciated or expensed?",
+    "ground_truth": "Business software with a useful life over 1 year is typically amortized over 3 years (Section 197 intangible or MACRS). Annual licensing is immediately expensed.",
+    "hierarchy_path": "Pub 946 \u2192 Software & Intangibles \u2192 Recovery Periods (Summary)",
+    "expected_pubs": [
+      "946"
+    ],
+    "key_facts": [
+      "3-year recovery",
+      "Section 197 intangible",
+      "licensing expensed",
+      "useful life test"
+    ],
+    "topic_tags": [
+      "software",
+      "intangible_property",
+      "amortization",
+      "Pub_946"
+    ]
+  },
+  {
+    "id": "PRE-156",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A real estate investor selling a rental property with $100,000 depreciation claimed.",
+    "question": "What is my depreciation recapture tax rate?",
+    "ground_truth": "Depreciation recapture on real property is taxed at 25%. The $100,000 recapture is taxed at 25%, separate from long-term capital gain rates (0-20%).",
+    "hierarchy_path": "Pub 544 \u2192 Depreciation Recapture Rates \u2192 Section 1250 (Detail)",
+    "expected_pubs": [
+      "544"
+    ],
+    "key_facts": [
+      "25% recapture rate",
+      "Section 1250 property",
+      "real property",
+      "separate calculation"
+    ],
+    "topic_tags": [
+      "depreciation_recapture",
+      "real_property",
+      "recapture_rate",
+      "Pub_544"
+    ]
+  },
+  {
+    "id": "PRE-157",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A partnership with $100,000 gain distributing $150,000 cash to a partner.",
+    "question": "Does the cash distribution create gain?",
+    "ground_truth": "Yes. Distributions in excess of the partner's basis create capital gain. If partner basis is $100,000 and distribution is $150,000, the $50,000 excess is long-term capital gain.",
+    "hierarchy_path": "Pub 541 \u2192 Partnership Distributions \u2192 Excess Cash Rule (Detail)",
+    "expected_pubs": [
+      "541"
+    ],
+    "key_facts": [
+      "$50,000 capital gain",
+      "basis reduction first",
+      "excess is gain",
+      "LTCG treatment"
+    ],
+    "topic_tags": [
+      "partnership",
+      "distribution",
+      "capital_gain",
+      "basis"
+    ]
+  },
+  {
+    "id": "PRE-158",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business earning $200,000 with $80,000 in business meal expenses.",
+    "question": "How much of my $80,000 in meal expenses can I deduct?",
+    "ground_truth": "Business meals are 50% deductible. You can deduct $40,000 of the $80,000. Certain eligible entertainment and on-premises meals may have different rates.",
+    "hierarchy_path": "Pub 535 \u2192 Meals & Entertainment \u2192 Deduction Percentage (Summary)",
+    "expected_pubs": [
+      "535"
+    ],
+    "key_facts": [
+      "50% deductible",
+      "$40,000 allowed",
+      "documentation required",
+      "meal limitation"
+    ],
+    "topic_tags": [
+      "meal_expenses",
+      "entertainment",
+      "business_deduction",
+      "Pub_535"
+    ]
+  },
+  {
+    "id": "PRE-159",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A self-employed consultant earning $150,000 with $30,000 health insurance premiums.",
+    "question": "Can I deduct my health insurance as self-employed?",
+    "ground_truth": "Yes. Self-employed individuals can deduct health insurance premiums (medical, dental, vision) as an above-the-line deduction. The full $30,000 is deductible.",
+    "hierarchy_path": "Pub 535 \u2192 Self-Employment Health Insurance (Summary)",
+    "expected_pubs": [
+      "535"
+    ],
+    "key_facts": [
+      "fully deductible",
+      "above-the-line deduction",
+      "medical/dental/vision",
+      "self-employed eligible"
+    ],
+    "topic_tags": [
+      "health_insurance",
+      "self_employed",
+      "above_the_line",
+      "Pub_535"
+    ]
+  },
+  {
+    "id": "PRE-160",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business owner with an office in a commercial building.",
+    "question": "What is the recovery period for office furniture and fixtures?",
+    "ground_truth": "Office furniture and fixtures have a 7-year recovery period under MACRS. Leasehold improvements may have a 15-year period for qualified improvements.",
+    "hierarchy_path": "Pub 946 \u2192 Chapter 3: Asset Classes (Summary)",
+    "expected_pubs": [
+      "946"
+    ],
+    "key_facts": [
+      "7-year recovery period",
+      "office furniture",
+      "fixtures included",
+      "MACRS method"
+    ],
+    "topic_tags": [
+      "furniture",
+      "fixtures",
+      "recovery_period",
+      "MACRS",
+      "Pub_946"
+    ]
+  },
+  {
+    "id": "OBBBA-161",
+    "category": "IV. Business, R&D & Depreciation",
+    "scenario": "A small manufacturer claiming the production property deduction.",
+    "question": "What qualifies as 'production property' for the new 100% deduction?",
+    "ground_truth": "Production property is nonresidential real property (buildings, equipment) used in manufacturing, processing, or production of tangible goods. Must be placed in service after 7/4/2025.",
+    "hierarchy_path": "Pub 946 \u2192 Production Property Deduction (Detail)",
+    "expected_pubs": [
+      "946"
+    ],
+    "key_facts": [
+      "nonresidential real property",
+      "manufacturing use",
+      "100% deduction",
+      "July 4, 2025 date"
+    ],
+    "topic_tags": [
+      "production_property",
+      "manufacturing",
+      "OBBBA",
+      "depreciation"
+    ]
+  },
+  {
+    "id": "OBBBA-162",
+    "category": "IV. Business, R&D & Depreciation",
+    "scenario": "A business with mixed property: building $300,000, equipment $100,000.",
+    "question": "If I claim production property deduction on the building, do I also deduct equipment?",
+    "ground_truth": "Yes. The $300,000 building qualifies for 100% production property deduction. The $100,000 equipment (not real property) is still subject to normal depreciation or bonus depreciation.",
+    "hierarchy_path": "Pub 946 \u2192 Production Property & Equipment (Summary)",
+    "expected_pubs": [
+      "946"
+    ],
+    "key_facts": [
+      "building 100% deductible",
+      "equipment separate treatment",
+      "real vs tangible",
+      "combined deduction"
+    ],
+    "topic_tags": [
+      "production_property",
+      "equipment",
+      "OBBBA",
+      "depreciation"
+    ]
+  },
+  {
+    "id": "OBBBA-163",
+    "category": "III. Tipped & Overtime Workers",
+    "scenario": "A worker with $22,000 tips and $18,000 wages, both properly reported on W-2.",
+    "question": "Is the qualified tip deduction based on actual tips or wages?",
+    "ground_truth": "The qualified tips deduction is based on actual tips reported, up to $25,000. Your $22,000 in tips can all be deducted on Schedule 1-A.",
+    "hierarchy_path": "Schedule 1-A Instructions \u2192 Tips Deduction Basis (Summary)",
+    "expected_pubs": [
+      "1-A"
+    ],
+    "key_facts": [
+      "tips basis",
+      "$22,000 deductible",
+      "wages not included",
+      "qualified tips only"
+    ],
+    "topic_tags": [
+      "tips",
+      "Schedule_1A",
+      "qualified_tips",
+      "OBBBA"
+    ]
+  },
+  {
+    "id": "OBBBA-164",
+    "category": "V. Reporting & Thresholds",
+    "scenario": "A business with multiple employees receiving overtime in 2026.",
+    "question": "Does each employee's overtime get its own Form W-2 code, or is there aggregate reporting?",
+    "ground_truth": "Each employee's qualified overtime is reported separately on their W-2 using Code TT in Box 12. Aggregate reporting on one document is not permitted.",
+    "hierarchy_path": "Form W-2 Instructions \u2192 Box 12 Code TT (Detail)",
+    "expected_pubs": [
+      "W-2"
+    ],
+    "key_facts": [
+      "Code TT per employee",
+      "Box 12 reporting",
+      "individual W-2s",
+      "aggregate not allowed"
+    ],
+    "topic_tags": [
+      "overtime",
+      "W-2",
+      "employer_reporting",
+      "Code_TT"
+    ]
+  },
+  {
+    "id": "OBBBA-165",
+    "category": "V. Reporting & Thresholds",
+    "scenario": "A household employer with two nannies earning $1,500 and $1,600 (total $3,100).",
+    "question": "Are household employer taxes triggered at $3,100 total wages?",
+    "ground_truth": "Yes. The 2026 threshold is $3,000 aggregate wages to all household workers. At $3,100, you must pay FICA and FUTA taxes and file Schedule H.",
+    "hierarchy_path": "Pub 926 \u2192 Nanny Tax Threshold (Summary)",
+    "expected_pubs": [
+      "926"
+    ],
+    "key_facts": [
+      "$3,000 threshold",
+      "$3,100 exceeds",
+      "Schedule H required",
+      "FICA/FUTA apply"
+    ],
+    "topic_tags": [
+      "household_employer",
+      "nanny_tax",
+      "aggregate_wages",
+      "Schedule_H"
+    ]
+  },
+  {
+    "id": "SCN-166",
+    "category": "VIII. Cross-Topic Scenarios",
+    "scenario": "An investment advisor with $500,000 income from advisory fees, substantial investment income, but no employees.",
+    "question": "What retirement plan options offer the highest deduction?",
+    "ground_truth": "Best option: Solo 401(k) allowing $23,500 employee deferral + 20% employer ($100k cap) = $69,000 total. SEP would be $70,000 (20% of income), slightly higher but similar.",
+    "hierarchy_path": "Pub 560 \u2192 Solo vs SEP Comparison (Summary)",
+    "expected_pubs": [
+      "560"
+    ],
+    "key_facts": [
+      "$69,000 401k max",
+      "$70,000 SEP max",
+      "high income benefit",
+      "plan selection"
+    ],
+    "topic_tags": [
+      "retirement_plan",
+      "solo_401k",
+      "SEP_IRA",
+      "income_limits"
+    ]
+  },
+  {
+    "id": "SCN-167",
+    "category": "VIII. Cross-Topic Scenarios",
+    "scenario": "A widow inheriting IRA from spouse and choosing to treat it as her own.",
+    "question": "What RMD rules apply to a spousal inherited IRA?",
+    "ground_truth": "Spouse can treat inherited IRA as own. RMD rules based on spouse's age: if under 73, no RMD yet. If over 73, RMD begins based on new age divisor.",
+    "hierarchy_path": "Pub 590-B \u2192 Inherited IRA Spouse Rules (Detail)",
+    "expected_pubs": [
+      "590b"
+    ],
+    "key_facts": [
+      "treat as own",
+      "spouse RMD rules",
+      "age-based calculation",
+      "no beneficiary treatment"
+    ],
+    "topic_tags": [
+      "inherited_IRA",
+      "spousal_heir",
+      "RMD",
+      "Pub_590b"
+    ]
+  },
+  {
+    "id": "SCN-168",
+    "category": "VIII. Cross-Topic Scenarios",
+    "scenario": "A business owner with $300,000 income, $50,000 carried-forward NOL, and considering losses.",
+    "question": "How does the 80% NOL limitation affect my current year deduction?",
+    "ground_truth": "80% of $300,000 = $240,000. You can deduct $240,000 of NOL ($50,000 available, full deduction), leaving $210,000 taxable income.",
+    "hierarchy_path": "Pub 536 \u2192 80% Limitation Calculation (Detail)",
+    "expected_pubs": [
+      "536"
+    ],
+    "key_facts": [
+      "80% of income",
+      "$240,000 allowed",
+      "$50,000 NOL used",
+      "$210,000 taxable"
+    ],
+    "topic_tags": [
+      "NOL",
+      "80% limitation",
+      "carryforward",
+      "current_income"
+    ]
+  },
+  {
+    "id": "SCN-169",
+    "category": "VIII. Cross-Topic Scenarios",
+    "scenario": "A landlord with rental property, $40,000 profit, but passive loss limitation applies.",
+    "question": "If I'm an active real estate professional, does the passive loss limit still apply?",
+    "ground_truth": "No. Real estate professionals (>50% of business time, >750 hours in RE activities) are exempt from passive loss limitations. All rental losses are fully deductible.",
+    "hierarchy_path": "Pub 527 \u2192 Real Estate Professional Exception (Detail)",
+    "expected_pubs": [
+      "527"
+    ],
+    "key_facts": [
+      "50% business time",
+      "750 hours annual",
+      "exception applies",
+      "losses fully deductible"
+    ],
+    "topic_tags": [
+      "real_estate_professional",
+      "passive_loss",
+      "exception",
+      "Pub_527"
+    ]
+  },
+  {
+    "id": "SCN-170",
+    "category": "VIII. Cross-Topic Scenarios",
+    "scenario": "A business owner age 55 wanting to establish SEP-IRA with catch-up.",
+    "question": "Can I make catch-up contributions to a SEP-IRA?",
+    "ground_truth": "No. SEP-IRAs do not allow catch-up contributions (unlike traditional IRAs at 50+). Limited to 20% of net SE income ($70,000 max). Solo 401(k) allows catch-ups.",
+    "hierarchy_path": "Pub 560 \u2192 SEP Limitations (Summary)",
+    "expected_pubs": [
+      "560"
+    ],
+    "key_facts": [
+      "no catch-up allowed",
+      "20% limit",
+      "SEP-IRA",
+      "401k allows catch-up"
+    ],
+    "topic_tags": [
+      "SEP_IRA",
+      "age_50",
+      "catch_up",
+      "contribution_limits"
+    ]
+  },
+  {
+    "id": "MEF-171",
+    "category": "VI. MeF & Procedural Errors",
+    "scenario": "A return with vehicle interest deduction claimed twice (once on Schedule 1-A and once as itemized).",
+    "question": "Will MeF reject a duplicated vehicle interest deduction?",
+    "ground_truth": "Yes. Vehicle interest can only be claimed once as an above-the-line deduction on Schedule 1-A. MeF validation checks for duplicate claims and rejects.",
+    "hierarchy_path": "Pub 17 \u2192 Vehicle Interest Claiming Rules (Summary)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "claim once only",
+      "Schedule 1-A location",
+      "duplicate rejection",
+      "above-the-line only"
+    ],
+    "topic_tags": [
+      "vehicle_interest",
+      "MeF",
+      "duplicate_deduction",
+      "reject_code"
+    ]
+  },
+  {
+    "id": "MEF-172",
+    "category": "VI. MeF & Procedural Errors",
+    "scenario": "A taxpayer claiming both Trump Account contributions and traditional IRA.",
+    "question": "Are there interaction issues between Trump Account and IRA contributions?",
+    "ground_truth": "No conflict. Trump Account contributions ($5,000) are separate from IRA contributions ($8,000 age 50+, or $7,000 younger). Both can be claimed in same year.",
+    "hierarchy_path": "Pub 590-A \u2192 Trump Account vs IRA (Summary)",
+    "expected_pubs": [
+      "590a"
+    ],
+    "key_facts": [
+      "separate accounts",
+      "combined contributions allowed",
+      "no phaseout interaction",
+      "both deductible"
+    ],
+    "topic_tags": [
+      "trump_account",
+      "IRA",
+      "contribution_limits",
+      "coordination"
+    ]
+  },
+  {
+    "id": "MEF-173",
+    "category": "VI. MeF & Procedural Errors",
+    "scenario": "A self-employed taxpayer claiming SE tax deduction but computing it incorrectly.",
+    "question": "If I compute my SE tax incorrectly, will MeF catch the error?",
+    "ground_truth": "MeF does not validate SE tax calculations in detail. The system trusts taxpayer-provided amounts. Errors may be caught in random audits but not automatically rejected.",
+    "hierarchy_path": "Pub 334 \u2192 SE Tax Calculation \u2192 Verification (Summary)",
+    "expected_pubs": [
+      "334"
+    ],
+    "key_facts": [
+      "SE tax self-calculated",
+      "MeF relies on input",
+      "audit risk if wrong",
+      "taxpayer responsibility"
+    ],
+    "topic_tags": [
+      "SE_tax",
+      "self_employed",
+      "calculation",
+      "verification"
+    ]
+  },
+  {
+    "id": "MEF-174",
+    "category": "VI. MeF & Procedural Errors",
+    "scenario": "A return showing negative QBI with high losses.",
+    "question": "Can I claim QBI deduction if my QBI is negative?",
+    "ground_truth": "No. QBI deduction requires positive QBI. If your business shows losses, QBI is negative and no Section 199A deduction is available for that year.",
+    "hierarchy_path": "Form 8995-A \u2192 QBI Calculation (Summary)",
+    "expected_pubs": [
+      "8995-A"
+    ],
+    "key_facts": [
+      "positive QBI required",
+      "losses = negative QBI",
+      "no deduction available",
+      "deferred to profit years"
+    ],
+    "topic_tags": [
+      "QBI",
+      "business_losses",
+      "Section_199A",
+      "deduction_limitation"
+    ]
+  },
+  {
+    "id": "MEF-175",
+    "category": "VI. MeF & Procedural Errors",
+    "scenario": "A married filing separately return with senior deduction claimed by lower-income spouse.",
+    "question": "On MFS, can the spouse with lower income claim the senior deduction?",
+    "ground_truth": "Yes. Each spouse is evaluated separately for age 65+ status. The lower-income spouse can claim $6,000 if over 65, regardless of the other spouse's income.",
+    "hierarchy_path": "Pub 17 \u2192 Senior Deduction MFS Rules (Detail)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "individual eligibility",
+      "each spouse separate",
+      "age 65+ each",
+      "income separate"
+    ],
+    "topic_tags": [
+      "senior_deduction",
+      "married_filing_separately",
+      "individual_eligibility",
+      "OBBBA"
+    ]
+  },
+  {
+    "id": "BIZ-176",
+    "category": "IV. Business, R&D & Depreciation",
+    "scenario": "A business with $60,000 in employee education assistance from employer.",
+    "question": "Can my employer's $60,000 educational assistance be tax-free?",
+    "ground_truth": "Up to $5,250 per year of employer-provided educational assistance is tax-free. The remaining $54,750 is taxable wage income to the employee.",
+    "hierarchy_path": "Pub 15-B \u2192 Fringe Benefits \u2192 Educational Assistance (Detail)",
+    "expected_pubs": [
+      "15-B"
+    ],
+    "key_facts": [
+      "$5,250 annual limit",
+      "excess taxable",
+      "employer deductible",
+      "fringe benefit"
+    ],
+    "topic_tags": [
+      "educational_assistance",
+      "fringe_benefit",
+      "employer",
+      "Pub_15B"
+    ]
+  },
+  {
+    "id": "BIZ-177",
+    "category": "IV. Business, R&D & Depreciation",
+    "scenario": "An S-Corporation paying reasonable salary of $80,000 to owner and distributing $50,000.",
+    "question": "Can I reduce the salary and increase distributions to lower SE tax?",
+    "ground_truth": "No. Owners must pay 'reasonable compensation.' If compensation is artificially low, IRS will reclassify distributions as wages, plus penalties and interest.",
+    "hierarchy_path": "Pub 542 \u2192 S-Corp Reasonable Compensation (Summary)",
+    "expected_pubs": [
+      "542"
+    ],
+    "key_facts": [
+      "reasonable compensation required",
+      "reclassification risk",
+      "IRS scrutiny",
+      "wage threshold"
+    ],
+    "topic_tags": [
+      "S_Corporation",
+      "reasonable_compensation",
+      "owner_salary",
+      "distribution"
+    ]
+  },
+  {
+    "id": "PRE-178",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business with $10,000 in vehicle repairs and maintenance.",
+    "question": "Are vehicle repair and maintenance costs deductible?",
+    "ground_truth": "Yes. Repairs and maintenance to business vehicles (fixing, oil changes, maintenance) are fully deductible. However, capital improvements (new engine) are depreciated.",
+    "hierarchy_path": "Pub 535 \u2192 Vehicle Expenses \u2192 Repairs vs Improvements (Summary)",
+    "expected_pubs": [
+      "535"
+    ],
+    "key_facts": [
+      "repairs deductible",
+      "maintenance deductible",
+      "improvements depreciated",
+      "capitalization threshold"
+    ],
+    "topic_tags": [
+      "vehicle_expense",
+      "repairs",
+      "maintenance",
+      "business_deduction"
+    ]
+  },
+  {
+    "id": "PRE-179",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business with $5,000 in business gifts to clients.",
+    "question": "Are business gifts fully deductible?",
+    "ground_truth": "Business gifts are deductible up to $25 per recipient per year. At $5,000, only $25 \u00d7 number of recipients is deductible. Excess is non-deductible.",
+    "hierarchy_path": "Pub 535 \u2192 Business Gifts \u2192 Limitation (Detail)",
+    "expected_pubs": [
+      "535"
+    ],
+    "key_facts": [
+      "$25 per recipient limit",
+      "annual limit",
+      "$5,000 may exceed",
+      "excess non-deductible"
+    ],
+    "topic_tags": [
+      "business_gift",
+      "deduction_limit",
+      "limitation",
+      "Pub_535"
+    ]
+  },
+  {
+    "id": "PRE-180",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business paying an accountant $3,000 for tax return preparation.",
+    "question": "Is tax return preparation deductible as business expense?",
+    "ground_truth": "Yes, but only if the return is for business entity (Schedule C, Form 1065, etc.). Personal tax return fees are not deductible business expenses.",
+    "hierarchy_path": "Pub 535 \u2192 Professional Services \u2192 Tax Return Fees (Summary)",
+    "expected_pubs": [
+      "535"
+    ],
+    "key_facts": [
+      "business return deductible",
+      "personal return non-deductible",
+      "professional fees",
+      "business expense"
+    ],
+    "topic_tags": [
+      "professional_services",
+      "tax_fees",
+      "business_deduction",
+      "Pub_535"
+    ]
+  },
+  {
+    "id": "PRE-181",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business with $8,000 in utilities for home office.",
+    "question": "What portion of home utilities can I deduct?",
+    "ground_truth": "Using regular method: deduct percentage of home utilities proportional to office space. If office is 15% of home, deduct 15% of utilities. Simplified method does not itemize utilities separately.",
+    "hierarchy_path": "Pub 587 \u2192 Home Office \u2192 Utility Allocation (Summary)",
+    "expected_pubs": [
+      "587"
+    ],
+    "key_facts": [
+      "proportional deduction",
+      "percentage of space",
+      "regular method",
+      "utility costs"
+    ],
+    "topic_tags": [
+      "home_office",
+      "utilities",
+      "expense_allocation",
+      "Pub_587"
+    ]
+  },
+  {
+    "id": "PRE-182",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business buying office supplies in bulk for $15,000.",
+    "question": "Can I deduct $15,000 in office supplies purchased at once?",
+    "ground_truth": "If supplies are consumed within 12 months, deduct $15,000. If held longer, capitalize and deduct as they are consumed. Office supplies under $2,500 are typically immediately deductible.",
+    "hierarchy_path": "Pub 535 \u2192 Supplies & Materials \u2192 Capitalization Rule (Summary)",
+    "expected_pubs": [
+      "535"
+    ],
+    "key_facts": [
+      "12-month rule",
+      "consumed deductible",
+      "$2,500 de minimis",
+      "supplies capitalization"
+    ],
+    "topic_tags": [
+      "office_supplies",
+      "materials",
+      "capitalization",
+      "Pub_535"
+    ]
+  },
+  {
+    "id": "PRE-183",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business owner with $25,000 in charitable contributions.",
+    "question": "Are business charitable contributions deductible as business expense?",
+    "ground_truth": "Yes. Business charitable contributions to qualified organizations are deductible as business expenses. Limitations apply (50-60% of AGI generally).",
+    "hierarchy_path": "Pub 535 \u2192 Charitable Contributions (Summary)",
+    "expected_pubs": [
+      "535"
+    ],
+    "key_facts": [
+      "deductible business expense",
+      "qualified organizations",
+      "AGI limitations",
+      "documentation required"
+    ],
+    "topic_tags": [
+      "charitable_contribution",
+      "business_deduction",
+      "limitation",
+      "Pub_535"
+    ]
+  },
+  {
+    "id": "SCN-171",
+    "category": "VIII. Cross-Topic Scenarios",
+    "scenario": "A partnership with three equal partners, one receiving a $20,000 guaranteed payment.",
+    "question": "How is the guaranteed payment treated for income and SE tax?",
+    "ground_truth": "Guaranteed payment is ordinary income to partner (not subject to K-1 loss limitations) and taxable to partnership as deduction. SE tax due on GP amount.",
+    "hierarchy_path": "Pub 541 \u2192 Guaranteed Payments (Detail)",
+    "expected_pubs": [
+      "541"
+    ],
+    "key_facts": [
+      "guaranteed payment",
+      "ordinary income treatment",
+      "SE tax applicable",
+      "partnership deduction"
+    ],
+    "topic_tags": [
+      "partnership",
+      "guaranteed_payment",
+      "SE_tax",
+      "K-1"
+    ]
+  },
+  {
+    "id": "SCN-172",
+    "category": "VIII. Cross-Topic Scenarios",
+    "scenario": "A sole proprietor with $150,000 income, $50,000 home office expenses, and $15,000 charitable contributions.",
+    "question": "What is the optimal deduction strategy for this taxpayer?",
+    "ground_truth": "Schedule C deductions: home office $50k, charitable $15k reduce AGI to $85k. SE tax ~$12k. SE deduction ~$6k. Result: ~$79k taxable income before standard deduction.",
+    "hierarchy_path": "Pub 334 \u2192 Schedule C Optimization (Summary)",
+    "expected_pubs": [
+      "334",
+      "535"
+    ],
+    "key_facts": [
+      "$50,000 home office",
+      "$15,000 charitable",
+      "$85,000 AGI",
+      "$79,000 taxable"
+    ],
+    "topic_tags": [
+      "sole_proprietor",
+      "Schedule_C",
+      "home_office",
+      "charitable"
+    ]
+  },
+  {
+    "id": "SCN-173",
+    "category": "VIII. Cross-Topic Scenarios",
+    "scenario": "A retired teacher (65+) with $90,000 pension, $50,000 IRA RMD, $30,000 rental income.",
+    "question": "What is the optimal filing strategy for this retiree?",
+    "ground_truth": "File as single (or HOH if dependent). Total income ~$170k. Senior deduction $6,000 reduces AGI to $164k. Social Security coordination critical to avoid IRMAA penalties.",
+    "hierarchy_path": "Pub 17 \u2192 Retiree Planning (Summary)",
+    "expected_pubs": [
+      "17",
+      "915"
+    ],
+    "key_facts": [
+      "$6,000 senior deduction",
+      "$164,000 AGI",
+      "IRMAA threshold",
+      "Social Security coordination"
+    ],
+    "topic_tags": [
+      "retirement",
+      "senior_deduction",
+      "IRMAA",
+      "income_coordination"
+    ]
+  },
+  {
+    "id": "OBBBA-174",
+    "category": "II. Family, Dependents & Trump Accounts",
+    "scenario": "A married couple establishing separate Trump Accounts for each of two children.",
+    "question": "Can we establish two separate Trump Accounts and receive two federal seeds?",
+    "ground_truth": "Yes. Each child has their own account and receives one $1,000 federal seed. Total family contribution capacity: $10,000 annually (2 \u00d7 $5,000 limit).",
+    "hierarchy_path": "Form 4547 Instructions \u2192 Multiple Accounts (Summary)",
+    "expected_pubs": [
+      "4547"
+    ],
+    "key_facts": [
+      "per-child account",
+      "per-child $1,000 seed",
+      "$10,000 combined limit",
+      "separate tax treatment"
+    ],
+    "topic_tags": [
+      "trump_account",
+      "multiple_children",
+      "federal_seed",
+      "OBBBA"
+    ]
+  },
+  {
+    "id": "OBBBA-175",
+    "category": "V. Reporting & Thresholds",
+    "scenario": "A business with total wage payments across multiple employees exceeding 1099-NEC thresholds.",
+    "question": "Is there a per-payee or aggregate 1099-NEC threshold?",
+    "ground_truth": "The 1099-NEC threshold is per payee ($2,000 in 2026), not aggregate. You must issue 1099-NEC for each individual payee if payments to that person exceed $2,000.",
+    "hierarchy_path": "1099-NEC Instructions \u2192 Threshold Definition (Detail)",
+    "expected_pubs": [
+      "1099"
+    ],
+    "key_facts": [
+      "per-payee threshold",
+      "$2,000 individual",
+      "aggregate not considered",
+      "payee identification"
+    ],
+    "topic_tags": [
+      "1099NEC",
+      "per-payee",
+      "reporting_threshold",
+      "contractor"
+    ]
+  },
+  {
+    "id": "OBBBA-176",
+    "category": "VI. MeF & Procedural Errors",
+    "scenario": "A return with CTC claimed at the updated $2,200 amount per the OBBBA.",
+    "question": "Will MeF validate that CTC is now $2,200 instead of $2,000?",
+    "ground_truth": "Yes. MeF validation checks CTC amount and will accept $2,200 per child (per OBBBA). Returns claiming $2,000 will be auto-corrected or rejected if discrepancy detected.",
+    "hierarchy_path": "Form 8812 Instructions \u2192 OBBBA CTC Update (Summary)",
+    "expected_pubs": [
+      "8812"
+    ],
+    "key_facts": [
+      "$2,200 per child",
+      "OBBBA updated",
+      "MeF accepts",
+      "validation check"
+    ],
+    "topic_tags": [
+      "CTC",
+      "child_tax_credit",
+      "OBBBA",
+      "MeF_validation"
+    ]
+  },
+  {
+    "id": "PRE-184",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business paying an employee $50,000 with no retirement plan available.",
+    "question": "Can the employee contribute to a traditional IRA despite lack of workplace plan?",
+    "ground_truth": "Yes. If the business has no retirement plan, employees can contribute to traditional IRA ($7,500 or $8,000 age 50+) and deduct it fully.",
+    "hierarchy_path": "Pub 590-A \u2192 Employee Contributions Without Workplace Plan (Summary)",
+    "expected_pubs": [
+      "590a"
+    ],
+    "key_facts": [
+      "$7,500 contribution",
+      "fully deductible",
+      "no plan required",
+      "employee eligible"
+    ],
+    "topic_tags": [
+      "IRA_contribution",
+      "employee",
+      "deductibility",
+      "Pub_590a"
+    ]
+  },
+  {
+    "id": "PRE-185",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A partnership distributing appreciated real estate to a partner.",
+    "question": "Is gain recognized when appreciated property is distributed?",
+    "ground_truth": "Generally no gain at partnership level or partner level. Gain is deferred. Partner's basis in property is carryover basis (not stepped-up).",
+    "hierarchy_path": "Pub 541 \u2192 Property Distribution \u2192 Appreciated Property (Summary)",
+    "expected_pubs": [
+      "541"
+    ],
+    "key_facts": [
+      "no gain recognized",
+      "basis carryover",
+      "deferred gain",
+      "partner basis"
+    ],
+    "topic_tags": [
+      "partnership_distribution",
+      "appreciated_property",
+      "basis",
+      "Pub_541"
+    ]
+  },
+  {
+    "id": "OBBBA-177",
+    "category": "I. Individual Filing & Standard Deductions",
+    "scenario": "A taxpayer with two vehicles: one U.S.-assembled purchased in 2025, one foreign-assembled.",
+    "question": "Can I claim vehicle interest deduction on both vehicles?",
+    "ground_truth": "Only the U.S.-assembled vehicle qualifies for the interest deduction. The foreign-assembled vehicle does not qualify. Deduction limited to $10,000 annually total.",
+    "hierarchy_path": "Pub 17 \u2192 Vehicle Interest \u2192 Multiple Vehicles (Detail)",
+    "expected_pubs": [
+      "17"
+    ],
+    "key_facts": [
+      "U.S. assembled only",
+      "$10,000 annual cap",
+      "foreign ineligible",
+      "aggregate limit"
+    ],
+    "topic_tags": [
+      "vehicle_interest",
+      "OBBBA",
+      "multiple_vehicles",
+      "assembly_requirement"
+    ]
+  },
+  {
+    "id": "SCN-178",
+    "category": "VIII. Cross-Topic Scenarios",
+    "scenario": "A real estate investor with $200,000 AGI, two rental properties with $50,000 combined losses.",
+    "question": "Can I claim all $50,000 in rental losses under the $25,000 active participant exception?",
+    "ground_truth": "No. The maximum is $25,000 per year for active participants with AGI under $100,000. You can deduct $25,000 this year; $25,000 carries forward indefinitely.",
+    "hierarchy_path": "Pub 527 \u2192 Passive Loss Limitation \u2192 Active Participant Exception (Detail)",
+    "expected_pubs": [
+      "527"
+    ],
+    "key_facts": [
+      "$25,000 annual limit",
+      "active participation",
+      "$100,000 AGI threshold",
+      "carryforward indefinite"
+    ],
+    "topic_tags": [
+      "passive_loss",
+      "active_participant",
+      "rental_property",
+      "loss_limitation"
+    ]
+  },
+  {
+    "id": "MEF-179",
+    "category": "VI. MeF & Procedural Errors",
+    "scenario": "A taxpayer filing with both Trump Account contributions and dependent exemptions.",
+    "question": "Are there validation conflicts between Trump Account and dependent claims?",
+    "ground_truth": "No conflict. Trump Account is separate from dependent exemptions. Both can be claimed simultaneously in same tax year for same child.",
+    "hierarchy_path": "Form 4547 \u2192 Dependent Coordination (Summary)",
+    "expected_pubs": [
+      "4547"
+    ],
+    "key_facts": [
+      "no conflict",
+      "separate provisions",
+      "both claimable",
+      "child can have both"
+    ],
+    "topic_tags": [
+      "trump_account",
+      "dependent",
+      "CTC",
+      "coordination"
+    ]
+  },
+  {
+    "id": "PRE-186",
+    "category": "VII. Pre-OBBBA Knowledge Base",
+    "scenario": "A business with $100,000 in start-up costs (legal, accounting, permit fees).",
+    "question": "How are start-up costs treated on my first year return?",
+    "ground_truth": "Under Section 195, you can elect to deduct up to $5,000 of start-up costs in the first year, amortizing the remainder over 180 months.",
+    "hierarchy_path": "Pub 535 \u2192 Chapter 3: Start-up Costs \u2192 Election (Detail)",
+    "expected_pubs": [
+      "535"
+    ],
+    "key_facts": [
+      "$5,000 first-year deduction",
+      "180-month amortization",
+      "Form 4562",
+      "election required"
+    ],
+    "topic_tags": [
+      "startup_costs",
+      "amortization",
+      "Section_195",
+      "Pub_535"
+    ]
+  },
+  {
+    "id": "OBBBA-180",
+    "category": "III. Tipped & Overtime Workers",
+    "scenario": "A worker with $22,000 tips and $150,000 total income from other sources.",
+    "question": "Does high income from other sources eliminate my tips deduction?",
+    "ground_truth": "Yes. At $150,000 income, tips deduction is subject to phase-out. The $25,000 tips deduction is progressively reduced based on phase-out percentage.",
+    "hierarchy_path": "Schedule 1-A Instructions \u2192 Income-Based Phase-out (Detail)",
+    "expected_pubs": [
+      "1-A"
+    ],
+    "key_facts": [
+      "high income phase-out",
+      "reduced deduction",
+      "$150,000 MAGI",
+      "progressive reduction"
+    ],
+    "topic_tags": [
+      "tips",
+      "high_income",
+      "phase_out",
+      "OBBBA"
+    ]
+  }
+]

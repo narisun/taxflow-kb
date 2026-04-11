@@ -1,0 +1,83 @@
+[
+  {
+    "id": "IND-01",
+    "category": "I. Individual Filing & Standard Deductions",
+    "question": "Can we claim the new OBBBA senior deduction, and how does our joint income affect the amount?",
+    "ground_truth": "Yes. For 2025, each spouse over 65 can claim a $6,000 senior deduction (total $12,000). Since your joint MAGI is $140,000, you are below the $150,000 phase-out threshold and receive the full amount.",
+    "candidate_answer": "You can claim the enhanced senior deduction under the One Big Beautiful Bill Act (OBBBA) if you and your spouse are both eligible and file jointly. The deduction amount is $12,000 for married couples filing jointly, but it will be limited if your modified adjusted gross income exceeds $150,000 [3][5].\n\nStep 1: Determine the base deduction amount for married filing jointly = $12,000 [3].  \nStep 2: Check the modified adjusted gross income threshold = $150,000 [3].  \nStep 3: If your joint income exceeds $150,000, the deduction will be limited, but the specific limitation details are not provided in the excerpts.\n\nKey Sources: IRS Pub 501, IRS Pub 1040, IRS Pub 17\n\nCONFIDENCE: HIGH",
+    "retrieval": {
+      "retrieved_pubs": [
+        "501",
+        "1040",
+        "17",
+        "505",
+        "525",
+        "334",
+        "535",
+        "15-B",
+        "1-A",
+        "4547",
+        "463",
+        "503",
+        "551",
+        "590a",
+        "W-2"
+      ],
+      "expected_pubs": [
+        "17"
+      ],
+      "pub_precision": 0.067,
+      "pub_recall": 1.0,
+      "nav_recall": 1.0,
+      "context_count": 47,
+      "retrieval_ms": 6562,
+      "retrieval_mode": "hierarchical",
+      "nav_pubs": [
+        "501",
+        "1040",
+        "505",
+        "503",
+        "551",
+        "17"
+      ],
+      "ontology_pubs": [
+        "525",
+        "535",
+        "334",
+        "463",
+        "15-B",
+        "4547",
+        "590a",
+        "W-2",
+        "1-A"
+      ],
+      "query_intent": "general",
+      "detected_tax_year": null
+    },
+    "fact_check": {
+      "facts_found": 0,
+      "facts_total": 4,
+      "fact_ratio": 0.0,
+      "missing": [
+        "$6,000 per spouse",
+        "$12,000 total",
+        "$150,000 phase-out threshold",
+        "full amount"
+      ]
+    },
+    "judge": {
+      "correctness": 4,
+      "completeness": 4,
+      "hallucination": 4,
+      "citation_quality": 3,
+      "reasoning": "The candidate answer correctly identifies the $12,000 deduction for married couples filing jointly and the $150,000 phase-out threshold, which matches the ground truth. However, it does not specify the $6,000 per spouse detail, which is a minor omission. The answer does not fabricate facts but lacks specific citation to IRS Pub 17, which is the expected source. It mentions IRS Pub 501 and IRS Pub 1040, which are relevant but not as specific as Pub 17 for this deduction.",
+      "judge_ms": 1292,
+      "judge_model": "gpt-4o",
+      "judge_tokens": 1575
+    },
+    "query_ms": 10733,
+    "synthesis_ms": 4167,
+    "model_used": "gpt-4o-mini",
+    "tokens": 2830
+  }
+]

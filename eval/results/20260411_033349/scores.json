@@ -1,0 +1,77 @@
+[
+  {
+    "id": "SCN-107",
+    "category": "VIII. Cross-Topic Scenarios",
+    "question": "How do I optimize first-year deductions and carryforwards?",
+    "ground_truth": "Expense $200k R&D under Section 174 (OBBBA), Section 179 equipment to $1,160,000 limit, carry forward NOL ($300k+ total) under 80% limitation rule. No federal tax due; valuable NOL asset created.",
+    "candidate_answer": "",
+    "retrieval": {
+      "retrieved_pubs": [
+        "536",
+        "535",
+        "514",
+        "17",
+        "525",
+        "501",
+        "334",
+        "527",
+        "15-B",
+        "463",
+        "587",
+        "590a",
+        "8995-A",
+        "946"
+      ],
+      "expected_pubs": [
+        "535",
+        "946",
+        "536"
+      ],
+      "pub_precision": 0.214,
+      "pub_recall": 1.0,
+      "nav_recall": 1.0,
+      "context_count": 48,
+      "retrieval_ms": 5629,
+      "retrieval_mode": "hierarchical",
+      "nav_pubs": [
+        "587",
+        "514",
+        "501",
+        "590a",
+        "525",
+        "8995-A",
+        "946",
+        "334",
+        "925"
+      ],
+      "ontology_pubs": [
+        "17",
+        "535",
+        "334",
+        "463",
+        "15-B",
+        "946",
+        "527",
+        "536"
+      ],
+      "query_intent": "general",
+      "detected_tax_year": null
+    },
+    "fact_check": {
+      "facts_found": 0,
+      "facts_total": 4,
+      "fact_ratio": 0.0,
+      "missing": [
+        "R&D expensing",
+        "Section_179 max",
+        "NOL carryforward",
+        "80% limitation"
+      ]
+    },
+    "judge": {},
+    "query_ms": 8483,
+    "synthesis_ms": 0,
+    "model_used": "",
+    "tokens": 0
+  }
+]
