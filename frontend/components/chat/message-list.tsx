@@ -21,43 +21,33 @@ export function MessageList({ messages, isTyping = false }: MessageListProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const [userScrolledUp, setUserScrolledUp] = useState(false);
-  const prevMessageCount = useRef(0);
-  const isInitialLoad = useRef(true);
+  const lastMessageCount = useRef(0);
 
-  // Scroll to bottom only when NEW messages arrive (not on initial load)
+  // Only auto-scroll when a NEW message is added (count increases)
+  // Never scroll on initial load or client switch
   useEffect(() => {
-    const count = messages.length;
-    const isNew = count > prevMessageCount.current;
-    prevMessageCount.current = count;
+    const newCount = messages.length;
+    const wasAdded = newCount > lastMessageCount.current && lastMessageCount.current > 0;
+    lastMessageCount.current = newCount;
 
-    if (isInitialLoad.current) {
-      isInitialLoad.current = false;
-      // On initial load, scroll to bottom without animation
-      requestAnimationFrame(() => {
-        bottomRef.current?.scrollIntoView({ behavior: "instant" });
-      });
-      return;
-    }
-
-    // Only auto-scroll for new messages when user hasn't scrolled up
-    if (isNew && !userScrolledUp) {
+    if (wasAdded && !userScrolledUp) {
       bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages, userScrolledUp]);
+  }, [messages.length, userScrolledUp]);
 
-  // Also scroll when typing indicator appears
+  // Scroll when typing indicator appears (only if user hasn't scrolled up)
   useEffect(() => {
     if (isTyping && !userScrolledUp) {
       bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [isTyping, userScrolledUp]);
 
-  // Reset on client switch (messages array changes entirely)
+  // Reset tracking when messages change entirely (client switch)
+  const firstMsgId = messages[0]?.id;
   useEffect(() => {
-    isInitialLoad.current = true;
-    prevMessageCount.current = 0;
+    lastMessageCount.current = 0;
     setUserScrolledUp(false);
-  }, [messages.length === 0 ? "empty" : messages[0]?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [firstMsgId]);
 
   const handleScroll = useCallback(() => {
     const el = containerRef.current;
@@ -71,10 +61,10 @@ export function MessageList({ messages, isTyping = false }: MessageListProps) {
       <div
         ref={containerRef}
         onScroll={handleScroll}
-        className="h-full overflow-y-auto px-5 py-4 pb-2 space-y-4"
+        className="absolute inset-0 overflow-y-auto px-5 py-4 pb-2 space-y-4"
       >
         {messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-tertiary">
+          <div className="flex flex-col items-center justify-center min-h-full text-tertiary">
             <svg className="w-10 h-10 mb-3 text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1}>
               <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -96,14 +86,13 @@ export function MessageList({ messages, isTyping = false }: MessageListProps) {
         <div ref={bottomRef} />
       </div>
 
-      {/* "Scroll to bottom" pill — shown when user has scrolled up */}
       {userScrolledUp && messages.length > 0 && (
         <button
           onClick={() => {
             setUserScrolledUp(false);
             bottomRef.current?.scrollIntoView({ behavior: "smooth" });
           }}
-          className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-surface text-primary text-[12px] px-3 py-1.5 rounded-full shadow-md border border-divider animate-fade-in cursor-pointer hover:bg-surface-secondary transition-colors"
+          className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-surface text-primary text-[12px] px-3 py-1.5 rounded-full shadow-md border border-divider animate-fade-in cursor-pointer hover:bg-surface-secondary transition-colors z-10"
         >
           &darr; Latest messages
         </button>
