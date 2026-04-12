@@ -8,6 +8,7 @@ import { WorkPanel } from "@/components/layout/work-panel";
 import { MessageList } from "@/components/chat/message-list";
 import { ChatInput } from "@/components/chat/chat-input";
 import { DocumentViewerModal } from "@/components/documents/document-viewer-modal";
+import { IntakeModal, type IntakeFormData } from "@/components/clients/intake-modal";
 import { ReturnPreview } from "@/components/returns/return-preview";
 import { Dashboard } from "@/components/dashboard/dashboard";
 import { Avatar } from "@/components/ui/avatar";
@@ -231,6 +232,7 @@ export default function Home() {
   const [activeWorkTab, setActiveWorkTab] = useState("Documents");
   const [usingApi, setUsingApi] = useState(false);
   const [returnDraft, setReturnDraft] = useState<TaxReturnDraft | null>(null);
+  const [intakeOpen, setIntakeOpen] = useState(false);
 
   const activeClient = sidebarClients.find((c) => c.id === activeClientId);
 
@@ -446,18 +448,27 @@ export default function Home() {
           clients={sidebarClients}
           activeClientId={activeClientId}
           onSelectClient={setActiveClientId}
+          onNewIntake={() => setIntakeOpen(true)}
         />
 
         {/* Chat panel - custom wired version */}
         <main className="flex-1 flex flex-col bg-white min-w-0">
           {/* Context bar */}
           <div className="shrink-0 border-b border-gray-100 px-5 py-3">
-            {/* Top row: client + tracking labels */}
+            {/* Top row: client info + tracking labels */}
             <div className="flex items-center gap-3">
-              <div className="flex-1 min-w-0">
+              <div className="flex-1 min-w-0 flex items-center gap-3">
                 <span className="text-[14px] font-semibold text-[#1d1d1f]">
                   {activeClient?.name || "Select a client"}
                 </span>
+                {activeClient && (
+                  <>
+                    <span className="text-[11px] text-gray-400">{activeClient.meta}</span>
+                    <Badge variant={activeClient.status as "pending" | "inProgress" | "review" | "completed" | "filed"}>
+                      {activeClient.status === "inProgress" ? "In Progress" : activeClient.status}
+                    </Badge>
+                  </>
+                )}
               </div>
 
               {/* Federal / State tracking labels */}
@@ -521,47 +532,85 @@ export default function Home() {
                   </div>
                 )}
 
-                {documents.map((doc) => (
-                  <button
-                    key={doc.id}
-                    onClick={() => {
-                      setViewerDoc(doc);
-                      setViewerOpen(true);
-                    }}
-                    className="w-full text-left cursor-pointer"
-                  >
-                    <Card className="p-3 hover:shadow-md transition-shadow">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-[13px] font-medium text-[#1d1d1f]">
-                          {doc.name}
-                        </span>
-                        <Badge
-                          variant={
-                            doc.status === "verified"
-                              ? "completed"
-                              : doc.status === "flagged"
-                                ? "review"
-                                : "pending"
-                          }
-                        >
-                          {doc.status}
-                        </Badge>
-                      </div>
-                      <div className="text-[11px] text-gray-500 mb-1.5">
-                        {doc.type}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Progress
-                          value={doc.confidence}
-                          className="flex-1"
-                        />
-                        <span className="text-[10px] text-gray-400 w-8 text-right">
-                          {doc.confidence}%
-                        </span>
-                      </div>
-                    </Card>
-                  </button>
-                ))}
+                {documents.map((doc) => {
+                  const data = (() => { try { return JSON.parse(doc.extracted_data); } catch { return {}; } })();
+                  const fmt = (v: number | undefined) => v != null ? `$${v.toLocaleString()}` : "—";
+                  return (
+                    <button
+                      key={doc.id}
+                      onClick={() => {
+                        setViewerDoc(doc);
+                        setViewerOpen(true);
+                      }}
+                      className="w-full text-left cursor-pointer"
+                    >
+                      <Card className="p-3 hover:shadow-md transition-shadow">
+                        {/* Header: name + small confidence pill */}
+                        <div className="flex items-center justify-between mb-1.5">
+                          <div>
+                            <div className="text-[13px] font-medium text-[#1d1d1f]">
+                              {doc.name}
+                            </div>
+                            <div className="text-[11px] text-gray-400">
+                              {doc.form_type} &middot; TY 2025
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <Badge
+                              variant={
+                                doc.status === "verified" ? "completed"
+                                  : doc.status === "flagged" ? "review"
+                                  : "pending"
+                              }
+                            >
+                              {doc.confidence}%
+                            </Badge>
+                          </div>
+                        </div>
+
+                        {/* Extracted amounts — key financial data */}
+                        <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[11px]">
+                          {data.wages != null && (
+                            <>
+                              <span className="text-gray-400">Wages</span>
+                              <span className="text-right text-[#1d1d1f] font-medium">{fmt(data.wages)}</span>
+                            </>
+                          )}
+                          {data.federal_tax_withheld != null && (
+                            <>
+                              <span className="text-gray-400">Fed W/H</span>
+                              <span className="text-right text-[#1d1d1f] font-medium">{fmt(data.federal_tax_withheld)}</span>
+                            </>
+                          )}
+                          {data.state && data.state_tax != null && (
+                            <>
+                              <span className="text-gray-400">{data.state} W/H</span>
+                              <span className="text-right text-[#1d1d1f] font-medium">{fmt(data.state_tax)}</span>
+                            </>
+                          )}
+                          {data.interest_income != null && (
+                            <>
+                              <span className="text-gray-400">Interest</span>
+                              <span className="text-right text-[#1d1d1f] font-medium">{fmt(data.interest_income)}</span>
+                            </>
+                          )}
+                          {data.mortgage_interest != null && (
+                            <>
+                              <span className="text-gray-400">Mort. Int.</span>
+                              <span className="text-right text-[#1d1d1f] font-medium">{fmt(data.mortgage_interest)}</span>
+                            </>
+                          )}
+                          {data.real_estate_taxes != null && (
+                            <>
+                              <span className="text-gray-400">RE Taxes</span>
+                              <span className="text-right text-[#1d1d1f] font-medium">{fmt(data.real_estate_taxes)}</span>
+                            </>
+                          )}
+                        </div>
+                      </Card>
+                    </button>
+                  );
+                })}
               </div>
             )}
 
@@ -605,9 +654,51 @@ export default function Home() {
         document={viewerDoc}
         onApprove={handleApproveDoc}
       />
+
+      <IntakeModal
+        open={intakeOpen}
+        onClose={() => setIntakeOpen(false)}
+        onSubmit={(data: IntakeFormData) => {
+          const newId = String(Date.now());
+          const name = data.spouseFirstName
+            ? `${data.lastName} Family`
+            : `${data.lastName}, ${data.firstName}`;
+          const meta = [
+            data.spouseFirstName ? `${data.firstName} & ${data.spouseFirstName}` : data.firstName,
+            FILING_STATUS_LABELS[data.filingStatus] || data.filingStatus,
+            data.dependents > 0 ? `${data.dependents} dep.` : null,
+          ].filter(Boolean).join(" · ");
+          setSidebarClients((prev) => [
+            {
+              id: newId,
+              name,
+              meta,
+              status: "pending",
+              initials: name.slice(0, 2).toUpperCase(),
+              color: "#6B7280",
+            },
+            ...prev,
+          ]);
+          setActiveClientId(newId);
+          setMessages([{
+            id: "intake-" + newId,
+            role: "assistant" as const,
+            content: `New intake created for <strong>${name}</strong> (${data.taxYear}). ${data.filingFederal ? "Federal" : ""}${data.filingStates.length ? " + " + data.filingStates.join(", ") : ""}. Ready to upload documents.`,
+            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          }]);
+        }}
+      />
     </div>
   );
 }
+
+const FILING_STATUS_LABELS: Record<string, string> = {
+  single: "Single",
+  mfj: "MFJ",
+  mfs: "MFS",
+  hoh: "HOH",
+  qw: "QSS",
+};
 
 // ────────────────────────────────────────────
 // Helpers

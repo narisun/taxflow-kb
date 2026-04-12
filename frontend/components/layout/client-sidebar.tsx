@@ -18,6 +18,7 @@ interface ClientSidebarProps {
   clients: Client[];
   activeClientId: string | null;
   onSelectClient: (id: string) => void;
+  onNewIntake?: () => void;
 }
 
 const statusLabels: Record<string, string> = {
@@ -28,7 +29,7 @@ const statusLabels: Record<string, string> = {
   filed: "Filed",
 };
 
-function ClientSidebar({ clients, activeClientId, onSelectClient }: ClientSidebarProps) {
+function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake }: ClientSidebarProps) {
   const [search, setSearch] = useState("");
 
   const filtered = clients.filter(
@@ -61,14 +62,22 @@ function ClientSidebar({ clients, activeClientId, onSelectClient }: ClientSideba
         </div>
       </div>
 
-      {/* Section header */}
-      <div className="flex items-center justify-between px-3 pb-2">
-        <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
-          Clients <span className="text-gray-400">({filtered.length})</span>
-        </span>
-        <button className="w-5 h-5 rounded-md bg-[#0071e3] text-white text-[12px] flex items-center justify-center cursor-pointer hover:brightness-110 transition-all">
-          +
+      {/* New Intake button */}
+      <div className="px-3 pb-2">
+        <button
+          onClick={onNewIntake}
+          className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0071e3] text-white text-[12px] font-medium cursor-pointer hover:brightness-110 transition-all"
+        >
+          <span className="text-[14px] leading-none">+</span>
+          New Intake
         </button>
+      </div>
+
+      {/* Section header */}
+      <div className="flex items-center justify-between px-3 pb-1.5">
+        <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+          Clients ({filtered.length})
+        </span>
       </div>
 
       {/* Client list — accordion style */}
