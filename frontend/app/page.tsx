@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, Fragment } from "react";
 import { TopBar } from "@/components/layout/top-bar";
 import { ClientSidebar, type Client as SidebarClient } from "@/components/layout/client-sidebar";
 import { ChatPanel } from "@/components/layout/chat-panel";
@@ -548,11 +548,7 @@ export default function Home() {
     (c) => c.status === "review"
   ).length;
 
-  const flagMessage =
-    documents.filter((d) => d.status === "flagged" || d.status === "pending")
-      .length > 0
-      ? `${documents.filter((d) => d.status === "flagged" || d.status === "pending").length} documents need review before filing`
-      : "";
+  const flagCount = documents.filter((d) => d.status === "flagged" || d.status === "pending").length;
 
   // ── Reusable content blocks ──────────────────────
 
@@ -577,86 +573,92 @@ export default function Home() {
       <div className="flex-1 overflow-y-auto p-3">
         {activeWorkTab === "Documents" && (
           <div className="space-y-3">
-            {flagMessage && (
-              <div className="bg-badge-review-bg text-badge-review-text text-[12px] px-3 py-2 rounded-lg">
-                &#9888; {flagMessage}
-              </div>
-            )}
-
             {documents.map((doc) => {
               const data = (() => { try { return JSON.parse(doc.extracted_data); } catch { return {}; } })();
+              const flags: string[] = (() => { try { return JSON.parse(doc.flags || "[]"); } catch { return []; } })();
               const fmt = (v: number | undefined) => v != null ? `$${v.toLocaleString()}` : "\u2014";
+
+              const subtitle = data.employer_name || data.payer_name || data.lender_name || doc.form_type;
+
+              const kvPairs: { label: string; value: string }[] = [];
+              if (doc.form_type === "W-2") {
+                if (data.wages != null) kvPairs.push({ label: "Wages", value: fmt(data.wages) });
+                if (data.federal_tax_withheld != null) kvPairs.push({ label: "Fed W/H", value: fmt(data.federal_tax_withheld) });
+                if (data.social_security_tax != null) kvPairs.push({ label: "SS Tax", value: fmt(data.social_security_tax) });
+                if (data.medicare_tax != null) kvPairs.push({ label: "Medicare", value: fmt(data.medicare_tax) });
+                if (data.state && data.state_tax != null) kvPairs.push({ label: `${data.state} Tax`, value: fmt(data.state_tax) });
+              } else if (doc.form_type === "1099-INT") {
+                if (data.interest_income != null) kvPairs.push({ label: "Interest", value: fmt(data.interest_income) });
+                if (data.federal_tax_withheld != null) kvPairs.push({ label: "Fed W/H", value: fmt(data.federal_tax_withheld) });
+              } else if (doc.form_type === "1098") {
+                if (data.mortgage_interest != null) kvPairs.push({ label: "Mort. Int.", value: fmt(data.mortgage_interest) });
+                if (data.real_estate_taxes != null) kvPairs.push({ label: "RE Taxes", value: fmt(data.real_estate_taxes) });
+                if (data.outstanding_principal != null) kvPairs.push({ label: "Principal", value: fmt(data.outstanding_principal) });
+              } else {
+                Object.entries(data).forEach(([key, val]) => {
+                  if (typeof val === "number") kvPairs.push({ label: key.replace(/_/g, " "), value: fmt(val) });
+                });
+              }
+
+              const statusIcon = doc.status === "verified" ? "\u2713" : doc.status === "flagged" ? "\u26A0" : "\u2022";
+              const statusColor = doc.status === "verified" ? "text-green-600 dark:text-green-400" : doc.status === "flagged" ? "text-orange-500" : "text-tertiary";
+
               return (
                 <button
                   key={doc.id}
-                  onClick={() => {
-                    setViewerDoc(doc);
-                    setViewerOpen(true);
-                  }}
+                  onClick={() => { setViewerDoc(doc); setViewerOpen(true); }}
                   className="w-full text-left cursor-pointer"
                 >
-                  <Card className="p-3 hover:shadow-md transition-shadow">
-                    {/* Header: name + small confidence pill */}
-                    <div className="flex items-center justify-between mb-1.5">
-                      <div>
-                        <div className="text-[13px] font-medium text-primary">
-                          {doc.name}
-                        </div>
-                        <div className="text-[11px] text-tertiary">
-                          {doc.form_type} &middot; TY 2025
-                        </div>
+                  <Card className="p-0 overflow-hidden hover:shadow-md transition-shadow">
+                    {/* Header */}
+                    <div className="flex items-center justify-between px-3 pt-3 pb-2">
+                      <div className="min-w-0">
+                        <div className="text-[13px] font-medium text-primary truncate">{doc.name}</div>
+                        <div className="text-[11px] text-tertiary truncate">{subtitle} &middot; TY 2025</div>
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        <Badge
-                          variant={
-                            doc.status === "verified" ? "completed"
-                              : doc.status === "flagged" ? "review"
-                              : "pending"
-                          }
-                        >
-                          {doc.confidence}%
-                        </Badge>
+                      <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                        <span className="text-[12px] font-medium text-secondary">{doc.confidence}%</span>
+                        <span className={`text-[14px] ${statusColor}`}>{statusIcon}</span>
                       </div>
                     </div>
 
-                    {/* Extracted amounts — key financial data */}
-                    <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[11px]">
-                      {data.wages != null && (
-                        <>
-                          <span className="text-tertiary">Wages</span>
-                          <span className="text-right text-primary font-medium">{fmt(data.wages)}</span>
-                        </>
-                      )}
-                      {data.federal_tax_withheld != null && (
-                        <>
-                          <span className="text-tertiary">Fed W/H</span>
-                          <span className="text-right text-primary font-medium">{fmt(data.federal_tax_withheld)}</span>
-                        </>
-                      )}
-                      {data.state && data.state_tax != null && (
-                        <>
-                          <span className="text-tertiary">{data.state} W/H</span>
-                          <span className="text-right text-primary font-medium">{fmt(data.state_tax)}</span>
-                        </>
-                      )}
-                      {data.interest_income != null && (
-                        <>
-                          <span className="text-tertiary">Interest</span>
-                          <span className="text-right text-primary font-medium">{fmt(data.interest_income)}</span>
-                        </>
-                      )}
-                      {data.mortgage_interest != null && (
-                        <>
-                          <span className="text-tertiary">Mort. Int.</span>
-                          <span className="text-right text-primary font-medium">{fmt(data.mortgage_interest)}</span>
-                        </>
-                      )}
-                      {data.real_estate_taxes != null && (
-                        <>
-                          <span className="text-tertiary">RE Taxes</span>
-                          <span className="text-right text-primary font-medium">{fmt(data.real_estate_taxes)}</span>
-                        </>
-                      )}
+                    {/* Divider */}
+                    <div className="border-t border-divider mx-3" />
+
+                    {/* Body: two columns */}
+                    <div className="flex gap-3 px-3 py-2.5">
+                      {/* Left: key-value pairs */}
+                      <div className="flex-1 min-w-0">
+                        <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 text-[11px]">
+                          {kvPairs.map((kv) => (
+                            <Fragment key={kv.label}>
+                              <span className="text-tertiary whitespace-nowrap">{kv.label}</span>
+                              <span className="text-primary font-medium text-right">{kv.value}</span>
+                            </Fragment>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Right: confidence + status + flags */}
+                      <div className="w-28 shrink-0 space-y-1.5">
+                        <div>
+                          <div className="text-[10px] text-tertiary uppercase">Confidence</div>
+                          <Progress value={doc.confidence} color={doc.confidence >= 90 ? "green" : doc.confidence >= 70 ? "orange" : "red"} className="mt-1" />
+                          <div className="text-[11px] font-medium text-primary mt-0.5">{doc.confidence}%</div>
+                        </div>
+                        <Badge variant={doc.status === "verified" ? "completed" : doc.status === "flagged" ? "review" : "pending"}>
+                          {doc.status === "verified" ? "Verified" : doc.status === "flagged" ? "Flagged" : "Pending"}
+                        </Badge>
+                        {flags.length > 0 && (
+                          <div className="space-y-1">
+                            {flags.map((flag, i) => (
+                              <div key={i} className="text-[10px] text-badge-review-text leading-tight">
+                                <span className="mr-0.5">&#9888;</span>{flag}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </Card>
                 </button>
