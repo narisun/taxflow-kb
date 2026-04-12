@@ -893,6 +893,21 @@ export const mockReturnDrafts: Record<number, TaxReturnDraft> = {
   },
 };
 
+// ── Adult names per client (for sidebar display) ───────────
+
+export const mockAdults: Record<number, string> = {
+  1: "John Smith",
+  2: "Robert & Maria Johnson",
+  3: "Wei Chen",
+  4: "Carlos & Ana Garcia",
+  5: "Raj & Priya Patel",
+  6: "Marcus Williams",
+  7: "Sarah & David Kim",
+  8: "Patrick O\u2019Brien",
+  9: "Tuan & Linh Nguyen",
+  10: "Sofia Rivera",
+};
+
 // ── Mock upload extraction templates ───────────────────────
 
 export const mockExtractionTemplates: Record<

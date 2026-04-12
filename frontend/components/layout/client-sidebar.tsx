@@ -10,6 +10,7 @@ interface Client {
   status: string;
   initials: string;
   color: string;
+  adults?: string;
   years?: { year: string; docs: string[] }[];
 }
 
@@ -34,7 +35,8 @@ function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake }:
   const filtered = clients.filter(
     (c) =>
       c.name.toLowerCase().includes(search.toLowerCase()) ||
-      c.meta.toLowerCase().includes(search.toLowerCase())
+      c.meta.toLowerCase().includes(search.toLowerCase()) ||
+      (c.adults || "").toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -56,24 +58,20 @@ function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake }:
         </div>
       </div>
 
-      {/* New Intake — Apple style button */}
-      <div className="px-3 pb-2">
+      {/* Section header + New Intake gray button */}
+      <div className="flex items-center justify-between px-3 pb-2">
+        <span className="text-[10px] font-semibold text-tertiary uppercase tracking-wider">
+          Clients ({filtered.length})
+        </span>
         <button
           onClick={onNewIntake}
-          className="w-full flex items-center justify-center gap-1.5 px-3 py-[7px] rounded-lg bg-apple-blue text-white text-[13px] font-medium cursor-pointer hover:brightness-110 active:scale-[0.98] transition-all"
+          className="flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium text-secondary bg-surface-secondary hover:bg-surface-tertiary active:scale-[0.97] transition-all cursor-pointer"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
             <path d="M12 4.5v15m7.5-7.5h-15" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           New Intake
         </button>
-      </div>
-
-      {/* Section header */}
-      <div className="px-3 pb-1">
-        <span className="text-[10px] font-semibold text-tertiary uppercase tracking-wider">
-          Clients ({filtered.length})
-        </span>
       </div>
 
       {/* Client list — Apple sidebar style */}
@@ -105,6 +103,14 @@ function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake }:
               )}>
                 {client.name}
               </div>
+              {client.adults && (
+                <div className={cn(
+                  "text-[11px] truncate",
+                  isActive ? "text-apple-blue/60" : "text-tertiary"
+                )}>
+                  {client.adults}
+                </div>
+              )}
               <div className={cn(
                 "text-[11px] mt-0.5 truncate",
                 isActive ? "text-apple-blue/70" : "text-tertiary"

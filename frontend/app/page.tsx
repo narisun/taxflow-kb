@@ -19,6 +19,7 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs } from "@/components/ui/tabs";
 import { api } from "@/lib/api-client";
 import { mockApi } from "@/lib/mock-api";
+import { mockAdults } from "@/lib/mock-data";
 import type {
   Client as ApiClient,
   ChatMessage,
@@ -126,6 +127,7 @@ export default function Home() {
         status: mapWorkflowStep(c.workflow_step),
         initials: c.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase(),
         color: hashColor(c.name),
+        adults: mockAdults[c.id] || undefined,
       }));
     }
 
@@ -426,6 +428,7 @@ export default function Home() {
               const flags: string[] = (() => { try { return JSON.parse(doc.flags || "[]"); } catch { return []; } })();
               const fmt = (v: number | undefined) => v != null ? `$${v.toLocaleString()}` : "\u2014";
 
+              const personName = data.employee_name || data.recipient_name || "";
               const subtitle = data.employer_name || data.payer_name || data.lender_name || doc.form_type;
 
               const kvPairs: { label: string; value: string }[] = [];
@@ -461,7 +464,7 @@ export default function Home() {
                     {/* Header */}
                     <div className="flex items-center justify-between px-3 pt-3 pb-2">
                       <div className="min-w-0">
-                        <div className="text-[13px] font-medium text-primary truncate">{doc.name}</div>
+                        <div className="text-[13px] font-medium text-primary truncate">{doc.name}{personName ? ` \u2014 ${personName}` : ""}</div>
                         <div className="text-[11px] text-tertiary truncate">{subtitle} &middot; TY 2025</div>
                       </div>
                       <div className="flex items-center gap-1.5 shrink-0 ml-2">
@@ -551,7 +554,7 @@ export default function Home() {
   const chatContent = (
     <main className="flex-1 flex flex-col bg-surface min-w-0">
       {/* Context bar */}
-      <div className="shrink-0 border-b border-divider px-5 py-3">
+      <div className="shrink-0 border-b border-divider px-5 py-3 bg-surface-secondary/50">
         {/* Top row: client info + tracking labels */}
         <div className="flex items-center gap-3">
           <div className="flex-1 min-w-0 flex items-center gap-3">
