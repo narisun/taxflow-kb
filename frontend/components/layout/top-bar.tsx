@@ -2,6 +2,7 @@
 
 import { Avatar } from "@/components/ui/avatar";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
+import { NotificationBell } from "@/components/notifications/notification-bell";
 
 interface TopBarProps {
   stats: { clients: number; filed: number; review: number };
@@ -87,6 +88,8 @@ function TopBar({ stats, deadline, user, onMenuToggle, showMenu, clientName, onD
             </svg>
           </button>
         )}
+
+        <NotificationBell />
 
         {/* Deadline */}
         <span className="hidden md:inline text-[12px] text-red-500 font-medium bg-surface-secondary px-2.5 py-1 rounded-full">
