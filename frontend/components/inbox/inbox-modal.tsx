@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Modal, ModalHeader, ModalBody } from "@/components/ui/modal";
 import { cn } from "@/lib/utils";
+import { mockInboxMessages } from "@/lib/mock-data";
 
 interface InboxModalProps {
   open: boolean;
@@ -24,78 +25,6 @@ interface Message {
   type: "email" | "text";
 }
 
-const mockMessages: Message[] = [
-  // Inbox
-  {
-    id: 1, folder: "inbox", from: "John Smith", to: "SC", subject: "1099-INT correction",
-    preview: "I contacted First National Bank about the TIN issue...",
-    body: "Hi Sarah,\n\nI contacted First National Bank about the TIN issue you flagged on the 1099-INT. They confirmed it was a transposition error and will issue a corrected form within 5 business days.\n\nShould I send it to you as soon as I receive it, or will you pull it directly?\n\nThanks,\nJohn Smith",
-    date: "Apr 11", read: false, type: "email",
-  },
-  {
-    id: 2, folder: "inbox", from: "Maria Johnson", to: "SC", subject: "Additional 1099-INT from Chase",
-    preview: "We just received a 1099-INT from Chase that we forgot...",
-    body: "Hi Sarah,\n\nWe just received a 1099-INT from Chase that we forgot to include. Interest income is $847. I've scanned and attached it.\n\nDo we need to amend anything, or can you add it before filing?\n\nBest,\nMaria Johnson",
-    date: "Apr 10", read: false, type: "email",
-  },
-  {
-    id: 3, folder: "inbox", from: "Carlos Garcia", to: "SC", subject: "Ready to file",
-    preview: "Everything looks good on our end. Please go ahead and file...",
-    body: "Sarah,\n\nEverything looks good on our end. Please go ahead and file when ready. Ana and I have both reviewed the return summary you sent.\n\nOne question — will we receive the refund via direct deposit to the same account as last year?\n\nThanks,\nCarlos Garcia",
-    date: "Apr 9", read: true, type: "email",
-  },
-  {
-    id: 4, folder: "inbox", from: "Raj Patel", to: "SC", subject: "CA state refund received",
-    preview: "Just wanted to let you know the California refund...",
-    body: "Hi Sarah,\n\nJust wanted to let you know the California state refund hit our account yesterday. Federal came through last week.\n\nThank you for everything this year!\n\nBest regards,\nRaj Patel",
-    date: "Apr 5", read: true, type: "email",
-  },
-  {
-    id: 5, folder: "inbox", from: "Wei Chen", to: "SC", subject: "",
-    preview: "Hi, when should I bring in my W-2? I just got it from my employer.",
-    body: "Hi, when should I bring in my W-2? I just got it from my employer.",
-    date: "Apr 11", read: false, type: "text",
-  },
-  // Drafts
-  {
-    id: 10, folder: "drafts", from: "SC", to: "Johnson Family", subject: "Tax advisory — 2026 planning",
-    preview: "Dear Robert & Maria, Based on your 2025 return, here are...",
-    body: "Dear Robert & Maria,\n\nBased on your 2025 return, here are some recommendations to optimize your tax situation for 2026:\n\n1. Increase 401(k) contributions — you have room for an additional $8,000 combined\n2. Consider a 529 plan for your children's education\n3. Set up quarterly estimated payments for Maria's freelance income\n\nLet me know if you'd like to discuss any of these in detail.\n\nBest regards,\nSarah Chen, CPA",
-    date: "Apr 11", read: true, type: "email",
-  },
-  {
-    id: 11, folder: "drafts", from: "SC", to: "Wei Chen", subject: "",
-    preview: "Hi Wei, you can upload your W-2 directly through the portal or...",
-    body: "Hi Wei, you can upload your W-2 directly through the portal or bring it to the office. I'm available Tuesday and Thursday this week.",
-    date: "Apr 11", read: true, type: "text",
-  },
-  // Sent
-  {
-    id: 20, folder: "sent", from: "SC", to: "Smith, John", subject: "1099-INT flag — action needed",
-    preview: "Hi John, During processing of your 1099-INT from First National...",
-    body: "Hi John,\n\nDuring processing of your 1099-INT from First National Bank, our system detected a TIN mismatch. The form shows TIN ending in 4521, but IRS records expect 4512.\n\nThis is likely a transposition error. Could you contact the bank and request a corrected 1099-INT?\n\nWe can proceed with filing once we have the corrected form.\n\nBest regards,\nSarah Chen, CPA",
-    date: "Apr 8", read: true, type: "email",
-  },
-  {
-    id: 21, folder: "sent", from: "SC", to: "Garcia Household", subject: "Return ready for review",
-    preview: "Dear Carlos & Ana, Your 2025 tax return is ready for review...",
-    body: "Dear Carlos & Ana,\n\nYour 2025 tax return is ready for your review. Here's a summary:\n\n• Combined income: $143,200\n• Standard deduction (MFJ): $29,200\n• Child tax credit (4 dependents): $8,000\n• Estimated federal refund: $9,880\n\nPlease review and confirm so we can proceed with e-filing.\n\nBest regards,\nSarah Chen, CPA",
-    date: "Apr 7", read: true, type: "email",
-  },
-  {
-    id: 22, folder: "sent", from: "SC", to: "Patel Family", subject: "Filing confirmation — 2025 return",
-    preview: "Dear Raj & Priya, Your 2025 federal and California returns have...",
-    body: "Dear Raj & Priya,\n\nYour 2025 federal and California returns have been e-filed successfully.\n\nFederal: Accepted — Confirmation #2026-FED-00482\nCalifornia: Accepted — Confirmation #2026-CA-01893\n\nExpected refund deposit: 2-3 weeks\n\nThank you for choosing our firm.\n\nBest regards,\nSarah Chen, CPA",
-    date: "Feb 5", read: true, type: "email",
-  },
-  {
-    id: 23, folder: "sent", from: "SC", to: "Wei Chen", subject: "",
-    preview: "Welcome Wei! I've set up your file. You can upload documents anytime.",
-    body: "Welcome Wei! I've set up your file. You can upload documents through the portal anytime. Let me know if you have any questions.",
-    date: "Apr 1", read: true, type: "text",
-  },
-];
-
 const folders: { id: Folder; label: string; icon: string }[] = [
   { id: "inbox", label: "Inbox", icon: "\u{1F4E5}" },
   { id: "drafts", label: "Drafts", icon: "\u{1F4DD}" },
@@ -105,7 +34,7 @@ const folders: { id: Folder; label: string; icon: string }[] = [
 export function InboxModal({ open, onClose }: InboxModalProps) {
   const [activeFolder, setActiveFolder] = useState<Folder>("inbox");
   const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [messages, setMessages] = useState(mockMessages);
+  const [messages, setMessages] = useState<Message[]>(mockInboxMessages);
 
   const folderMessages = messages.filter((m) => m.folder === activeFolder);
   const selectedMessage = selectedId ? messages.find((m) => m.id === selectedId) : null;
