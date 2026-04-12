@@ -13,7 +13,7 @@ export function ChatInput({
   onSend,
   onAttach,
   disabled = false,
-  hints = ["Refund estimate", "Missing docs", "Year-over-year", "Credits check"],
+  hints = ["Check status", "Review docs", "Run rules", "Analyze yoy", "Estimate refund", "Draft email", "Draft advisory", "Run pre-filing checks"],
 }: ChatInputProps) {
   const [input, setInput] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
