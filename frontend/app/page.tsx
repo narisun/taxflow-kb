@@ -523,18 +523,18 @@ export default function Home() {
         />
 
         {/* Chat panel - custom wired version */}
-        <main className="flex-1 flex flex-col bg-white min-w-0">
+        <main className="flex-1 flex flex-col bg-surface min-w-0">
           {/* Context bar */}
-          <div className="shrink-0 border-b border-gray-100 px-5 py-3">
+          <div className="shrink-0 border-b border-divider px-5 py-3">
             {/* Top row: client info + tracking labels */}
             <div className="flex items-center gap-3">
               <div className="flex-1 min-w-0 flex items-center gap-3">
-                <span className="text-[14px] font-semibold text-[#1d1d1f]">
+                <span className="text-[14px] font-semibold text-primary">
                   {activeClient?.name || "Select a client"}
                 </span>
                 {activeClient && (
                   <>
-                    <span className="text-[11px] text-gray-400">{activeClient.meta}</span>
+                    <span className="text-[11px] text-tertiary">{activeClient.meta}</span>
                     <Badge variant={activeClient.status as "pending" | "inProgress" | "review" | "completed" | "filed"}>
                       {activeClient.status === "inProgress" ? "In Progress" : activeClient.status}
                     </Badge>
@@ -543,10 +543,10 @@ export default function Home() {
               </div>
 
               {/* Federal / State tracking labels */}
-              <span className="text-[12px] font-semibold text-green-600 bg-gray-50 px-2.5 py-1 rounded-md">
+              <span className="text-[12px] font-semibold text-green-600 dark:text-green-400 bg-surface-secondary px-2.5 py-1 rounded-md">
                 Federal: +$4,820
               </span>
-              <span className="text-[12px] font-semibold text-red-500 bg-gray-50 px-2.5 py-1 rounded-md">
+              <span className="text-[12px] font-semibold text-red-500 dark:text-red-400 bg-surface-secondary px-2.5 py-1 rounded-md">
                 NJ: -$1,240
               </span>
             </div>
@@ -554,12 +554,12 @@ export default function Home() {
             {/* Second row: tax season + workflow stepper */}
             <div className="flex items-center gap-3 mt-2">
               <Badge variant="inProgress">2025 Tax Season</Badge>
-              <div className="w-px h-4 bg-gray-200" />
+              <div className="w-px h-4 bg-divider" />
               <div className="flex items-center gap-1">
                 {["Intake", "Documents", "Review", "Prepare", "File"].map(
                   (step, i) => (
                     <div key={step} className="flex items-center gap-1">
-                      {i > 0 && <div className="w-4 h-px bg-gray-300" />}
+                      {i > 0 && <div className="w-4 h-px bg-divider" />}
                       <Badge
                         variant={
                           i < 2
@@ -598,7 +598,7 @@ export default function Home() {
         </main>
 
         {/* Work panel */}
-        <aside className="w-96 shrink-0 bg-white border-l border-gray-200 flex flex-col overflow-hidden">
+        <aside className="w-96 shrink-0 bg-surface border-l border-divider flex flex-col overflow-hidden">
           <Tabs
             tabs={["Documents", "Tax Return", "Filed"]}
             activeTab={activeWorkTab}
@@ -610,7 +610,7 @@ export default function Home() {
             {activeWorkTab === "Documents" && (
               <div className="space-y-3">
                 {flagMessage && (
-                  <div className="bg-orange-50 text-orange-700 text-[12px] px-3 py-2 rounded-lg">
+                  <div className="bg-badge-review-bg text-badge-review-text text-[12px] px-3 py-2 rounded-lg">
                     &#9888; {flagMessage}
                   </div>
                 )}
@@ -631,10 +631,10 @@ export default function Home() {
                         {/* Header: name + small confidence pill */}
                         <div className="flex items-center justify-between mb-1.5">
                           <div>
-                            <div className="text-[13px] font-medium text-[#1d1d1f]">
+                            <div className="text-[13px] font-medium text-primary">
                               {doc.name}
                             </div>
-                            <div className="text-[11px] text-gray-400">
+                            <div className="text-[11px] text-tertiary">
                               {doc.form_type} &middot; TY 2025
                             </div>
                           </div>
@@ -655,38 +655,38 @@ export default function Home() {
                         <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[11px]">
                           {data.wages != null && (
                             <>
-                              <span className="text-gray-400">Wages</span>
-                              <span className="text-right text-[#1d1d1f] font-medium">{fmt(data.wages)}</span>
+                              <span className="text-tertiary">Wages</span>
+                              <span className="text-right text-primary font-medium">{fmt(data.wages)}</span>
                             </>
                           )}
                           {data.federal_tax_withheld != null && (
                             <>
-                              <span className="text-gray-400">Fed W/H</span>
-                              <span className="text-right text-[#1d1d1f] font-medium">{fmt(data.federal_tax_withheld)}</span>
+                              <span className="text-tertiary">Fed W/H</span>
+                              <span className="text-right text-primary font-medium">{fmt(data.federal_tax_withheld)}</span>
                             </>
                           )}
                           {data.state && data.state_tax != null && (
                             <>
-                              <span className="text-gray-400">{data.state} W/H</span>
-                              <span className="text-right text-[#1d1d1f] font-medium">{fmt(data.state_tax)}</span>
+                              <span className="text-tertiary">{data.state} W/H</span>
+                              <span className="text-right text-primary font-medium">{fmt(data.state_tax)}</span>
                             </>
                           )}
                           {data.interest_income != null && (
                             <>
-                              <span className="text-gray-400">Interest</span>
-                              <span className="text-right text-[#1d1d1f] font-medium">{fmt(data.interest_income)}</span>
+                              <span className="text-tertiary">Interest</span>
+                              <span className="text-right text-primary font-medium">{fmt(data.interest_income)}</span>
                             </>
                           )}
                           {data.mortgage_interest != null && (
                             <>
-                              <span className="text-gray-400">Mort. Int.</span>
-                              <span className="text-right text-[#1d1d1f] font-medium">{fmt(data.mortgage_interest)}</span>
+                              <span className="text-tertiary">Mort. Int.</span>
+                              <span className="text-right text-primary font-medium">{fmt(data.mortgage_interest)}</span>
                             </>
                           )}
                           {data.real_estate_taxes != null && (
                             <>
-                              <span className="text-gray-400">RE Taxes</span>
-                              <span className="text-right text-[#1d1d1f] font-medium">{fmt(data.real_estate_taxes)}</span>
+                              <span className="text-tertiary">RE Taxes</span>
+                              <span className="text-right text-primary font-medium">{fmt(data.real_estate_taxes)}</span>
                             </>
                           )}
                         </div>
@@ -712,13 +712,13 @@ export default function Home() {
 
             {activeWorkTab === "Filed" && (
               <div className="flex flex-col items-center justify-center h-64 text-center">
-                <div className="w-12 h-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-[24px] mb-3">
+                <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-950/30 text-green-600 dark:text-green-400 flex items-center justify-center text-[24px] mb-3">
                   &#10003;
                 </div>
-                <div className="text-[15px] font-semibold text-[#1d1d1f] mb-1">
+                <div className="text-[15px] font-semibold text-primary mb-1">
                   Return Filed
                 </div>
-                <div className="text-[12px] text-gray-500">
+                <div className="text-[12px] text-secondary">
                   Submitted 04/10/2026
                 </div>
                 <Badge variant="filed" className="mt-3">
