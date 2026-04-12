@@ -12,6 +12,7 @@ import { DocumentViewerModal } from "@/components/documents/document-viewer-moda
 import { IntakeModal, type IntakeFormData } from "@/components/clients/intake-modal";
 import { ReturnPreview } from "@/components/returns/return-preview";
 import { FilingWorkflow } from "@/components/returns/filing-workflow";
+import { AdvisoryPanel } from "@/components/returns/advisory-panel";
 import { Dashboard } from "@/components/dashboard/dashboard";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -416,7 +417,7 @@ export default function Home() {
   const workPanelContent = (
     <>
       <Tabs
-        tabs={["Documents", "Tax Return", "Filing"]}
+        tabs={["Documents", "Tax Return", "Filing", "Advisory"]}
         activeTab={activeWorkTab}
         onTabChange={setActiveWorkTab}
         className="px-2 pt-1"
@@ -546,6 +547,14 @@ export default function Home() {
             filingStatus={activeClient?.meta.split(" \u00b7 ")[0]}
           />
         )}
+
+        {activeWorkTab === "Advisory" && (
+          <AdvisoryPanel
+            clientName={activeClient?.name}
+            filingStatus={activeClient?.meta.split(" \u00b7 ")[0]}
+            dependents={Number(activeClient?.meta.match(/(\d+) dep/)?.[1] || 0)}
+          />
+        )}
       </div>
     </>
   );
@@ -669,7 +678,7 @@ export default function Home() {
             {mobileTab === "returns" && (
               <div className="flex-1 overflow-y-auto flex flex-col">
                 <Tabs
-                  tabs={["Tax Return", "Filing"]}
+                  tabs={["Tax Return", "Filing", "Advisory"]}
                   activeTab={activeWorkTab === "Documents" ? "Tax Return" : activeWorkTab}
                   onTabChange={setActiveWorkTab}
                   className="px-2 pt-1"
@@ -687,6 +696,13 @@ export default function Home() {
                     <FilingWorkflow
                       clientName={activeClient?.name}
                       filingStatus={activeClient?.meta.split(" \u00b7 ")[0]}
+                    />
+                  )}
+                  {activeWorkTab === "Advisory" && (
+                    <AdvisoryPanel
+                      clientName={activeClient?.name}
+                      filingStatus={activeClient?.meta.split(" \u00b7 ")[0]}
+                      dependents={Number(activeClient?.meta.match(/(\d+) dep/)?.[1] || 0)}
                     />
                   )}
                 </div>
