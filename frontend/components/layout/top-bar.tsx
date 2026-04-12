@@ -17,6 +17,7 @@ interface TopBarProps {
   onAvatarClick?: () => void;
   onInbox?: () => void;
   inboxUnread?: number;
+  onStatsClick?: (filter?: string) => void;
 }
 
 const irsNewsItems = [
@@ -79,7 +80,7 @@ function IrsNewsFeed({ deadline }: { deadline: string }) {
   );
 }
 
-function TopBar({ stats, deadline, user, onMenuToggle, showMenu, clientName, onDashboard, onAvatarClick, onInbox, inboxUnread }: TopBarProps) {
+function TopBar({ stats, deadline, user, onMenuToggle, showMenu, clientName, onDashboard, onAvatarClick, onInbox, inboxUnread, onStatsClick }: TopBarProps) {
   return (
     <nav
       className="h-12 max-md:h-10 flex items-center px-4 gap-4 shrink-0 z-50 border-b"
@@ -128,17 +129,17 @@ function TopBar({ stats, deadline, user, onMenuToggle, showMenu, clientName, onD
 
       {/* Stats — desktop only */}
       <div className="hidden lg:flex items-center gap-4 text-[12px] text-secondary">
-        <span>
+        <button onClick={() => onStatsClick?.()} className="hover:text-primary transition-colors cursor-pointer">
           <span className="text-primary font-medium">{stats.clients}</span> clients
-        </span>
+        </button>
         <span className="text-[10px] text-tertiary">&middot;</span>
-        <span>
+        <button onClick={() => onStatsClick?.("filed")} className="hover:text-primary transition-colors cursor-pointer">
           <span className="text-green-500 font-medium">{stats.filed}</span> filed
-        </span>
+        </button>
         <span className="text-[10px] text-tertiary">&middot;</span>
-        <span>
+        <button onClick={() => onStatsClick?.("review")} className="hover:text-primary transition-colors cursor-pointer">
           <span className="text-orange-500 font-medium">{stats.review}</span> review
-        </span>
+        </button>
       </div>
 
       {/* Right cluster */}

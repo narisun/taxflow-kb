@@ -14,6 +14,8 @@ import { ReturnPreview } from "@/components/returns/return-preview";
 import { FilingWorkflow } from "@/components/returns/filing-workflow";
 import { AdvisoryPanel } from "@/components/returns/advisory-panel";
 import { InboxModal } from "@/components/inbox/inbox-modal";
+import { ClientMasterModal } from "@/components/clients/client-master-modal";
+import { DashboardModal } from "@/components/dashboard/dashboard-modal";
 import { ResearchAgentModal } from "@/components/research/research-agent-modal";
 import { Dashboard } from "@/components/dashboard/dashboard";
 import { Avatar } from "@/components/ui/avatar";
@@ -36,7 +38,6 @@ import { useIsMobile, useIsDesktopXL } from "@/lib/hooks/use-media-query";
 import { useApp } from "./providers";
 import { SettingsModal } from "@/components/settings/settings-modal";
 import { OnboardingTour } from "@/components/onboarding/onboarding-tour";
-import { AnalyticsDashboard } from "@/components/dashboard/analytics-dashboard";
 
 // ────────────────────────────────────────────
 // Page component
@@ -91,7 +92,9 @@ export default function Home() {
   const [inboxOpen, setInboxOpen] = useState(false);
   const [researchOpen, setResearchOpen] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [showDashboard, setShowDashboard] = useState(false);
+  const [dashboardOpen, setDashboardOpen] = useState(false);
+  const [clientMasterOpen, setClientMasterOpen] = useState(false);
+  const [clientMasterFilter, setClientMasterFilter] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const isMobile = useIsMobile();
@@ -665,7 +668,8 @@ export default function Home() {
         showMenu={!isDesktopXL}
         onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
         clientName={isMobile ? activeClient?.name : undefined}
-        onDashboard={() => setShowDashboard(!showDashboard)}
+        onDashboard={() => setDashboardOpen(true)}
+        onStatsClick={(filter?: string) => { setClientMasterFilter(filter || ""); setClientMasterOpen(true); }}
         onAvatarClick={() => setSettingsOpen(true)}
         onInbox={() => setInboxOpen(true)}
         inboxUnread={3}
@@ -678,7 +682,7 @@ export default function Home() {
             {mobileTab === "clients" && (
               <div className="flex-1 overflow-y-auto">{sidebarContent}</div>
             )}
-            {mobileTab === "chat" && (showDashboard ? <AnalyticsDashboard /> : chatContent)}
+            {mobileTab === "chat" && chatContent}
             {mobileTab === "docs" && (
               <div className="flex-1 overflow-y-auto flex flex-col">{workPanelContent}</div>
             )}
@@ -729,7 +733,7 @@ export default function Home() {
           <div className="hidden lg:block h-full">{sidebarContent}</div>
 
           {/* Chat panel */}
-          {showDashboard ? <AnalyticsDashboard /> : chatContent}
+          {chatContent}
 
           {/* Work panel — inline on XL, overlay below */}
           {isDesktopXL && (
@@ -767,6 +771,14 @@ export default function Home() {
         onApprove={handleApproveDoc}
       />
 
+      <DashboardModal open={dashboardOpen} onClose={() => setDashboardOpen(false)} />
+      <ClientMasterModal
+        open={clientMasterOpen}
+        onClose={() => setClientMasterOpen(false)}
+        clients={apiClients}
+        initialFilter={clientMasterFilter}
+        onSelectClient={(id) => handleSelectClient(String(id))}
+      />
       <InboxModal open={inboxOpen} onClose={() => setInboxOpen(false)} />
       <ResearchAgentModal open={researchOpen} onClose={() => setResearchOpen(false)} />
 
