@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef, Fragment } from "react";
+import { cn } from "@/lib/utils";
 import { TopBar } from "@/components/layout/top-bar";
 import { ClientSidebar, type Client as SidebarClient } from "@/components/layout/client-sidebar";
 import { ChatPanel } from "@/components/layout/chat-panel";
@@ -589,30 +590,28 @@ export default function Home() {
           </span>
         </div>
 
-        {/* Second row: tax season + workflow stepper */}
-        <div className="hidden md:flex items-center gap-3 mt-2">
-          <Badge variant="inProgress">2025 Tax Season</Badge>
-          <div className="w-px h-4 bg-divider" />
-          <div className="flex items-center gap-1">
-            {["Intake", "Documents", "Review", "Prepare", "File"].map(
-              (step, i) => (
-                <div key={step} className="flex items-center gap-1">
-                  {i > 0 && <div className="w-4 h-px bg-divider" />}
-                  <Badge
-                    variant={
-                      i < 2
-                        ? "completed"
-                        : i === 2
-                          ? "inProgress"
-                          : "pending"
-                    }
-                  >
-                    {step}
-                  </Badge>
-                </div>
-              )
-            )}
-          </div>
+        {/* Second row: workflow stepper — grayscale */}
+        <div className="hidden md:flex items-center gap-1 mt-2">
+          <span className="text-[11px] text-tertiary mr-1">2025</span>
+          {["Intake", "Documents", "Review", "Prepare", "File"].map(
+            (step, i) => (
+              <div key={step} className="flex items-center gap-1">
+                {i > 0 && <div className="w-3 h-px bg-divider" />}
+                <span
+                  className={cn(
+                    "text-[11px] px-2 py-0.5 rounded-full",
+                    i < 2
+                      ? "text-primary font-medium bg-surface-secondary"
+                      : i === 2
+                        ? "text-primary font-semibold bg-surface-tertiary"
+                        : "text-tertiary"
+                  )}
+                >
+                  {step}
+                </span>
+              </div>
+            )
+          )}
         </div>
       </div>
 

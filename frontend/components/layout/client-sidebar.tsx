@@ -1,7 +1,6 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Badge, type BadgeVariant } from "@/components/ui/badge";
 import { useState } from "react";
 
 interface Client {
@@ -40,7 +39,8 @@ function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake }:
 
   return (
     <aside className="w-72 shrink-0 bg-bg border-r border-divider flex flex-col overflow-hidden">
-      <div className="p-3">
+      {/* Search */}
+      <div className="p-3 pb-2">
         <div className="relative">
           <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <circle cx="11" cy="11" r="8" strokeWidth="2" />
@@ -56,50 +56,59 @@ function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake }:
         </div>
       </div>
 
-      <div className="px-3 pb-2">
+      {/* Section header + New Intake button inline */}
+      <div className="flex items-center justify-between px-3 pb-2">
+        <span className="text-[10px] font-semibold text-tertiary uppercase tracking-wider">
+          Clients ({filtered.length})
+        </span>
         <button
           onClick={onNewIntake}
-          className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-apple-blue text-white text-[12px] font-medium cursor-pointer hover:brightness-110 transition-all"
+          className="text-[11px] text-secondary hover:text-primary transition-colors cursor-pointer flex items-center gap-0.5"
         >
-          <span className="text-[14px] leading-none">+</span>
+          <span className="text-[13px] leading-none">+</span>
           New Intake
         </button>
       </div>
 
-      <div className="flex items-center justify-between px-3 pb-1.5">
-        <span className="text-[10px] font-semibold text-tertiary uppercase tracking-wider">
-          Clients ({filtered.length})
-        </span>
-      </div>
-
+      {/* Client list */}
       <div className="flex-1 overflow-y-auto">
         {filtered.map((client) => {
           const isActive = client.id === activeClientId;
+          // Extract tax year from meta (format: "filing_status · N dep. · YEAR")
+          const metaParts = client.meta.split(" \u00b7 ");
+          const filingInfo = metaParts.slice(0, -1).join(" \u00b7 "); // e.g. "mfj · 3 dep."
+          const taxYear = metaParts[metaParts.length - 1] || "2025";
+          const statusLabel = statusLabels[client.status] ?? client.status;
+
           return (
-            <div key={client.id}>
-              <div
-                role="button"
-                tabIndex={0}
-                onClick={() => onSelectClient(client.id)}
-                onKeyDown={(e) => { if (e.key === "Enter") onSelectClient(client.id); }}
-                className={cn(
-                  "w-full flex items-center gap-2.5 px-3 py-2.5 text-left transition-all cursor-pointer border-l-3",
-                  isActive
-                    ? "bg-surface border-l-apple-blue shadow-sm"
-                    : "hover:bg-surface/60 border-l-transparent"
-                )}
-              >
-                <div className="flex-1 min-w-0">
-                  <div className={cn("text-[13px] truncate transition-all", isActive ? "font-semibold text-primary" : "font-medium text-secondary")}>
-                    {client.name}
-                  </div>
-                  <div className={cn("text-[11px] truncate", isActive ? "text-secondary" : "text-tertiary")}>
-                    {client.meta}
-                  </div>
-                </div>
-                <Badge variant={client.status as BadgeVariant}>
-                  {statusLabels[client.status] ?? client.status}
-                </Badge>
+            <div
+              key={client.id}
+              role="button"
+              tabIndex={0}
+              onClick={() => onSelectClient(client.id)}
+              onKeyDown={(e) => { if (e.key === "Enter") onSelectClient(client.id); }}
+              className={cn(
+                "w-full px-3 py-2.5 text-left transition-all cursor-pointer border-l-2",
+                isActive
+                  ? "bg-surface border-l-primary"
+                  : "border-l-transparent hover:bg-surface-secondary"
+              )}
+            >
+              {/* Line 1: Name + filing info */}
+              <div className="flex items-baseline gap-1.5">
+                <span className={cn(
+                  "text-[13px] truncate",
+                  isActive ? "font-semibold text-primary" : "font-medium text-secondary"
+                )}>
+                  {client.name}
+                </span>
+                <span className="text-[10px] text-tertiary truncate shrink-0">
+                  {filingInfo}
+                </span>
+              </div>
+              {/* Line 2: Status + year */}
+              <div className="text-[11px] text-tertiary mt-0.5">
+                {statusLabel} &middot; {taxYear}
               </div>
             </div>
           );
