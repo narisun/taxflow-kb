@@ -44,20 +44,17 @@ function IrsNewsFeed({ deadline }: { deadline: string }) {
   }, [open]);
 
   const latest = irsNewsItems[0];
+  void deadline; // used by parent for positioning
 
   return (
-    <div ref={ref} className="hidden md:flex items-center gap-2 relative">
+    <div ref={ref} className="hidden lg:flex items-center relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1.5 max-w-[240px] lg:max-w-[320px] hover:bg-surface-secondary px-2 py-1 rounded-md transition-colors cursor-pointer"
+        className="flex items-center gap-1.5 max-w-[240px] xl:max-w-[320px] hover:bg-surface-secondary px-2 py-1 rounded-md transition-colors cursor-pointer"
       >
         <span className="text-[10px] font-semibold text-tertiary uppercase shrink-0">IRS</span>
         <span className="text-[11px] text-secondary truncate">{latest.title}</span>
       </button>
-
-      <span className="text-[12px] text-red-500 font-medium bg-surface-secondary px-2.5 py-1 rounded-full shrink-0">
-        {deadline}
-      </span>
 
       {open && (
         <div className="absolute right-0 top-10 w-96 bg-surface rounded-xl shadow-xl border border-divider overflow-hidden z-50 animate-scale-in">
@@ -126,6 +123,9 @@ function TopBar({ stats, deadline, user, onMenuToggle, showMenu, clientName, onD
       {/* Spacer — desktop */}
       <div className="flex-1 max-md:hidden" />
 
+      {/* IRS News — left of stats */}
+      <IrsNewsFeed deadline={deadline} />
+
       {/* Stats — desktop only */}
       <div className="hidden lg:flex items-center gap-4 text-[12px] text-secondary">
         <span>
@@ -176,8 +176,10 @@ function TopBar({ stats, deadline, user, onMenuToggle, showMenu, clientName, onD
 
         <NotificationBell />
 
-        {/* IRS News + Deadline */}
-        <IrsNewsFeed deadline={deadline} />
+        {/* Deadline */}
+        <span className="hidden md:inline text-[12px] text-red-500 font-medium bg-surface-secondary px-2.5 py-1 rounded-full shrink-0">
+          {deadline}
+        </span>
 
         <ThemeToggle />
 
