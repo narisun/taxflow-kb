@@ -27,6 +27,9 @@ import { PanelOverlay } from "@/components/layout/panel-overlay";
 import { BottomTabBar, type TabId } from "@/components/layout/bottom-tab-bar";
 import { useIsMobile, useIsDesktopXL } from "@/lib/hooks/use-media-query";
 import { useApp } from "./providers";
+import { SettingsModal } from "@/components/settings/settings-modal";
+import { OnboardingTour } from "@/components/onboarding/onboarding-tour";
+import { AnalyticsDashboard } from "@/components/dashboard/analytics-dashboard";
 
 // ────────────────────────────────────────────
 // Mock data for offline / fallback mode
@@ -236,6 +239,9 @@ export default function Home() {
   const [usingApi, setUsingApi] = useState(false);
   const [returnDraft, setReturnDraft] = useState<TaxReturnDraft | null>(null);
   const [intakeOpen, setIntakeOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showDashboard, setShowDashboard] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const isMobile = useIsMobile();
@@ -245,6 +251,24 @@ export default function Home() {
   const [mobileTab, setMobileTab] = useState<TabId>("chat");
 
   const activeClient = sidebarClients.find((c) => c.id === activeClientId);
+
+  // Check onboarding on mount
+  useEffect(() => {
+    if (!localStorage.getItem("taxflow_onboarding_complete")) {
+      setShowOnboarding(true);
+    }
+  }, []);
+
+  const completeOnboarding = useCallback(() => {
+    localStorage.setItem("taxflow_onboarding_complete", "true");
+    setShowOnboarding(false);
+  }, []);
+
+  const replayTour = useCallback(() => {
+    setSettingsOpen(false);
+    localStorage.removeItem("taxflow_onboarding_complete");
+    setShowOnboarding(true);
+  }, []);
 
   // Try loading from API on mount
   useEffect(() => {
@@ -774,6 +798,8 @@ export default function Home() {
         showMenu={!isDesktopXL}
         onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
         clientName={isMobile ? activeClient?.name : undefined}
+        onDashboard={() => setShowDashboard(!showDashboard)}
+        onAvatarClick={() => setSettingsOpen(true)}
       />
 
       {isMobile ? (
@@ -783,7 +809,7 @@ export default function Home() {
             {mobileTab === "clients" && (
               <div className="flex-1 overflow-y-auto">{sidebarContent}</div>
             )}
-            {mobileTab === "chat" && chatContent}
+            {mobileTab === "chat" && (showDashboard ? <AnalyticsDashboard /> : chatContent)}
             {mobileTab === "docs" && (
               <div className="flex-1 overflow-y-auto flex flex-col">{workPanelContent}</div>
             )}
@@ -831,7 +857,7 @@ export default function Home() {
           <div className="hidden lg:block">{sidebarContent}</div>
 
           {/* Chat panel */}
-          {chatContent}
+          {showDashboard ? <AnalyticsDashboard /> : chatContent}
 
           {/* Work panel — inline on XL, overlay below */}
           {isDesktopXL && (
@@ -862,6 +888,17 @@ export default function Home() {
         onClose={() => setViewerOpen(false)}
         document={viewerDoc}
         onApprove={handleApproveDoc}
+      />
+
+      <SettingsModal
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        onReplayTour={replayTour}
+      />
+
+      <OnboardingTour
+        active={showOnboarding}
+        onComplete={completeOnboarding}
       />
 
       <IntakeModal
