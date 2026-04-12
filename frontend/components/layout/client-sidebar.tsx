@@ -88,27 +88,34 @@ function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake }:
               onClick={() => onSelectClient(client.id)}
               onKeyDown={(e) => { if (e.key === "Enter") onSelectClient(client.id); }}
               className={cn(
-                "w-full px-3 py-2.5 text-left transition-all cursor-pointer border-l-2",
+                "mx-2 my-0.5 px-2.5 py-2.5 rounded-lg text-left transition-all cursor-pointer border",
                 isActive
-                  ? "bg-surface border-l-primary"
-                  : "border-l-transparent hover:bg-surface-secondary"
+                  ? "bg-surface border-apple-blue/30 shadow-sm"
+                  : "border-transparent hover:border-teal-500/30 hover:bg-surface-secondary/60"
               )}
             >
               {/* Line 1: Name + filing info */}
-              <div className="flex items-baseline gap-1.5">
-                <span className={cn(
-                  "text-[13px] truncate",
-                  isActive ? "font-semibold text-primary" : "font-medium text-secondary"
-                )}>
-                  {client.name}
-                </span>
-                <span className="text-[10px] text-tertiary truncate shrink-0">
-                  {filingInfo}
-                </span>
+              <div className="flex items-center justify-between gap-1.5">
+                <div className="flex items-baseline gap-1.5 min-w-0">
+                  <span className={cn(
+                    "text-[13px] truncate",
+                    isActive ? "font-semibold text-primary" : "font-medium text-secondary"
+                  )}>
+                    {client.name}
+                  </span>
+                  <span className="text-[10px] text-tertiary truncate shrink-0">
+                    {filingInfo}
+                  </span>
+                </div>
+                {isActive && (
+                  <span className="shrink-0 text-[9px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-apple-blue text-white">
+                    {statusLabel}
+                  </span>
+                )}
               </div>
               {/* Line 2: Status + year */}
               <div className="text-[11px] text-tertiary mt-0.5">
-                {statusLabel} &middot; {taxYear}
+                {isActive ? taxYear : `${statusLabel} \u00b7 ${taxYear}`}
               </div>
             </div>
           );
