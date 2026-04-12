@@ -13,6 +13,7 @@ import { IntakeModal, type IntakeFormData } from "@/components/clients/intake-mo
 import { ReturnPreview } from "@/components/returns/return-preview";
 import { FilingWorkflow } from "@/components/returns/filing-workflow";
 import { AdvisoryPanel } from "@/components/returns/advisory-panel";
+import { InboxModal } from "@/components/inbox/inbox-modal";
 import { Dashboard } from "@/components/dashboard/dashboard";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -86,6 +87,7 @@ export default function Home() {
   const [returnDraft, setReturnDraft] = useState<TaxReturnDraft | null>(null);
   const [intakeOpen, setIntakeOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [inboxOpen, setInboxOpen] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -662,6 +664,8 @@ export default function Home() {
         clientName={isMobile ? activeClient?.name : undefined}
         onDashboard={() => setShowDashboard(!showDashboard)}
         onAvatarClick={() => setSettingsOpen(true)}
+        onInbox={() => setInboxOpen(true)}
+        inboxUnread={3}
       />
 
       {isMobile ? (
@@ -759,6 +763,8 @@ export default function Home() {
         document={viewerDoc}
         onApprove={handleApproveDoc}
       />
+
+      <InboxModal open={inboxOpen} onClose={() => setInboxOpen(false)} />
 
       <SettingsModal
         open={settingsOpen}
