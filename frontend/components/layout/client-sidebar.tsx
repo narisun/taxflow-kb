@@ -112,11 +112,16 @@ function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake }:
                     {client.adults}
                   </div>
                 )}
-                <div className={cn(
-                  "text-[11px] mt-0.5 truncate",
-                  isActive ? "text-apple-blue/70" : "text-tertiary"
-                )}>
-                  {filingInfo} &middot; {statusLabel} &middot; {taxYear}
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className={cn(
+                    "text-[11px] truncate",
+                    isActive ? "text-apple-blue/70" : "text-tertiary"
+                  )}>
+                    {filingInfo} &middot; {taxYear}
+                  </span>
+                  <span className="shrink-0 text-[9px] font-medium px-1.5 py-px rounded-full bg-surface-tertiary text-secondary">
+                    {statusLabel}
+                  </span>
                 </div>
               </div>
             </div>
