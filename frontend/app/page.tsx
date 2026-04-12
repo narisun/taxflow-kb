@@ -23,6 +23,9 @@ import type {
   Document as ApiDocument,
   TaxReturnDraft,
 } from "@/lib/api-client";
+import { PanelOverlay } from "@/components/layout/panel-overlay";
+import { BottomTabBar, type TabId } from "@/components/layout/bottom-tab-bar";
+import { useIsMobile, useIsDesktopXL } from "@/lib/hooks/use-media-query";
 import { useApp } from "./providers";
 
 // ────────────────────────────────────────────
@@ -234,6 +237,12 @@ export default function Home() {
   const [returnDraft, setReturnDraft] = useState<TaxReturnDraft | null>(null);
   const [intakeOpen, setIntakeOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const isMobile = useIsMobile();
+  const isDesktopXL = useIsDesktopXL();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [workPanelOpen, setWorkPanelOpen] = useState(false);
+  const [mobileTab, setMobileTab] = useState<TabId>("chat");
 
   const activeClient = sidebarClients.find((c) => c.id === activeClientId);
 
@@ -494,6 +503,20 @@ export default function Home() {
     [activeClientId]
   );
 
+  const handleMobileTabChange = useCallback((tab: TabId) => {
+    setMobileTab(tab);
+    setSidebarOpen(false);
+    setWorkPanelOpen(false);
+  }, []);
+
+  const handleSelectClient = useCallback((id: string) => {
+    setActiveClientId(id);
+    if (isMobile) {
+      setMobileTab("chat");
+    }
+    setSidebarOpen(false);
+  }, [isMobile]);
+
   // Stats
   const totalClients = sidebarClients.length;
   const filedCount = sidebarClients.filter((c) => c.status === "filed").length;
@@ -507,228 +530,331 @@ export default function Home() {
       ? `${documents.filter((d) => d.status === "flagged" || d.status === "pending").length} documents need review before filing`
       : "";
 
+  // ── Reusable content blocks ──────────────────────
+
+  const sidebarContent = (
+    <ClientSidebar
+      clients={sidebarClients}
+      activeClientId={activeClientId}
+      onSelectClient={handleSelectClient}
+      onNewIntake={() => setIntakeOpen(true)}
+    />
+  );
+
+  const workPanelContent = (
+    <>
+      <Tabs
+        tabs={["Documents", "Tax Return", "Filed"]}
+        activeTab={activeWorkTab}
+        onTabChange={setActiveWorkTab}
+        className="px-2 pt-1"
+      />
+
+      <div className="flex-1 overflow-y-auto p-3">
+        {activeWorkTab === "Documents" && (
+          <div className="space-y-3">
+            {flagMessage && (
+              <div className="bg-badge-review-bg text-badge-review-text text-[12px] px-3 py-2 rounded-lg">
+                &#9888; {flagMessage}
+              </div>
+            )}
+
+            {documents.map((doc) => {
+              const data = (() => { try { return JSON.parse(doc.extracted_data); } catch { return {}; } })();
+              const fmt = (v: number | undefined) => v != null ? `$${v.toLocaleString()}` : "\u2014";
+              return (
+                <button
+                  key={doc.id}
+                  onClick={() => {
+                    setViewerDoc(doc);
+                    setViewerOpen(true);
+                  }}
+                  className="w-full text-left cursor-pointer"
+                >
+                  <Card className="p-3 hover:shadow-md transition-shadow">
+                    {/* Header: name + small confidence pill */}
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div>
+                        <div className="text-[13px] font-medium text-primary">
+                          {doc.name}
+                        </div>
+                        <div className="text-[11px] text-tertiary">
+                          {doc.form_type} &middot; TY 2025
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Badge
+                          variant={
+                            doc.status === "verified" ? "completed"
+                              : doc.status === "flagged" ? "review"
+                              : "pending"
+                          }
+                        >
+                          {doc.confidence}%
+                        </Badge>
+                      </div>
+                    </div>
+
+                    {/* Extracted amounts — key financial data */}
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[11px]">
+                      {data.wages != null && (
+                        <>
+                          <span className="text-tertiary">Wages</span>
+                          <span className="text-right text-primary font-medium">{fmt(data.wages)}</span>
+                        </>
+                      )}
+                      {data.federal_tax_withheld != null && (
+                        <>
+                          <span className="text-tertiary">Fed W/H</span>
+                          <span className="text-right text-primary font-medium">{fmt(data.federal_tax_withheld)}</span>
+                        </>
+                      )}
+                      {data.state && data.state_tax != null && (
+                        <>
+                          <span className="text-tertiary">{data.state} W/H</span>
+                          <span className="text-right text-primary font-medium">{fmt(data.state_tax)}</span>
+                        </>
+                      )}
+                      {data.interest_income != null && (
+                        <>
+                          <span className="text-tertiary">Interest</span>
+                          <span className="text-right text-primary font-medium">{fmt(data.interest_income)}</span>
+                        </>
+                      )}
+                      {data.mortgage_interest != null && (
+                        <>
+                          <span className="text-tertiary">Mort. Int.</span>
+                          <span className="text-right text-primary font-medium">{fmt(data.mortgage_interest)}</span>
+                        </>
+                      )}
+                      {data.real_estate_taxes != null && (
+                        <>
+                          <span className="text-tertiary">RE Taxes</span>
+                          <span className="text-right text-primary font-medium">{fmt(data.real_estate_taxes)}</span>
+                        </>
+                      )}
+                    </div>
+                  </Card>
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {activeWorkTab === "Tax Return" && (
+          <ReturnPreview
+            lines={
+              returnDraft
+                ? returnDraft.lines
+                : undefined
+            }
+            refundOrOwed={returnDraft?.refund_or_owed}
+            effectiveRate={returnDraft?.effective_rate}
+            onViewFull={handleGenerateReturn}
+          />
+        )}
+
+        {activeWorkTab === "Filed" && (
+          <div className="flex flex-col items-center justify-center h-64 text-center">
+            <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-950/30 text-green-600 dark:text-green-400 flex items-center justify-center text-[24px] mb-3">
+              &#10003;
+            </div>
+            <div className="text-[15px] font-semibold text-primary mb-1">
+              Return Filed
+            </div>
+            <div className="text-[12px] text-secondary">
+              Submitted 04/10/2026
+            </div>
+            <Badge variant="filed" className="mt-3">
+              E-Filed
+            </Badge>
+          </div>
+        )}
+      </div>
+    </>
+  );
+
+  const chatContent = (
+    <main className="flex-1 flex flex-col bg-surface min-w-0">
+      {/* Context bar */}
+      <div className="shrink-0 border-b border-divider px-5 py-3">
+        {/* Top row: client info + tracking labels */}
+        <div className="flex items-center gap-3">
+          <div className="flex-1 min-w-0 flex items-center gap-3">
+            <span className="text-[14px] font-semibold text-primary">
+              {activeClient?.name || "Select a client"}
+            </span>
+            {activeClient && (
+              <>
+                <span className="text-[11px] text-tertiary hidden md:inline">{activeClient.meta}</span>
+                <Badge variant={activeClient.status as "pending" | "inProgress" | "review" | "completed" | "filed"}>
+                  {activeClient.status === "inProgress" ? "In Progress" : activeClient.status}
+                </Badge>
+              </>
+            )}
+          </div>
+
+          {/* Work panel toggle — visible below XL */}
+          {!isDesktopXL && !isMobile && (
+            <button
+              onClick={() => setWorkPanelOpen(!workPanelOpen)}
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-secondary hover:bg-surface-secondary transition-colors cursor-pointer"
+              aria-label="Toggle work panel"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                <path d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          )}
+
+          {/* Federal / State tracking labels */}
+          <span className="hidden xl:inline text-[12px] font-semibold text-green-600 dark:text-green-400 bg-surface-secondary px-2.5 py-1 rounded-md">
+            Federal: +$4,820
+          </span>
+          <span className="hidden xl:inline text-[12px] font-semibold text-red-500 dark:text-red-400 bg-surface-secondary px-2.5 py-1 rounded-md">
+            NJ: -$1,240
+          </span>
+        </div>
+
+        {/* Second row: tax season + workflow stepper */}
+        <div className="hidden md:flex items-center gap-3 mt-2">
+          <Badge variant="inProgress">2025 Tax Season</Badge>
+          <div className="w-px h-4 bg-divider" />
+          <div className="flex items-center gap-1">
+            {["Intake", "Documents", "Review", "Prepare", "File"].map(
+              (step, i) => (
+                <div key={step} className="flex items-center gap-1">
+                  {i > 0 && <div className="w-4 h-px bg-divider" />}
+                  <Badge
+                    variant={
+                      i < 2
+                        ? "completed"
+                        : i === 2
+                          ? "inProgress"
+                          : "pending"
+                    }
+                  >
+                    {step}
+                  </Badge>
+                </div>
+              )
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Messages */}
+      <MessageList messages={messages} isTyping={isTyping} />
+
+      {/* Hidden file input for document upload */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        className="hidden"
+        accept=".pdf,.png,.jpg,.jpeg,.tiff"
+        onChange={handleFileSelected}
+      />
+
+      {/* Input */}
+      <ChatInput
+        onSend={handleSendMessage}
+        onAttach={() => fileInputRef.current?.click()}
+      />
+    </main>
+  );
+
+  // ── Render ─────────────────────────────────────
+
   return (
     <div className="flex flex-col h-full">
       <TopBar
         stats={{ clients: totalClients, filed: filedCount, review: reviewCount }}
         deadline="April 15 in 4 days"
         user={{ initials: "SC" }}
+        showMenu={!isDesktopXL}
+        onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
+        clientName={isMobile ? activeClient?.name : undefined}
       />
-      <div className="flex flex-1 overflow-hidden">
-        <ClientSidebar
-          clients={sidebarClients}
-          activeClientId={activeClientId}
-          onSelectClient={setActiveClientId}
-          onNewIntake={() => setIntakeOpen(true)}
-        />
 
-        {/* Chat panel - custom wired version */}
-        <main className="flex-1 flex flex-col bg-surface min-w-0">
-          {/* Context bar */}
-          <div className="shrink-0 border-b border-divider px-5 py-3">
-            {/* Top row: client info + tracking labels */}
-            <div className="flex items-center gap-3">
-              <div className="flex-1 min-w-0 flex items-center gap-3">
-                <span className="text-[14px] font-semibold text-primary">
-                  {activeClient?.name || "Select a client"}
-                </span>
-                {activeClient && (
-                  <>
-                    <span className="text-[11px] text-tertiary">{activeClient.meta}</span>
-                    <Badge variant={activeClient.status as "pending" | "inProgress" | "review" | "completed" | "filed"}>
-                      {activeClient.status === "inProgress" ? "In Progress" : activeClient.status}
-                    </Badge>
-                  </>
-                )}
-              </div>
-
-              {/* Federal / State tracking labels */}
-              <span className="text-[12px] font-semibold text-green-600 dark:text-green-400 bg-surface-secondary px-2.5 py-1 rounded-md">
-                Federal: +$4,820
-              </span>
-              <span className="text-[12px] font-semibold text-red-500 dark:text-red-400 bg-surface-secondary px-2.5 py-1 rounded-md">
-                NJ: -$1,240
-              </span>
-            </div>
-
-            {/* Second row: tax season + workflow stepper */}
-            <div className="flex items-center gap-3 mt-2">
-              <Badge variant="inProgress">2025 Tax Season</Badge>
-              <div className="w-px h-4 bg-divider" />
-              <div className="flex items-center gap-1">
-                {["Intake", "Documents", "Review", "Prepare", "File"].map(
-                  (step, i) => (
-                    <div key={step} className="flex items-center gap-1">
-                      {i > 0 && <div className="w-4 h-px bg-divider" />}
-                      <Badge
-                        variant={
-                          i < 2
-                            ? "completed"
-                            : i === 2
-                              ? "inProgress"
-                              : "pending"
-                        }
-                      >
-                        {step}
-                      </Badge>
+      {isMobile ? (
+        /* ── Mobile layout: single panel + bottom tabs ── */
+        <>
+          <div className="flex-1 overflow-hidden flex flex-col">
+            {mobileTab === "clients" && (
+              <div className="flex-1 overflow-y-auto">{sidebarContent}</div>
+            )}
+            {mobileTab === "chat" && chatContent}
+            {mobileTab === "docs" && (
+              <div className="flex-1 overflow-y-auto flex flex-col">{workPanelContent}</div>
+            )}
+            {mobileTab === "returns" && (
+              <div className="flex-1 overflow-y-auto flex flex-col">
+                <Tabs
+                  tabs={["Tax Return", "Filed"]}
+                  activeTab={activeWorkTab === "Documents" ? "Tax Return" : activeWorkTab}
+                  onTabChange={setActiveWorkTab}
+                  className="px-2 pt-1"
+                />
+                <div className="flex-1 overflow-y-auto p-3">
+                  {(activeWorkTab === "Tax Return" || activeWorkTab === "Documents") && (
+                    <ReturnPreview
+                      lines={returnDraft ? returnDraft.lines : undefined}
+                      refundOrOwed={returnDraft?.refund_or_owed}
+                      effectiveRate={returnDraft?.effective_rate}
+                      onViewFull={handleGenerateReturn}
+                    />
+                  )}
+                  {activeWorkTab === "Filed" && (
+                    <div className="flex flex-col items-center justify-center h-64 text-center">
+                      <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-950/30 text-green-600 dark:text-green-400 flex items-center justify-center text-[24px] mb-3">
+                        &#10003;
+                      </div>
+                      <div className="text-[15px] font-semibold text-primary mb-1">Return Filed</div>
+                      <div className="text-[12px] text-secondary">Submitted 04/10/2026</div>
+                      <Badge variant="filed" className="mt-3">E-Filed</Badge>
                     </div>
-                  )
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Messages */}
-          <MessageList messages={messages} isTyping={isTyping} />
-
-          {/* Hidden file input for document upload */}
-          <input
-            type="file"
-            ref={fileInputRef}
-            className="hidden"
-            accept=".pdf,.png,.jpg,.jpeg,.tiff"
-            onChange={handleFileSelected}
-          />
-
-          {/* Input */}
-          <ChatInput
-            onSend={handleSendMessage}
-            onAttach={() => fileInputRef.current?.click()}
-          />
-        </main>
-
-        {/* Work panel */}
-        <aside className="w-96 shrink-0 bg-surface border-l border-divider flex flex-col overflow-hidden">
-          <Tabs
-            tabs={["Documents", "Tax Return", "Filed"]}
-            activeTab={activeWorkTab}
-            onTabChange={setActiveWorkTab}
-            className="px-2 pt-1"
-          />
-
-          <div className="flex-1 overflow-y-auto p-3">
-            {activeWorkTab === "Documents" && (
-              <div className="space-y-3">
-                {flagMessage && (
-                  <div className="bg-badge-review-bg text-badge-review-text text-[12px] px-3 py-2 rounded-lg">
-                    &#9888; {flagMessage}
-                  </div>
-                )}
-
-                {documents.map((doc) => {
-                  const data = (() => { try { return JSON.parse(doc.extracted_data); } catch { return {}; } })();
-                  const fmt = (v: number | undefined) => v != null ? `$${v.toLocaleString()}` : "—";
-                  return (
-                    <button
-                      key={doc.id}
-                      onClick={() => {
-                        setViewerDoc(doc);
-                        setViewerOpen(true);
-                      }}
-                      className="w-full text-left cursor-pointer"
-                    >
-                      <Card className="p-3 hover:shadow-md transition-shadow">
-                        {/* Header: name + small confidence pill */}
-                        <div className="flex items-center justify-between mb-1.5">
-                          <div>
-                            <div className="text-[13px] font-medium text-primary">
-                              {doc.name}
-                            </div>
-                            <div className="text-[11px] text-tertiary">
-                              {doc.form_type} &middot; TY 2025
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <Badge
-                              variant={
-                                doc.status === "verified" ? "completed"
-                                  : doc.status === "flagged" ? "review"
-                                  : "pending"
-                              }
-                            >
-                              {doc.confidence}%
-                            </Badge>
-                          </div>
-                        </div>
-
-                        {/* Extracted amounts — key financial data */}
-                        <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[11px]">
-                          {data.wages != null && (
-                            <>
-                              <span className="text-tertiary">Wages</span>
-                              <span className="text-right text-primary font-medium">{fmt(data.wages)}</span>
-                            </>
-                          )}
-                          {data.federal_tax_withheld != null && (
-                            <>
-                              <span className="text-tertiary">Fed W/H</span>
-                              <span className="text-right text-primary font-medium">{fmt(data.federal_tax_withheld)}</span>
-                            </>
-                          )}
-                          {data.state && data.state_tax != null && (
-                            <>
-                              <span className="text-tertiary">{data.state} W/H</span>
-                              <span className="text-right text-primary font-medium">{fmt(data.state_tax)}</span>
-                            </>
-                          )}
-                          {data.interest_income != null && (
-                            <>
-                              <span className="text-tertiary">Interest</span>
-                              <span className="text-right text-primary font-medium">{fmt(data.interest_income)}</span>
-                            </>
-                          )}
-                          {data.mortgage_interest != null && (
-                            <>
-                              <span className="text-tertiary">Mort. Int.</span>
-                              <span className="text-right text-primary font-medium">{fmt(data.mortgage_interest)}</span>
-                            </>
-                          )}
-                          {data.real_estate_taxes != null && (
-                            <>
-                              <span className="text-tertiary">RE Taxes</span>
-                              <span className="text-right text-primary font-medium">{fmt(data.real_estate_taxes)}</span>
-                            </>
-                          )}
-                        </div>
-                      </Card>
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-
-            {activeWorkTab === "Tax Return" && (
-              <ReturnPreview
-                lines={
-                  returnDraft
-                    ? returnDraft.lines
-                    : undefined
-                }
-                refundOrOwed={returnDraft?.refund_or_owed}
-                effectiveRate={returnDraft?.effective_rate}
-                onViewFull={handleGenerateReturn}
-              />
-            )}
-
-            {activeWorkTab === "Filed" && (
-              <div className="flex flex-col items-center justify-center h-64 text-center">
-                <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-950/30 text-green-600 dark:text-green-400 flex items-center justify-center text-[24px] mb-3">
-                  &#10003;
+                  )}
                 </div>
-                <div className="text-[15px] font-semibold text-primary mb-1">
-                  Return Filed
-                </div>
-                <div className="text-[12px] text-secondary">
-                  Submitted 04/10/2026
-                </div>
-                <Badge variant="filed" className="mt-3">
-                  E-Filed
-                </Badge>
               </div>
             )}
           </div>
-        </aside>
-      </div>
+          <BottomTabBar
+            activeTab={mobileTab}
+            onTabChange={handleMobileTabChange}
+            docBadge={documents.filter((d) => d.status === "flagged" || d.status === "pending").length}
+          />
+        </>
+      ) : (
+        /* ── Tablet / Desktop / XL layout ── */
+        <div className="flex flex-1 overflow-hidden">
+          {/* Sidebar — inline on lg+, overlay on tablet */}
+          <div className="hidden lg:block">{sidebarContent}</div>
+
+          {/* Chat panel */}
+          {chatContent}
+
+          {/* Work panel — inline on XL, overlay below */}
+          {isDesktopXL && (
+            <aside className="w-96 shrink-0 bg-surface border-l border-divider flex flex-col overflow-hidden">
+              {workPanelContent}
+            </aside>
+          )}
+        </div>
+      )}
+
+      {/* Sidebar overlay — tablet (below lg) */}
+      {!isMobile && (
+        <PanelOverlay open={sidebarOpen} onClose={() => setSidebarOpen(false)} side="left" className="w-72">
+          {sidebarContent}
+        </PanelOverlay>
+      )}
+
+      {/* Work panel overlay — tablet/laptop (below XL) */}
+      {!isMobile && !isDesktopXL && (
+        <PanelOverlay open={workPanelOpen} onClose={() => setWorkPanelOpen(false)} side="right" className="w-96">
+          <div className="flex flex-col h-full">{workPanelContent}</div>
+        </PanelOverlay>
+      )}
 
       {/* Document viewer modal */}
       <DocumentViewerModal
