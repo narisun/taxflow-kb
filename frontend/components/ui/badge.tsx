@@ -9,11 +9,11 @@ interface BadgeProps {
 }
 
 const variantClasses: Record<BadgeVariant, string> = {
-  pending: "bg-gray-200 text-gray-600",
-  inProgress: "bg-blue-100 text-blue-700",
-  review: "bg-orange-100 text-orange-700",
-  completed: "bg-green-100 text-green-700",
-  filed: "bg-purple-100 text-purple-700",
+  pending: "bg-badge-pending-bg text-badge-pending-text",
+  inProgress: "bg-badge-progress-bg text-badge-progress-text",
+  review: "bg-badge-review-bg text-badge-review-text",
+  completed: "bg-badge-complete-bg text-badge-complete-text",
+  filed: "bg-badge-filed-bg text-badge-filed-text",
 };
 
 function Badge({ variant, children, className }: BadgeProps) {

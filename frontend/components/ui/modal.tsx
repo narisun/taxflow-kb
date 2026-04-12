@@ -24,14 +24,16 @@ function Modal({ open, onClose, children, className }: ModalProps) {
 
   return (
     <div
-      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center"
+      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center animate-fade-in"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
+      role="dialog"
+      aria-modal="true"
     >
       <div
         className={cn(
-          "bg-white rounded-2xl shadow-2xl max-h-[calc(100vh-48px)] overflow-hidden animate-in",
+          "bg-surface rounded-2xl shadow-2xl max-h-[calc(100vh-48px)] overflow-hidden animate-scale-in w-full mx-4",
           className
         )}
       >
@@ -43,12 +45,12 @@ function Modal({ open, onClose, children, className }: ModalProps) {
 
 function ModalHeader({ children, onClose }: { children: ReactNode; onClose?: () => void }) {
   return (
-    <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-      <div className="text-[17px] font-semibold text-[#1d1d1f]">{children}</div>
+    <div className="flex items-center justify-between px-6 py-4 border-b border-divider">
+      <div className="text-[17px] font-semibold text-primary">{children}</div>
       {onClose && (
         <button
           onClick={onClose}
-          className="rounded-lg border border-gray-200 px-2 py-1 text-[13px] text-gray-500 hover:bg-red-50 hover:text-red-500 transition-colors cursor-pointer"
+          className="rounded-lg border border-divider px-2 py-1 text-[13px] text-secondary hover:bg-surface-tertiary hover:text-primary transition-colors cursor-pointer"
         >
           Close
         </button>
@@ -65,7 +67,7 @@ function ModalBody({ children, className }: { children: ReactNode; className?: s
 
 function ModalFooter({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <div className={cn("px-6 py-4 border-t border-gray-100 flex justify-end gap-2", className)}>
+    <div className={cn("px-6 py-4 border-t border-divider flex justify-end gap-2", className)}>
       {children}
     </div>
   );

@@ -10,8 +10,8 @@ function Card({ elevated = false, children, className }: CardProps) {
   return (
     <div
       className={cn(
-        "bg-[#f5f5f7] rounded-lg p-4",
-        elevated && "shadow-[3px_5px_30px_rgba(0,0,0,0.22)]",
+        "bg-surface-secondary rounded-xl p-4",
+        elevated && "shadow-lg",
         className
       )}
     >
