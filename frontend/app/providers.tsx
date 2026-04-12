@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, ReactNode } from "react";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import type { Client, ChatMessage, Document } from "@/lib/api-client";
 
 interface AppState {
@@ -23,20 +24,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [documents, setDocuments] = useState<Document[]>([]);
 
   return (
-    <AppContext.Provider
-      value={{
-        activeClientId,
-        setActiveClientId,
-        clients,
-        setClients,
-        messages,
-        setMessages,
-        documents,
-        setDocuments,
-      }}
-    >
-      {children}
-    </AppContext.Provider>
+    <ThemeProvider>
+      <AppContext.Provider
+        value={{
+          activeClientId, setActiveClientId,
+          clients, setClients,
+          messages, setMessages,
+          documents, setDocuments,
+        }}
+      >
+        {children}
+      </AppContext.Provider>
+    </ThemeProvider>
   );
 }
 

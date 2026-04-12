@@ -13,7 +13,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className="h-full" data-theme="light" suppressHydrationWarning>
       <body className="h-screen overflow-hidden flex flex-col" suppressHydrationWarning>
         <AppProvider>{children}</AppProvider>
       </body>
