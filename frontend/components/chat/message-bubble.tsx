@@ -20,8 +20,8 @@ export function MessageBubble({ role, content, timestamp }: MessageBubbleProps) 
         <div
           className={
             isUser
-              ? "bg-[#1E3A5F] text-white rounded-xl px-4 py-3 text-[13px]"
-              : "bg-white border border-gray-200 rounded-xl px-4 py-3 shadow-sm text-[13px] text-[#1d1d1f]"
+              ? "rounded-2xl px-4 py-3 text-[13px] leading-relaxed text-[#1d1d1f]"
+              : "bg-[#f5f5f7] rounded-2xl px-4 py-3 text-[13px] leading-relaxed text-[#1d1d1f]"
           }
         >
           {isUser ? (

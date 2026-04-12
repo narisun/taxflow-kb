@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 interface TopBarProps {
   stats: { clients: number; filed: number; review: number };
   deadline: string;
-  user: { initials: string };
+  user: { initials: string; name?: string };
 }
 
 function TopBar({ stats, deadline, user }: TopBarProps) {
@@ -22,14 +22,9 @@ function TopBar({ stats, deadline, user }: TopBarProps) {
           T
         </div>
         <span className="text-white text-[14px] font-semibold tracking-tight">
-          Tax Brain
+          TaxFlow AI
         </span>
       </div>
-
-      {/* Season badge */}
-      <Badge variant="inProgress" className="ml-2">
-        2025 Season
-      </Badge>
 
       {/* Spacer */}
       <div className="flex-1" />
@@ -46,6 +41,8 @@ function TopBar({ stats, deadline, user }: TopBarProps) {
           <span className="text-orange-400 font-medium">{stats.review}</span> review
         </span>
       </div>
+
+      <div className="w-px h-5 bg-white/20" />
 
       {/* Deadline */}
       <div className="text-[12px] text-red-400 font-medium">{deadline}</div>

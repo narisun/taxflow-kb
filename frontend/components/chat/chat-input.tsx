@@ -43,11 +43,11 @@ export function ChatInput({
   };
 
   return (
-    <div className="shrink-0 border-t border-gray-100 p-3">
-      <div className="flex items-end gap-2">
+    <div className="shrink-0 border-t border-gray-100 px-5 py-4 bg-[#fafafa]">
+      <div className="flex items-end gap-2.5 bg-white border border-gray-200 rounded-2xl px-4 py-3 shadow-sm transition-all focus-within:border-[#0071e3] focus-within:shadow-md focus-within:bg-white hover:border-gray-300 hover:shadow-sm">
         <button
           onClick={onAttach}
-          className="shrink-0 w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center text-gray-400 hover:text-[#0071e3] hover:border-[#0071e3] transition-colors cursor-pointer text-[14px]"
+          className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-[#0071e3] hover:bg-blue-50 transition-colors cursor-pointer text-[15px]"
           title="Attach file"
         >
           &#128206;
@@ -57,15 +57,15 @@ export function ChatInput({
           value={input}
           onChange={handleInput}
           onKeyDown={handleKeyDown}
-          placeholder="Ask about this client's tax return..."
-          rows={1}
+          placeholder="Ask anything about this return, or instruct the AI..."
+          rows={2}
           disabled={disabled}
-          className="flex-1 resize-none border border-gray-200 rounded-lg px-3 py-2 text-[13px] outline-none focus:border-[#0071e3] transition-colors disabled:opacity-50"
+          className="flex-1 resize-none bg-transparent text-[14px] text-[#1d1d1f] outline-none min-h-[48px] max-h-[120px] leading-relaxed placeholder:text-gray-400 disabled:opacity-50"
         />
         <button
           onClick={handleSend}
           disabled={!input.trim() || disabled}
-          className="shrink-0 w-8 h-8 rounded-lg bg-[#0071e3] text-white flex items-center justify-center hover:brightness-110 transition-all cursor-pointer text-[14px] disabled:opacity-40"
+          className="shrink-0 w-9 h-9 rounded-xl bg-[#0071e3] text-white flex items-center justify-center hover:brightness-110 transition-all cursor-pointer text-[15px] disabled:opacity-30 shadow-sm"
           title="Send"
         >
           &#10148;
@@ -73,7 +73,7 @@ export function ChatInput({
       </div>
 
       {/* Quick hint chips */}
-      <div className="flex gap-2 mt-2 flex-wrap">
+      <div className="flex gap-2 mt-2.5 flex-wrap">
         {hints.map((hint) => (
           <button
             key={hint}
@@ -81,7 +81,7 @@ export function ChatInput({
               setInput(hint);
               textareaRef.current?.focus();
             }}
-            className="text-[11px] px-2.5 py-1 rounded-full border border-gray-200 text-gray-500 hover:border-[#0071e3] hover:text-[#0071e3] transition-colors cursor-pointer"
+            className="text-[11px] px-3 py-1.5 rounded-full border border-gray-200 bg-white text-gray-500 hover:border-[#0071e3] hover:text-[#0071e3] hover:bg-blue-50 transition-all cursor-pointer shadow-xs"
           >
             {hint}
           </button>

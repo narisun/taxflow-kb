@@ -451,36 +451,53 @@ export default function Home() {
         {/* Chat panel - custom wired version */}
         <main className="flex-1 flex flex-col bg-white min-w-0">
           {/* Context bar */}
-          <div className="h-12 shrink-0 border-b border-gray-100 flex items-center px-4 gap-3">
-            <Avatar
-              initials={activeClient?.initials || "??"}
-              color={activeClient?.color || "#6B7280"}
-              size="sm"
-            />
-            <span className="text-[13px] font-semibold text-[#1d1d1f]">
-              {activeClient?.name || "Select a client"}
-            </span>
+          <div className="shrink-0 border-b border-gray-100 px-5 py-3">
+            {/* Top row: client + tracking labels */}
+            <div className="flex items-center gap-3">
+              <Avatar
+                initials={activeClient?.initials || "??"}
+                color={activeClient?.color || "#6B7280"}
+                size="sm"
+              />
+              <div className="flex-1 min-w-0">
+                <span className="text-[14px] font-semibold text-[#1d1d1f]">
+                  {activeClient?.name || "Select a client"}
+                </span>
+              </div>
 
-            {/* Workflow stepper */}
-            <div className="flex items-center gap-1 ml-4">
-              {["Intake", "Documents", "Review", "Prepare", "File"].map(
-                (step, i) => (
-                  <div key={step} className="flex items-center gap-1">
-                    {i > 0 && <div className="w-4 h-px bg-gray-300" />}
-                    <Badge
-                      variant={
-                        i < 2
-                          ? "completed"
-                          : i === 2
-                            ? "inProgress"
-                            : "pending"
-                      }
-                    >
-                      {step}
-                    </Badge>
-                  </div>
-                )
-              )}
+              {/* Federal / State tracking labels */}
+              <span className="text-[12px] font-semibold text-green-600 bg-gray-50 px-2.5 py-1 rounded-md">
+                Federal: +$4,820
+              </span>
+              <span className="text-[12px] font-semibold text-red-500 bg-gray-50 px-2.5 py-1 rounded-md">
+                NJ: -$1,240
+              </span>
+            </div>
+
+            {/* Second row: tax season + workflow stepper */}
+            <div className="flex items-center gap-3 mt-2">
+              <Badge variant="inProgress">2025 Tax Season</Badge>
+              <div className="w-px h-4 bg-gray-200" />
+              <div className="flex items-center gap-1">
+                {["Intake", "Documents", "Review", "Prepare", "File"].map(
+                  (step, i) => (
+                    <div key={step} className="flex items-center gap-1">
+                      {i > 0 && <div className="w-4 h-px bg-gray-300" />}
+                      <Badge
+                        variant={
+                          i < 2
+                            ? "completed"
+                            : i === 2
+                              ? "inProgress"
+                              : "pending"
+                        }
+                      >
+                        {step}
+                      </Badge>
+                    </div>
+                  )
+                )}
+              </div>
             </div>
           </div>
 

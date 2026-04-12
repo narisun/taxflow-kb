@@ -90,8 +90,11 @@ function ClientSidebar({ clients, activeClientId, onSelectClient }: ClientSideba
 
           return (
             <div key={client.id}>
-              <button
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={() => onSelectClient(client.id)}
+                onKeyDown={(e) => { if (e.key === "Enter") onSelectClient(client.id); }}
                 className={cn(
                   "w-full flex items-center gap-2.5 px-3 py-2 text-left transition-colors cursor-pointer",
                   isActive
@@ -110,20 +113,23 @@ function ClientSidebar({ clients, activeClientId, onSelectClient }: ClientSideba
                   {statusLabels[client.status] ?? client.status}
                 </Badge>
                 {client.years && (
-                  <button
+                  <span
+                    role="button"
+                    tabIndex={0}
                     onClick={(e) => {
                       e.stopPropagation();
                       toggleExpand(client.id);
                     }}
+                    onKeyDown={(e) => { if (e.key === "Enter") { e.stopPropagation(); toggleExpand(client.id); } }}
                     className={cn(
                       "text-gray-400 text-[10px] transition-transform cursor-pointer",
                       isExpanded && "rotate-90"
                     )}
                   >
                     &#9654;
-                  </button>
+                  </span>
                 )}
-              </button>
+              </div>
 
               {/* Expandable tree */}
               {isExpanded && client.years && (
