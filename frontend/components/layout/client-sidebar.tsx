@@ -56,27 +56,32 @@ function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake }:
         </div>
       </div>
 
-      {/* Section header + New Intake button inline */}
-      <div className="flex items-center justify-between px-3 pb-2">
-        <span className="text-[10px] font-semibold text-tertiary uppercase tracking-wider">
-          Clients ({filtered.length})
-        </span>
+      {/* New Intake — Apple style button */}
+      <div className="px-3 pb-2">
         <button
           onClick={onNewIntake}
-          className="text-[11px] text-secondary hover:text-primary transition-colors cursor-pointer flex items-center gap-0.5"
+          className="w-full flex items-center justify-center gap-1.5 px-3 py-[7px] rounded-lg bg-apple-blue text-white text-[13px] font-medium cursor-pointer hover:brightness-110 active:scale-[0.98] transition-all"
         >
-          <span className="text-[13px] leading-none">+</span>
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+            <path d="M12 4.5v15m7.5-7.5h-15" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
           New Intake
         </button>
       </div>
 
-      {/* Client list */}
-      <div className="flex-1 overflow-y-auto">
+      {/* Section header */}
+      <div className="px-3 pb-1">
+        <span className="text-[10px] font-semibold text-tertiary uppercase tracking-wider">
+          Clients ({filtered.length})
+        </span>
+      </div>
+
+      {/* Client list — Apple sidebar style */}
+      <div className="flex-1 overflow-y-auto px-2">
         {filtered.map((client) => {
           const isActive = client.id === activeClientId;
-          // Extract tax year from meta (format: "filing_status · N dep. · YEAR")
           const metaParts = client.meta.split(" \u00b7 ");
-          const filingInfo = metaParts.slice(0, -1).join(" \u00b7 "); // e.g. "mfj · 3 dep."
+          const filingInfo = metaParts.slice(0, -1).join(" \u00b7 ");
           const taxYear = metaParts[metaParts.length - 1] || "2025";
           const statusLabel = statusLabels[client.status] ?? client.status;
 
@@ -88,34 +93,23 @@ function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake }:
               onClick={() => onSelectClient(client.id)}
               onKeyDown={(e) => { if (e.key === "Enter") onSelectClient(client.id); }}
               className={cn(
-                "mx-2 my-0.5 px-2.5 py-2.5 rounded-lg text-left transition-all cursor-pointer border",
+                "w-full px-2.5 py-2 rounded-lg text-left transition-all cursor-pointer mb-px",
                 isActive
-                  ? "bg-surface border-apple-blue/30 shadow-sm"
-                  : "border-transparent hover:border-teal-500/30 hover:bg-surface-secondary/60"
+                  ? "bg-apple-blue/10 text-apple-blue"
+                  : "hover:bg-surface-secondary text-secondary"
               )}
             >
-              {/* Line 1: Name + filing info */}
-              <div className="flex items-center justify-between gap-1.5">
-                <div className="flex items-baseline gap-1.5 min-w-0">
-                  <span className={cn(
-                    "text-[13px] truncate",
-                    isActive ? "font-semibold text-primary" : "font-medium text-secondary"
-                  )}>
-                    {client.name}
-                  </span>
-                  <span className="text-[10px] text-tertiary truncate shrink-0">
-                    {filingInfo}
-                  </span>
-                </div>
-                {isActive && (
-                  <span className="shrink-0 text-[9px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-apple-blue text-white">
-                    {statusLabel}
-                  </span>
-                )}
+              <div className={cn(
+                "text-[13px] truncate",
+                isActive ? "font-semibold text-apple-blue" : "font-medium"
+              )}>
+                {client.name}
               </div>
-              {/* Line 2: Status + year */}
-              <div className="text-[11px] text-tertiary mt-0.5">
-                {isActive ? taxYear : `${statusLabel} \u00b7 ${taxYear}`}
+              <div className={cn(
+                "text-[11px] mt-0.5 truncate",
+                isActive ? "text-apple-blue/70" : "text-tertiary"
+              )}>
+                {filingInfo} &middot; {statusLabel} &middot; {taxYear}
               </div>
             </div>
           );
