@@ -17,6 +17,7 @@ import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Tabs } from "@/components/ui/tabs";
 import { api } from "@/lib/api-client";
+import { mockApi } from "@/lib/mock-api";
 import type {
   Client as ApiClient,
   ChatMessage,
@@ -32,56 +33,8 @@ import { OnboardingTour } from "@/components/onboarding/onboarding-tour";
 import { AnalyticsDashboard } from "@/components/dashboard/analytics-dashboard";
 
 // ────────────────────────────────────────────
-// Mock data for offline / fallback mode
+// Page component
 // ────────────────────────────────────────────
-
-const mockSidebarClients: SidebarClient[] = [
-  {
-    id: "1",
-    name: "Smith Family",
-    meta: "John & Jane \u00b7 MFJ \u00b7 2 dep.",
-    status: "inProgress",
-    initials: "SM",
-    color: "#1D4ED8",
-    years: [
-      { year: "2025", docs: ["W-2 (John)", "W-2 (Jane)", "1099-INT", "1098"] },
-      { year: "2024", docs: ["W-2 (John)", "W-2 (Jane)"] },
-    ],
-  },
-  {
-    id: "2",
-    name: "Johnson Family",
-    meta: "Robert & Maria \u00b7 MFJ \u00b7 3 dep.",
-    status: "review",
-    initials: "JO",
-    color: "#9A3412",
-    years: [{ year: "2025", docs: ["W-2", "1099-NEC", "Schedule C"] }],
-  },
-  {
-    id: "3",
-    name: "Wei Chen",
-    meta: "Single \u00b7 0 dep. \u00b7 Self-employed",
-    status: "pending",
-    initials: "WC",
-    color: "#7C3AED",
-  },
-  {
-    id: "4",
-    name: "Garcia Household",
-    meta: "Carlos & Ana \u00b7 MFJ \u00b7 4 dep.",
-    status: "completed",
-    initials: "GA",
-    color: "#047857",
-  },
-  {
-    id: "5",
-    name: "Patel Family",
-    meta: "Raj & Priya \u00b7 MFJ \u00b7 1 dep.",
-    status: "filed",
-    initials: "PA",
-    color: "#B45309",
-  },
-];
 
 interface LocalMessage {
   id: string | number;
@@ -90,29 +43,6 @@ interface LocalMessage {
   timestamp: string;
   created_at?: string;
 }
-
-const mockMessages: LocalMessage[] = [
-  {
-    id: "1",
-    role: "assistant",
-    content:
-      "I\u2019ve loaded the Smith Family return. I see 4 documents uploaded for 2025. The W-2s look good, but the 1099-INT needs review \u2014 the payer TIN doesn\u2019t match IRS records.",
-    timestamp: "10:32 AM",
-  },
-  {
-    id: "2",
-    role: "user",
-    content: "Can you show me the 1099-INT discrepancy?",
-    timestamp: "10:33 AM",
-  },
-  {
-    id: "3",
-    role: "assistant",
-    content:
-      "The 1099-INT from First National Bank shows TIN ending in 4521, but our IRS match database expects 4512. This is likely a transposition error. I recommend contacting the bank for a corrected form.",
-    timestamp: "10:33 AM",
-  },
-];
 
 interface LocalDoc {
   id: number;
@@ -126,95 +56,6 @@ interface LocalDoc {
   type: string;
 }
 
-const mockDocuments: LocalDoc[] = [
-  {
-    id: 1,
-    name: "W-2 (John)",
-    type: "Income",
-    form_type: "W-2",
-    title: "W-2 (John Smith)",
-    status: "verified",
-    confidence: 97,
-    extracted_data: JSON.stringify({
-      employer_name: "Acme Corp",
-      employer_ein: "12-3456789",
-      employee_name: "John Smith",
-      wages: 85000,
-      federal_tax_withheld: 12750,
-      social_security_wages: 85000,
-      social_security_tax: 5270,
-      medicare_wages: 85000,
-      medicare_tax: 1232.5,
-      state: "CA",
-      state_wages: 85000,
-      state_tax: 4250,
-    }),
-    flags: "[]",
-  },
-  {
-    id: 2,
-    name: "W-2 (Jane)",
-    type: "Income",
-    form_type: "W-2",
-    title: "W-2 (Jane Smith)",
-    status: "verified",
-    confidence: 94,
-    extracted_data: JSON.stringify({
-      employer_name: "TechStart Inc",
-      employer_ein: "98-7654321",
-      employee_name: "Jane Smith",
-      wages: 57500,
-      federal_tax_withheld: 7950,
-      social_security_wages: 57500,
-      social_security_tax: 3565,
-      medicare_wages: 57500,
-      medicare_tax: 833.75,
-      state: "CA",
-      state_wages: 57500,
-      state_tax: 2875,
-    }),
-    flags: "[]",
-  },
-  {
-    id: 3,
-    name: "1099-INT",
-    type: "Interest",
-    form_type: "1099-INT",
-    title: "1099-INT (First National Bank)",
-    status: "flagged",
-    confidence: 88,
-    extracted_data: JSON.stringify({
-      payer_name: "First National Bank",
-      payer_tin: "**-***4521",
-      recipient_name: "John Smith",
-      interest_income: 1230,
-      federal_tax_withheld: 0,
-    }),
-    flags: JSON.stringify(["Payer TIN mismatch - expected ending 4512, found 4521"]),
-  },
-  {
-    id: 4,
-    name: "1098 Mortgage",
-    type: "Deduction",
-    form_type: "1098",
-    title: "1098 Mortgage Interest Statement",
-    status: "verified",
-    confidence: 92,
-    extracted_data: JSON.stringify({
-      lender_name: "Wells Fargo Home Mortgage",
-      mortgage_interest: 12500,
-      real_estate_taxes: 4800,
-      mortgage_insurance: 0,
-      outstanding_principal: 320000,
-    }),
-    flags: "[]",
-  },
-];
-
-// ────────────────────────────────────────────
-// Page component
-// ────────────────────────────────────────────
-
 export default function Home() {
   const {
     activeClientId: apiClientId,
@@ -227,11 +68,11 @@ export default function Home() {
     setDocuments: setApiDocuments,
   } = useApp();
 
-  const [activeClientId, setActiveClientId] = useState<string | null>("1");
-  const [messages, setMessages] = useState<LocalMessage[]>(mockMessages);
-  const [documents, setDocuments] = useState<LocalDoc[]>(mockDocuments);
+  const [activeClientId, setActiveClientId] = useState<string | null>(null);
+  const [messages, setMessages] = useState<LocalMessage[]>([]);
+  const [documents, setDocuments] = useState<LocalDoc[]>([]);
   const [sidebarClients, setSidebarClients] =
-    useState<SidebarClient[]>(mockSidebarClients);
+    useState<SidebarClient[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [viewerDoc, setViewerDoc] = useState<LocalDoc | null>(null);
   const [viewerOpen, setViewerOpen] = useState(false);
@@ -274,54 +115,58 @@ export default function Home() {
   useEffect(() => {
     let cancelled = false;
     async function loadClients() {
+      let data: ApiClient[] = [];
       try {
-        const data = await api.clients.list();
-        if (cancelled || !Array.isArray(data) || data.length === 0) return;
-        setApiClients(data);
-        setUsingApi(true);
-        // Convert API clients to sidebar format
-        const converted: SidebarClient[] = data.map((c: ApiClient) => ({
-          id: String(c.id),
-          name: c.name,
-          meta: `${c.filing_status} \u00b7 ${c.dependents} dep. \u00b7 ${c.tax_year}`,
-          status: mapWorkflowStep(c.workflow_step),
-          initials: c.name
-            .split(" ")
-            .map((w) => w[0])
-            .join("")
-            .slice(0, 2)
-            .toUpperCase(),
-          color: hashColor(c.name),
-        }));
-        setSidebarClients(converted);
-        if (converted.length > 0) setActiveClientId(converted[0].id);
+        data = await api.clients.list();
+        if (!cancelled && Array.isArray(data) && data.length > 0) {
+          setUsingApi(true);
+        }
       } catch {
-        // API unavailable — use mock data
+        // API unavailable
       }
+
+      if (!cancelled && data.length === 0) {
+        try {
+          data = await mockApi.clients.list();
+        } catch { /* ignore */ }
+      }
+
+      if (cancelled || !Array.isArray(data) || data.length === 0) return;
+
+      setApiClients(data);
+      const converted: SidebarClient[] = data.map((c: ApiClient) => ({
+        id: String(c.id),
+        name: c.name,
+        meta: `${c.filing_status} \u00b7 ${c.dependents} dep. \u00b7 ${c.tax_year}`,
+        status: mapWorkflowStep(c.workflow_step),
+        initials: c.name
+          .split(" ")
+          .map((w) => w[0])
+          .join("")
+          .slice(0, 2)
+          .toUpperCase(),
+        color: hashColor(c.name),
+      }));
+      setSidebarClients(converted);
+      if (converted.length > 0) setActiveClientId(converted[0].id);
     }
     loadClients();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [setApiClients]);
 
   // Load chat and documents when active client changes
   useEffect(() => {
     if (!activeClientId) return;
     const numId = Number(activeClientId);
-    if (!usingApi || isNaN(numId)) {
-      // Use mock data
-      setMessages(mockMessages);
-      setDocuments(mockDocuments);
-      return;
-    }
+    if (isNaN(numId)) return;
 
     let cancelled = false;
     async function loadClientData() {
+      const source = usingApi ? api : mockApi;
       try {
         const [chatData, docData] = await Promise.all([
-          api.chat.history(numId),
-          api.documents.list(numId),
+          source.chat.history(numId),
+          source.documents.list(numId),
         ]);
         if (cancelled) return;
         if (Array.isArray(chatData)) {
@@ -351,15 +196,12 @@ export default function Home() {
           );
         }
       } catch {
-        // Fallback to mock
-        setMessages(mockMessages);
-        setDocuments(mockDocuments);
+        setMessages([]);
+        setDocuments([]);
       }
     }
     loadClientData();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [activeClientId, usingApi, setApiMessages, setApiDocuments]);
 
   // Send message handler
@@ -404,24 +246,27 @@ export default function Home() {
         }
       }
 
-      // Mock AI response
-      setTimeout(() => {
+      // Fallback to mock API
+      try {
+        const response = await mockApi.chat.send(numId, content);
         setIsTyping(false);
         setMessages((prev) => [
           ...prev,
           {
-            id: Date.now() + 1,
-            role: "assistant" as const,
-            content: `I'll look into that for you. Based on the documents I have for ${activeClient?.name || "this client"}, here's what I found regarding "${content}".`,
-            timestamp: new Date().toLocaleTimeString([], {
+            id: response.id || Date.now() + 1,
+            role: "assistant",
+            content: response.content,
+            timestamp: new Date(response.created_at || Date.now()).toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",
             }),
           },
         ]);
-      }, 1500);
+      } catch {
+        setIsTyping(false);
+      }
     },
-    [activeClientId, usingApi, activeClient?.name]
+    [activeClientId, usingApi]
   );
 
   // Document approve handler
@@ -446,15 +291,12 @@ export default function Home() {
   // Generate return draft
   const handleGenerateReturn = useCallback(async () => {
     const numId = Number(activeClientId);
-    if (usingApi && !isNaN(numId)) {
-      try {
-        const draft = await api.returns.draft(numId);
-        setReturnDraft(draft);
-        return;
-      } catch {
-        // Fall through
-      }
-    }
+    if (isNaN(numId)) return;
+    const source = usingApi ? api : mockApi;
+    try {
+      const draft = await source.returns.draft(numId);
+      setReturnDraft(draft);
+    } catch { /* ignore */ }
   }, [activeClientId, usingApi]);
 
   // File upload handler
@@ -486,45 +328,45 @@ export default function Home() {
       setMessages((prev) => [...prev, uploadMsg]);
 
       const numId = Number(activeClientId);
-      if (!isNaN(numId)) {
-        try {
-          const doc = await api.documents.upload(numId, file, formType);
-          // Refresh documents list
-          const docData = await api.documents.list(numId);
-          if (Array.isArray(docData)) {
-            setDocuments(docData.map((d: ApiDocument) => ({
-              ...d, client_id: d.client_id, name: d.title, type: d.form_type,
-            })));
-          }
-          // Parse extracted data for chat summary
-          let summary = `<strong>${formType}</strong> uploaded and processed (${doc.confidence}% confidence).`;
-          try {
-            const fields = JSON.parse(doc.extracted_data);
-            if (Array.isArray(fields) && fields.length > 0) {
-              const details = fields.slice(0, 4).map((f: { name: string; value: string }) => `${f.name}: ${f.value}`).join(" · ");
-              summary += `\n${details}`;
-            }
-          } catch { /* ignore parse errors */ }
-          const flags = JSON.parse(doc.flags || "[]");
-          if (flags.length > 0) {
-            summary += `\n⚠ ${flags.length} flag(s): ${flags.join(", ")}`;
-          }
-          setMessages((prev) => [
-            ...prev.filter((m) => m.id !== uploadMsg.id),
-            { id: Date.now() + 1, role: "assistant" as const, content: summary,
-              timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) },
-          ]);
-        } catch (err) {
-          setMessages((prev) => [
-            ...prev.filter((m) => m.id !== uploadMsg.id),
-            { id: Date.now() + 1, role: "assistant" as const,
-              content: `Failed to upload ${file.name}: ${err instanceof Error ? err.message : "Unknown error"}`,
-              timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) },
-          ]);
+      if (isNaN(numId)) return;
+
+      const source = usingApi ? api : mockApi;
+      try {
+        const doc = await source.documents.upload(numId, file, formType);
+        const docData = await source.documents.list(numId);
+        if (Array.isArray(docData)) {
+          setDocuments(docData.map((d: ApiDocument) => ({
+            ...d, client_id: d.client_id, name: d.title, type: d.form_type,
+          })));
         }
+        let summary = `<strong>${formType}</strong> uploaded and processed (${Math.round(doc.confidence * 100)}% confidence).`;
+        try {
+          const data = JSON.parse(doc.extracted_data);
+          if (typeof data === "object" && data !== null) {
+            const entries = Object.entries(data).slice(0, 4);
+            const details = entries.map(([k, v]) => `${k.replace(/_/g, " ")}: ${typeof v === "number" ? `$${v.toLocaleString()}` : v}`).join(" \u00b7 ");
+            if (details) summary += `\n${details}`;
+          }
+        } catch { /* ignore */ }
+        const flags = JSON.parse(doc.flags || "[]");
+        if (flags.length > 0) {
+          summary += `\n\u26A0 ${flags.length} flag(s): ${flags.join(", ")}`;
+        }
+        setMessages((prev) => [
+          ...prev.filter((m) => m.id !== uploadMsg.id),
+          { id: Date.now() + 1, role: "assistant" as const, content: summary,
+            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) },
+        ]);
+      } catch (err) {
+        setMessages((prev) => [
+          ...prev.filter((m) => m.id !== uploadMsg.id),
+          { id: Date.now() + 1, role: "assistant" as const,
+            content: `Failed to upload ${file.name}: ${err instanceof Error ? err.message : "Unknown error"}`,
+            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) },
+        ]);
       }
     },
-    [activeClientId]
+    [activeClientId, usingApi]
   );
 
   const handleMobileTabChange = useCallback((tab: TabId) => {
@@ -952,18 +794,47 @@ export default function Home() {
             }
             setDocuments([]);
           } catch {
-            // Fallback: local-only
-            const newId = String(Date.now());
-            setSidebarClients((prev) => [
-              { id: newId, name, meta: filingLabel, status: "pending", initials: name.slice(0, 2).toUpperCase(), color: "#6B7280" },
-              ...prev,
-            ]);
-            setActiveClientId(newId);
-            setMessages([{
-              id: "intake-" + newId, role: "assistant" as const,
-              content: `New intake created for ${name} (${data.taxYear}). Ready to upload documents.`,
-              timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-            }]);
+            try {
+              const created = await mockApi.clients.create({
+                name,
+                filing_status: data.filingStatus,
+                tax_year: data.taxYear,
+                dependents: data.dependents,
+              });
+              const newId = String(created.id);
+              const meta = [
+                data.spouseFirstName ? `${data.firstName} & ${data.spouseFirstName}` : data.firstName,
+                filingLabel,
+                data.dependents > 0 ? `${data.dependents} dep.` : null,
+              ].filter(Boolean).join(" \u00b7 ");
+
+              setSidebarClients((prev) => [
+                {
+                  id: newId, name, meta, status: "pending",
+                  initials: name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase(),
+                  color: hashColor(name),
+                },
+                ...prev,
+              ]);
+              handleSelectClient(newId);
+
+              const chatData = await mockApi.chat.history(created.id);
+              if (Array.isArray(chatData)) {
+                setMessages(chatData.map((m: ChatMessage) => ({
+                  id: m.id, role: m.role, content: m.content,
+                  timestamp: new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+                })));
+              }
+              setDocuments([]);
+            } catch {
+              const newId = String(Date.now());
+              setSidebarClients((prev) => [
+                { id: newId, name, meta: filingLabel, status: "pending", initials: name.slice(0, 2).toUpperCase(), color: "#6B7280" },
+                ...prev,
+              ]);
+              handleSelectClient(newId);
+              setMessages([]);
+            }
           }
         }}
       />
