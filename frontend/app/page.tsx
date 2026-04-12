@@ -428,8 +428,9 @@ export default function Home() {
               const flags: string[] = (() => { try { return JSON.parse(doc.flags || "[]"); } catch { return []; } })();
               const fmt = (v: number | undefined) => v != null ? `$${v.toLocaleString()}` : "\u2014";
 
-              const personName = data.employee_name || data.recipient_name || "";
               const subtitle = data.employer_name || data.payer_name || data.lender_name || doc.form_type;
+              const confidenceRounded = Math.round((doc.confidence * 100) / 10) * 10;
+              const updatedAt = doc.created_at ? new Date(doc.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "";
 
               const kvPairs: { label: string; value: string }[] = [];
               if (doc.form_type === "W-2") {
@@ -464,11 +465,11 @@ export default function Home() {
                     {/* Header */}
                     <div className="flex items-center justify-between px-3 pt-3 pb-2">
                       <div className="min-w-0">
-                        <div className="text-[13px] font-medium text-primary truncate">{doc.name}{personName ? ` \u2014 ${personName}` : ""}</div>
+                        <div className="text-[13px] font-medium text-primary truncate">{doc.name}</div>
                         <div className="text-[11px] text-tertiary truncate">{subtitle} &middot; TY 2025</div>
                       </div>
                       <div className="flex items-center gap-1.5 shrink-0 ml-2">
-                        <span className="text-[12px] font-medium text-secondary">{doc.confidence}%</span>
+                        <span className="text-[12px] font-medium text-secondary">{confidenceRounded}%</span>
                         <span className={`text-[14px] ${statusColor}`}>{statusIcon}</span>
                       </div>
                     </div>
@@ -476,26 +477,24 @@ export default function Home() {
                     {/* Divider */}
                     <div className="border-t border-divider mx-3" />
 
-                    {/* Body: two columns */}
-                    <div className="flex gap-3 px-3 py-2.5">
-                      {/* Left: key-value pairs */}
-                      <div className="flex-1 min-w-0">
-                        <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 text-[11px]">
-                          {kvPairs.map((kv) => (
-                            <Fragment key={kv.label}>
-                              <span className="text-tertiary whitespace-nowrap">{kv.label}</span>
-                              <span className="text-primary font-medium text-right">{kv.value}</span>
-                            </Fragment>
-                          ))}
-                        </div>
+                    {/* Body: two equal columns */}
+                    <div className="grid grid-cols-2 gap-3 px-3 py-2.5">
+                      {/* Left: key-value pairs inline */}
+                      <div className="space-y-0.5 text-[11px]">
+                        {kvPairs.map((kv) => (
+                          <div key={kv.label}>
+                            <span className="text-tertiary">{kv.label}: </span>
+                            <span className="text-primary font-medium">{kv.value}</span>
+                          </div>
+                        ))}
                       </div>
 
-                      {/* Right: confidence + status + flags */}
-                      <div className="w-28 shrink-0 space-y-1.5">
+                      {/* Right: confidence + status + flags + timestamp */}
+                      <div className="space-y-1.5">
                         <div>
                           <div className="text-[10px] text-tertiary uppercase">Confidence</div>
-                          <Progress value={doc.confidence} color={doc.confidence >= 90 ? "green" : doc.confidence >= 70 ? "orange" : "red"} className="mt-1" />
-                          <div className="text-[11px] font-medium text-primary mt-0.5">{doc.confidence}%</div>
+                          <Progress value={confidenceRounded} color={confidenceRounded >= 90 ? "green" : confidenceRounded >= 70 ? "orange" : "red"} className="mt-1" />
+                          <div className="text-[11px] font-medium text-primary mt-0.5">{confidenceRounded}%</div>
                         </div>
                         <Badge variant={doc.status === "verified" ? "completed" : doc.status === "flagged" ? "review" : "pending"}>
                           {doc.status === "verified" ? "Verified" : doc.status === "flagged" ? "Flagged" : "Pending"}
@@ -507,6 +506,11 @@ export default function Home() {
                                 <span className="mr-0.5">&#9888;</span>{flag}
                               </div>
                             ))}
+                          </div>
+                        )}
+                        {updatedAt && (
+                          <div className="text-[10px] text-tertiary">
+                            Updated {updatedAt} &middot; AI
                           </div>
                         )}
                       </div>
