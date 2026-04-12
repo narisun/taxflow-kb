@@ -618,23 +618,26 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Messages */}
-      <MessageList messages={messages} isTyping={isTyping} />
+      {/* Chat area — messages scroll, input floats at bottom */}
+      <div className="relative flex-1 min-h-0">
+        {/* Messages — scroll area fills the container, padding at bottom for input */}
+        <MessageList messages={messages} isTyping={isTyping} />
 
-      {/* Hidden file input for document upload */}
-      <input
-        type="file"
-        ref={fileInputRef}
-        className="hidden"
-        accept=".pdf,.png,.jpg,.jpeg,.tiff"
-        onChange={handleFileSelected}
-      />
-
-      {/* Input */}
-      <ChatInput
-        onSend={handleSendMessage}
-        onAttach={() => fileInputRef.current?.click()}
-      />
+        {/* Floating input at bottom */}
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-surface from-80% to-transparent pt-6">
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            accept=".pdf,.png,.jpg,.jpeg,.tiff"
+            onChange={handleFileSelected}
+          />
+          <ChatInput
+            onSend={handleSendMessage}
+            onAttach={() => fileInputRef.current?.click()}
+          />
+        </div>
+      </div>
     </main>
   );
 
@@ -720,7 +723,7 @@ export default function Home() {
       )}
 
       {/* Footer */}
-      <footer className="shrink-0 flex items-center justify-center px-4 py-1.5" style={{ background: "#657878" }}>
+      <footer className="shrink-0 flex items-center justify-center px-4 py-1.5" style={{ background: "#4a4d52" }}>
         <span className="text-[10px] text-white/70">&copy; 2026 SciEncephalon Corp. All rights reserved.</span>
       </footer>
 

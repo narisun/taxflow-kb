@@ -58,14 +58,14 @@ function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake }:
         </div>
       </div>
 
-      {/* Section header + New Intake gray button */}
+      {/* Section header + New Intake button */}
       <div className="flex items-center justify-between px-3 pb-2">
         <span className="text-[10px] font-semibold text-tertiary uppercase tracking-wider">
           Clients ({filtered.length})
         </span>
         <button
           onClick={onNewIntake}
-          className="flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium text-secondary bg-surface-secondary hover:bg-surface-tertiary active:scale-[0.97] transition-all cursor-pointer"
+          className="flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium text-secondary border border-divider bg-surface hover:bg-surface-secondary hover:border-tertiary active:scale-[0.97] transition-all cursor-pointer"
         >
           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
             <path d="M12 4.5v15m7.5-7.5h-15" strokeLinecap="round" strokeLinejoin="round" />
@@ -74,9 +74,9 @@ function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake }:
         </button>
       </div>
 
-      {/* Client list — Apple sidebar style */}
-      <div className="flex-1 overflow-y-auto px-2">
-        {filtered.map((client) => {
+      {/* Client list with visible scrollbar */}
+      <div className="flex-1 min-h-0 overflow-y-auto">
+        {filtered.map((client, index) => {
           const isActive = client.id === activeClientId;
           const metaParts = client.meta.split(" \u00b7 ");
           const filingInfo = metaParts.slice(0, -1).join(" \u00b7 ");
@@ -84,38 +84,40 @@ function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake }:
           const statusLabel = statusLabels[client.status] ?? client.status;
 
           return (
-            <div
-              key={client.id}
-              role="button"
-              tabIndex={0}
-              onClick={() => onSelectClient(client.id)}
-              onKeyDown={(e) => { if (e.key === "Enter") onSelectClient(client.id); }}
-              className={cn(
-                "w-full px-2.5 py-2 rounded-lg text-left transition-all cursor-pointer mb-px",
-                isActive
-                  ? "bg-apple-blue/10 text-apple-blue"
-                  : "hover:bg-surface-secondary text-secondary"
-              )}
-            >
-              <div className={cn(
-                "text-[13px] truncate",
-                isActive ? "font-semibold text-apple-blue" : "font-medium"
-              )}>
-                {client.name}
-              </div>
-              {client.adults && (
+            <div key={client.id}>
+              {index > 0 && <div className="border-t border-divider mx-3" />}
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => onSelectClient(client.id)}
+                onKeyDown={(e) => { if (e.key === "Enter") onSelectClient(client.id); }}
+                className={cn(
+                  "w-full px-3 py-2.5 text-left transition-all cursor-pointer",
+                  isActive
+                    ? "bg-apple-blue/10 text-apple-blue"
+                    : "hover:bg-surface-secondary text-secondary"
+                )}
+              >
                 <div className={cn(
-                  "text-[11px] truncate",
-                  isActive ? "text-apple-blue/60" : "text-tertiary"
+                  "text-[13px] truncate",
+                  isActive ? "font-semibold text-apple-blue" : "font-medium"
                 )}>
-                  {client.adults}
+                  {client.name}
                 </div>
-              )}
-              <div className={cn(
-                "text-[11px] mt-0.5 truncate",
-                isActive ? "text-apple-blue/70" : "text-tertiary"
-              )}>
-                {filingInfo} &middot; {statusLabel} &middot; {taxYear}
+                {client.adults && (
+                  <div className={cn(
+                    "text-[11px] truncate",
+                    isActive ? "text-apple-blue/60" : "text-tertiary"
+                  )}>
+                    {client.adults}
+                  </div>
+                )}
+                <div className={cn(
+                  "text-[11px] mt-0.5 truncate",
+                  isActive ? "text-apple-blue/70" : "text-tertiary"
+                )}>
+                  {filingInfo} &middot; {statusLabel} &middot; {taxYear}
+                </div>
               </div>
             </div>
           );

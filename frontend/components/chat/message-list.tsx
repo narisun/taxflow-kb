@@ -61,7 +61,7 @@ export function MessageList({ messages, isTyping = false }: MessageListProps) {
       <div
         ref={containerRef}
         onScroll={handleScroll}
-        className="absolute inset-0 overflow-y-auto px-5 py-4 pb-2 space-y-4"
+        className="absolute inset-0 overflow-y-auto px-5 py-4 pb-36 space-y-4"
       >
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center min-h-full text-tertiary">
