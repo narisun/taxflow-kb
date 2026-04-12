@@ -158,6 +158,26 @@ html.theme-transitioning * {
   h1, h2, h3 {
     font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
   }
+
+  /* Force visible scrollbars on macOS (overlay scrollbars hide by default) */
+  .scroll-visible {
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--t-surface-tertiary) transparent;
+  }
+  .scroll-visible::-webkit-scrollbar {
+    width: 6px;
+  }
+  .scroll-visible::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scroll-visible::-webkit-scrollbar-thumb {
+    background: var(--t-surface-tertiary);
+    border-radius: 3px;
+  }
+  .scroll-visible::-webkit-scrollbar-thumb:hover {
+    background: var(--t-text-tertiary);
+  }
 }
 
 /* =====================================================

@@ -23,8 +23,6 @@ export function MessageList({ messages, isTyping = false }: MessageListProps) {
   const [userScrolledUp, setUserScrolledUp] = useState(false);
   const lastMessageCount = useRef(0);
 
-  // Only auto-scroll when a NEW message is added (count increases)
-  // Never scroll on initial load or client switch
   useEffect(() => {
     const newCount = messages.length;
     const wasAdded = newCount > lastMessageCount.current && lastMessageCount.current > 0;
@@ -35,14 +33,12 @@ export function MessageList({ messages, isTyping = false }: MessageListProps) {
     }
   }, [messages.length, userScrolledUp]);
 
-  // Scroll when typing indicator appears (only if user hasn't scrolled up)
   useEffect(() => {
     if (isTyping && !userScrolledUp) {
       bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [isTyping, userScrolledUp]);
 
-  // Reset tracking when messages change entirely (client switch)
   const firstMsgId = messages[0]?.id;
   useEffect(() => {
     lastMessageCount.current = 0;
@@ -57,11 +53,11 @@ export function MessageList({ messages, isTyping = false }: MessageListProps) {
   }, []);
 
   return (
-    <div className="relative flex-1 min-h-0">
+    <>
       <div
         ref={containerRef}
         onScroll={handleScroll}
-        className="absolute inset-0 overflow-y-auto px-5 py-4 pb-36 space-y-4"
+        className="absolute inset-0 scroll-visible px-5 py-4 pb-36 space-y-4"
       >
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center min-h-full text-tertiary">
@@ -92,11 +88,11 @@ export function MessageList({ messages, isTyping = false }: MessageListProps) {
             setUserScrolledUp(false);
             bottomRef.current?.scrollIntoView({ behavior: "smooth" });
           }}
-          className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-surface text-primary text-[12px] px-3 py-1.5 rounded-full shadow-md border border-divider animate-fade-in cursor-pointer hover:bg-surface-secondary transition-colors z-10"
+          className="absolute bottom-40 left-1/2 -translate-x-1/2 bg-surface text-primary text-[12px] px-3 py-1.5 rounded-full shadow-md border border-divider animate-fade-in cursor-pointer hover:bg-surface-secondary transition-colors z-10"
         >
           &darr; Latest messages
         </button>
       )}
-    </div>
+    </>
   );
 }

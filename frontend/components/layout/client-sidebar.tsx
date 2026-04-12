@@ -75,7 +75,7 @@ function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake }:
       </div>
 
       {/* Client list with visible scrollbar */}
-      <div className="flex-1 min-h-0 overflow-y-auto">
+      <div className="flex-1 min-h-0 scroll-visible">
         {filtered.map((client, index) => {
           const isActive = client.id === activeClientId;
           const metaParts = client.meta.split(" \u00b7 ");
