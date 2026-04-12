@@ -1,8 +1,10 @@
 "use client";
 
+import { useState, useRef, useEffect } from "react";
 import { Avatar } from "@/components/ui/avatar";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { NotificationBell } from "@/components/notifications/notification-bell";
+import { cn } from "@/lib/utils";
 
 interface TopBarProps {
   stats: { clients: number; filed: number; review: number };
@@ -15,6 +17,69 @@ interface TopBarProps {
   onAvatarClick?: () => void;
   onInbox?: () => void;
   inboxUnread?: number;
+}
+
+const irsNewsItems = [
+  { id: 1, title: "EITC refunds released — check Where\u2019s My Refund tool", date: "Apr 11", category: "Refunds" },
+  { id: 2, title: "Form 1099-K reporting threshold remains $5,000 for 2025", date: "Apr 10", category: "Compliance" },
+  { id: 3, title: "Direct File expanded to 25 states for TY 2025", date: "Apr 8", category: "E-File" },
+  { id: 4, title: "IRS processed over 90 million returns this filing season", date: "Apr 7", category: "Stats" },
+  { id: 5, title: "Free File available for taxpayers with AGI $84,000 or less", date: "Apr 3", category: "Resources" },
+  { id: 6, title: "Estimated tax payment Q1 deadline April 15", date: "Mar 28", category: "Deadlines" },
+  { id: 7, title: "IRS warns of new phishing scams targeting tax professionals", date: "Mar 25", category: "Security" },
+  { id: 8, title: "Standard mileage rate set at 70 cents per mile for 2025", date: "Mar 20", category: "Deductions" },
+];
+
+function IrsNewsFeed({ deadline }: { deadline: string }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
+
+  const latest = irsNewsItems[0];
+
+  return (
+    <div ref={ref} className="hidden md:flex items-center gap-2 relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-1.5 max-w-[240px] lg:max-w-[320px] hover:bg-surface-secondary px-2 py-1 rounded-md transition-colors cursor-pointer"
+      >
+        <span className="text-[10px] font-semibold text-tertiary uppercase shrink-0">IRS</span>
+        <span className="text-[11px] text-secondary truncate">{latest.title}</span>
+      </button>
+
+      <span className="text-[12px] text-red-500 font-medium bg-surface-secondary px-2.5 py-1 rounded-full shrink-0">
+        {deadline}
+      </span>
+
+      {open && (
+        <div className="absolute right-0 top-10 w-96 bg-surface rounded-xl shadow-xl border border-divider overflow-hidden z-50 animate-scale-in">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-divider">
+            <span className="text-[13px] font-semibold text-primary">IRS News &amp; Updates</span>
+            <span className="text-[10px] text-tertiary">irs.gov/newsroom</span>
+          </div>
+          <div className="max-h-80 overflow-y-auto scroll-visible">
+            {irsNewsItems.map((item) => (
+              <div key={item.id} className="px-4 py-3 border-b border-divider last:border-0 hover:bg-surface-secondary transition-colors">
+                <div className="flex items-center gap-2 mb-0.5">
+                  <span className="text-[9px] font-medium px-1.5 py-px rounded-full bg-surface-tertiary text-secondary">{item.category}</span>
+                  <span className="text-[10px] text-tertiary">{item.date}</span>
+                </div>
+                <div className="text-[12px] text-primary leading-relaxed">{item.title}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function TopBar({ stats, deadline, user, onMenuToggle, showMenu, clientName, onDashboard, onAvatarClick, onInbox, inboxUnread }: TopBarProps) {
@@ -111,20 +176,8 @@ function TopBar({ stats, deadline, user, onMenuToggle, showMenu, clientName, onD
 
         <NotificationBell />
 
-        {/* IRS News Ticker + Deadline */}
-        <div className="hidden md:flex items-center gap-2">
-          <div className="relative overflow-hidden max-w-[280px] lg:max-w-[360px] h-6 flex items-center">
-            <span className="text-[10px] font-semibold text-tertiary uppercase mr-1.5 shrink-0">IRS</span>
-            <div className="overflow-hidden flex-1">
-              <div className="animate-marquee whitespace-nowrap text-[11px] text-secondary">
-                Tax filing deadline April 15 &nbsp;&bull;&nbsp; Free File available for AGI $84,000 or less &nbsp;&bull;&nbsp; IRS processed 90M+ returns this season &nbsp;&bull;&nbsp; Direct File expanded to 25 states for 2025 &nbsp;&bull;&nbsp; Watch for Form 1099-K threshold changes &nbsp;&bull;&nbsp; EITC refunds released — check Where's My Refund
-              </div>
-            </div>
-          </div>
-          <span className="text-[12px] text-red-500 font-medium bg-surface-secondary px-2.5 py-1 rounded-full shrink-0">
-            {deadline}
-          </span>
-        </div>
+        {/* IRS News + Deadline */}
+        <IrsNewsFeed deadline={deadline} />
 
         <ThemeToggle />
 
