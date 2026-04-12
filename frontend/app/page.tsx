@@ -552,7 +552,7 @@ export default function Home() {
   );
 
   const chatContent = (
-    <main className="flex-1 flex flex-col bg-surface min-w-0">
+    <main className="flex-1 flex flex-col bg-surface min-w-0 min-h-0">
       {/* Context bar */}
       <div className="shrink-0 border-b border-divider px-5 py-3 bg-surface-secondary/50">
         {/* Top row: client info + tracking labels */}
@@ -703,7 +703,7 @@ export default function Home() {
         </>
       ) : (
         /* ── Tablet / Desktop / XL layout ── */
-        <div className="flex flex-1 overflow-hidden">
+        <div className="flex flex-1 overflow-hidden min-h-0">
           {/* Sidebar — inline on lg+, overlay on tablet */}
           <div className="hidden lg:block">{sidebarContent}</div>
 
@@ -712,7 +712,7 @@ export default function Home() {
 
           {/* Work panel — inline on XL, overlay below */}
           {isDesktopXL && (
-            <aside className="w-96 shrink-0 bg-surface border-l border-divider flex flex-col overflow-hidden">
+            <aside className="w-96 shrink-0 bg-surface border-l border-divider flex flex-col overflow-hidden min-h-0">
               {workPanelContent}
             </aside>
           )}

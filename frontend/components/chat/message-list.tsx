@@ -20,25 +20,54 @@ interface MessageListProps {
 export function MessageList({ messages, isTyping = false }: MessageListProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
-  const [autoScroll, setAutoScroll] = useState(true);
+  const [userScrolledUp, setUserScrolledUp] = useState(false);
+  const prevMessageCount = useRef(0);
+  const isInitialLoad = useRef(true);
 
-  const scrollToBottom = useCallback(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, []);
-
+  // Scroll to bottom only when NEW messages arrive (not on initial load)
   useEffect(() => {
-    if (autoScroll) scrollToBottom();
-  }, [messages, isTyping, autoScroll, scrollToBottom]);
+    const count = messages.length;
+    const isNew = count > prevMessageCount.current;
+    prevMessageCount.current = count;
+
+    if (isInitialLoad.current) {
+      isInitialLoad.current = false;
+      // On initial load, scroll to bottom without animation
+      requestAnimationFrame(() => {
+        bottomRef.current?.scrollIntoView({ behavior: "instant" });
+      });
+      return;
+    }
+
+    // Only auto-scroll for new messages when user hasn't scrolled up
+    if (isNew && !userScrolledUp) {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, userScrolledUp]);
+
+  // Also scroll when typing indicator appears
+  useEffect(() => {
+    if (isTyping && !userScrolledUp) {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [isTyping, userScrolledUp]);
+
+  // Reset on client switch (messages array changes entirely)
+  useEffect(() => {
+    isInitialLoad.current = true;
+    prevMessageCount.current = 0;
+    setUserScrolledUp(false);
+  }, [messages.length === 0 ? "empty" : messages[0]?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleScroll = useCallback(() => {
     const el = containerRef.current;
     if (!el) return;
     const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
-    setAutoScroll(distanceFromBottom < 100);
+    setUserScrolledUp(distanceFromBottom > 100);
   }, []);
 
   return (
-    <div className="relative flex-1 overflow-hidden">
+    <div className="relative flex-1 min-h-0">
       <div
         ref={containerRef}
         onScroll={handleScroll}
@@ -67,12 +96,16 @@ export function MessageList({ messages, isTyping = false }: MessageListProps) {
         <div ref={bottomRef} />
       </div>
 
-      {!autoScroll && (
+      {/* "Scroll to bottom" pill — shown when user has scrolled up */}
+      {userScrolledUp && messages.length > 0 && (
         <button
-          onClick={() => { setAutoScroll(true); scrollToBottom(); }}
+          onClick={() => {
+            setUserScrolledUp(false);
+            bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+          }}
           className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-surface text-primary text-[12px] px-3 py-1.5 rounded-full shadow-md border border-divider animate-fade-in cursor-pointer hover:bg-surface-secondary transition-colors"
         >
-          &darr; New messages
+          &darr; Latest messages
         </button>
       )}
     </div>
