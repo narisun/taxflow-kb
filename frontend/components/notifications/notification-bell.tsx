@@ -53,7 +53,7 @@ export function NotificationBell() {
     <div ref={ref} className="relative hidden md:block">
       <button
         onClick={() => setOpen(!open)}
-        className="w-8 h-8 rounded-lg flex items-center justify-center text-secondary hover:bg-surface-secondary transition-colors cursor-pointer relative"
+        className="w-8 h-8 rounded-lg flex items-center justify-center text-current opacity-70 hover:opacity-100 hover:bg-white/10 transition-all cursor-pointer relative"
         aria-label="Notifications"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
