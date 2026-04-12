@@ -13,7 +13,7 @@ export function MessageBubble({ role, content, timestamp, userInitials = "SC" }:
   return (
     <div className={`flex gap-2.5 animate-message-in ${isUser ? "justify-end" : "justify-start"}`}>
       {!isUser && (
-        <div className="w-7 h-7 bg-apple-blue rounded-md flex items-center justify-center text-white text-[12px] font-bold shrink-0 mt-0.5">
+        <div className="w-7 h-7 rounded-md flex items-center justify-center text-white text-[12px] font-bold shrink-0 mt-0.5" style={{ background: "#3a3d42" }}>
           T
         </div>
       )}
