@@ -40,7 +40,7 @@ function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake }:
   );
 
   return (
-    <aside className="w-72 shrink-0 bg-bg border-r border-divider flex flex-col overflow-hidden">
+    <aside className="w-72 h-full shrink-0 bg-bg border-r border-divider flex flex-col overflow-hidden">
       {/* Search */}
       <div className="p-3 pb-2">
         <div className="relative">

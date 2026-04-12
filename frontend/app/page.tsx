@@ -708,7 +708,7 @@ export default function Home() {
         /* ── Tablet / Desktop / XL layout ── */
         <div className="flex flex-1 overflow-hidden min-h-0">
           {/* Sidebar — inline on lg+, overlay on tablet */}
-          <div className="hidden lg:block">{sidebarContent}</div>
+          <div className="hidden lg:block h-full">{sidebarContent}</div>
 
           {/* Chat panel */}
           {showDashboard ? <AnalyticsDashboard /> : chatContent}
