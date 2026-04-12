@@ -111,7 +111,9 @@ export default function Home() {
     setShowOnboarding(true);
   }, []);
 
-  // Load clients on mount — mock data first, then overlay real API if available
+  // Load clients on mount — use real API only if NEXT_PUBLIC_API_URL is explicitly set
+  const useRealApi = Boolean(process.env.NEXT_PUBLIC_API_URL);
+
   useEffect(() => {
     let cancelled = false;
 
@@ -127,35 +129,35 @@ export default function Home() {
     }
 
     async function loadClients() {
-      // Always load mock data first so the UI is never empty
-      let mockData: ApiClient[] = [];
-      try {
-        mockData = await mockApi.clients.list();
-      } catch { /* ignore */ }
-
-      if (cancelled) return;
-      if (mockData.length > 0) {
-        setApiClients(mockData);
-        setSidebarClients(toSidebar(mockData));
-        setActiveClientId(String(mockData[0].id));
-      }
-
-      // Then try real API — if it responds, switch to it
-      try {
-        const apiData = await api.clients.list();
-        if (!cancelled && Array.isArray(apiData) && apiData.length > 0) {
-          setUsingApi(true);
-          setApiClients(apiData);
-          setSidebarClients(toSidebar(apiData));
-          setActiveClientId(String(apiData[0].id));
+      // If explicitly configured to use real API, try that first
+      if (useRealApi) {
+        try {
+          const apiData = await api.clients.list();
+          if (!cancelled && Array.isArray(apiData) && apiData.length > 0) {
+            setUsingApi(true);
+            setApiClients(apiData);
+            setSidebarClients(toSidebar(apiData));
+            setActiveClientId(String(apiData[0].id));
+            return;
+          }
+        } catch {
+          // Fall through to mock
         }
-      } catch {
-        // API unavailable — keep using mock data (already loaded)
       }
+
+      // Use mock data
+      try {
+        const mockData = await mockApi.clients.list();
+        if (!cancelled && mockData.length > 0) {
+          setApiClients(mockData);
+          setSidebarClients(toSidebar(mockData));
+          setActiveClientId(String(mockData[0].id));
+        }
+      } catch { /* ignore */ }
     }
     loadClients();
     return () => { cancelled = true; };
-  }, [setApiClients]);
+  }, [setApiClients, useRealApi]);
 
   // Load chat and documents when active client changes
   useEffect(() => {
