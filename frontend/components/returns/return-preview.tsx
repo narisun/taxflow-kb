@@ -1,8 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 
 interface TaxLine { number: string; label: string; value: number; section: string; }
 
@@ -24,13 +22,26 @@ const defaultLines: TaxLine[] = [
   { number: "34", label: "Overpayment / Refund", value: 3288, section: "Payments" },
 ];
 
-export function ReturnPreview({ lines = defaultLines, refundOrOwed = 3288, effectiveRate = 13.3, onViewFull, onApproveFile }: ReturnPreviewProps) {
+export function ReturnPreview({ lines = defaultLines, effectiveRate = 13.3, onViewFull, onApproveFile }: ReturnPreviewProps) {
   const sections = ["Income", "Deductions", "Tax & Credits", "Payments"];
   const fmt = (v: number) => `$${Math.abs(v).toLocaleString("en-US", { minimumFractionDigits: 0 })}`;
 
   return (
     <div className="space-y-3">
-      <div className="text-[11px] font-semibold text-secondary uppercase tracking-wider">Form 1040 Preview</div>
+      {/* Header row: title + View 1040 button */}
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="text-[11px] font-semibold text-secondary uppercase tracking-wider">Form 1040 Preview</div>
+          <div className="text-[11px] text-tertiary mt-0.5">Effective tax rate: {effectiveRate}%</div>
+        </div>
+        {onViewFull && (
+          <Button variant="pill" onClick={onViewFull} className="text-[11px] px-3 py-1">
+            View 1040
+          </Button>
+        )}
+      </div>
+
+      {/* Line items by section */}
       {sections.map((section) => {
         const sectionLines = lines.filter((l) => l.section === section);
         if (sectionLines.length === 0) return null;
@@ -38,31 +49,28 @@ export function ReturnPreview({ lines = defaultLines, refundOrOwed = 3288, effec
           <div key={section}>
             <div className="text-[11px] font-semibold text-form-header uppercase tracking-wider mb-1">{section}</div>
             <div className="space-y-0.5">
-              {sectionLines.map((line) => {
-                const isRefund = line.number === "34";
-                return (
-                  <div key={line.number} className={cn("flex items-center justify-between py-1.5 px-2 rounded text-[12px]", isRefund ? "bg-green-50 dark:bg-green-950/30 font-semibold text-green-700 dark:text-green-400" : "text-primary")}>
-                    <div className="flex items-center gap-2">
-                      <span className="text-tertiary w-6 text-right font-mono text-[11px]">{line.number}</span>
-                      <span>{line.label}</span>
-                    </div>
-                    <span className="font-medium">{fmt(line.value)}</span>
+              {sectionLines.map((line) => (
+                <div key={line.number} className="flex items-center justify-between py-1.5 px-2 rounded text-[12px] text-primary">
+                  <div className="flex items-center gap-2">
+                    <span className="text-tertiary w-6 text-right font-mono text-[11px]">{line.number}</span>
+                    <span>{line.label}</span>
                   </div>
-                );
-              })}
+                  <span className="font-medium">{fmt(line.value)}</span>
+                </div>
+              ))}
             </div>
           </div>
         );
       })}
-      <Card className="text-center p-4">
-        <div className="text-[11px] text-secondary uppercase tracking-wider mb-1">{refundOrOwed >= 0 ? "Estimated Refund" : "Amount Owed"}</div>
-        <div className={cn("text-[28px] font-semibold", refundOrOwed >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400")}>{fmt(refundOrOwed)}</div>
-        <div className="text-[12px] text-secondary mt-1">Effective rate: {effectiveRate}%</div>
-        <div className="flex gap-2 mt-3 justify-center">
-          <Button variant="pill" onClick={onViewFull}>View Full 1040</Button>
-          <Button variant="primary" onClick={onApproveFile}>Approve &amp; File</Button>
+
+      {/* Approve & File button */}
+      {onApproveFile && (
+        <div className="flex justify-end pt-2">
+          <Button variant="primary" onClick={onApproveFile} className="text-[13px]">
+            Approve &amp; File
+          </Button>
         </div>
-      </Card>
+      )}
     </div>
   );
 }
