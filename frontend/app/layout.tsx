@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { AppProvider } from "./providers";
 
 export const metadata: Metadata = {
   title: "Tax Brain — CPA Platform",
@@ -13,7 +14,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full">
-      <body className="h-screen overflow-hidden flex flex-col">{children}</body>
+      <body className="h-screen overflow-hidden flex flex-col">
+        <AppProvider>{children}</AppProvider>
+      </body>
     </html>
   );
 }
