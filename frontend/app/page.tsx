@@ -11,6 +11,7 @@ import { ChatInput } from "@/components/chat/chat-input";
 import { DocumentViewerModal } from "@/components/documents/document-viewer-modal";
 import { IntakeModal, type IntakeFormData } from "@/components/clients/intake-modal";
 import { ReturnPreview } from "@/components/returns/return-preview";
+import { FilingWorkflow } from "@/components/returns/filing-workflow";
 import { Dashboard } from "@/components/dashboard/dashboard";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -415,7 +416,7 @@ export default function Home() {
   const workPanelContent = (
     <>
       <Tabs
-        tabs={["Documents", "Tax Return", "Filed"]}
+        tabs={["Documents", "Tax Return", "Filing"]}
         activeTab={activeWorkTab}
         onTabChange={setActiveWorkTab}
         className="px-2 pt-1"
@@ -539,21 +540,11 @@ export default function Home() {
           />
         )}
 
-        {activeWorkTab === "Filed" && (
-          <div className="flex flex-col items-center justify-center h-64 text-center">
-            <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-950/30 text-green-600 dark:text-green-400 flex items-center justify-center text-[24px] mb-3">
-              &#10003;
-            </div>
-            <div className="text-[15px] font-semibold text-primary mb-1">
-              Return Filed
-            </div>
-            <div className="text-[12px] text-secondary">
-              Submitted 04/10/2026
-            </div>
-            <Badge variant="filed" className="mt-3">
-              E-Filed
-            </Badge>
-          </div>
+        {activeWorkTab === "Filing" && (
+          <FilingWorkflow
+            clientName={activeClient?.name}
+            filingStatus={activeClient?.meta.split(" \u00b7 ")[0]}
+          />
         )}
       </div>
     </>
@@ -678,7 +669,7 @@ export default function Home() {
             {mobileTab === "returns" && (
               <div className="flex-1 overflow-y-auto flex flex-col">
                 <Tabs
-                  tabs={["Tax Return", "Filed"]}
+                  tabs={["Tax Return", "Filing"]}
                   activeTab={activeWorkTab === "Documents" ? "Tax Return" : activeWorkTab}
                   onTabChange={setActiveWorkTab}
                   className="px-2 pt-1"
@@ -692,15 +683,11 @@ export default function Home() {
                       onViewFull={handleGenerateReturn}
                     />
                   )}
-                  {activeWorkTab === "Filed" && (
-                    <div className="flex flex-col items-center justify-center h-64 text-center">
-                      <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-950/30 text-green-600 dark:text-green-400 flex items-center justify-center text-[24px] mb-3">
-                        &#10003;
-                      </div>
-                      <div className="text-[15px] font-semibold text-primary mb-1">Return Filed</div>
-                      <div className="text-[12px] text-secondary">Submitted 04/10/2026</div>
-                      <Badge variant="filed" className="mt-3">E-Filed</Badge>
-                    </div>
+                  {activeWorkTab === "Filing" && (
+                    <FilingWorkflow
+                      clientName={activeClient?.name}
+                      filingStatus={activeClient?.meta.split(" \u00b7 ")[0]}
+                    />
                   )}
                 </div>
               </div>
