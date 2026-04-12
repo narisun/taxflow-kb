@@ -1,0 +1,95 @@
+@import "tailwindcss";
+
+/* =====================================================
+   Apple Design Token Theme (Tailwind v4 @theme)
+   ===================================================== */
+@theme {
+  /* Colors */
+  --color-apple-blue: #0071e3;
+  --color-link-blue: #0066cc;
+  --color-bright-blue: #2997ff;
+  --color-near-black: #1d1d1f;
+  --color-light-gray: #f5f5f7;
+  --color-surface-1: #272729;
+  --color-surface-2: #262628;
+  --color-surface-3: #28282a;
+  --color-surface-4: #2a2a2d;
+  --color-surface-5: #242426;
+  --color-btn-active: #ededf2;
+  --color-btn-default-light: #fafafc;
+
+  /* Font families */
+  --font-display: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-body: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  /* Letter spacing */
+  --tracking-apple-display: -0.28px;
+  --tracking-apple-body: -0.374px;
+  --tracking-apple-caption: -0.224px;
+  --tracking-apple-micro: -0.12px;
+
+  /* Border radius */
+  --radius-pill: 980px;
+
+  /* Box shadow */
+  --shadow-apple: 3px 5px 30px rgba(0, 0, 0, 0.22);
+
+  /* Backdrop blur */
+  --blur-apple: 20px;
+}
+
+/* =====================================================
+   CSS Custom Properties — Runtime Design Tokens
+   ===================================================== */
+:root {
+  /* Background */
+  --color-bg: #f5f5f7;
+  --color-bg-dark: #000000;
+  --color-surface: #ffffff;
+  --color-surface-dark: #272729;
+
+  /* Text */
+  --color-text: #1d1d1f;
+  --color-text-dark: #ffffff;
+  --color-text-secondary: rgba(0, 0, 0, 0.8);
+  --color-text-tertiary: rgba(0, 0, 0, 0.48);
+
+  /* Accent */
+  --color-accent: #0071e3;
+  --color-accent-link: #0066cc;
+  --color-accent-link-dark: #2997ff;
+
+  /* Status */
+  --color-success: #30d158;
+  --color-warning: #ff9f0a;
+  --color-error: #ff3b30;
+
+  /* Navigation glass */
+  --nav-bg: rgba(0, 0, 0, 0.8);
+  --nav-blur: saturate(180%) blur(20px);
+}
+
+/* =====================================================
+   Base Layer Styles
+   ===================================================== */
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.47;
+    letter-spacing: -0.374px;
+    color: var(--color-text);
+    background-color: var(--color-surface);
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+}
