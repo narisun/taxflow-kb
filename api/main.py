@@ -5,6 +5,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    from api.db.engine import init_db
+    await init_db()
     yield
 
 def create_app() -> FastAPI:
@@ -21,6 +23,8 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    from api.routers import health
+    from api.routers import health, clients, chat
     app.include_router(health.router)
+    app.include_router(clients.router)
+    app.include_router(chat.router)
     return app
