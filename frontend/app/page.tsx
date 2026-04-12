@@ -641,7 +641,7 @@ export default function Home() {
   // ── Render ─────────────────────────────────────
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-screen overflow-hidden">
       <TopBar
         stats={{ clients: totalClients, filed: filedCount, review: reviewCount }}
         deadline="April 15 in 4 days"
@@ -656,7 +656,7 @@ export default function Home() {
       {isMobile ? (
         /* ── Mobile layout: single panel + bottom tabs ── */
         <>
-          <div className="flex-1 overflow-hidden flex flex-col">
+          <div className="flex-1 overflow-hidden flex flex-col min-h-0">
             {mobileTab === "clients" && (
               <div className="flex-1 overflow-y-auto">{sidebarContent}</div>
             )}
@@ -718,6 +718,11 @@ export default function Home() {
           )}
         </div>
       )}
+
+      {/* Footer */}
+      <footer className="shrink-0 flex items-center justify-center px-4 py-1.5" style={{ background: "#657878" }}>
+        <span className="text-[10px] text-white/70">&copy; 2026 SciEncephalon Corp. All rights reserved.</span>
+      </footer>
 
       {/* Sidebar overlay — tablet (below lg) */}
       {!isMobile && (
@@ -845,11 +850,6 @@ export default function Home() {
           }
         }}
       />
-
-      {/* Footer */}
-      <footer className="shrink-0 flex items-center justify-center px-4 py-1.5" style={{ background: "#657878" }}>
-        <span className="text-[10px] text-white/70">&copy; 2026 SciEncephalon Corp. All rights reserved.</span>
-      </footer>
     </div>
   );
 }
