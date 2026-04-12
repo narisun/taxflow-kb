@@ -454,11 +454,6 @@ export default function Home() {
           <div className="shrink-0 border-b border-gray-100 px-5 py-3">
             {/* Top row: client + tracking labels */}
             <div className="flex items-center gap-3">
-              <Avatar
-                initials={activeClient?.initials || "??"}
-                color={activeClient?.color || "#6B7280"}
-                size="sm"
-              />
               <div className="flex-1 min-w-0">
                 <span className="text-[14px] font-semibold text-[#1d1d1f]">
                   {activeClient?.name || "Select a client"}

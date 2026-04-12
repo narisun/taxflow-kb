@@ -122,11 +122,7 @@ function DocumentsTab({
           </div>
           <div className="text-[11px] text-gray-500 mb-1.5">{doc.type}</div>
           <div className="flex items-center gap-2">
-            <Progress
-              value={doc.confidence}
-              color={doc.confidence >= 90 ? "green" : doc.confidence >= 70 ? "orange" : "red"}
-              className="flex-1"
-            />
+            <Progress value={doc.confidence} className="flex-1" />
             <span className="text-[10px] text-gray-400 w-8 text-right">{doc.confidence}%</span>
           </div>
         </Card>
@@ -135,15 +131,15 @@ function DocumentsTab({
       {/* Missing docs */}
       {missingDocs.length > 0 && (
         <div>
-          <div className="text-[11px] font-semibold text-red-500 uppercase tracking-wider mb-2">
-            Missing Documents
+          <div className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-2">
+            Possibly Missing
           </div>
           {missingDocs.map((doc) => (
             <div
               key={doc}
-              className="flex items-center gap-2 py-1.5 px-2 text-[12px] text-red-600 bg-red-50 rounded-lg mb-1"
+              className="flex items-center gap-2 py-1.5 px-2 text-[12px] text-gray-600 bg-gray-50 rounded-lg mb-1 border border-dashed border-gray-200"
             >
-              <span>&#10007;</span>
+              <span className="text-gray-400">&#9679;</span>
               <span>{doc}</span>
             </div>
           ))}

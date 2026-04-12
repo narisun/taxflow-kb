@@ -25,7 +25,7 @@ export function MessageList({ messages, isTyping = false }: MessageListProps) {
   }, [messages, isTyping]);
 
   return (
-    <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+    <div className="flex-1 overflow-y-auto px-5 py-4 pb-2 space-y-4">
       {messages.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-full text-gray-400">
           <div className="text-[40px] mb-2">&#128172;</div>

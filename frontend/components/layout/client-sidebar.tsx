@@ -102,7 +102,6 @@ function ClientSidebar({ clients, activeClientId, onSelectClient }: ClientSideba
                     : "hover:bg-gray-100 border-l-2 border-transparent"
                 )}
               >
-                <Avatar initials={client.initials} color={client.color} size="sm" />
                 <div className="flex-1 min-w-0">
                   <div className="text-[13px] font-medium text-[#1d1d1f] truncate">
                     {client.name}

@@ -43,8 +43,8 @@ export function ChatInput({
   };
 
   return (
-    <div className="shrink-0 border-t border-gray-100 px-5 py-4 bg-[#fafafa]">
-      <div className="flex items-end gap-2.5 bg-white border border-gray-200 rounded-2xl px-4 py-3 shadow-sm transition-all focus-within:border-[#0071e3] focus-within:shadow-md focus-within:bg-white hover:border-gray-300 hover:shadow-sm">
+    <div className="shrink-0 px-5 pb-4 pt-2">
+      <div className="flex items-end gap-2.5 bg-white/95 backdrop-blur-sm border border-gray-200 rounded-2xl px-4 py-3 shadow-md transition-all focus-within:border-[#0071e3] focus-within:shadow-lg hover:border-gray-300 hover:shadow-md">
         <button
           onClick={onAttach}
           className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-[#0071e3] hover:bg-blue-50 transition-colors cursor-pointer text-[15px]"
@@ -72,8 +72,8 @@ export function ChatInput({
         </button>
       </div>
 
-      {/* Quick hint chips */}
-      <div className="flex gap-2 mt-2.5 flex-wrap">
+      {/* Quick hint / action chips */}
+      <div className="flex gap-2 mt-2 flex-wrap">
         {hints.map((hint) => (
           <button
             key={hint}
@@ -81,7 +81,7 @@ export function ChatInput({
               setInput(hint);
               textareaRef.current?.focus();
             }}
-            className="text-[11px] px-3 py-1.5 rounded-full border border-gray-200 bg-white text-gray-500 hover:border-[#0071e3] hover:text-[#0071e3] hover:bg-blue-50 transition-all cursor-pointer shadow-xs"
+            className="text-[11px] px-3 py-1 rounded-full border border-gray-200 bg-white text-gray-500 hover:border-[#0071e3] hover:text-[#0071e3] hover:bg-blue-50/50 transition-all cursor-pointer"
           >
             {hint}
           </button>
