@@ -101,18 +101,6 @@ function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake }:
                   {statusLabels[client.status] ?? client.status}
                 </Badge>
               </div>
-              {isActive && client.years && (
-                <div className="bg-surface border-l-3 border-l-apple-blue px-3 pb-2">
-                  {client.years.map((y) => (
-                    <div key={y.year} className="mt-1">
-                      <div className="text-[10px] font-semibold text-tertiary uppercase tracking-wider mb-0.5 pl-3">{y.year}</div>
-                      {y.docs.map((doc) => (
-                        <div key={doc} className="text-[11px] text-secondary pl-3 py-1 rounded hover:bg-surface-secondary cursor-pointer transition-colors">{doc}</div>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
           );
         })}
