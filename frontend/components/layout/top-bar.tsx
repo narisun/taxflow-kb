@@ -111,10 +111,20 @@ function TopBar({ stats, deadline, user, onMenuToggle, showMenu, clientName, onD
 
         <NotificationBell />
 
-        {/* Deadline */}
-        <span className="hidden md:inline text-[12px] text-red-500 font-medium bg-surface-secondary px-2.5 py-1 rounded-full">
-          {deadline}
-        </span>
+        {/* IRS News Ticker + Deadline */}
+        <div className="hidden md:flex items-center gap-2">
+          <div className="relative overflow-hidden max-w-[280px] lg:max-w-[360px] h-6 flex items-center">
+            <span className="text-[10px] font-semibold text-tertiary uppercase mr-1.5 shrink-0">IRS</span>
+            <div className="overflow-hidden flex-1">
+              <div className="animate-marquee whitespace-nowrap text-[11px] text-secondary">
+                Tax filing deadline April 15 &nbsp;&bull;&nbsp; Free File available for AGI $84,000 or less &nbsp;&bull;&nbsp; IRS processed 90M+ returns this season &nbsp;&bull;&nbsp; Direct File expanded to 25 states for 2025 &nbsp;&bull;&nbsp; Watch for Form 1099-K threshold changes &nbsp;&bull;&nbsp; EITC refunds released — check Where's My Refund
+              </div>
+            </div>
+          </div>
+          <span className="text-[12px] text-red-500 font-medium bg-surface-secondary px-2.5 py-1 rounded-full shrink-0">
+            {deadline}
+          </span>
+        </div>
 
         <ThemeToggle />
 
