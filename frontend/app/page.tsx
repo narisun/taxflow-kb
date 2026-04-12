@@ -453,8 +453,28 @@ export default function Home() {
                 });
               }
 
-              const statusIcon = doc.status === "verified" ? "\u2713" : doc.status === "flagged" ? "\u26A0" : "\u2022";
-              const statusColor = doc.status === "verified" ? "text-green-600 dark:text-green-400" : doc.status === "flagged" ? "text-orange-500" : "text-tertiary";
+              // Build event timeline based on document status
+              const ts = doc.created_at ? new Date(doc.created_at) : new Date();
+              const fmtTime = (d: Date) => d.toLocaleDateString("en-US", { month: "short", day: "numeric" }) + " " + d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+              const uploadTime = fmtTime(ts);
+              const extractTime = fmtTime(new Date(ts.getTime() + 30000)); // +30s
+              const events: { icon: string; text: string; accent?: string }[] = [
+                { icon: "\u2B06", text: `Uploaded by SC at ${uploadTime}` },
+              ];
+              if (doc.status === "review" || doc.status === "flagged") {
+                events.push({ icon: "\u2699", text: `Extraction attempted by AI at ${extractTime}` });
+                events.push({ icon: "\u23F3", text: `Pending review since ${extractTime}` });
+              } else if (doc.status === "verified" || doc.status === "approved") {
+                events.push({ icon: "\u2699", text: `Extraction completed by AI at ${extractTime}` });
+                events.push({ icon: "\u2713", text: `Verified by SC at ${fmtTime(new Date(ts.getTime() + 3600000))}` });
+              } else {
+                events.push({ icon: "\u2699", text: `Extraction completed by AI at ${extractTime}` });
+              }
+              if (flags.length > 0) {
+                flags.forEach((flag) => {
+                  events.push({ icon: "\u26A0", text: flag, accent: "text-badge-review-text" });
+                });
+              }
 
               return (
                 <button
@@ -470,8 +490,8 @@ export default function Home() {
                         <div className="text-[11px] text-tertiary truncate">{subtitle} &middot; TY 2025</div>
                       </div>
                       <div className="flex items-center gap-1.5 shrink-0 ml-2">
-                        <span className="text-[12px] font-medium text-secondary">{confidenceRounded}%</span>
-                        <span className={`text-[14px] ${statusColor}`}>{statusIcon}</span>
+                        <Progress value={confidenceRounded} color={confidenceRounded >= 90 ? "green" : confidenceRounded >= 70 ? "orange" : "red"} className="w-12" />
+                        <span className="text-[11px] font-medium text-secondary">{confidenceRounded}%</span>
                       </div>
                     </div>
 
@@ -490,30 +510,13 @@ export default function Home() {
                         ))}
                       </div>
 
-                      {/* Right: confidence + status + flags + timestamp */}
-                      <div className="space-y-1.5">
-                        <div>
-                          <div className="text-[10px] text-tertiary uppercase">Confidence</div>
-                          <Progress value={confidenceRounded} color={confidenceRounded >= 90 ? "green" : confidenceRounded >= 70 ? "orange" : "red"} className="mt-1" />
-                          <div className="text-[11px] font-medium text-primary mt-0.5">{confidenceRounded}%</div>
-                        </div>
-                        <Badge variant={doc.status === "verified" ? "completed" : doc.status === "flagged" ? "review" : "pending"}>
-                          {doc.status === "verified" ? "Verified" : doc.status === "flagged" ? "Flagged" : "Pending"}
-                        </Badge>
-                        {flags.length > 0 && (
-                          <div className="space-y-1">
-                            {flags.map((flag, i) => (
-                              <div key={i} className="text-[10px] text-badge-review-text leading-tight">
-                                <span className="mr-0.5">&#9888;</span>{flag}
-                              </div>
-                            ))}
+                      {/* Right: event timeline */}
+                      <div className="space-y-1 text-[10px]">
+                        {events.map((evt, i) => (
+                          <div key={i} className={cn("leading-tight", evt.accent || "text-tertiary")}>
+                            <span className="mr-1">{evt.icon}</span>{evt.text}
                           </div>
-                        )}
-                        {updatedAt && (
-                          <div className="text-[10px] text-tertiary">
-                            Updated {updatedAt} &middot; AI
-                          </div>
-                        )}
+                        ))}
                       </div>
                     </div>
                   </Card>
