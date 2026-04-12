@@ -19,7 +19,7 @@ function TopBar({ stats, deadline, user, onMenuToggle, showMenu, clientName, onD
   return (
     <nav
       className="h-12 max-md:h-10 flex items-center px-4 gap-4 shrink-0 z-50"
-      style={{ background: "#3a3d42" }}
+      style={{ background: "#6B8BA4" }}
     >
       {/* Hamburger — tablet and below */}
       {showMenu && (

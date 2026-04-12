@@ -723,8 +723,8 @@ export default function Home() {
       )}
 
       {/* Footer */}
-      <footer className="shrink-0 flex items-center justify-center px-4 py-1.5" style={{ background: "#4a4d52" }}>
-        <span className="text-[10px] text-white/70">&copy; 2026 SciEncephalon Corp. All rights reserved.</span>
+      <footer className="shrink-0 flex items-center justify-center px-4 py-1.5" style={{ background: "#d1d5db" }}>
+        <span className="text-[10px] text-gray-600">&copy; 2026 SciEncephalon Corp. All rights reserved.</span>
       </footer>
 
       {/* Sidebar overlay — tablet (below lg) */}
