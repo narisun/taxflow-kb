@@ -2,7 +2,7 @@
 """
 Tax Brain — Evaluation Harness
 
-Runs the golden-set questions through the CPAQueryAgent and scores both
+Runs the golden-set questions through the TaxBrainAgent and scores both
 retrieval quality and answer quality (via LLM-as-judge).
 
 Metrics produced
@@ -46,8 +46,9 @@ from typing import Optional
 # ── Setup path ──────────────────────────────────────────────────────────────
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from taxflow_kb.layer4.agent import CPAQueryAgent
-from taxflow_kb.layer4.models_layer4 import CPAQueryResult
+from tax_brain.factories import create_agent
+from tax_brain.agent.agent import TaxBrainAgent
+from tax_brain.agent.models import QueryResult
 
 # ═══════════════════════════════════════════════════════════════════════════
 # LLM-as-Judge
@@ -180,7 +181,7 @@ def judge_answer(
 # ═══════════════════════════════════════════════════════════════════════════
 
 def score_retrieval(
-    result: CPAQueryResult,
+    result: QueryResult,
     expected_pubs: list[str],
 ) -> dict:
     """Score retrieval quality for a single question."""
@@ -255,7 +256,7 @@ def load_golden_set(path: str) -> list[dict]:
 
 def run_eval(
     golden_set: list[dict],
-    agent: CPAQueryAgent,
+    agent: TaxBrainAgent,
     synthesize: bool = True,
     run_judge: bool = True,
     judge_model: str = "gpt-4o",
@@ -610,9 +611,9 @@ def main():
     print(f"  Judge model: {args.judge_model}" if run_judge else "")
     print(f"{'=' * 76}")
 
-    print("\nInitializing CPAQueryAgent...")
+    print("\nInitializing TaxBrainAgent...")
     t0 = time.time()
-    agent = CPAQueryAgent()
+    agent = create_agent()
     print(f"  Agent ready in {time.time() - t0:.1f}s\n")
 
     # ── Run ────────────────────────────────────────────────────────────

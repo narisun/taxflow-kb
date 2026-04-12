@@ -16,7 +16,7 @@ import pytest
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 
-from taxflow_kb.ingestion.irs_download import (
+from tax_brain.rules.irs_download import (
     IRSDownloader,
     DownloadResult,
     download_publication,

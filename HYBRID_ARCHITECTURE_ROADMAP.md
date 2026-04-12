@@ -16,8 +16,8 @@ The research framework describes three structurally distinct IRS data sources, e
 **What it is:** The IRS Modernized e-File (MeF) schema ships as XML/CSV describing every field-level validation rule — data types, required fields, cross-field conditionals, error codes, reject reasons. These are the rules that decide whether a return will be accepted or rejected at submission time. No NLP is needed to query them: a CPA asking "what error code fires when Schedule C Line 7 is blank?" needs an exact lookup, not a cosine similarity.
 
 **What is built:**
-- `taxflow_kb/ingestion/csv_parser.py` — full MeF CSV parser with column-alias normalization, produces `MeFRule` objects with `rule_id`, `form_family`, `field_path`, `rule_type`, `severity`, `error_code`, `rule_text`, and a parsed AST of the rule expression.
-- `taxflow_kb/ingestion/neo4j_ingestion.py` — full Neo4j ingestion with `Form`, `FormLine`, `Rule`, `ErrorCode` nodes and `GOVERNED_BY` / `RAISES` / `SUPERSEDES` relationships. Handles schema version diffing.
+- `tax_brain/rules/csv_parser.py` — full MeF CSV parser with column-alias normalization, produces `MeFRule` objects with `rule_id`, `form_family`, `field_path`, `rule_type`, `severity`, `error_code`, `rule_text`, and a parsed AST of the rule expression.
+- `tax_brain/rules/neo4j_ingestion.py` — full Neo4j ingestion with `Form`, `FormLine`, `Rule`, `ErrorCode` nodes and `GOVERNED_BY` / `RAISES` / `SUPERSEDES` relationships. Handles schema version diffing.
 - Neo4j schema is designed: `(:FormLine)-[:GOVERNED_BY]->(:Rule)-[:RAISES]->(:ErrorCode)`.
 
 **What is NOT wired:**
@@ -34,10 +34,10 @@ The research framework describes three structurally distinct IRS data sources, e
 **What it is:** IRS.gov publishes HTML instructions for every form — 1040, Schedule A/B/C/D/E/SE, 8889, 8606, etc. These are semi-structured: each line of the form has a dedicated section with cross-references to other lines, schedules, and publications. They sit between Layer 1 (pure rules) and Layer 3 (policy prose) — they are the "how to fill in this line" layer.
 
 **What is built:**
-- `taxflow_kb/layer2/html_parser.py` — full IRS HTML instruction parser, handles both synthetic and real irs.gov HTML. Extracts `InstructionSection` objects with `line_reference`, `field_names`, `cross_refs`, `section_type` (line-instruction, general, definition, cross-reference). Has a `LINE_TO_FIELDS` map covering 1040 lines 1a through 38.
-- `taxflow_kb/layer2/postgres_layer2.py` — PostgreSQL persistence for instruction sections (not pgvector; relational structure).
-- `taxflow_kb/layer2/neo4j_layer2.py` — Neo4j ingestion: `InstructionPage`, `InstructionSection` nodes with `HAS_SECTION`, `EXPLAINS`, `SEE_ALSO`, `REFERENCES_FORM` relationships.
-- `taxflow_kb/layer2/validation/` — structural and link-coverage validators.
+- `tax_brain/instructions/html_parser.py` — full IRS HTML instruction parser, handles both synthetic and real irs.gov HTML. Extracts `InstructionSection` objects with `line_reference`, `field_names`, `cross_refs`, `section_type` (line-instruction, general, definition, cross-reference). Has a `LINE_TO_FIELDS` map covering 1040 lines 1a through 38.
+- `tax_brain/instructions/postgres_layer2.py` — PostgreSQL persistence for instruction sections (not pgvector; relational structure).
+- `tax_brain/instructions/neo4j_layer2.py` — Neo4j ingestion: `InstructionPage`, `InstructionSection` nodes with `HAS_SECTION`, `EXPLAINS`, `SEE_ALSO`, `REFERENCES_FORM` relationships.
+- `tax_brain/instructions/validation/` — structural and link-coverage validators.
 
 **What is NOT wired:**
 - `MultiLayerRetriever` has `# TODO: if query references a form line, query Neo4j instruction graph` but no implementation.
@@ -55,13 +55,13 @@ The research framework describes three structurally distinct IRS data sources, e
 
 **What is built:** This layer is the most complete.
 
-- `taxflow_kb/layer3/pdf_parser.py` — PDF ingestion with **sliding-window chunking** (400-token target, 50-token overlap). Extracts chapter/section metadata.
-- `taxflow_kb/layer3/postgres_layer3.py` — PostgreSQL + pgvector store with `irs_kb.publications` and `irs_kb.publication_chunks` tables. `search_similar()` with cosine distance and IVFFlat ANN index.
-- `taxflow_kb/layer3/embeddings.py` — OpenAI `text-embedding-3-large` at 1536 dims (Matryoshka truncation).
-- `taxflow_kb/layer3/chunk_enrichment.py` — Pre-embedding NL summary prepended to Pub 596 worksheet/table chunks and Pub 525 topic-tagged chunks.
-- `taxflow_kb/layer4/retriever.py` — `Layer3Retriever` fully implemented; `MultiLayerRetriever` orchestrator exists but only calls Layer 3.
-- `taxflow_kb/layer4/synthesizer.py` — GPT-4o generation with tiered abstention, citation enforcement, and per-source Pub XXX fix.
-- `taxflow_kb/layer5/` — full evaluation pipeline: gold set (102 questions, 8 publications), retrieval evaluator, generation evaluator with LLM-as-judge.
+- `tax_brain/publications/pdf_parser.py` — PDF ingestion with **sliding-window chunking** (400-token target, 50-token overlap). Extracts chapter/section metadata.
+- `tax_brain/publications/postgres_layer3.py` — PostgreSQL + pgvector store with `irs_kb.publications` and `irs_kb.publication_chunks` tables. `search_similar()` with cosine distance and IVFFlat ANN index.
+- `tax_brain/publications/embeddings.py` — OpenAI `text-embedding-3-large` at 1536 dims (Matryoshka truncation).
+- `tax_brain/publications/chunk_enrichment.py` — Pre-embedding NL summary prepended to Pub 596 worksheet/table chunks and Pub 525 topic-tagged chunks.
+- `tax_brain/agent/retriever.py` — `Layer3Retriever` fully implemented; `MultiLayerRetriever` orchestrator exists but only calls Layer 3.
+- `tax_brain/agent/synthesizer.py` — GPT-4o generation with tiered abstention, citation enforcement, and per-source Pub XXX fix.
+- `tax_brain/evaluation/` — full evaluation pipeline: gold set (102 questions, 8 publications), retrieval evaluator, generation evaluator with LLM-as-judge.
 
 **Ingested publications:** Pub 17, 501, 525, 550, 590-A, 590-B, 596, 969.
 
@@ -282,7 +282,7 @@ CREATE INDEX IF NOT EXISTS idx_chunks_fts
 
 The `GENERATED ALWAYS AS ... STORED` pattern means Postgres maintains the index automatically on every upsert — no application-layer plumbing needed.
 
-**Step 1.2 — `BM25Retriever` class in `taxflow_kb/layer4/retriever.py`**
+**Step 1.2 — `BM25Retriever` class in `tax_brain/agent/retriever.py`**
 
 Uses `plainto_tsquery` for query parsing and `ts_rank_cd` with normalization flag `32` (rank ÷ document length) — the closest Postgres approximation to BM25. Shares the same `Layer3Store` connection pool as the vector retriever.
 

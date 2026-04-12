@@ -17,11 +17,11 @@ from pathlib import Path
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from taxflow_kb.layer3.pdf_parser import parse_publication_pdf
-from taxflow_kb.layer3.summary_generator import generate_anchor_chunks
-from taxflow_kb.layer3.chunk_enrichment import enrich_for_embedding
-from taxflow_kb.layer3.topic_ontology import ChunkType, get_ontology
-from taxflow_kb.layer3.publication_registry import get_registry
+from tax_brain.publications.pdf_parser import parse_publication_pdf
+from tax_brain.publications.summary_generator import generate_anchor_chunks
+from tax_brain.publications.chunk_enrichment import enrich_for_embedding
+from tax_brain.publications.ontology import ChunkType, get_ontology
+from tax_brain.publications.registry import get_registry
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data" / "publications"
 

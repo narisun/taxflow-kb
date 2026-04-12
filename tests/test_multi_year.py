@@ -26,7 +26,7 @@ class TestRegistryCoverageUtilities:
     """Test the new multi-year coverage methods on PublicationRegistry."""
 
     def setup_method(self):
-        from taxflow_kb.layer3.publication_registry import PublicationRegistry
+        from tax_brain.publications.registry import PublicationRegistry
         self.reg = PublicationRegistry()
 
     def test_get_available_years_known_pub(self):
@@ -152,7 +152,7 @@ class TestYearAwarePubFilter:
 
     def test_filter_excludes_discontinued_pub_for_2025(self):
         """Queries about 2025 should not suggest Pub 535 (2022-only)."""
-        from taxflow_kb.layer4.query_classifier import (
+        from tax_brain.agent.classifier import (
             classify_query,
             suggest_pub_filter,
         )
@@ -164,7 +164,7 @@ class TestYearAwarePubFilter:
 
     def test_filter_includes_discontinued_pub_for_2022(self):
         """Queries about 2022 should include Pub 535."""
-        from taxflow_kb.layer4.query_classifier import (
+        from tax_brain.agent.classifier import (
             QueryMetadata,
             QueryIntent,
             suggest_pub_filter,
@@ -186,7 +186,7 @@ class TestYearAwarePubFilter:
 
     def test_filter_with_no_year_returns_all_matches(self):
         """When tax_year is None, no year filtering is applied."""
-        from taxflow_kb.layer4.query_classifier import (
+        from tax_brain.agent.classifier import (
             QueryMetadata,
             QueryIntent,
             suggest_pub_filter,
@@ -214,28 +214,28 @@ class TestYearExtraction:
     """Test that classify_query() correctly extracts tax years from queries."""
 
     def test_extract_explicit_year(self):
-        from taxflow_kb.layer4.query_classifier import classify_query
+        from tax_brain.agent.classifier import classify_query
         meta = classify_query("What is the standard deduction for 2025?")
         assert meta.tax_year == 2025
 
     def test_extract_year_2024(self):
-        from taxflow_kb.layer4.query_classifier import classify_query
+        from tax_brain.agent.classifier import classify_query
         meta = classify_query("What was the HSA contribution limit in 2024?")
         assert meta.tax_year == 2024
 
     def test_extract_year_2023(self):
-        from taxflow_kb.layer4.query_classifier import classify_query
+        from tax_brain.agent.classifier import classify_query
         meta = classify_query("2023 earned income credit phase-out amounts")
         assert meta.tax_year == 2023
 
     def test_no_year_returns_none(self):
-        from taxflow_kb.layer4.query_classifier import classify_query
+        from tax_brain.agent.classifier import classify_query
         meta = classify_query("How does depreciation work for rental property?")
         assert meta.tax_year is None
 
     def test_query_metadata_fields(self):
         """QueryMetadata has all expected fields."""
-        from taxflow_kb.layer4.query_classifier import classify_query
+        from tax_brain.agent.classifier import classify_query
         meta = classify_query("What is the 2025 standard deduction for single filer?")
         assert hasattr(meta, "intent")
         assert hasattr(meta, "tax_year")
@@ -255,20 +255,20 @@ class TestRetrieverClassifyIntegration:
 
     def test_query_metadata_is_dataclass(self):
         """classify_query() should return a QueryMetadata dataclass, not a tuple."""
-        from taxflow_kb.layer4.query_classifier import classify_query, QueryMetadata
+        from tax_brain.agent.classifier import classify_query, QueryMetadata
         result = classify_query("What is the standard deduction for 2025?")
         assert isinstance(result, QueryMetadata)
 
     def test_query_metadata_intent_has_value(self):
         """QueryMetadata.intent should be a QueryIntent enum with a .value string."""
-        from taxflow_kb.layer4.query_classifier import classify_query
+        from tax_brain.agent.classifier import classify_query
         meta = classify_query("How much can I contribute to my HSA in 2024?")
         assert hasattr(meta.intent, "value")
         assert isinstance(meta.intent.value, str)
 
     def test_suggest_pub_filter_accepts_metadata(self):
         """suggest_pub_filter() should accept a single QueryMetadata argument."""
-        from taxflow_kb.layer4.query_classifier import (
+        from tax_brain.agent.classifier import (
             classify_query,
             suggest_pub_filter,
         )
@@ -279,7 +279,7 @@ class TestRetrieverClassifyIntegration:
 
     def test_retriever_classify_code_path(self):
         """Simulate the retriever's classify code path to confirm it won't crash."""
-        from taxflow_kb.layer4.query_classifier import (
+        from tax_brain.agent.classifier import (
             classify_query,
             suggest_pub_filter,
             QueryIntent,
@@ -304,7 +304,7 @@ class TestRetrieverClassifyIntegration:
 
     def test_retrieve_with_classification_code_path(self):
         """Simulate the retrieve_with_classification() code path."""
-        from taxflow_kb.layer4.query_classifier import classify_query
+        from tax_brain.agent.classifier import classify_query
 
         query_meta = classify_query("What goes on Schedule C line 31?")
         query_metadata = {
@@ -372,14 +372,14 @@ class TestRevisionBasedPubs:
 
     def test_pub_551_available_years(self):
         """Pub 551 (revision-dated) should have at least 2025."""
-        from taxflow_kb.layer3.publication_registry import get_registry
+        from tax_brain.publications.registry import get_registry
         reg = get_registry()
         years = reg.get_available_years("551")
         assert 2025 in years
 
     def test_pub_535_discontinued(self):
         """Pub 535 only covers 2022."""
-        from taxflow_kb.layer3.publication_registry import get_registry
+        from tax_brain.publications.registry import get_registry
         reg = get_registry()
         years = reg.get_available_years("535")
         assert years == [2022]
@@ -399,10 +399,10 @@ class TestDefaultYearBehavior:
     """
 
     def test_agent_defaults_to_current_year(self):
-        """CPAQueryAgent.query() should fill in default_tax_year when tax_year is None."""
+        """TaxBrainAgent.query() should fill in default_tax_year when tax_year is None."""
         from unittest.mock import patch, MagicMock
-        from taxflow_kb.layer4.agent import CPAQueryAgent
-        from taxflow_kb.layer4.query_classifier import QueryMetadata, QueryIntent
+        from tax_brain.agent.agent import TaxBrainAgent, AgentConfig
+        from tax_brain.agent.classifier import QueryMetadata, QueryIntent
 
         # Mock classify_query to return no detected year
         no_year_meta = QueryMetadata(
@@ -416,32 +416,28 @@ class TestDefaultYearBehavior:
             confidence=0.5,
         )
 
-        with patch("taxflow_kb.layer4.agent.classify_query", return_value=no_year_meta):
-            with patch("taxflow_kb.layer4.agent.get_settings") as mock_settings:
-                mock_settings.return_value.default_tax_year = 2025
-                mock_settings.return_value.retrieval_top_k = 5
-                mock_settings.return_value.synthesis_temperature = 0.1
-                mock_settings.return_value.synthesis_max_tokens = 1000
+        with patch("tax_brain.agent.agent.classify_query", return_value=no_year_meta):
+            agent = MagicMock(spec=TaxBrainAgent)
+            agent._config = AgentConfig(default_tax_year=2025, enable_compression=False)
+            agent.api_key = "sk-test"
+            agent._retriever = MagicMock()
+            agent._retriever.retrieve.return_value = ([], 10.0, {"mode": "flat", "nav_pubs": [], "ontology_pubs": []})
 
-                agent = MagicMock(spec=CPAQueryAgent)
-                agent._retriever = MagicMock()
-                agent._retriever.retrieve.return_value = ([], 10.0, {"mode": "flat", "nav_pubs": [], "ontology_pubs": []})
+            # Call the real query method
+            TaxBrainAgent.query(agent, "How does depreciation work?")
 
-                # Call the real query method
-                CPAQueryAgent.query(agent, "How does depreciation work?")
-
-                # Verify retriever was called with default year, not None
-                call_kwargs = agent._retriever.retrieve.call_args
-                assert call_kwargs is not None
-                # tax_year should be 2025 (the default), not None
-                _, kwargs = call_kwargs
-                assert kwargs.get("tax_year") == 2025
+            # Verify retriever was called with default year, not None
+            call_kwargs = agent._retriever.retrieve.call_args
+            assert call_kwargs is not None
+            # tax_year should be 2025 (the default), not None
+            _, kwargs = call_kwargs
+            assert kwargs.get("tax_year") == 2025
 
     def test_agent_respects_explicit_year(self):
         """When user passes tax_year=2023, the agent should use 2023, not default."""
         from unittest.mock import patch, MagicMock
-        from taxflow_kb.layer4.agent import CPAQueryAgent
-        from taxflow_kb.layer4.query_classifier import QueryMetadata, QueryIntent
+        from tax_brain.agent.agent import TaxBrainAgent, AgentConfig
+        from tax_brain.agent.classifier import QueryMetadata, QueryIntent
 
         no_year_meta = QueryMetadata(
             original_query="How does depreciation work?",
@@ -454,28 +450,24 @@ class TestDefaultYearBehavior:
             confidence=0.5,
         )
 
-        with patch("taxflow_kb.layer4.agent.classify_query", return_value=no_year_meta):
-            with patch("taxflow_kb.layer4.agent.get_settings") as mock_settings:
-                mock_settings.return_value.default_tax_year = 2025
-                mock_settings.return_value.retrieval_top_k = 5
-                mock_settings.return_value.synthesis_temperature = 0.1
-                mock_settings.return_value.synthesis_max_tokens = 1000
+        with patch("tax_brain.agent.agent.classify_query", return_value=no_year_meta):
+            agent = MagicMock(spec=TaxBrainAgent)
+            agent._config = AgentConfig(default_tax_year=2025, enable_compression=False)
+            agent.api_key = "sk-test"
+            agent._retriever = MagicMock()
+            agent._retriever.retrieve.return_value = ([], 10.0, {"mode": "flat", "nav_pubs": [], "ontology_pubs": []})
 
-                agent = MagicMock(spec=CPAQueryAgent)
-                agent._retriever = MagicMock()
-                agent._retriever.retrieve.return_value = ([], 10.0, {"mode": "flat", "nav_pubs": [], "ontology_pubs": []})
+            TaxBrainAgent.query(agent, "How does depreciation work?", tax_year=2023)
 
-                CPAQueryAgent.query(agent, "How does depreciation work?", tax_year=2023)
-
-                call_kwargs = agent._retriever.retrieve.call_args
-                _, kwargs = call_kwargs
-                assert kwargs.get("tax_year") == 2023
+            call_kwargs = agent._retriever.retrieve.call_args
+            _, kwargs = call_kwargs
+            assert kwargs.get("tax_year") == 2023
 
     def test_agent_uses_detected_year(self):
         """When classify_query detects a year, agent should use it over default."""
         from unittest.mock import patch, MagicMock
-        from taxflow_kb.layer4.agent import CPAQueryAgent
-        from taxflow_kb.layer4.query_classifier import QueryMetadata, QueryIntent
+        from tax_brain.agent.agent import TaxBrainAgent, AgentConfig
+        from tax_brain.agent.classifier import QueryMetadata, QueryIntent
 
         year_2024_meta = QueryMetadata(
             original_query="What is the 2024 HSA limit?",
@@ -488,23 +480,19 @@ class TestDefaultYearBehavior:
             confidence=0.9,
         )
 
-        with patch("taxflow_kb.layer4.agent.classify_query", return_value=year_2024_meta):
-            with patch("taxflow_kb.layer4.agent.get_settings") as mock_settings:
-                mock_settings.return_value.default_tax_year = 2025
-                mock_settings.return_value.retrieval_top_k = 5
-                mock_settings.return_value.synthesis_temperature = 0.1
-                mock_settings.return_value.synthesis_max_tokens = 1000
+        with patch("tax_brain.agent.agent.classify_query", return_value=year_2024_meta):
+            agent = MagicMock(spec=TaxBrainAgent)
+            agent._config = AgentConfig(default_tax_year=2025, enable_compression=False)
+            agent.api_key = "sk-test"
+            agent._retriever = MagicMock()
+            agent._retriever.retrieve.return_value = ([], 10.0, {"mode": "flat", "nav_pubs": [], "ontology_pubs": []})
 
-                agent = MagicMock(spec=CPAQueryAgent)
-                agent._retriever = MagicMock()
-                agent._retriever.retrieve.return_value = ([], 10.0, {"mode": "flat", "nav_pubs": [], "ontology_pubs": []})
+            TaxBrainAgent.query(agent, "What is the 2024 HSA limit?")
 
-                CPAQueryAgent.query(agent, "What is the 2024 HSA limit?")
-
-                call_kwargs = agent._retriever.retrieve.call_args
-                _, kwargs = call_kwargs
-                assert kwargs.get("tax_year") == 2024, \
-                    "Detected year (2024) should take priority over default (2025)"
+            call_kwargs = agent._retriever.retrieve.call_args
+            _, kwargs = call_kwargs
+            assert kwargs.get("tax_year") == 2024, \
+                "Detected year (2024) should take priority over default (2025)"
 
     def test_cli_search_help_does_not_expose_all_years(self):
         """The search --tax-year help should NOT advertise the 0/all-years escape hatch."""
@@ -540,7 +528,7 @@ class TestCrossYearComparison:
 
     def test_extract_comparison_years_from_to(self):
         """'from 2023 to 2025' → [2023, 2025]."""
-        from taxflow_kb.layer4.query_classifier import _extract_comparison_years
+        from tax_brain.agent.classifier import _extract_comparison_years
         years = _extract_comparison_years(
             "How did the standard deduction change from 2023 to 2025?"
         )
@@ -548,7 +536,7 @@ class TestCrossYearComparison:
 
     def test_extract_comparison_years_vs(self):
         """'2023 vs 2024' → [2023, 2024]."""
-        from taxflow_kb.layer4.query_classifier import _extract_comparison_years
+        from tax_brain.agent.classifier import _extract_comparison_years
         years = _extract_comparison_years(
             "HSA contribution limit 2023 vs 2024"
         )
@@ -556,7 +544,7 @@ class TestCrossYearComparison:
 
     def test_extract_comparison_years_three_years(self):
         """Three years → all three returned."""
-        from taxflow_kb.layer4.query_classifier import _extract_comparison_years
+        from tax_brain.agent.classifier import _extract_comparison_years
         years = _extract_comparison_years(
             "Compare EIC limits for 2023, 2024, and 2025"
         )
@@ -564,7 +552,7 @@ class TestCrossYearComparison:
 
     def test_extract_comparison_years_single_year(self):
         """A single year → empty list (not a comparison)."""
-        from taxflow_kb.layer4.query_classifier import _extract_comparison_years
+        from tax_brain.agent.classifier import _extract_comparison_years
         years = _extract_comparison_years(
             "What is the 2025 standard deduction?"
         )
@@ -572,30 +560,32 @@ class TestCrossYearComparison:
 
     def test_extract_comparison_years_no_year(self):
         """No years → empty list."""
-        from taxflow_kb.layer4.query_classifier import _extract_comparison_years
+        from tax_brain.agent.classifier import _extract_comparison_years
         years = _extract_comparison_years("How does depreciation work?")
         assert years == []
 
     def test_classify_query_populates_comparison_years(self):
         """classify_query() should populate comparison_years for multi-year queries."""
-        from taxflow_kb.layer4.query_classifier import classify_query
+        from tax_brain.agent.classifier import classify_query
         meta = classify_query("How did HSA limits change from 2023 to 2025?")
         assert meta.comparison_years == [2023, 2025]
 
     def test_classify_query_no_comparison_years_for_single(self):
         """classify_query() should have empty comparison_years for single-year queries."""
-        from taxflow_kb.layer4.query_classifier import classify_query
+        from tax_brain.agent.classifier import classify_query
         meta = classify_query("What is the 2025 HSA limit?")
         assert meta.comparison_years == []
 
     def test_agent_cross_year_makes_separate_calls(self):
         """
-        When comparison_years has 2+ years, the agent should make separate
-        retriever calls per year instead of one all-years call.
+        When comparison_years has 2+ years, the retriever should make
+        separate per-year calls internally via _retrieve_cross_year.
+        The agent makes a single call to retriever.retrieve(query_meta=...).
         """
         from unittest.mock import patch, MagicMock, call
-        from taxflow_kb.layer4.agent import CPAQueryAgent
-        from taxflow_kb.layer4.query_classifier import QueryMetadata, QueryIntent
+        from tax_brain.agent.agent import TaxBrainAgent, AgentConfig
+        from tax_brain.agent.classifier import QueryMetadata, QueryIntent
+        from tax_brain.agent.retriever import TaxBrainRetriever
 
         comparison_meta = QueryMetadata(
             original_query="How did HSA limits change from 2023 to 2025?",
@@ -609,42 +599,55 @@ class TestCrossYearComparison:
             confidence=0.85,
         )
 
-        with patch("taxflow_kb.layer4.agent.classify_query", return_value=comparison_meta):
-            with patch("taxflow_kb.layer4.agent.get_settings") as mock_settings:
-                mock_settings.return_value.default_tax_year = 2025
-                mock_settings.return_value.retrieval_top_k = 5
-                mock_settings.return_value.synthesis_temperature = 0.1
-                mock_settings.return_value.synthesis_max_tokens = 1000
+        with patch("tax_brain.agent.agent.classify_query", return_value=comparison_meta):
+            retriever = MagicMock(spec=TaxBrainRetriever)
+            flat_return = ([], 5.0, {"mode": "flat", "nav_pubs": [], "ontology_pubs": []})
 
-                agent = MagicMock(spec=CPAQueryAgent)
-                agent._retriever = MagicMock()
-                agent._retriever.retrieve.return_value = ([], 5.0, {"mode": "flat", "nav_pubs": [], "ontology_pubs": []})
+            original_cross_year = TaxBrainRetriever._retrieve_cross_year
+            sub_calls = []
 
-                # Bind real cross-year method
-                agent._retrieve_cross_year = lambda *a, **kw: CPAQueryAgent._retrieve_cross_year(agent, *a, **kw)
+            def smart_retrieve(*args, **kwargs):
+                if kwargs.get("query_meta") is not None:
+                    # Top-level call from agent — run cross-year strategy
+                    comparison_years = getattr(kwargs["query_meta"], "comparison_years", [])
+                    if comparison_years and len(comparison_years) >= 2:
+                        return original_cross_year(
+                            retriever,
+                            args[0] if args else kwargs.get("query", ""),
+                            kwargs.get("top_k", 10),
+                            kwargs.get("pub_filter"),
+                            comparison_years,
+                        )
+                # Sub-call (per-year) — record and return mock data
+                sub_calls.append(kwargs)
+                return flat_return
 
-                CPAQueryAgent.query(
-                    agent,
-                    "How did HSA limits change from 2023 to 2025?",
-                )
+            retriever.retrieve = MagicMock(side_effect=smart_retrieve)
 
-                # Should have made 2 separate calls (one per year)
-                retrieve_calls = agent._retriever.retrieve.call_args_list
-                assert len(retrieve_calls) == 2
+            agent = MagicMock(spec=TaxBrainAgent)
+            agent._config = AgentConfig(default_tax_year=2025, enable_compression=False)
+            agent.api_key = "sk-test"
+            agent._retriever = retriever
 
-                # First call should be for 2023
-                _, kwargs_1 = retrieve_calls[0]
-                assert kwargs_1["tax_year"] == 2023
+            TaxBrainAgent.query(
+                agent,
+                "How did HSA limits change from 2023 to 2025?",
+            )
 
-                # Second call should be for 2025
-                _, kwargs_2 = retrieve_calls[1]
-                assert kwargs_2["tax_year"] == 2025
+            # The retriever should have been called 3 times total:
+            # 1 top-level (with query_meta) + 2 per-year sub-calls
+            assert retriever.retrieve.call_count == 3
+
+            # The 2 sub-calls should be for different years
+            assert len(sub_calls) == 2
+            assert sub_calls[0]["tax_year"] == 2023
+            assert sub_calls[1]["tax_year"] == 2025
 
     def test_agent_single_year_query_makes_one_call(self):
         """Standard queries should make exactly one retriever call."""
         from unittest.mock import patch, MagicMock
-        from taxflow_kb.layer4.agent import CPAQueryAgent
-        from taxflow_kb.layer4.query_classifier import QueryMetadata, QueryIntent
+        from tax_brain.agent.agent import TaxBrainAgent, AgentConfig
+        from tax_brain.agent.classifier import QueryMetadata, QueryIntent
 
         single_meta = QueryMetadata(
             original_query="What is the 2025 HSA limit?",
@@ -658,20 +661,16 @@ class TestCrossYearComparison:
             confidence=0.9,
         )
 
-        with patch("taxflow_kb.layer4.agent.classify_query", return_value=single_meta):
-            with patch("taxflow_kb.layer4.agent.get_settings") as mock_settings:
-                mock_settings.return_value.default_tax_year = 2025
-                mock_settings.return_value.retrieval_top_k = 5
-                mock_settings.return_value.synthesis_temperature = 0.1
-                mock_settings.return_value.synthesis_max_tokens = 1000
+        with patch("tax_brain.agent.agent.classify_query", return_value=single_meta):
+            agent = MagicMock(spec=TaxBrainAgent)
+            agent._config = AgentConfig(default_tax_year=2025, enable_compression=False)
+            agent.api_key = "sk-test"
+            agent._retriever = MagicMock()
+            agent._retriever.retrieve.return_value = ([], 10.0, {"mode": "flat", "nav_pubs": [], "ontology_pubs": []})
 
-                agent = MagicMock(spec=CPAQueryAgent)
-                agent._retriever = MagicMock()
-                agent._retriever.retrieve.return_value = ([], 10.0, {"mode": "flat", "nav_pubs": [], "ontology_pubs": []})
+            TaxBrainAgent.query(agent, "What is the 2025 HSA limit?")
 
-                CPAQueryAgent.query(agent, "What is the 2025 HSA limit?")
-
-                # Should have made exactly 1 call
-                assert agent._retriever.retrieve.call_count == 1
-                _, kwargs = agent._retriever.retrieve.call_args
-                assert kwargs["tax_year"] == 2025
+            # Should have made exactly 1 call
+            assert agent._retriever.retrieve.call_count == 1
+            _, kwargs = agent._retriever.retrieve.call_args
+            assert kwargs["tax_year"] == 2025

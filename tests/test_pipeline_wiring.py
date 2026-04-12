@@ -2,19 +2,19 @@
 Tests for the wired ingestion pipeline:
   - New chunk enrichers (Pubs 334, 505, 527, 544, 946)
   - Ingest with generate_summaries parameter
-  - Layer3Store.has_chunk_type()
-  - Layer3Store.search_summaries()
+  - PublicationStore.has_chunk_type()
+  - PublicationStore.search_summaries()
   - CLI add-hierarchy-columns and --no-summaries flag
 """
 import pytest
 from unittest.mock import MagicMock, patch, PropertyMock
 
-from taxflow_kb.layer3.chunk_enrichment import (
+from tax_brain.publications.chunk_enrichment import (
     EnrichmentRegistry,
     enrich_for_embedding,
 )
-from taxflow_kb.layer3.models_layer3 import PublicationChunk
-from taxflow_kb.layer3.topic_ontology import ChunkType
+from tax_brain.publications.models import PublicationChunk
+from tax_brain.publications.ontology import ChunkType
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -266,7 +266,7 @@ class TestIngestWithSummaries:
 
     def _make_parse_result(self, pub_number="17", chunk_count=10):
         """Build a minimal Layer3ParseResult-like object for ingest testing."""
-        from taxflow_kb.layer3.models_layer3 import Publication
+        from tax_brain.publications.models import Publication
 
         pub = Publication(
             pub_id=f"p{pub_number}-2025",
@@ -293,29 +293,29 @@ class TestIngestWithSummaries:
         result.parse_success = True
         return result
 
-    @patch("taxflow_kb.layer3.postgres_layer3.Layer3Store.upsert_publication")
-    @patch("taxflow_kb.layer3.postgres_layer3.Layer3Store.upsert_chunks")
-    @patch("taxflow_kb.layer3.postgres_layer3.Layer3Store.upsert_embeddings")
-    @patch("taxflow_kb.layer3.postgres_layer3.Layer3Store.finalize_embedding")
-    @patch("taxflow_kb.layer3.embeddings.embed_chunks")
+    @patch("tax_brain.publications.store.PublicationStore.upsert_publication")
+    @patch("tax_brain.publications.store.PublicationStore.upsert_chunks")
+    @patch("tax_brain.publications.store.PublicationStore.upsert_embeddings")
+    @patch("tax_brain.publications.store.PublicationStore.finalize_embedding")
+    @patch("tax_brain.publications.embeddings.embed_chunks")
     def test_ingest_with_summaries_generates_anchors(
         self, mock_embed, mock_finalize, mock_upsert_emb, mock_upsert_chunks, mock_upsert_pub
     ):
         """Ingest with generate_summaries=True should produce anchor chunks."""
-        from taxflow_kb.layer3.postgres_layer3 import Layer3Store
+        from tax_brain.publications.store import PublicationStore
 
         mock_embed.return_value = []
         result = self._make_parse_result(pub_number="17", chunk_count=9)
 
-        store = MagicMock(spec=Layer3Store)
+        store = MagicMock(spec=PublicationStore)
         # Call the real ingest method but mock the DB calls
-        with patch.object(store, 'ingest', Layer3Store.ingest.__get__(store)):
+        with patch.object(store, 'ingest', PublicationStore.ingest.__get__(store)):
             # We need to patch _cursor and _commit since ingest calls upsert_publication etc.
             # Actually let's just directly test the summary generation logic
             pass
 
         # Simpler approach: test that generate_anchor_chunks produces anchors for pub 17
-        from taxflow_kb.layer3.summary_generator import generate_anchor_chunks
+        from tax_brain.publications.summary_generator import generate_anchor_chunks
         chunks = result.chunks
         anchors = generate_anchor_chunks(
             pub_number="17",
@@ -336,7 +336,7 @@ class TestIngestWithSummaries:
 
     def test_anchor_chunks_have_correct_chunk_type(self):
         """All anchors should be tagged with correct chunk_type."""
-        from taxflow_kb.layer3.summary_generator import generate_anchor_chunks
+        from tax_brain.publications.summary_generator import generate_anchor_chunks
         result = self._make_parse_result(pub_number="550", chunk_count=6)
         anchors = generate_anchor_chunks(
             pub_number="550",
@@ -350,7 +350,7 @@ class TestIngestWithSummaries:
 
     def test_anchor_chunks_have_negative_index(self):
         """Anchor chunks use negative chunk_index to avoid collision."""
-        from taxflow_kb.layer3.summary_generator import generate_anchor_chunks
+        from tax_brain.publications.summary_generator import generate_anchor_chunks
         result = self._make_parse_result(pub_number="596", chunk_count=6)
         anchors = generate_anchor_chunks(
             pub_number="596",
@@ -363,7 +363,7 @@ class TestIngestWithSummaries:
 
     def test_anchor_chunks_have_topic_ids(self):
         """Anchors should have topic_ids populated from the ontology."""
-        from taxflow_kb.layer3.summary_generator import generate_anchor_chunks
+        from tax_brain.publications.summary_generator import generate_anchor_chunks
         result = self._make_parse_result(pub_number="17", chunk_count=6)
         anchors = generate_anchor_chunks(
             pub_number="17",
@@ -377,7 +377,7 @@ class TestIngestWithSummaries:
 
     def test_ingest_no_summaries_skips_generation(self):
         """When generate_summaries=False, no anchor chunks should be created."""
-        from taxflow_kb.layer3.summary_generator import generate_anchor_chunks
+        from tax_brain.publications.summary_generator import generate_anchor_chunks
 
         result = self._make_parse_result(pub_number="17", chunk_count=6)
         detail_count = len(result.chunks)
@@ -419,9 +419,9 @@ class TestCLIHierarchy:
 
     def test_no_summaries_flag_in_ingest_publications(self):
         """ingest-publications should accept --no-summaries."""
-        import subprocess
+        import subprocess, sys
         result = subprocess.run(
-            ["python", "cli.py", "ingest-publications", "--help"],
+            [sys.executable, "cli.py", "ingest-publications", "--help"],
             capture_output=True, text=True,
             cwd=str(__import__("pathlib").Path(__file__).resolve().parent.parent),
         )
@@ -429,9 +429,9 @@ class TestCLIHierarchy:
 
     def test_add_hierarchy_columns_in_help(self):
         """add-hierarchy-columns should appear in global help."""
-        import subprocess
+        import subprocess, sys
         result = subprocess.run(
-            ["python", "cli.py", "--help"],
+            [sys.executable, "cli.py", "--help"],
             capture_output=True, text=True,
             cwd=str(__import__("pathlib").Path(__file__).resolve().parent.parent),
         )
@@ -439,43 +439,43 @@ class TestCLIHierarchy:
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# Layer3Store method signatures (import-level tests)
+# PublicationStore method signatures (import-level tests)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 class TestLayer3StoreHierarchyMethods:
 
     def test_has_chunk_type_method_exists(self):
-        from taxflow_kb.layer3.postgres_layer3 import Layer3Store
-        assert hasattr(Layer3Store, "has_chunk_type")
+        from tax_brain.publications.store import PublicationStore
+        assert hasattr(PublicationStore, "has_chunk_type")
 
     def test_search_summaries_method_exists(self):
-        from taxflow_kb.layer3.postgres_layer3 import Layer3Store
-        assert hasattr(Layer3Store, "search_summaries")
+        from tax_brain.publications.store import PublicationStore
+        assert hasattr(PublicationStore, "search_summaries")
 
     def test_add_hierarchy_columns_method_exists(self):
-        from taxflow_kb.layer3.postgres_layer3 import Layer3Store
-        assert hasattr(Layer3Store, "add_hierarchy_columns")
+        from tax_brain.publications.store import PublicationStore
+        assert hasattr(PublicationStore, "add_hierarchy_columns")
 
     def test_ingest_has_generate_summaries_param(self):
         """ingest() should accept generate_summaries parameter."""
         import inspect
-        from taxflow_kb.layer3.postgres_layer3 import Layer3Store
-        sig = inspect.signature(Layer3Store.ingest)
+        from tax_brain.publications.store import PublicationStore
+        sig = inspect.signature(PublicationStore.ingest)
         assert "generate_summaries" in sig.parameters
         # Default should be True
         assert sig.parameters["generate_summaries"].default is True
 
     def test_upsert_chunks_handles_chunk_type(self):
         """upsert_chunks should handle chunks with chunk_type field."""
-        from taxflow_kb.layer3.postgres_layer3 import Layer3Store
+        from tax_brain.publications.store import PublicationStore
         # Just verify the method exists and accepts chunks with chunk_type
-        assert hasattr(Layer3Store, "upsert_chunks")
+        assert hasattr(PublicationStore, "upsert_chunks")
 
     def test_search_summaries_signature(self):
         """search_summaries should accept query_embedding, top_k, pub_numbers, tax_year."""
         import inspect
-        from taxflow_kb.layer3.postgres_layer3 import Layer3Store
-        sig = inspect.signature(Layer3Store.search_summaries)
+        from tax_brain.publications.store import PublicationStore
+        sig = inspect.signature(PublicationStore.search_summaries)
         params = sig.parameters
         assert "query_embedding" in params
         assert "top_k" in params

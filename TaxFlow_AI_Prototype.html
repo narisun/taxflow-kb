@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TaxFlow AI — CPA Tax Preparation Platform</title>
+<style>
+  :root {
+    --navy:#1E3A5F;--blue:#2563EB;--blue-light:#DBEAFE;--blue-xlight:#EFF6FF;
+    --teal:#0F766E;--teal-light:#CCFBF1;--green:#16A34A;--green-light:#DCFCE7;
+    --orange:#EA580C;--orange-light:#FFEDD5;--red:#DC2626;--red-light:#FEE2E2;
+    --purple:#7C3AED;--purple-light:#EDE9FE;--gray:#6B7280;--gray-light:#F3F4F6;
+    --gray-mid:#E5E7EB;--dark:#111827;--white:#fff;
+    --sb-bg:#F8FAFC;--sb-hover:#EFF6FF;--sb-active:#DBEAFE;--sb-border:#E2E8F0;
+    --sb-text:#1E293B;--sb-muted:#64748B;--sb-faint:#94A3B8;
+    --font:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--font);background:#F1F5F9;color:var(--dark);display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+  .topbar{height:52px;background:var(--navy);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0;border-bottom:1px solid #2A4F7C;z-index:100;}
+  .tb-logo-icon{width:30px;height:30px;background:var(--blue);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff;}
+  .tb-logo-name{font-size:16px;font-weight:700;color:#fff;letter-spacing:-.3px;}
+  .tb-div{width:1px;height:24px;background:#2A4F7C;margin:0 6px;}
+  .tb-season{background:#1D4ED8;color:#fff;font-size:11px;font-weight:600;padding:3px 10px;border-radius:99px;}
+  .tb-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+  .tb-deadline{color:#FCA5A5;font-size:12px;font-weight:600;}
+  .tb-avatar{width:30px;height:30px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;cursor:pointer;}
+  .tb-stat-val{font-size:14px;font-weight:700;color:#fff;}
+  .tb-stat-lbl{font-size:10px;color:#94A3B8;text-transform:uppercase;letter-spacing:.4px;}
+  .app-body{display:flex;flex:1;overflow:hidden;}
+  /* LEFT PANE — LIGHT */
+  .lp{width:284px;flex-shrink:0;background:var(--sb-bg);display:flex;flex-direction:column;border-right:1px solid var(--sb-border);overflow:hidden;}
+  .lp-head{padding:12px 12px 8px;border-bottom:1px solid var(--sb-border);background:#fff;}
+  .search-bar{display:flex;align-items:center;gap:8px;background:var(--gray-light);border:1px solid var(--gray-mid);border-radius:8px;padding:7px 11px;}
+  .search-bar input{background:none;border:none;outline:none;color:var(--dark);font-size:13px;width:100%;}
+  .search-bar input::placeholder{color:#9CA3AF;}
+  .lp-sec-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--sb-faint);padding:10px 14px 4px;display:flex;align-items:center;justify-content:space-between;}
+  .add-btn{width:20px;height:20px;background:var(--gray-light);border:1px solid var(--gray-mid);border-radius:4px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--gray);font-size:14px;transition:all .15s;}
+  .add-btn:hover{background:var(--blue);color:#fff;border-color:var(--blue);}
+  .client-list{flex:1;overflow-y:auto;padding:4px 0 12px;}
+  .client-list::-webkit-scrollbar{width:4px;}
+  .client-list::-webkit-scrollbar-thumb{background:var(--gray-mid);border-radius:99px;}
+  .ci{border-left:3px solid transparent;transition:border-color .15s;}
+  .ci.active{border-left-color:var(--blue);background:var(--blue-xlight);}
+  .ci-row{display:flex;align-items:center;gap:8px;padding:9px 12px 9px 10px;cursor:pointer;transition:background .12s;user-select:none;}
+  .ci-row:hover{background:var(--sb-hover);}
+  .ci.active .ci-row{background:transparent;}
+  .ci-av{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+  .ci-name{font-size:13px;font-weight:600;color:var(--sb-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ci-meta{font-size:11px;color:var(--sb-muted);margin-top:1px;}
+  .ci-info{flex:1;min-width:0;}
+  .sb{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 7px;border-radius:99px;flex-shrink:0;}
+  .sb-pending{background:#F1F5F9;color:#64748B;border:1px solid #CBD5E1;}
+  .sb-inprog{background:#DBEAFE;color:#1D4ED8;border:1px solid #BFDBFE;}
+  .sb-review{background:#FFEDD5;color:#9A3412;border:1px solid #FED7AA;}
+  .sb-done{background:#DCFCE7;color:#14532D;border:1px solid #BBF7D0;}
+  .sb-filed{background:#EDE9FE;color:#4C1D95;border:1px solid #DDD6FE;}
+  .chev{color:var(--sb-faint);font-size:11px;flex-shrink:0;transition:transform .2s;}
+  .chev.open{transform:rotate(90deg);}
+  .yr-sec{overflow:hidden;}
+  .yr-row{display:flex;align-items:center;gap:7px;padding:6px 12px 6px 28px;cursor:pointer;transition:background .12s;color:var(--sb-muted);}
+  .yr-row:hover{background:var(--sb-hover);color:var(--sb-text);}
+  .yr-row.ayr{color:var(--blue);background:var(--blue-xlight);}
+  .yr-badge{background:var(--gray-light);color:var(--sb-muted);font-size:10px;font-weight:600;padding:1px 6px;border-radius:4px;border:1px solid var(--gray-mid);}
+  .yr-badge.awf{background:var(--blue-light);color:var(--blue);border-color:#BFDBFE;}
+  .docs-sec{padding:2px 8px 4px 34px;}
+  .dc{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:6px;cursor:pointer;transition:background .12s;margin-bottom:1px;}
+  .dc:hover{background:var(--sb-hover);}
+  .dc.active{background:var(--sb-active);}
+  .dc-name{font-size:12px;color:var(--sb-muted);flex:1;}
+  .dc:hover .dc-name{color:var(--sb-text);}
+  .dc-conf{font-size:10px;font-weight:600;padding:1px 5px;border-radius:4px;}
+  .ch{background:#DCFCE7;color:#15803D;} .cm{background:#FEF9C3;color:#854D0E;} .cl{background:#FEE2E2;color:#B91C1C;}
+  /* CENTER */
+  .cp{flex:1;display:flex;flex-direction:column;overflow:hidden;background:#F8FAFC;}
+  .ctx-bar{background:#fff;border-bottom:1px solid var(--gray-mid);padding:10px 20px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
+  .ctx-av{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;}
+  .ctx-div{width:1px;height:28px;background:var(--gray-mid);}
+  .stepper{display:flex;align-items:center;flex:1;overflow-x:auto;}
+  .step{display:flex;align-items:center;gap:6px;padding:4px 12px;border-radius:6px;cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0;}
+  .step:hover{background:var(--gray-light);}
+  .step-num{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
+  .step.done .step-num{background:var(--green);color:#fff;}
+  .step.active .step-num{background:var(--blue);color:#fff;}
+  .step.pending .step-num{background:var(--gray-mid);color:var(--gray);}
+  .step-lbl{font-size:11px;font-weight:600;}
+  .step.done .step-lbl{color:var(--green);}
+  .step.active .step-lbl{color:var(--blue);}
+  .step.pending .step-lbl{color:var(--gray);}
+  .s-arr{color:var(--gray-mid);font-size:12px;margin:0 -2px;flex-shrink:0;}
+  .chat-area{flex:1;overflow-y:auto;padding:24px 60px;display:flex;flex-direction:column;gap:20px;}
+  .chat-area::-webkit-scrollbar{width:6px;}
+  .chat-area::-webkit-scrollbar-thumb{background:var(--gray-mid);border-radius:99px;}
+  .msg{display:flex;gap:12px;max-width:800px;animation:msgIn .2s ease;}
+  @keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .msg.user{align-self:flex-end;flex-direction:row-reverse;}
+  .m-av{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;margin-top:2px;}
+  .m-av.ai{background:var(--navy);color:#fff;}
+  .m-av.u{background:var(--teal);color:#fff;}
+  .m-name{font-size:11px;font-weight:600;color:var(--gray);margin-bottom:5px;}
+  .msg.user .m-name{text-align:right;}
+  .m-bub{padding:12px 16px;border-radius:12px;font-size:14px;line-height:1.6;color:var(--dark);background:#fff;border:1px solid var(--gray-mid);box-shadow:0 1px 2px rgba(0,0,0,.04);}
+  .msg.user .m-bub{background:var(--navy);color:#fff;border-color:var(--navy);}
+  .m-bub p{margin-bottom:8px;}
+  .m-bub p:last-child{margin-bottom:0;}
+  .ai-card{background:#fff;border:1px solid var(--gray-mid);border-radius:10px;padding:12px 14px;margin-top:10px;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+  .ai-card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray);margin-bottom:8px;}
+  .exr{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--gray-light);font-size:13px;}
+  .exr:last-child{border-bottom:none;}
+  .fl{color:var(--gray);flex:1;}
+  .fv{font-weight:600;color:var(--dark);}
+  .cd{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .cd.h{background:var(--green);} .cd.m{background:#F59E0B;} .cd.l{background:var(--red);}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+  .chip{font-size:12px;font-weight:600;padding:5px 12px;border-radius:99px;cursor:pointer;border:1px solid;transition:all .15s;}
+  .c-bl{background:var(--blue-light);color:var(--blue);border-color:#BFDBFE;}
+  .c-bl:hover{background:var(--blue);color:#fff;}
+  .c-te{background:var(--teal-light);color:var(--teal);border-color:#99F6E4;}
+  .c-te:hover{background:var(--teal);color:#fff;}
+  .c-or{background:var(--orange-light);color:var(--orange);border-color:#FED7AA;}
+  .c-or:hover{background:var(--orange);color:#fff;}
+  .al{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-radius:8px;margin-top:8px;font-size:13px;}
+  .al-w{background:#FFFBEB;border:1px solid #FDE68A;color:#92400E;}
+  .al-i{background:var(--blue-light);border:1px solid #BFDBFE;color:#1E40AF;}
+  .al-s{background:var(--green-light);border:1px solid #BBF7D0;color:#14532D;}
+  .typing-indicator{display:flex;gap:4px;padding:4px 0;}
+  .td{width:7px;height:7px;border-radius:50%;background:var(--gray);animation:ty 1.2s infinite;}
+  .td:nth-child(2){animation-delay:.2s;} .td:nth-child(3){animation-delay:.4s;}
+  @keyframes ty{0%,80%,100%{opacity:.3;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+  .ci-wrap{background:#fff;border-top:1px solid var(--gray-mid);padding:14px 60px 18px;flex-shrink:0;}
+  .ci-box{display:flex;align-items:flex-end;gap:10px;background:#F8FAFC;border:1.5px solid var(--gray-mid);border-radius:12px;padding:10px 14px;transition:border-color .15s;}
+  .ci-box:focus-within{border-color:var(--blue);background:#fff;}
+  .ia-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--gray-mid);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;transition:all .15s;color:var(--gray);}
+  .ia-btn:hover{background:var(--gray-light);color:var(--dark);}
+  .c-ta{flex:1;border:none;outline:none;background:none;font-family:var(--font);font-size:14px;color:var(--dark);resize:none;max-height:120px;min-height:24px;line-height:1.5;}
+  .c-ta::placeholder{color:#9CA3AF;}
+  .send-btn{width:36px;height:36px;border-radius:8px;background:var(--navy);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:16px;transition:background .15s;flex-shrink:0;}
+  .send-btn:hover{background:var(--blue);}
+  .hints{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
+  .hint{font-size:11px;color:var(--gray);padding:3px 10px;border-radius:99px;border:1px solid var(--gray-mid);cursor:pointer;transition:all .12s;background:#fff;}
+  .hint:hover{background:var(--blue-light);color:var(--blue);border-color:#BFDBFE;}
+  /* RIGHT */
+  .rp{width:380px;flex-shrink:0;background:#fff;border-left:1px solid var(--gray-mid);display:flex;flex-direction:column;overflow:hidden;}
+  .r-tabs{display:flex;border-bottom:1px solid var(--gray-mid);background:#FAFAFA;flex-shrink:0;}
+  .r-tab{flex:1;padding:12px 8px;text-align:center;font-size:12px;font-weight:600;color:var(--gray);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;}
+  .r-tab:hover{color:var(--dark);background:var(--gray-light);}
+  .r-tab.active{color:var(--blue);border-bottom-color:var(--blue);background:#fff;}
+  .r-cnt{flex:1;overflow-y:auto;}
+  .r-cnt::-webkit-scrollbar{width:4px;}
+  .r-cnt::-webkit-scrollbar-thumb{background:var(--gray-mid);border-radius:99px;}
+  .ds{padding:14px 14px 6px;}
+  .ds-t{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--gray);margin-bottom:10px;}
+  .dc-card{border:1px solid var(--gray-mid);border-radius:10px;padding:12px;margin-bottom:8px;cursor:pointer;transition:all .15s;}
+  .dc-card:hover{border-color:var(--blue);box-shadow:0 2px 8px rgba(37,99,235,.08);}
+  .dc-card.sel{border-color:var(--blue);background:var(--blue-xlight);}
+  .dc-card.flagged{border-color:#FCA5A5;background:#FFF9F9;}
+  .dc-card.flagged:hover{border-color:var(--orange);}
+  .dc-ch{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+  .dc-cn{font-size:13px;font-weight:600;color:var(--dark);flex:1;}
+  .dp{font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;}
+  .dp-a{background:var(--green-light);color:var(--green);}
+  .dp-r{background:var(--orange-light);color:var(--orange);}
+  .dp-p{background:var(--gray-light);color:var(--gray);}
+  .dc-fr{display:flex;justify-content:space-between;font-size:12px;}
+  .dc-cb{height:3px;background:var(--gray-mid);border-radius:99px;margin-top:6px;overflow:hidden;}
+  .dc-cf{height:100%;border-radius:99px;}
+  .cfh{background:var(--green);} .cfm{background:#F59E0B;} .cfl{background:var(--red);}
+  .miss-c{border:1.5px dashed #FCA5A5;border-radius:10px;padding:12px;margin-bottom:8px;background:#FFF9F9;cursor:pointer;transition:all .15s;}
+  .miss-c:hover{background:#FEE2E2;border-color:var(--orange);}
+  .fs{padding:12px 14px;border-bottom:1px solid var(--gray-mid);background:#FFFBEB;}
+  .fh{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#92400E;margin-bottom:8px;}
+  .fi{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:#92400E;padding:5px 0;border-bottom:1px dashed #FDE68A;}
+  .fi:last-child{border-bottom:none;}
+  .fd{margin-left:auto;font-size:11px;color:#D97706;cursor:pointer;font-weight:600;white-space:nowrap;}
+  .fd:hover{color:#92400E;}
+  /* Return tab */
+  .rp-body{padding:14px;}
+  .rp-hdr{background:var(--navy);color:#fff;border-radius:10px 10px 0 0;padding:14px;}
+  .rl{display:flex;justify-content:space-between;align-items:center;padding:9px 14px;border-bottom:1px solid var(--gray-light);font-size:13px;}
+  .rl:last-child{border-bottom:none;}
+  .rln{color:var(--gray);font-size:11px;width:30px;flex-shrink:0;}
+  .rll{color:var(--dark);flex:1;padding:0 8px;}
+  .rlv{font-weight:700;font-size:14px;}
+  .rl.tot{background:#F0FDF4;}
+  .rl.ref{background:var(--green-light);}
+  .rl.ref .rlv{color:var(--green);font-size:16px;}
+  .rsh{background:var(--gray-light);padding:7px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray);}
+  .sum-box{margin-top:14px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:14px;}
+  .btn{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;}
+  .btn-p{background:var(--navy);color:#fff;} .btn-p:hover{background:var(--blue);}
+  .btn-s{background:#fff;color:var(--dark);border:1px solid var(--gray-mid);} .btn-s:hover{background:var(--gray-light);}
+  .btn-g{background:var(--green);color:#fff;} .btn-g:hover{background:#15803D;}
+  .btn-o{background:var(--orange);color:#fff;}
+  /* Dashboard */
+  .dash{padding:24px 60px;flex:1;overflow-y:auto;}
+  .dash::-webkit-scrollbar{width:6px;}
+  .dash::-webkit-scrollbar-thumb{background:var(--gray-mid);border-radius:99px;}
+  .d-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;}
+  .d-mc{background:#fff;border:1px solid var(--gray-mid);border-radius:12px;padding:16px;}
+  .d-mv{font-size:28px;font-weight:800;}
+  .d-ml{font-size:12px;color:var(--gray);margin-top:2px;}
+  .kanban{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+  .kc{background:var(--gray-light);border-radius:10px;padding:10px;min-height:160px;}
+  .kch{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+  .kn{background:#fff;color:var(--dark);font-size:11px;font-weight:700;padding:1px 7px;border-radius:99px;}
+  .kcard{background:#fff;border:1px solid var(--gray-mid);border-radius:8px;padding:10px;margin-bottom:8px;cursor:pointer;transition:all .15s;}
+  .kcard:hover{border-color:var(--blue);box-shadow:0 2px 8px rgba(37,99,235,.1);transform:translateY(-1px);}
+  .kcn{font-size:12px;font-weight:700;color:var(--dark);}
+  .kcy{font-size:11px;color:var(--gray);margin-top:2px;}
+  .kcf{font-size:11px;color:var(--orange);font-weight:600;margin-top:5px;}
+  .pb{height:4px;background:var(--gray-mid);border-radius:99px;margin-top:6px;overflow:hidden;}
+  .pf{height:100%;border-radius:99px;background:var(--blue);}
+  .hidden{display:none!important;}
+  /* DOC LINKS */
+  .dlink{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--blue);cursor:pointer;text-decoration:underline;text-decoration-style:dotted;}
+  .dlink:hover{color:var(--navy);}
+  .dlink.fl-link{color:var(--orange);}
+  .dlink.fl-link:hover{color:var(--red);}
+  /* MODAL */
+  .mo{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;animation:ovIn .18s ease;}
+  @keyframes ovIn{from{opacity:0}to{opacity:1}}
+  .mo.hidden{display:none!important;}
+  .mc{background:#fff;border-radius:16px;box-shadow:0 24px 64px rgba(0,0,0,.2);display:flex;flex-direction:column;overflow:hidden;animation:mcIn .22s cubic-bezier(.16,1,.3,1);max-height:calc(100vh - 48px);}
+  @keyframes mcIn{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+  .mc.sm{width:700px;} .mc.lg{width:1120px;}
+  .m-hdr{padding:16px 20px;border-bottom:1px solid var(--gray-mid);display:flex;align-items:center;gap:12px;flex-shrink:0;background:#fff;}
+  .m-cb{display:flex;align-items:center;gap:10px;background:var(--gray-light);border:1px solid var(--gray-mid);border-radius:10px;padding:8px 14px;flex-shrink:0;}
+  .m-cav{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
+  .m-cn{font-size:13px;font-weight:700;color:var(--dark);}
+  .m-cm{font-size:11px;color:var(--gray);margin-top:1px;}
+  .m-dt{font-size:15px;font-weight:700;color:var(--dark);}
+  .m-ds{font-size:12px;color:var(--gray);margin-top:2px;}
+  .m-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--gray-mid);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--gray);transition:all .15s;flex-shrink:0;}
+  .m-close:hover{background:var(--red-light);color:var(--red);border-color:#FCA5A5;}
+  .m-body{display:flex;flex:1;overflow:hidden;min-height:0;}
+  .m-ftr{padding:12px 20px;border-top:1px solid var(--gray-mid);display:flex;align-items:center;gap:10px;flex-shrink:0;background:#FAFAFA;}
+  /* PDF pane */
+  .pdf-p{flex:1;overflow-y:auto;background:#6B7280;display:flex;flex-direction:column;align-items:center;padding:20px;gap:14px;}
+  .pdf-p::-webkit-scrollbar{width:6px;}
+  .pdf-p::-webkit-scrollbar-thumb{background:#4B5563;border-radius:99px;}
+  .pdf-tb{width:100%;max-width:620px;background:#fff;border-radius:8px;padding:7px 14px;display:flex;align-items:center;gap:10px;font-size:12px;color:var(--gray);box-shadow:0 2px 8px rgba(0,0,0,.15);}
+  .pdf-pg{width:100%;max-width:620px;background:#fff;border-radius:4px;box-shadow:0 4px 16px rgba(0,0,0,.3);overflow:hidden;position:relative;}
+  /* IRS FORM */
+  .if{font-family:Arial,Helvetica,sans-serif;font-size:11px;}
+  .if-hdr{background:#1a1a1a;color:#fff;padding:8px 14px;display:flex;align-items:center;justify-content:space-between;}
+  .if-htitle{font-size:16px;font-weight:800;letter-spacing:1px;}
+  .if-hyear{font-size:13px;font-weight:700;color:#FCD34D;}
+  .if-body{padding:12px 14px;}
+  .if-pb{background:#F9FAFB;border:1px solid #333;padding:8px;margin-bottom:8px;position:relative;}
+  .if-pn{font-size:14px;font-weight:800;color:#111;}
+  .if-pa{font-size:10px;color:#555;margin-top:2px;}
+  .if-rb{border:1px solid #333;padding:8px;margin-bottom:8px;display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .if-bl{font-size:9px;color:#555;font-weight:600;text-transform:uppercase;display:block;margin-bottom:2px;}
+  .if-bv{font-size:13px;font-weight:700;color:#111;}
+  .if-bv.ff{background:#FEF9C3;color:#92400E;border-radius:3px;padding:1px 4px;}
+  .if-bv.ff::after{content:'⚠ Low confidence';font-size:8px;color:#D97706;display:block;font-weight:400;}
+  .if-grid{display:grid;gap:0;border-left:1px solid #333;border-top:1px solid #333;}
+  .if-grid .if-box{border-left:none;border-top:none;border-right:1px solid #333;border-bottom:1px solid #333;}
+  .if-box{border:1px solid #555;padding:4px 6px;}
+  .if-ok{background:#D1FAE5;color:#065F46;border-radius:3px;padding:1px 4px;display:inline-block;}
+  .if-stamp{position:absolute;top:10px;right:10px;border:3px solid var(--green);color:var(--green);font-weight:800;font-size:10px;padding:3px 8px;border-radius:4px;transform:rotate(-8deg);opacity:.7;text-transform:uppercase;}
+  .if-stamp.fl{border-color:var(--orange);color:var(--orange);}
+  /* Form pane */
+  .fp{width:340px;flex-shrink:0;border-left:1px solid var(--gray-mid);display:flex;flex-direction:column;overflow:hidden;background:#FAFAFA;}
+  .fp-hdr{padding:14px 16px;border-bottom:1px solid var(--gray-mid);background:#fff;}
+  .fp-title{font-size:13px;font-weight:700;color:var(--dark);}
+  .fp-sub{font-size:11px;color:var(--gray);margin-top:2px;}
+  .fp-body{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px;}
+  .fp-body::-webkit-scrollbar{width:4px;}
+  .fp-body::-webkit-scrollbar-thumb{background:var(--gray-mid);border-radius:99px;}
+  .ff-field{display:flex;flex-direction:column;gap:4px;}
+  .ff-field label{font-size:11px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.4px;}
+  .ff-field input,.ff-field select{border:1.5px solid var(--gray-mid);border-radius:8px;padding:8px 10px;font-size:13px;font-family:var(--font);color:var(--dark);background:#fff;outline:none;transition:border-color .15s;}
+  .ff-field input:focus{border-color:var(--blue);}
+  .ff-field input.ok{border-color:var(--green);background:#F0FDF4;}
+  .ff-field input.wn{border-color:var(--orange);background:#FFFBEB;}
+  .ff-field input.er{border-color:var(--red);background:#FFF5F5;}
+  .fn{font-size:11px;margin-top:2px;font-weight:500;}
+  .fn.ok{color:var(--green);} .fn.wn{color:var(--orange);} .fn.er{color:var(--red);}
+  .fp-div{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--gray);border-bottom:1px solid var(--gray-mid);padding-bottom:4px;margin-top:4px;}
+  .cb-i{font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;}
+  .cb-h{background:var(--green-light);color:var(--green);}
+  .cb-m{background:#FEF9C3;color:#854D0E;}
+  .cb-l{background:var(--red-light);color:var(--red);}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:8px">
+    <div class="tb-logo-icon">T</div>
+    <div><span class="tb-logo-name">TaxFlow AI</span><span style="font-size:11px;color:#94A3B8;margin-left:2px"> by CPAX</span></div>
+  </div>
+  <div class="tb-div"></div>
+  <div class="tb-season">Tax Season 2024</div>
+  <div class="tb-right">
+    <div style="display:flex;gap:16px">
+      <div><div class="tb-stat-val">47</div><div class="tb-stat-lbl">Clients</div></div>
+      <div><div class="tb-stat-val">12</div><div class="tb-stat-lbl">Filed</div></div>
+      <div><div class="tb-stat-val" style="color:#FCA5A5">8</div><div class="tb-stat-lbl">Review</div></div>
+    </div>
+    <div class="tb-div"></div>
+    <div class="tb-deadline">⏰ April 15 in 8 days</div>
+    <div class="tb-avatar">SC</div>
+  </div>
+</div>
+<div class="app-body">
+  <!-- LEFT PANE -->
+  <div class="lp">
+    <div class="lp-head">
+      <div class="search-bar">
+        <span style="color:#9CA3AF;font-size:13px">🔍</span>
+        <input type="text" placeholder="Search clients, documents…" oninput="filterClients(this.value)">
+      </div>
+    </div>
+    <div class="lp-sec-label">Clients <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#94A3B8">47</span>
+      <div class="add-btn" onclick="alert('Add New Client')" title="Add Client">+</div>
+    </div>
+    <div class="client-list" id="clientList">
+      <!-- SMITH -->
+      <div class="ci active" id="ci-smith" onclick="selClient('smith')">
+        <div class="ci-row">
+          <div class="ci-av" style="background:#1D4ED8">SM</div>
+          <div class="ci-info"><div class="ci-name">Smith Family</div><div class="ci-meta">John & Jane · MFJ · 2 dep.</div></div>
+          <span class="sb sb-inprog">In Progress</span>
+          <span class="chev open" id="ch-smith">›</span>
+        </div>
+        <div class="yr-sec" id="ys-smith">
+          <div class="yr-row ayr"><span>📁</span><span style="font-size:12px;font-weight:500;flex:1">2024 Tax Year</span><span class="yr-badge awf">Active</span></div>
+          <div class="docs-sec">
+            <div class="dc" onclick="openDoc('w2-john',event)"><span>📄</span><span class="dc-name">W-2 (John)</span><span class="dc-conf ch">99%</span></div>
+            <div class="dc" onclick="openDoc('w2-jane',event)"><span>📄</span><span class="dc-name">W-2 (Jane)</span><span class="dc-conf ch">97%</span></div>
+            <div class="dc" onclick="openDoc('1099-int',event)"><span>📄</span><span class="dc-name">1099-INT</span><span class="dc-conf cm">82%</span><span style="font-size:11px">⚠️</span></div>
+            <div class="dc" onclick="openDoc('1098',event)"><span>📄</span><span class="dc-name">1098 Mortgage</span><span class="dc-conf ch">95%</span></div>
+          </div>
+          <div class="yr-row" style="opacity:.65"><span>📂</span><span style="font-size:12px;font-weight:500;flex:1">2023 Tax Year</span><span class="yr-badge">Filed</span></div>
+        </div>
+      </div>
+      <!-- JOHNSON -->
+      <div class="ci" id="ci-johnson" onclick="selClient('johnson')">
+        <div class="ci-row">
+          <div class="ci-av" style="background:#9A3412">JO</div>
+          <div class="ci-info"><div class="ci-name">Johnson Family</div><div class="ci-meta">Robert & Maria · MFJ · 3 dep.</div></div>
+          <span class="sb sb-review">Review</span>
+          <span class="chev" id="ch-johnson">›</span>
+        </div>
+        <div class="yr-sec hidden" id="ys-johnson">
+          <div class="yr-row ayr"><span>📁</span><span style="font-size:12px;font-weight:500;flex:1">2024 Tax Year</span><span class="yr-badge" style="background:#FFEDD5;color:#9A3412;border-color:#FED7AA">3 Flags</span></div>
+          <div class="docs-sec">
+            <div class="dc" onclick="openDoc('j-w2',event)"><span>📄</span><span class="dc-name">W-2 (Robert)</span><span class="dc-conf ch">98%</span></div>
+            <div class="dc" onclick="openDoc('1099-b',event)"><span>📄</span><span class="dc-name">1099-B</span><span class="dc-conf cl">61%</span><span style="font-size:11px">🚨</span></div>
+            <div class="dc" onclick="openDoc('k1',event)"><span>📄</span><span class="dc-name">Schedule K-1</span><span class="dc-conf cm">79%</span><span style="font-size:11px">⚠️</span></div>
+          </div>
+        </div>
+      </div>
+      <!-- WILLIAMS -->
+      <div class="ci" id="ci-williams" onclick="selClient('williams')">
+        <div class="ci-row">
+          <div class="ci-av" style="background:#14532D">WI</div>
+          <div class="ci-info"><div class="ci-name">Williams, Patricia</div><div class="ci-meta">Single · No dependents</div></div>
+          <span class="sb sb-done">Completed</span>
+          <span class="chev" id="ch-williams">›</span>
+        </div>
+        <div class="yr-sec hidden" id="ys-williams"></div>
+      </div>
+      <!-- GARCIA -->
+      <div class="ci" id="ci-garcia" onclick="selClient('garcia')">
+        <div class="ci-row">
+          <div class="ci-av" style="background:#4C1D95">GA</div>
+          <div class="ci-info"><div class="ci-name">Garcia Family</div><div class="ci-meta">Miguel & Rosa · MFJ · 1 dep.</div></div>
+          <span class="sb sb-filed">Filed</span>
+          <span class="chev" id="ch-garcia">›</span>
+        </div>
+        <div class="yr-sec hidden" id="ys-garcia"></div>
+      </div>
+      <!-- THOMPSON -->
+      <div class="ci" id="ci-thompson" onclick="selClient('thompson')">
+        <div class="ci-row">
+          <div class="ci-av" style="background:#64748B">TH</div>
+          <div class="ci-info"><div class="ci-name">Thompson, Daniel</div><div class="ci-meta">Single · Self-employed</div></div>
+          <span class="sb sb-pending">Pending</span>
+          <span class="chev" id="ch-thompson">›</span>
+        </div>
+        <div class="yr-sec hidden" id="ys-thompson"></div>
+      </div>
+      <!-- LEE -->
+      <div class="ci" id="ci-lee" onclick="selClient('lee')">
+        <div class="ci-row">
+          <div class="ci-av" style="background:#0F766E">LE</div>
+          <div class="ci-info"><div class="ci-name">Lee Family</div><div class="ci-meta">David & Jennifer · MFJ · 2 dep.</div></div>
+          <span class="sb sb-inprog">In Progress</span>
+          <span class="chev" id="ch-lee">›</span>
+        </div>
+        <div class="yr-sec hidden" id="ys-lee"></div>
+      </div>
+    </div>
+  </div>
+  <!-- CENTER PANE -->
+  <div class="cp">
+    <div class="ctx-bar" id="ctxBar">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="ctx-av" id="ctxAv" style="background:#1D4ED8">SM</div>
+        <div><div style="font-size:14px;font-weight:700" id="ctxName">Smith Family — 2024 Federal 1040</div><div style="font-size:12px;color:var(--gray)" id="ctxSub">John & Jane Smith · MFJ · 2 Dependents</div></div>
+      </div>
+      <div class="ctx-div"></div>
+      <div class="stepper">
+        <div class="step done"><div class="step-num">✓</div><span class="step-lbl">Intake</span></div><span class="s-arr">›</span>
+        <div class="step done"><div class="step-num">✓</div><span class="step-lbl">Extraction</span></div><span class="s-arr">›</span>
+        <div class="step active"><div class="step-num">3</div><span class="step-lbl">Tax Profile</span></div><span class="s-arr">›</span>
+        <div class="step pending"><div class="step-num">4</div><span class="step-lbl">Preparation</span></div><span class="s-arr">›</span>
+        <div class="step pending"><div class="step-num">5</div><span class="step-lbl">Review</span></div><span class="s-arr">›</span>
+        <div class="step pending"><div class="step-num">6</div><span class="step-lbl">File</span></div>
+      </div>
+    </div>
+    <!-- Dashboard -->
+    <div class="dash hidden" id="dashboard">
+      <div style="font-size:22px;font-weight:800;margin-bottom:4px">Good morning, Sarah 👋</div>
+      <div style="font-size:14px;color:var(--gray);margin-bottom:24px">Here's your practice — 8 days until April 15.</div>
+      <div class="d-metrics">
+        <div class="d-mc"><div class="d-mv">47</div><div class="d-ml">Total Clients</div><div style="font-size:11px;font-weight:600;margin-top:4px;color:var(--green)">↑ 6 vs last season</div></div>
+        <div class="d-mc"><div class="d-mv">12</div><div class="d-ml">Filed</div><div style="font-size:11px;font-weight:600;margin-top:4px;color:var(--green)">25.5% complete</div></div>
+        <div class="d-mc"><div class="d-mv" style="color:var(--orange)">8</div><div class="d-ml">Need Review</div><div style="font-size:11px;font-weight:600;margin-top:4px;color:var(--orange)">⚠ Attention needed</div></div>
+        <div class="d-mc"><div class="d-mv" style="color:var(--gray)">11</div><div class="d-ml">Pending Intake</div><div style="font-size:11px;font-weight:600;margin-top:4px;color:var(--gray)">Reminders sent</div></div>
+      </div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:14px">Practice Pipeline</div>
+      <div class="kanban">
+        <div class="kc"><div class="kch">⬜ Pending<span class="kn">11</span></div>
+          <div class="kcard" onclick="selClient('thompson')"><div class="kcn">Thompson, D.</div><div class="kcy">2024 · Self-employed</div></div>
+          <div class="kcard"><div class="kcn">Patel Family</div><div class="kcy">2024 · 3 dep.</div></div>
+        </div>
+        <div class="kc"><div class="kch" style="color:var(--blue)">🔵 In Progress<span class="kn">14</span></div>
+          <div class="kcard" onclick="selClient('smith')"><div class="kcn">Smith Family</div><div class="kcy">Step 3/6</div><div class="pb"><div class="pf" style="width:50%"></div></div></div>
+          <div class="kcard" onclick="selClient('lee')"><div class="kcn">Lee Family</div><div class="kcy">Step 2/6</div><div class="pb"><div class="pf" style="width:33%"></div></div></div>
+        </div>
+        <div class="kc"><div class="kch" style="color:var(--orange)">🟠 Review<span class="kn">8</span></div>
+          <div class="kcard" onclick="selClient('johnson')"><div class="kcn">Johnson Family</div><div class="kcy">1099-B issue</div><div class="kcf">⚠ 3 flags</div></div>
+        </div>
+        <div class="kc"><div class="kch" style="color:var(--green)">🟢 Completed<span class="kn">2</span></div>
+          <div class="kcard" onclick="selClient('williams')"><div class="kcn">Williams, P.</div><div class="kcy">Ready to file</div></div>
+        </div>
+        <div class="kc"><div class="kch" style="color:var(--purple)">🟣 Filed<span class="kn">12</span></div>
+          <div class="kcard" onclick="selClient('garcia')"><div class="kcn">Garcia Family</div><div class="kcy">IRS Accepted</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="chat-area" id="chatArea"></div>
+    <div class="ci-wrap">
+      <div class="ci-box">
+        <div style="display:flex;gap:6px">
+          <div class="ia-btn" title="Upload document" onclick="openDoc('upload',null)">📎</div>
+          <div class="ia-btn" title="Run pipeline">⚡</div>
+        </div>
+        <textarea class="c-ta" id="chatIn" placeholder="Ask anything about this return, or instruct the AI…" rows="1" onkeydown="handleEnter(event)" oninput="autoResize(this)"></textarea>
+        <button class="send-btn" onclick="sendMsg()">➤</button>
+      </div>
+      <div class="hints">
+        <span class="hint" onclick="fill('What is the estimated refund?')">💰 Refund estimate</span>
+        <span class="hint" onclick="fill('What documents are missing?')">📋 Missing docs</span>
+        <span class="hint" onclick="fill('Compare to their 2023 return')">📈 Year-over-year</span>
+        <span class="hint" onclick="fill('Check Child Tax Credit eligibility')">👶 Credits check</span>
+        <span class="hint" onclick="fill('Why was standard deduction chosen?')">❓ Explain decision</span>
+      </div>
+    </div>
+  </div>
+  <!-- RIGHT PANE -->
+  <div class="rp">
+    <div class="r-tabs">
+      <div class="r-tab active" onclick="switchTab('documents',this)">Documents</div>
+      <div class="r-tab" onclick="switchTab('return',this)">Tax Return</div>
+      <div class="r-tab" onclick="switchTab('filed',this)">Filed</div>
+    </div>
+    <div class="r-cnt" id="tab-documents">
+      <div class="fs" id="flagSec">
+        <div class="fh">⚠️ AI Flags — 2 Need Review</div>
+        <div class="fi" id="flag1"><span>🔸 <span class="dlink fl-link" onclick="openDoc('1099-int',null)">1099-INT ↗</span> — interest $1,365 lower than 2023</span><span class="fd" onclick="dimFlag('flag1')">Dismiss</span></div>
+        <div class="fi" id="flag2"><span>🔸 <span class="dlink fl-link" onclick="openDoc('1099-int',null)">1099-INT ↗</span> — account number 82% confidence</span><span class="fd" onclick="dimFlag('flag2')">Dismiss</span></div>
+      </div>
+      <div class="ds">
+        <div class="ds-t">Uploaded Documents (4)</div>
+        <div class="dc-card sel" onclick="openDoc('w2-john',null)">
+          <div class="dc-ch"><span style="font-size:20px">📄</span><span class="dc-cn">W-2 — John Smith</span><span class="dp dp-a">Approved</span></div>
+          <div class="dc-fr"><span style="color:var(--gray)">Wages</span><span style="font-weight:600">$112,400</span></div>
+          <div class="dc-cb"><div class="dc-cf cfh" style="width:99%"></div></div>
+          <div style="font-size:11px;color:var(--green);margin-top:4px;font-weight:600">99% · Click to view document ↗</div>
+        </div>
+        <div class="dc-card" onclick="openDoc('w2-jane',null)">
+          <div class="dc-ch"><span style="font-size:20px">📄</span><span class="dc-cn">W-2 — Jane Smith</span><span class="dp dp-a">Approved</span></div>
+          <div class="dc-fr"><span style="color:var(--gray)">Wages</span><span style="font-weight:600">$72,800</span></div>
+          <div class="dc-cb"><div class="dc-cf cfh" style="width:97%"></div></div>
+          <div style="font-size:11px;color:var(--green);margin-top:4px;font-weight:600">97% · Click to view document ↗</div>
+        </div>
+        <div class="dc-card flagged" onclick="openDoc('1099-int',null)">
+          <div class="dc-ch"><span style="font-size:20px">📄</span><span class="dc-cn">1099-INT — Chase Bank</span><span class="dp dp-r">⚠ Review</span></div>
+          <div class="dc-fr"><span style="color:var(--gray)">Interest</span><span style="font-weight:600;color:var(--orange)">$3,847 ⚠</span></div>
+          <div class="dc-cb"><div class="dc-cf cfm" style="width:82%"></div></div>
+          <div style="font-size:11px;color:var(--orange);margin-top:4px;font-weight:600">82% · Click to review & validate ↗</div>
+        </div>
+        <div class="dc-card" onclick="openDoc('1098',null)">
+          <div class="dc-ch"><span style="font-size:20px">📄</span><span class="dc-cn">1098 — Wells Fargo</span><span class="dp dp-a">Approved</span></div>
+          <div class="dc-fr"><span style="color:var(--gray)">Mortgage Int.</span><span style="font-weight:600">$18,340</span></div>
+          <div class="dc-cb"><div class="dc-cf cfh" style="width:95%"></div></div>
+          <div style="font-size:11px;color:var(--green);margin-top:4px;font-weight:600">95% · Click to view document ↗</div>
+        </div>
+      </div>
+      <div class="ds" style="padding-top:0">
+        <div class="ds-t" style="color:var(--red)">⚠ Possibly Missing (1)</div>
+        <div class="miss-c">
+          <div style="font-size:13px;font-weight:600;color:var(--red)">1099-DIV — Vanguard</div>
+          <div style="font-size:12px;color:#9B1C1C;margin-top:3px">Present in 2023. Confirm if no dividends this year.</div>
+          <div style="display:flex;gap:6px;margin-top:8px">
+            <button class="btn btn-s" style="font-size:11px;padding:4px 10px">Not Applicable</button>
+            <button class="btn btn-p" style="font-size:11px;padding:4px 10px">Upload It</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="r-cnt hidden" id="tab-return">
+      <div class="rp-body">
+        <div class="rp-hdr"><div style="font-size:14px;font-weight:700">Form 1040 — Draft Preview</div><div style="font-size:11px;color:#94A3B8;margin-top:2px">Smith Family · MFJ · 2024 · AI Draft</div></div>
+        <div style="border:1px solid var(--gray-mid);border-top:none;border-radius:0 0 10px 10px;overflow:hidden">
+          <div class="rsh">Income</div>
+          <div class="rl"><span class="rln">1a</span><span class="rll">Total wages</span><span class="rlv">$185,200</span></div>
+          <div class="rl"><span class="rln">2b</span><span class="rll">Taxable interest <span class="dlink" onclick="openDoc('1099-int',null)" style="font-size:11px">verify ↗</span></span><span class="rlv">$3,847</span></div>
+          <div class="rl tot"><span class="rln">9</span><span class="rll"><strong>Total Income</strong></span><span class="rlv"><strong>$189,047</strong></span></div>
+          <div class="rsh">Deductions</div>
+          <div class="rl"><span class="rln">12</span><span class="rll">Standard deduction</span><span class="rlv">$29,200</span></div>
+          <div class="rl tot"><span class="rln">15</span><span class="rll"><strong>Taxable Income</strong></span><span class="rlv"><strong>$159,847</strong></span></div>
+          <div class="rsh">Tax & Credits</div>
+          <div class="rl"><span class="rln">16</span><span class="rll">Tax</span><span class="rlv">$28,420</span></div>
+          <div class="rl"><span class="rln">19</span><span class="rll">Child Tax Credit</span><span class="rlv" style="color:var(--green)">-$4,000</span></div>
+          <div class="rl tot"><span class="rln">24</span><span class="rll"><strong>Total Tax</strong></span><span class="rlv"><strong>$24,420</strong></span></div>
+          <div class="rsh">Payments & Refund</div>
+          <div class="rl"><span class="rln">25</span><span class="rll">Withholding</span><span class="rlv">$29,240</span></div>
+          <div class="rl ref"><span class="rln">35a</span><span class="rll"><strong>REFUND</strong></span><span class="rlv">$4,820</span></div>
+        </div>
+        <div class="sum-box">
+          <div style="font-size:28px;font-weight:800;color:var(--green)">$4,820</div>
+          <div style="font-size:12px;color:#166534;margin-top:2px">Federal Refund · Eff. rate 12.9%</div>
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <button class="btn btn-p" onclick="openDoc('1040-draft',null)">View Full 1040</button>
+            <button class="btn btn-g">Approve & File →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="r-cnt hidden" id="tab-filed">
+      <div style="padding:16px">
+        <div style="background:var(--gray-light);border-radius:10px;padding:12px;margin-bottom:14px;font-size:13px;color:var(--gray)">ℹ️ Smith Family 2024 not yet filed. Showing Garcia as example.</div>
+        <div style="border:1px solid var(--gray-mid);border-radius:10px;overflow:hidden">
+          <div style="background:var(--purple);padding:12px;color:#fff"><div style="font-size:13px;font-weight:700">Garcia Family · 2024 · Filed</div><div style="font-size:11px;color:#C4B5FD;margin-top:2px">IRS accepted</div></div>
+          <div style="padding:0 14px">
+            <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--gray-light);font-size:13px"><span style="color:var(--gray)">Submission</span><span style="font-weight:600">Mar 28, 2024 9:41 AM</span></div>
+            <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--gray-light);font-size:13px"><span style="color:var(--gray)">IRS Ack.</span><span style="font-weight:600;color:var(--green)">✓ Accepted</span></div>
+            <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--gray-light);font-size:13px"><span style="color:var(--gray)">Ack. ID</span><span style="font-weight:600">IRS-2024-MEF-884729</span></div>
+            <div style="display:flex;justify-content:space-between;padding:9px 0;font-size:13px"><span style="color:var(--gray)">Refund</span><span style="font-weight:600;color:var(--green)">$3,240</span></div>
+          </div>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px">
+          <button class="btn btn-s" onclick="openDoc('filed-return',null)">📄 View Return</button>
+          <button class="btn btn-s">📋 IRS Letter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="mo hidden" id="docModal" onclick="closeBkd(event)">
+  <div class="mc sm" id="modalCtr">
+    <div class="m-hdr">
+      <div class="m-cb">
+        <div class="m-cav" id="mCAv" style="background:#1D4ED8">SM</div>
+        <div><div class="m-cn" id="mCName">Smith Family</div><div class="m-cm" id="mCMeta">John & Jane Smith · MFJ · 2024</div></div>
+      </div>
+      <div style="width:10px"></div>
+      <div style="flex:1"><div class="m-dt" id="mDocTitle">Document Viewer</div><div class="m-ds" id="mDocSub">Tax Year 2024</div></div>
+      <div id="mStatusBadge" style="margin-right:8px"></div>
+      <div class="m-close" onclick="closeModal()">✕</div>
+    </div>
+    <div class="m-body" id="mBody"></div>
+    <div class="m-ftr">
+      <div style="flex:1;font-size:12px;color:var(--gray)" id="mFtrLeft">Review extracted data before approving.</div>
+      <button class="btn btn-s" onclick="closeModal()">Close</button>
+      <button class="btn btn-p" id="mApproveBtn" onclick="handleApprove()">✓ Approve</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// DOC REGISTRY
+const DOCS={
+  'w2-john':{title:'Form W-2 — Wage and Tax Statement',sub:'John Smith · Acme Corporation · 2024',status:'approved',conf:99,flaw:false,client:{id:'smith',name:'Smith Family',meta:'John & Jane Smith · MFJ · 2024',av:'SM',color:'#1D4ED8'}},
+  'w2-jane':{title:'Form W-2 — Wage and Tax Statement',sub:'Jane Smith · Sunrise Health LLC · 2024',status:'approved',conf:97,flaw:false,client:{id:'smith',name:'Smith Family',meta:'John & Jane Smith · MFJ · 2024',av:'SM',color:'#1D4ED8'}},
+  '1099-int':{title:'Form 1099-INT — Interest Income',sub:'Chase Bank N.A. · Account ••••8821 · 2024',status:'review',conf:82,flaw:true,client:{id:'smith',name:'Smith Family',meta:'John & Jane Smith · MFJ · 2024',av:'SM',color:'#1D4ED8'}},
+  '1098':{title:'Form 1098 — Mortgage Interest Statement',sub:'Wells Fargo Bank · 42 Oak St, Princeton NJ · 2024',status:'approved',conf:95,flaw:false,client:{id:'smith',name:'Smith Family',meta:'John & Jane Smith · MFJ · 2024',av:'SM',color:'#1D4ED8'}},
+  'j-w2':{title:'Form W-2 — Wage and Tax Statement',sub:'Robert Johnson · Meridian Consulting · 2024',status:'approved',conf:98,flaw:false,client:{id:'johnson',name:'Johnson Family',meta:'Robert & Maria Johnson · MFJ · 2024',av:'JO',color:'#9A3412'}},
+  '1099-b':{title:'Form 1099-B — Proceeds from Broker',sub:'Fidelity Investments · Multiple transactions · 2024',status:'review',conf:61,flaw:true,client:{id:'johnson',name:'Johnson Family',meta:'Robert & Maria Johnson · MFJ · 2024',av:'JO',color:'#9A3412'}},
+  'k1':{title:"Schedule K-1 — Partner's Share of Income",sub:'Oak Ridge Partners LLC · 2024',status:'review',conf:79,flaw:true,client:{id:'johnson',name:'Johnson Family',meta:'Robert & Maria Johnson · MFJ · 2024',av:'JO',color:'#9A3412'}},
+  '1040-draft':{title:'Form 1040 — AI-Generated Draft',sub:'Smith Family · MFJ · 2024 · For Review Only',status:'review',conf:96,flaw:false,client:{id:'smith',name:'Smith Family',meta:'John & Jane Smith · MFJ · 2024',av:'SM',color:'#1D4ED8'}},
+  'filed-return':{title:'Form 1040 — Filed Return',sub:'Garcia Family · MFJ · 2024 · IRS Accepted',status:'filed',conf:100,flaw:false,client:{id:'garcia',name:'Garcia Family',meta:'Miguel & Rosa Garcia · MFJ · 2024',av:'GA',color:'#4C1D95'}}
+};
+
+// PDF RENDERERS
+function rW2(id){
+  const j=id==='w2-jane';
+  return`<div class="if"><div class="if-hdr"><div><div style="font-size:9px;letter-spacing:1px;color:#9CA3AF;margin-bottom:2px">DEPARTMENT OF THE TREASURY — IRS</div><div class="if-htitle">W-2 WAGE AND TAX STATEMENT</div></div><div><div class="if-hyear">2024</div><div style="font-size:9px;color:#9CA3AF;text-align:right">OMB No. 1545-0008</div></div></div>
+  <div class="if-body"><div class="if-pb" style="position:relative"><div style="font-size:9px;color:#555;font-weight:600;margin-bottom:4px">EMPLOYER'S NAME, ADDRESS, ZIP</div><div class="if-pn">${j?'SUNRISE HEALTH LLC':'ACME CORPORATION'}</div><div class="if-pa">${j?'800 Medical Plaza, Edison, NJ 08817':'1 Corporate Way, Parsippany, NJ 07054'}</div><div style="margin-top:6px;font-size:10px"><span style="color:#555">EIN:</span> <span style="font-weight:700">${j?'84-2918374':'47-1923847'}</span></div><div class="if-stamp">✓ Verified</div></div>
+  <div class="if-rb"><div><span class="if-bl">Employee SSN</span><span class="if-bv">***-**-${j?'7892':'1234'}</span></div><div><span class="if-bl">Employee Name</span><span class="if-bv">${j?'JANE M. SMITH':'JOHN A. SMITH'}</span></div><div style="grid-column:1/-1"><span class="if-bl">Address</span><span class="if-bv">42 Oak Street, Princeton, NJ 08540</span></div></div>
+  <div class="if-grid" style="grid-template-columns:repeat(4,1fr)">
+    <div class="if-box"><span class="if-bl">Box 1 Wages</span><span class="if-bv if-ok">${j?'$72,800.00':'$112,400.00'}</span></div>
+    <div class="if-box"><span class="if-bl">Box 2 Fed Tax</span><span class="if-bv if-ok">${j?'$11,200.00':'$18,750.00'}</span></div>
+    <div class="if-box"><span class="if-bl">Box 3 SS Wages</span><span class="if-bv">${j?'$72,800.00':'$112,400.00'}</span></div>
+    <div class="if-box"><span class="if-bl">Box 4 SS Tax</span><span class="if-bv">${j?'$4,513.60':'$6,968.80'}</span></div>
+    <div class="if-box"><span class="if-bl">Box 5 Medicare W.</span><span class="if-bv">${j?'$72,800.00':'$112,400.00'}</span></div>
+    <div class="if-box"><span class="if-bl">Box 6 Medicare Tax</span><span class="if-bv">${j?'$1,055.60':'$1,629.80'}</span></div>
+    <div class="if-box"><span class="if-bl">Box 12 Code D (401k)</span><span class="if-bv">${j?'$4,200.00':'$8,500.00'}</span></div>
+    <div class="if-box"><span class="if-bl">Box 15 State</span><span class="if-bv">NJ</span></div>
+  </div>
+  <div class="if-grid" style="grid-template-columns:1fr 1fr">
+    <div class="if-box"><span class="if-bl">Box 16 State Wages</span><span class="if-bv">${j?'$72,800.00':'$112,400.00'}</span></div>
+    <div class="if-box"><span class="if-bl">Box 17 State Tax</span><span class="if-bv">${j?'$3,870.00':'$6,840.00'}</span></div>
+  </div>
+  <div style="margin-top:10px;font-size:9px;color:#9CA3AF;text-align:center">Copy B — To Be Filed With Employee's FEDERAL Tax Return</div>
+  </div></div>`;
+}
+function r1099INT(){return`<div class="if"><div class="if-hdr"><div><div style="font-size:9px;letter-spacing:1px;color:#9CA3AF;margin-bottom:2px">DEPARTMENT OF THE TREASURY — IRS</div><div class="if-htitle">1099-INT INTEREST INCOME</div></div><div><div class="if-hyear">2024</div><div style="font-size:9px;color:#9CA3AF;text-align:right">OMB No. 1545-0112</div></div></div>
+<div class="if-body"><div class="if-pb" style="position:relative"><div style="font-size:9px;color:#555;font-weight:600;margin-bottom:4px">PAYER'S NAME, ADDRESS</div><div class="if-pn">CHASE BANK N.A.</div><div class="if-pa">270 Park Avenue, New York, NY 10017</div><div style="margin-top:6px;font-size:10px"><span style="color:#555">TIN:</span><span style="font-weight:700">13-4994650</span></div><div class="if-stamp fl">⚠ Review</div></div>
+<div class="if-rb"><div><span class="if-bl">Recipient TIN</span><span class="if-bv">***-**-1234 / ***-**-7892</span></div><div><span class="if-bl">Account Number</span><span class="if-bv ff">••••8821</span></div><div style="grid-column:1/-1"><span class="if-bl">Recipient</span><span class="if-bv">JOHN & JANE SMITH — 42 Oak Street, Princeton, NJ 08540</span></div></div>
+<div class="if-grid" style="grid-template-columns:1fr 1fr">
+  <div class="if-box" style="background:#D1FAE5"><span class="if-bl">Box 1 — Interest Income</span><span class="if-bv" style="font-size:18px;color:#065F46">$3,847.00</span><span style="font-size:9px;color:#D97706;display:block;margin-top:2px">↓ vs 2023: $5,212.00 (−26%)</span></div>
+  <div class="if-box"><span class="if-bl">Box 4 — Federal Tax Withheld</span><span class="if-bv">$0.00</span></div>
+  <div class="if-box"><span class="if-bl">Box 8 — Tax-Exempt Interest</span><span class="if-bv">$0.00</span></div>
+  <div class="if-box"><span class="if-bl">Box 11 — FATCA Filing</span><span class="if-bv">No</span></div>
+</div>
+<div style="margin-top:8px;background:#FEF9C3;border:1px solid #FCD34D;border-radius:6px;padding:8px;font-size:10px;color:#92400E">⚠ <strong>AI Note:</strong> Account number partially illegible in scan (82% conf). Interest $3,847 clearly readable. Prior year $5,212 — confirm change with client.</div>
+<div style="margin-top:8px;font-size:9px;color:#9CA3AF;text-align:center">Copy B — To Be Filed With Employee's FEDERAL Tax Return</div></div></div>`;}
+function r1098(){return`<div class="if"><div class="if-hdr"><div><div style="font-size:9px;letter-spacing:1px;color:#9CA3AF;margin-bottom:2px">DEPARTMENT OF THE TREASURY — IRS</div><div class="if-htitle">1098 MORTGAGE INTEREST STATEMENT</div></div><div><div class="if-hyear">2024</div><div style="font-size:9px;color:#9CA3AF;text-align:right">OMB No. 1545-0901</div></div></div>
+<div class="if-body"><div class="if-pb" style="position:relative"><div class="if-pn">WELLS FARGO BANK, N.A.</div><div class="if-pa">420 Montgomery Street, San Francisco, CA 94104</div><div style="margin-top:6px;font-size:10px"><span style="color:#555">TIN:</span><span style="font-weight:700">94-1347393</span></div><div class="if-stamp">✓ Verified</div></div>
+<div class="if-rb"><div><span class="if-bl">Borrower TIN</span><span class="if-bv">***-**-1234</span></div><div><span class="if-bl">Loan Account</span><span class="if-bv">WF-2019-••••3847</span></div><div style="grid-column:1/-1"><span class="if-bl">Borrower</span><span class="if-bv">JOHN A. SMITH & JANE M. SMITH — 42 Oak Street, Princeton, NJ 08540</span></div></div>
+<div class="if-grid" style="grid-template-columns:1fr 1fr">
+  <div class="if-box" style="background:#D1FAE5"><span class="if-bl">Box 1 — Mortgage Interest</span><span class="if-bv if-ok" style="font-size:18px">$18,340.00</span></div>
+  <div class="if-box"><span class="if-bl">Box 2 — Outstanding Principal</span><span class="if-bv">$342,500.00</span></div>
+  <div class="if-box"><span class="if-bl">Box 3 — Origination Date</span><span class="if-bv">08/15/2019</span></div>
+  <div class="if-box"><span class="if-bl">Box 7 — Address secures loan?</span><span class="if-bv">Yes</span></div>
+  <div class="if-box" style="background:#D1FAE5"><span class="if-bl">Box 10 — Real Estate Taxes</span><span class="if-bv if-ok">$6,820.00</span></div>
+  <div class="if-box"><span class="if-bl">Box 11 — Mortgage Insurance</span><span class="if-bv">$0.00</span></div>
+</div>
+<div style="margin-top:8px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:6px;padding:8px;font-size:10px;color:#1E40AF">✓ <strong>AI Note:</strong> Standard deduction ($29,200) exceeds itemized ($28,340). Standard deduction recommended — saves $860.</div>
+<div style="margin-top:8px;font-size:9px;color:#9CA3AF;text-align:center">Copy B — Keep For Your Records</div></div></div>`;}
+function r1099B(){return`<div class="if"><div class="if-hdr"><div><div style="font-size:9px;letter-spacing:1px;color:#9CA3AF;margin-bottom:2px">DEPARTMENT OF THE TREASURY — IRS</div><div class="if-htitle">1099-B PROCEEDS FROM BROKER</div></div><div><div class="if-hyear">2024</div></div></div>
+<div class="if-body"><div class="if-pb" style="position:relative"><div class="if-pn">FIDELITY BROKERAGE SERVICES LLC</div><div class="if-pa">900 Salem Street, Smithfield, RI 02917</div><div style="margin-top:6px;font-size:10px"><span style="color:#555">TIN:</span><span style="font-weight:700">04-3481111</span></div><div class="if-stamp fl">🚨 Flags</div></div>
+<div class="if-rb"><div><span class="if-bl">Recipient TIN</span><span class="if-bv">***-**-5647</span></div><div><span class="if-bl">Account</span><span class="if-bv">Z39-••••4821</span></div><div style="grid-column:1/-1"><span class="if-bl">Recipient</span><span class="if-bv">ROBERT T. JOHNSON</span></div></div>
+<div class="if-grid" style="grid-template-columns:2fr 1fr 1fr 1fr">
+  <div class="if-box" style="background:#F3F4F6;font-size:9px;font-weight:700;color:#555">Description</div>
+  <div class="if-box" style="background:#F3F4F6;font-size:9px;font-weight:700;color:#555">Proceeds</div>
+  <div class="if-box" style="background:#F3F4F6;font-size:9px;font-weight:700;color:#555">Cost Basis</div>
+  <div class="if-box" style="background:#F3F4F6;font-size:9px;font-weight:700;color:#555">Gain/Loss</div>
+  <div class="if-box">AAPL 50 sh (01/15)</div><div class="if-box">$9,350</div><div class="if-box ff" style="font-size:11px">N/R ⚠</div><div class="if-box" style="color:#DC2626;font-weight:700">???</div>
+  <div class="if-box">MSFT 30 sh (03/22)</div><div class="if-box">$12,870</div><div class="if-box ff" style="font-size:11px">N/R ⚠</div><div class="if-box" style="color:#DC2626;font-weight:700">???</div>
+  <div class="if-box">NVDA 20 sh (11/08)</div><div class="if-box">$18,440</div><div class="if-box ff" style="font-size:11px">N/R ⚠</div><div class="if-box" style="color:#DC2626;font-weight:700">???</div>
+</div>
+<div style="margin-top:8px;background:#FEE2E2;border:1px solid #FCA5A5;border-radius:6px;padding:8px;font-size:10px;color:#7F1D1D">🚨 <strong>AI Flag:</strong> Cost basis NOT REPORTED for 3 transactions. Capital gain cannot be calculated. Total proceeds: $40,660. Obtain supplemental 1099-B or purchase records from client.</div></div></div>`;}
+function rK1(){return`<div class="if"><div class="if-hdr"><div><div style="font-size:9px;letter-spacing:1px;color:#9CA3AF;margin-bottom:2px">DEPARTMENT OF THE TREASURY — IRS</div><div class="if-htitle">SCHEDULE K-1 (Form 1065) — PARTNERSHIP</div></div><div><div class="if-hyear">2024</div></div></div>
+<div class="if-body"><div class="if-pb" style="position:relative"><div class="if-pn">OAK RIDGE PARTNERS LLC</div><div class="if-pa">Suite 400, 1200 Route 22 East, Bridgewater, NJ 08807</div><div style="margin-top:6px;font-size:10px"><span style="color:#555">Partnership EIN:</span><span style="font-weight:700">83-2847163</span></div><div class="if-stamp fl">⚠ Review</div></div>
+<div class="if-rb"><div><span class="if-bl">Partner Name</span><span class="if-bv">ROBERT T. JOHNSON</span></div><div><span class="if-bl">Partner Share %</span><span class="if-bv">18.5%</span></div></div>
+<div class="if-grid" style="grid-template-columns:1fr 1fr">
+  <div class="if-box" style="background:#FEF9C3"><span class="if-bl">Box 1 — Ordinary Business Income</span><span class="if-bv ff" style="font-size:14px">$1?,400.00</span><div style="font-size:9px;color:#D97706;margin-top:3px">Digit unclear: $13,400 or $18,400?</div></div>
+  <div class="if-box"><span class="if-bl">Box 2 — Net Rental</span><span class="if-bv">$0.00</span></div>
+  <div class="if-box"><span class="if-bl">Box 6 — Dividends</span><span class="if-bv">$840.00</span></div>
+  <div class="if-box"><span class="if-bl">Box 13 — Other Deductions</span><span class="if-bv">$2,120.00</span></div>
+</div>
+<div style="margin-top:8px;background:#FEF9C3;border:1px solid #FCD34D;border-radius:6px;padding:8px;font-size:10px;color:#92400E">⚠ <strong>AI Flag:</strong> Box 1 middle digit ambiguous (79% conf). Could be $13,400 or $18,400 — $5,000 difference, ~$1,100 tax impact. Contact Oak Ridge Partners to confirm.</div></div></div>`;}
+function r1040(){return`<div class="if"><div class="if-hdr"><div><div style="font-size:9px;letter-spacing:1px;color:#9CA3AF;margin-bottom:2px">DEPARTMENT OF THE TREASURY — INTERNAL REVENUE SERVICE</div><div class="if-htitle">FORM 1040 — U.S. INDIVIDUAL INCOME TAX RETURN</div></div><div><div class="if-hyear">2024</div></div></div>
+<div class="if-body"><div class="if-rb" style="grid-template-columns:1fr 1fr 1fr"><div style="grid-column:1/-1"><span class="if-bl">Name</span><span class="if-bv">JOHN A. SMITH & JANE M. SMITH</span></div><div><span class="if-bl">Your SSN</span><span class="if-bv">***-**-1234</span></div><div><span class="if-bl">Spouse SSN</span><span class="if-bv">***-**-7892</span></div><div><span class="if-bl">Filing Status</span><span class="if-bv">Married Filing Jointly</span></div><div style="grid-column:2/-1"><span class="if-bl">Home Address</span><span class="if-bv">42 Oak Street, Princeton, NJ 08540</span></div></div>
+<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#444;margin:8px 0 4px;border-bottom:1px solid #DDD;padding-bottom:3px">Income</div>
+<div class="if-grid" style="grid-template-columns:auto 1fr auto">
+  <div class="if-box" style="font-size:11px;font-weight:700;width:30px">1a</div><div class="if-box">Total wages, salaries, tips</div><div class="if-box" style="font-weight:700;text-align:right">$185,200</div>
+  <div class="if-box" style="font-size:11px;font-weight:700">2b</div><div class="if-box">Taxable interest</div><div class="if-box" style="font-weight:700;text-align:right">$3,847</div>
+  <div class="if-box" style="background:#F0FDF4;font-weight:800">9</div><div class="if-box" style="background:#F0FDF4"><strong>Total Income</strong></div><div class="if-box" style="font-weight:800;text-align:right;background:#F0FDF4;font-size:15px">$189,047</div>
+</div>
+<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#444;margin:8px 0 4px;border-bottom:1px solid #DDD;padding-bottom:3px">Deductions</div>
+<div class="if-grid" style="grid-template-columns:auto 1fr auto">
+  <div class="if-box" style="font-size:11px;font-weight:700">12</div><div class="if-box">Standard deduction (MFJ 2024)</div><div class="if-box" style="font-weight:700;text-align:right">$29,200</div>
+  <div class="if-box" style="background:#F0FDF4;font-weight:800">15</div><div class="if-box" style="background:#F0FDF4"><strong>Taxable Income</strong></div><div class="if-box" style="font-weight:800;text-align:right;background:#F0FDF4;font-size:15px">$159,847</div>
+</div>
+<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#444;margin:8px 0 4px;border-bottom:1px solid #DDD;padding-bottom:3px">Tax & Credits</div>
+<div class="if-grid" style="grid-template-columns:auto 1fr auto">
+  <div class="if-box" style="font-size:11px;font-weight:700">16</div><div class="if-box">Tax from Tax Tables</div><div class="if-box" style="font-weight:700;text-align:right">$28,420</div>
+  <div class="if-box" style="font-size:11px;font-weight:700">19</div><div class="if-box">Child Tax Credit (2 × $2,000)</div><div class="if-box" style="font-weight:700;text-align:right;color:#16A34A">-$4,000</div>
+  <div class="if-box" style="background:#DCFCE7;font-weight:800">24</div><div class="if-box" style="background:#DCFCE7"><strong>Total Tax</strong></div><div class="if-box" style="font-weight:800;text-align:right;background:#DCFCE7;font-size:15px">$24,420</div>
+</div>
+<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#444;margin:8px 0 4px;border-bottom:1px solid #DDD;padding-bottom:3px">Refund</div>
+<div class="if-grid" style="grid-template-columns:auto 1fr auto">
+  <div class="if-box" style="font-size:11px;font-weight:700">25a</div><div class="if-box">Federal tax withheld</div><div class="if-box" style="font-weight:700;text-align:right">$29,240</div>
+  <div class="if-box" style="background:#DCFCE7;font-weight:800">35a</div><div class="if-box" style="background:#DCFCE7"><strong>REFUND</strong></div><div class="if-box" style="font-weight:800;text-align:right;background:#DCFCE7;color:#16A34A;font-size:18px">$4,820</div>
+</div>
+<div style="margin-top:8px;font-size:9px;background:#FEF9C3;padding:6px;border-radius:4px;color:#92400E;text-align:center">AI-GENERATED DRAFT — Requires CPA review before submission</div></div></div>`;}
+
+function fpForm1099INT(){return`<div class="fp"><div class="fp-hdr"><div class="fp-title">📝 Extraction Validation</div><div class="fp-sub">Review AI fields · Edit if needed · Approve to confirm</div></div>
+<div class="fp-body">
+<div class="fp-div">Payer Information</div>
+<div class="ff-field"><label>Payer Name <span class="cb-i cb-h">99%</span></label><input type="text" value="CHASE BANK N.A." class="ok"><div class="fn ok">✓ Auto-verified</div></div>
+<div class="ff-field"><label>Payer TIN <span class="cb-i cb-h">99%</span></label><input type="text" value="13-4994650" class="ok"></div>
+<div class="fp-div">Recipient</div>
+<div class="ff-field"><label>Recipient <span class="cb-i cb-h">98%</span></label><input type="text" value="JOHN & JANE SMITH" class="ok"></div>
+<div class="ff-field"><label>Account Number <span class="cb-i cb-m">82%</span></label><input type="text" value="••••8821" class="wn" placeholder="Verify account number"><div class="fn wn">⚠ Partially illegible — verify with client statement</div></div>
+<div class="fp-div">Income Amounts</div>
+<div class="ff-field"><label>Box 1 — Interest Income <span class="cb-i cb-h">96%</span></label><input type="text" value="$3,847.00" class="ok"><div class="fn wn">⚠ $1,365 below 2023 ($5,212) — confirm with client</div></div>
+<div class="ff-field"><label>Box 4 — Federal Tax Withheld <span class="cb-i cb-h">99%</span></label><input type="text" value="$0.00" class="ok"></div>
+<div style="background:var(--orange-light);border:1px solid #FED7AA;border-radius:8px;padding:10px;font-size:12px;color:#9A3412;margin-top:4px"><strong>Action required:</strong> Verify account number and confirm reduced interest with client before approving.</div>
+</div></div>`;}
+
+function fpForm1099B(){return`<div class="fp"><div class="fp-hdr"><div class="fp-title">🚨 Critical — Cost Basis Missing</div><div class="fp-sub">3 transactions missing basis — gain cannot be calculated</div></div>
+<div class="fp-body">
+<div class="fp-div">Broker & Account</div>
+<div class="ff-field"><label>Broker <span class="cb-i cb-h">99%</span></label><input type="text" value="Fidelity Brokerage Services LLC" class="ok"></div>
+<div class="ff-field"><label>Account <span class="cb-i cb-h">95%</span></label><input type="text" value="Z39-••••4821" class="ok"></div>
+<div class="fp-div">Transaction 1 — AAPL (50 shares)</div>
+<div class="ff-field"><label>Proceeds <span class="cb-i cb-h">97%</span></label><input type="text" value="$9,350.00" class="ok"></div>
+<div class="ff-field"><label>Cost Basis <span class="cb-i cb-l">NOT REPORTED</span></label><input type="text" class="er" placeholder="Enter from purchase records…"><div class="fn er">🚨 Required — obtain from client or Fidelity</div></div>
+<div class="fp-div">Transaction 2 — MSFT (30 shares)</div>
+<div class="ff-field"><label>Proceeds <span class="cb-i cb-h">97%</span></label><input type="text" value="$12,870.00" class="ok"></div>
+<div class="ff-field"><label>Cost Basis <span class="cb-i cb-l">NOT REPORTED</span></label><input type="text" class="er" placeholder="Enter from purchase records…"><div class="fn er">🚨 Required</div></div>
+<div class="fp-div">Transaction 3 — NVDA (20 shares)</div>
+<div class="ff-field"><label>Proceeds <span class="cb-i cb-h">98%</span></label><input type="text" value="$18,440.00" class="ok"></div>
+<div class="ff-field"><label>Cost Basis <span class="cb-i cb-l">NOT REPORTED</span></label><input type="text" class="er" placeholder="Enter from purchase records…"><div class="fn er">🚨 Required</div></div>
+<div style="background:var(--red-light);border:1px solid #FCA5A5;border-radius:8px;padding:10px;font-size:12px;color:#7F1D1D;margin-top:4px"><strong>Next step:</strong> Request Fidelity 1099-B Supplement or client purchase confirmations for AAPL, MSFT, and NVDA.</div>
+</div></div>`;}
+
+function fpFormK1(){return`<div class="fp"><div class="fp-hdr"><div class="fp-title">⚠ Verify K-1 Box 1 Amount</div><div class="fp-sub">$13,400 or $18,400? Choose or type the correct value</div></div>
+<div class="fp-body">
+<div class="fp-div">Partnership</div>
+<div class="ff-field"><label>Partnership Name <span class="cb-i cb-h">99%</span></label><input type="text" value="Oak Ridge Partners LLC" class="ok"></div>
+<div class="ff-field"><label>Partner Share % <span class="cb-i cb-h">98%</span></label><input type="text" value="18.5%" class="ok"></div>
+<div class="fp-div">Income Items</div>
+<div class="ff-field"><label>Box 1 — Ordinary Business Income <span class="cb-i cb-m">79%</span></label><input type="text" value="$1?,400.00" class="wn" id="k1inp" placeholder="Verify: $13,400 or $18,400?"><div class="fn wn">⚠ Middle digit illegible. ~$1,100 tax difference. Contact partnership.</div></div>
+<div style="display:flex;gap:6px;margin-top:2px">
+  <button onclick="setK1('13400')" class="btn btn-s" style="font-size:12px;flex:1" id="bK1a">$13,400</button>
+  <button onclick="setK1('18400')" class="btn btn-s" style="font-size:12px;flex:1" id="bK1b">$18,400</button>
+</div>
+<div class="ff-field"><label>Box 6 — Dividends <span class="cb-i cb-h">96%</span></label><input type="text" value="$840.00" class="ok"></div>
+<div class="ff-field"><label>Box 13 — Other Deductions <span class="cb-i cb-h">94%</span></label><input type="text" value="$2,120.00" class="ok"></div>
+<div style="background:#FEF9C3;border:1px solid #FCD34D;border-radius:8px;padding:10px;font-size:12px;color:#92400E;margin-top:4px"><strong>Suggested:</strong> Call Oak Ridge Partners at (908) 555-0192 or email accounting@oakridgepartners.com to confirm Box 1.</div>
+</div></div>`;}
+
+function setK1(v){document.getElementById('k1inp').value='$'+v.replace('13400','13,400').replace('18400','18,400')+'.00';document.getElementById('k1inp').className='ok';document.getElementById('bK1a').className='btn '+(v==='13400'?'btn-g':'btn-s');document.getElementById('bK1b').className='btn '+(v==='18400'?'btn-g':'btn-s');}
+
+// MODAL
+let curDoc=null;
+function openDoc(id,ev){
+  if(ev)ev.stopPropagation();
+  const d=DOCS[id];if(!d)return;curDoc=id;
+  document.getElementById('mCAv').textContent=d.client.av;
+  document.getElementById('mCAv').style.background=d.client.color;
+  document.getElementById('mCName').textContent=d.client.name;
+  document.getElementById('mCMeta').textContent=d.client.meta;
+  document.getElementById('mDocTitle').textContent=d.title;
+  document.getElementById('mDocSub').textContent=d.sub;
+  const sm={approved:'✓ Verified',review:'⚠ Review',filed:'✓ Filed'};
+  const cm={approved:'var(--green)',review:'var(--orange)',filed:'var(--purple)'};
+  document.getElementById('mStatusBadge').innerHTML=`<span style="background:${cm[d.status]}1A;color:${cm[d.status]};border:1px solid ${cm[d.status]}40;font-size:11px;font-weight:700;padding:4px 12px;border-radius:99px">${sm[d.status]||d.status}</span>`;
+  const cc=d.conf>=90?'var(--green)':d.conf>=75?'var(--orange)':'var(--red)';
+  document.getElementById('mFtrLeft').innerHTML=`<span style="font-size:12px;color:${cc};font-weight:600">AI Confidence: ${d.conf}%</span><span style="font-size:12px;color:var(--gray);margin-left:10px">All changes logged in audit trail</span>`;
+  document.getElementById('modalCtr').className='mc '+(d.flaw?'lg':'sm');
+  let pdf='';
+  switch(id){case 'w2-john':pdf=rW2('w2-john');break;case 'w2-jane':pdf=rW2('w2-jane');break;case '1099-int':pdf=r1099INT();break;case '1098':pdf=r1098();break;case 'j-w2':pdf=rW2('j-w2');break;case '1099-b':pdf=r1099B();break;case 'k1':pdf=rK1();break;case '1040-draft':case 'filed-return':pdf=r1040();break;default:pdf='<div style="padding:24px;color:var(--gray)">Preview not available.</div>';}
+  let fp='';
+  if(d.flaw){switch(id){case '1099-int':fp=fpForm1099INT();break;case '1099-b':fp=fpForm1099B();break;case 'k1':fp=fpFormK1();break;}}
+  document.getElementById('mBody').innerHTML=`<div class="pdf-p"><div class="pdf-tb"><span style="font-weight:600;color:var(--dark)">📄 ${d.title}</span><span style="flex:1"></span><span>Page 1 of 1</span><span style="background:var(--gray-light);border:1px solid var(--gray-mid);border-radius:4px;padding:2px 8px;cursor:pointer">− 100% +</span></div><div class="pdf-pg">${pdf}</div></div>${fp}`;
+  const ab=document.getElementById('mApproveBtn');
+  if(d.flaw){ab.textContent='✓ Save & Review';ab.className='btn btn-o';}
+  else{ab.textContent=d.status==='approved'?'✓ Approved':'✓ Approve';ab.className='btn '+(d.status==='approved'?'btn-g':'btn-p');}
+  document.getElementById('docModal').classList.remove('hidden');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){document.getElementById('docModal').classList.add('hidden');document.body.style.overflow='';}
+function closeBkd(e){if(e.target===document.getElementById('docModal'))closeModal();}
+function handleApprove(){
+  if(!curDoc)return;const d=DOCS[curDoc];
+  if(d&&d.flaw){if(confirm('Save reviewed data and mark document as reviewed?\n\nYou can still edit fields later. Return will not advance until all flags are resolved.')){addAI(`Data saved for <strong>${d.title}</strong>. Document marked as Reviewed. Resolve remaining flags before approving the return.`);closeModal();}}
+  else{if(d)d.status='approved';addAI(`<strong>${d?d.title:'Document'}</strong> approved ✓ — extracted data confirmed and locked into the tax profile.`);closeModal();}
+}
+
+// CHAT
+let curClient='smith',isTyping=false;
+const CD={
+  smith:{name:'Smith Family — 2024 Federal 1040',sub:'John & Jane Smith · MFJ · 2 Dependents',av:'SM',color:'#1D4ED8'},
+  johnson:{name:'Johnson Family — 2024 Federal 1040',sub:'Robert & Maria Johnson · MFJ · 3 Dependents',av:'JO',color:'#9A3412'},
+  williams:{name:'Williams, Patricia — 2024',sub:'Single Filer · No Dependents',av:'WI',color:'#14532D'},
+  garcia:{name:'Garcia Family — 2024',sub:'Miguel & Rosa Garcia · MFJ · 1 Dependent',av:'GA',color:'#4C1D95'},
+  thompson:{name:'Thompson, Daniel — 2024',sub:'Single · Self-Employed',av:'TH',color:'#64748B'},
+  lee:{name:'Lee Family — 2024',sub:'David & Jennifer Lee · MFJ · 2 Dependents',av:'LE',color:'#0F766E'},
+};
+const CC={
+  smith:`<div class="msg" style="max-width:700px"><div class="m-av ai">T</div><div><div class="m-name">TaxFlow AI</div><div class="m-bub"><p>Hi Sarah! Extraction complete for <strong>Smith Family 2024</strong>.</p><p>✅ 4 documents processed · ⚠️ <span class="dlink fl-link" onclick="openDoc('1099-int',null)">1099-INT ↗</span> interest 26% lower than 2023 and account number 82% confidence — review recommended.</p><p>Ready to assemble the tax profile?</p></div>
+  <div class="chips"><span class="chip c-bl" onclick="qMsg('Assemble the tax profile')">▶ Assemble Tax Profile</span><span class="chip c-te" onclick="openDoc('1099-int',null)">🔍 Review 1099-INT</span><span class="chip c-or" onclick="qMsg('What documents are missing?')">📋 Missing Docs</span></div></div></div>
+  <div class="msg user" style="max-width:500px"><div class="m-av u">SC</div><div><div class="m-name" style="text-align:right">Sarah Chen, CPA</div><div class="m-bub">Assemble the tax profile</div></div></div>
+  <div class="msg" style="max-width:700px"><div class="m-av ai">T</div><div><div class="m-name">TaxFlow AI</div><div class="m-bub"><p>Done! Standard deduction ($29,200) recommended — saves $860 vs. itemized.</p><div class="ai-card"><div class="ai-card-title">📊 Tax Profile — Smith Family 2024</div><div class="exr"><span class="fl">Filing Status</span><span class="fv">Married Filing Jointly</span><span class="cd h"></span></div><div class="exr"><span class="fl">Total Wages</span><span class="fv">$185,200</span><span class="cd h"></span></div><div class="exr"><span class="fl">Interest Income <span class="dlink fl-link" onclick="openDoc('1099-int',null)" style="font-size:11px">verify ↗</span></span><span class="fv">$3,847</span><span class="cd m"></span></div><div class="exr"><span class="fl">Standard Deduction</span><span class="fv">$29,200 ✓</span><span class="cd h"></span></div><div class="exr"><span class="fl">Est. Refund</span><span class="fv" style="color:var(--green)">$4,820</span><span class="cd h"></span></div></div></div>
+  <div class="chips"><span class="chip c-bl" onclick="qMsg('Prepare the 1040')">▶ Prepare 1040</span><span class="chip c-te" onclick="qMsg('Why standard deduction?')">💡 Explain deduction</span><span class="chip c-or" onclick="qMsg('Compare to 2023')">📈 Year-over-year</span></div></div></div>`,
+  johnson:`<div class="msg" style="max-width:700px"><div class="m-av ai">T</div><div><div class="m-name">TaxFlow AI</div><div class="m-bub"><p><strong>Johnson Family 2024</strong> has 3 flags requiring review before preparation.</p><div class="al al-w">🚨 <span><span class="dlink fl-link" onclick="openDoc('1099-b',null)">1099-B ↗</span> — Cost basis missing on 3 stock sales (AAPL, MSFT, NVDA). Cannot calculate capital gains. Total proceeds: $40,660.</span></div><div class="al al-w" style="margin-top:6px">⚠️ <span><span class="dlink fl-link" onclick="openDoc('k1',null)">Schedule K-1 ↗</span> — Partnership income ambiguous: $13,400 or $18,400? (~$1,100 tax impact)</span></div><div class="al al-w" style="margin-top:6px">⚠️ <span>Prior year $4,200 capital loss carryforward — confirm application</span></div></div><div class="chips"><span class="chip c-or" onclick="openDoc('1099-b',null)">🚨 Fix 1099-B</span><span class="chip c-or" onclick="openDoc('k1',null)">⚠ Verify K-1</span><span class="chip c-bl" onclick="qMsg('Apply the capital loss carryforward')">Apply Carryforward</span></div></div></div>`,
+  williams:`<div class="msg" style="max-width:700px"><div class="m-av ai">T</div><div><div class="m-name">TaxFlow AI</div><div class="m-bub"><p><strong>Williams, Patricia 2024</strong> is ready to file. All documents verified, no flags.</p><div class="al al-s">✅ Return assembled — Patricia owes $1,240. Ready for your approval and e-file.</div></div><div class="chips"><span class="chip c-bl" onclick="openDoc('1040-draft',null)">📄 Review 1040</span><span class="chip c-te" onclick="qMsg('File the Williams return')">▶ File Return</span></div></div></div>`,
+  garcia:`<div class="msg" style="max-width:700px"><div class="m-av ai">T</div><div><div class="m-name">TaxFlow AI</div><div class="m-bub"><p><strong>Garcia Family 2024</strong> filed March 28 — IRS accepted.</p><div class="al al-s">✅ Ack. ID: IRS-2024-MEF-884729 · Refund: $3,240</div></div><div class="chips"><span class="chip c-bl" onclick="openDoc('filed-return',null)">📄 View Filed Return</span></div></div></div>`,
+  thompson:`<div class="msg" style="max-width:700px"><div class="m-av ai">T</div><div><div class="m-name">TaxFlow AI</div><div class="m-bub"><p><strong>Thompson, Daniel</strong> — no intake or documents received. Portal link sent March 15 (23 days ago).</p><div class="al al-w">⏳ Only 8 days until April 15. Consider requesting an extension.</div></div><div class="chips"><span class="chip c-or" onclick="qMsg('Send Daniel a reminder email')">📧 Send Reminder</span><span class="chip c-bl" onclick="qMsg('File an extension for Thompson')">📋 Extension</span></div></div></div>`,
+  lee:`<div class="msg" style="max-width:700px"><div class="m-av ai">T</div><div><div class="m-name">TaxFlow AI</div><div class="m-bub"><p>Extracting documents for <strong>Lee Family 2024</strong> — 2 of 5 complete.</p><div class="pb" style="margin:8px 0"><div class="pf" style="width:40%"></div></div><p style="font-size:13px;color:var(--gray)">W-2 (David) ✅ · W-2 (Jennifer) ✅ · 1099-DIV ⏳ · 1099-B ⏳ · 1098 ⏳</p></div></div></div>`,
+};
+const AR={
+  assemble:n=>`Tax profile assembled for <strong>${n}</strong>. Standard deduction ($29,200) selected — saves $860 vs. itemized. Estimated refund: <strong style="color:var(--green)">$4,820</strong>. See Tax Return tab →`,
+  prepare:n=>`Draft Form 1040 generated for <strong>${n}</strong>. Total tax: $24,420 · Withholding: $29,240 · Refund: <strong style="color:var(--green)">$4,820</strong>. Click "View Full 1040" in the Tax Return tab.`,
+  standard:n=>`For ${n}: Standard ($29,200) > Itemized ($18,340 + $6,820 SALT + state = $28,340). Standard wins by <strong>$860</strong>.`,
+  compare:n=>`<strong>Year-over-year for ${n}:</strong><br>• Income: $189,047 vs $172,400 (+9.7%) ↑<br>• Refund: $4,820 vs $3,950 (+$870) ↑<br>• Effective rate: 12.9% (stable) ✓`,
+  missing:n=>`Missing for ${n}: possibly <strong>1099-DIV from Vanguard</strong> (present in 2023). Confirm with clients.`,
+  credit:n=>`${n} qualifies for <strong>Child Tax Credit: $4,000</strong> ($2,000 × 2 qualifying children). Already included in draft.`,
+  carryforward:()=>`Applied $4,200 capital loss carryforward from 2023. Net 2024 capital gain reduced from $18,350 → $14,150, saving approx. <strong>$630 in federal tax</strong>.`,
+  reminder:()=>`Reminder sent to Thompson at <strong>d.thompson@email.com</strong> with portal link, document checklist, and April 15 deadline warning.`,
+  extension:()=>`Filing Form 4868 for Thompson — grants 6-month extension to <strong>October 15, 2025</strong>. Note: extends filing deadline only; taxes still due April 15.`,
+  file:()=>`E-filing initiated… ✅ Pre-flight passed · ✅ 8879 signed · ✅ EFIN validated.<br>Submission ID: <strong>IRS-2024-MEF-992341</strong>. Acknowledgment expected within 24 hours.`,
+};
+function getAI(t){
+  const n=(CD[curClient]||{name:'this client'}).name.split(' — ')[0];
+  const q=t.toLowerCase();
+  if(q.includes('assemble')||q.includes('profile'))return AR.assemble(n);
+  if(q.includes('prepare')||q.includes('1040'))return AR.prepare(n);
+  if(q.includes('standard')||q.includes('deduction')||q.includes('explain'))return AR.standard(n);
+  if(q.includes('compare')||q.includes('2023')||q.includes('year'))return AR.compare(n);
+  if(q.includes('missing'))return AR.missing(n);
+  if(q.includes('credit')||q.includes('child'))return AR.credit(n);
+  if(q.includes('carryforward')||q.includes('carry'))return AR.carryforward();
+  if(q.includes('reminder')||q.includes('email'))return AR.reminder();
+  if(q.includes('extension'))return AR.extension();
+  if(q.includes('file')||q.includes('submit'))return AR.file();
+  return`Analyzed <strong>${n}'s</strong> situation regarding "${t.substring(0,50)}". All figures consistent with IRS 2024 guidelines. Need me to dig into a specific form?`;
+}
+function addAI(html){const a=document.getElementById('chatArea');const e=document.createElement('div');e.className='msg';e.style.maxWidth='700px';e.innerHTML=`<div class="m-av ai">T</div><div><div class="m-name">TaxFlow AI</div><div class="m-bub"><p>${html}</p></div></div>`;a.appendChild(e);a.scrollTop=a.scrollHeight;}
+function selClient(id){
+  const prev=document.querySelector('.ci.active');const pid=prev?prev.id.replace('ci-',''):null;
+  if(pid===id){const ys=document.getElementById('ys-'+id),ch=document.getElementById('ch-'+id);if(ys){ys.classList.toggle('hidden');ch.classList.toggle('open');}return;}
+  document.querySelectorAll('.ci').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.yr-sec').forEach(e=>e.classList.add('hidden'));
+  document.querySelectorAll('.chev').forEach(e=>e.classList.remove('open'));
+  document.getElementById('ci-'+id).classList.add('active');
+  const ys=document.getElementById('ys-'+id);if(ys)ys.classList.remove('hidden');
+  document.getElementById('ch-'+id).classList.add('open');
+  curClient=id;const c=CD[id];
+  if(c){document.getElementById('ctxName').textContent=c.name;document.getElementById('ctxSub').textContent=c.sub;document.getElementById('ctxAv').textContent=c.av;document.getElementById('ctxAv').style.background=c.color;}
+  document.getElementById('dashboard').classList.add('hidden');
+  const a=document.getElementById('chatArea');a.classList.remove('hidden');
+  a.innerHTML=CC[id]||'';a.scrollTop=a.scrollHeight;
+}
+function handleEnter(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}}
+function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px';}
+function fill(t){const i=document.getElementById('chatIn');i.value=t;i.focus();autoResize(i);}
+function qMsg(t){fill(t);sendMsg();}
+function sendMsg(){
+  const inp=document.getElementById('chatIn');const t=inp.value.trim();if(!t||isTyping)return;
+  const a=document.getElementById('chatArea');
+  const u=document.createElement('div');u.className='msg user';u.style.maxWidth='500px';
+  u.innerHTML=`<div class="m-av u">SC</div><div><div class="m-name" style="text-align:right">Sarah Chen, CPA</div><div class="m-bub">${t}</div></div>`;
+  a.appendChild(u);inp.value='';inp.style.height='auto';a.scrollTop=a.scrollHeight;
+  isTyping=true;
+  const ty=document.createElement('div');ty.className='msg';ty.style.maxWidth='200px';
+  ty.innerHTML=`<div class="m-av ai">T</div><div><div class="m-name">TaxFlow AI</div><div class="m-bub" style="padding:14px 16px"><div class="typing-indicator"><div class="td"></div><div class="td"></div><div class="td"></div></div></div></div>`;
+  a.appendChild(ty);a.scrollTop=a.scrollHeight;
+  setTimeout(()=>{ty.remove();isTyping=false;const r=getAI(t);const el=document.createElement('div');el.className='msg';el.style.maxWidth='700px';el.innerHTML=`<div class="m-av ai">T</div><div><div class="m-name">TaxFlow AI</div><div class="m-bub"><p>${r}</p></div></div>`;a.appendChild(el);a.scrollTop=a.scrollHeight;},1000+Math.random()*600);
+}
+function switchTab(id,el){document.querySelectorAll('.r-tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.r-cnt').forEach(t=>t.classList.add('hidden'));el.classList.add('active');document.getElementById('tab-'+id).classList.remove('hidden');}
+function filterClients(q){document.querySelectorAll('.ci').forEach(i=>{const n=i.querySelector('.ci-name')?.textContent.toLowerCase()||'';const m=i.querySelector('.ci-meta')?.textContent.toLowerCase()||'';i.style.display=(!q||n.includes(q.toLowerCase())||m.includes(q.toLowerCase()))?'':'none';});}
+function dimFlag(id){const el=document.getElementById(id);if(el){el.style.transition='all .3s';el.style.opacity='0';el.style.maxHeight='0';el.style.overflow='hidden';el.style.padding='0';setTimeout(()=>{el.remove();const rem=document.querySelectorAll('#flagSec .fi').length;if(rem===0){const fs=document.getElementById('flagSec');if(fs)fs.style.display='none';}},320);}}
+selClient('smith');
+</script>
+</body>
+</html>

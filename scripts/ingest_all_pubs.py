@@ -46,11 +46,13 @@ import sys
 import time
 from pathlib import Path
 
+import psycopg2
+
 # ── Setup path ───────────────────────────────────────────────────────────────
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from taxflow_kb.layer3.publication_registry import get_registry, PublicationMeta
+from tax_brain.publications.registry import get_registry, PublicationMeta
 
 logging.basicConfig(
     level=logging.INFO,
@@ -254,7 +256,7 @@ def phase2_ingest(
 ) -> dict:
     """Phase 2: Ingest all publications into PostgreSQL.
 
-    Uses the high-level Layer3Store.ingest() pipeline which handles:
+    Uses the high-level PublicationStore.ingest() pipeline which handles:
       parse_result → anchor chunks → embed → upsert → finalize
     """
     print("\n" + "=" * 72)
@@ -273,28 +275,31 @@ def phase2_ingest(
         return results
 
     # Import ingestion pipeline
-    from taxflow_kb.layer3.pdf_parser import parse_publication_pdf
-    from taxflow_kb.layer3.postgres_layer3 import Layer3Store
+    from tax_brain.publications.pdf_parser import parse_publication_pdf
+    from tax_brain.publications.store import PublicationStore
 
     # Init schema once
     schema_path = str(PROJECT_ROOT / "schema" / "postgres_layer3.sql")
-    with Layer3Store(dsn=pg_dsn) as store:
-        store.apply_schema(schema_path)
-        logger.info("  Schema initialized")
+    _schema_conn = psycopg2.connect(pg_dsn)
+    try:
+        with PublicationStore(conn=_schema_conn) as store:
+            store.apply_schema(schema_path)
+            logger.info("  Schema initialized")
 
-        # Check what's already ingested
-        existing_pubs = set()
-        if not force:
-            try:
-                conn = store._conn
-                with conn.cursor() as cur:
-                    cur.execute(
-                        "SELECT DISTINCT pub_number || '::' || tax_year "
-                        "FROM irs_kb.publications"
-                    )
-                    existing_pubs = {row[0] for row in cur.fetchall()}
-            except Exception:
-                pass  # table may not exist yet
+            # Check what's already ingested
+            existing_pubs = set()
+            if not force:
+                try:
+                    with _schema_conn.cursor() as cur:
+                        cur.execute(
+                            "SELECT DISTINCT pub_number || '::' || tax_year "
+                            "FROM irs_kb.publications"
+                        )
+                        existing_pubs = {row[0] for row in cur.fetchall()}
+                except Exception:
+                    pass  # table may not exist yet
+    finally:
+        _schema_conn.close()
 
     for pub_number, tax_year in pubs_to_process:
         pub_key = f"{pub_number}::{tax_year}"
@@ -341,13 +346,17 @@ def phase2_ingest(
             # Step 2: Use the high-level store.ingest() pipeline
             # This handles: anchor generation → upsert pub → upsert chunks →
             #               embed → upsert embeddings → finalize
-            with Layer3Store(dsn=pg_dsn) as store:
-                summary = store.ingest(
-                    result=parse_result,
-                    embed_api_key=api_key if not skip_embedding else None,
-                    skip_embedding=skip_embedding,
-                    generate_summaries=True,
-                )
+            _ingest_conn = psycopg2.connect(pg_dsn)
+            try:
+                with PublicationStore(conn=_ingest_conn) as store:
+                    summary = store.ingest(
+                        result=parse_result,
+                        embed_api_key=api_key if not skip_embedding else None,
+                        skip_embedding=skip_embedding,
+                        generate_summaries=True,
+                    )
+            finally:
+                _ingest_conn.close()
 
             elapsed = time.time() - t0
             logger.info("  ✓ Ingested %s: %d chunks (%d anchors) in %.1fs",
@@ -378,14 +387,18 @@ def phase3_rebuild_index(pg_dsn: str, dry_run: bool):
         logger.info("  [DRY RUN] Would rebuild IVFFlat index")
         return
 
-    from taxflow_kb.layer3.postgres_layer3 import Layer3Store
+    from tax_brain.publications.store import PublicationStore
 
-    with Layer3Store(dsn=pg_dsn) as store:
-        logger.info("  Building IVFFlat ANN index...")
-        t0 = time.time()
-        store.create_ivfflat_index(lists=100)
-        elapsed = time.time() - t0
-        logger.info("  ✓ Index built in %.1fs", elapsed)
+    _idx_conn = psycopg2.connect(pg_dsn)
+    try:
+        with PublicationStore(conn=_idx_conn) as store:
+            logger.info("  Building IVFFlat ANN index...")
+            t0 = time.time()
+            store.create_ivfflat_index(lists=100)
+            elapsed = time.time() - t0
+            logger.info("  ✓ Index built in %.1fs", elapsed)
+    finally:
+        _idx_conn.close()
 
 
 def get_pubs_to_process(

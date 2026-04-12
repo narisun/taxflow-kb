@@ -2,7 +2,7 @@
 """
 Diagnose why ingested publications aren't being retrieved.
 
-Checks each stage of the HierarchicalRetriever pipeline for a set of
+Checks each stage of the TaxBrainRetriever pipeline for a set of
 "problem" pubs that are in the DB but not appearing in retrieval results.
 
 Stages tested:
@@ -11,7 +11,7 @@ Stages tested:
   3. Vector similarity — does a targeted query find chunks from this pub?
   4. Navigate stage — does the summary-level search route to this pub?
   5. Drill stage — do detail chunks from this pub appear after drilling?
-  6. Full pipeline — does the complete HierarchicalRetriever return this pub?
+  6. Full pipeline — does the complete TaxBrainRetriever return this pub?
 
 Usage:
     python scripts/diagnose_retrieval_gaps.py
@@ -30,9 +30,9 @@ import psycopg2.extras
 
 sys.path.insert(0, ".")
 
-from taxflow_kb.config import get_settings
-from taxflow_kb.layer3.postgres_layer3 import Layer3Store
-from taxflow_kb.protocols import OpenAIEmbeddingClient
+from tax_brain.config import get_settings
+from tax_brain.publications.store import PublicationStore
+from tax_brain.adapters import OpenAIEmbeddingClient
 
 
 # ── Problem pubs: in DB but not retrieved in eval ──────────────────────────
@@ -229,10 +229,10 @@ def diagnose_pub(pub: str, queries: list[str], conn, embed_client, settings):
         print(f"\n  Stage 5 — SKIPPED (no summary chunks)")
 
     # ── Stage 6: Full pipeline test ───────────────────────────────────
-    print(f"\n  Stage 6 — Full Pipeline (HierarchicalRetriever)")
+    print(f"\n  Stage 6 — Full Pipeline (TaxBrainRetriever)")
     try:
-        from taxflow_kb.layer4.agent import CPAQueryAgent
-        agent = CPAQueryAgent()
+        from tax_brain.factories import create_agent
+        agent = create_agent()
         for q in queries[:2]:
             result = agent.query(q, synthesize=False)
             retrieved_pubs = list(dict.fromkeys(ctx.reference for ctx in result.contexts))

@@ -104,7 +104,7 @@ taxflow-kb/
 │   ├── postgres_layer2.sql                     # Layer 2 DDL — instruction tables, GIN/FTS indexes
 │   ├── postgres_layer3.sql                     # Layer 3 DDL — publications + chunks + pgvector
 │   └── neo4j_schema.cypher                     # Neo4j constraints, indexes, seed nodes
-├── taxflow_kb/
+├── tax_brain/
 │   ├── models.py                               # Pydantic v2 models (MeFRule, ASTNode, ValidationReport …)
 │   ├── ingestion/
 │   │   ├── csv_parser.py                       # CSV → list[MeFRule]
@@ -542,7 +542,7 @@ RULE_ID, RULE_TYPE, FORM_FAMILY, FIELD_PATH, RULE_TEXT,
 RULE_EXPRESSION, ERROR_CODE, SEVERITY, TAX_YEAR, SCHEMA_VERSION
 ```
 
-If the IRS file uses different column names, add aliases to `HEADER_ALIASES` in `taxflow_kb/ingestion/csv_parser.py`.
+If the IRS file uses different column names, add aliases to `HEADER_ALIASES` in `tax_brain/rules/csv_parser.py`.
 
 **Multi-form ingestion:**
 
@@ -627,14 +627,14 @@ If `SECTION_COUNT` or `LINE_SECTIONS` fail, inspect the raw HTML heading structu
 grep -E "<h[23]" data/instructions/real/i1040gi_2024.html | head -40
 ```
 
-Adjust the parser's `_classify_section` logic or heading patterns in `taxflow_kb/layer2/html_parser.py` as needed.
+Adjust the parser's `_classify_section` logic or heading patterns in `tax_brain/instructions/html_parser.py` as needed.
 
 #### V2.2 coverage on real pages
 
 Real instruction pages cover every line of the form, so V2.2 coverage (≥ 70% of Layer 1 fields linked) should pass easily. If it does not, the most likely cause is a mismatch between the line labels in the HTML (`"Line 1a"`) and the keys in `LINE_TO_FIELDS` in `html_parser.py`. Check the V2.2 report for which fields are uncovered, then add or adjust mappings:
 
 ```python
-# taxflow_kb/layer2/html_parser.py — LINE_TO_FIELDS
+# tax_brain/instructions/html_parser.py — LINE_TO_FIELDS
 LINE_TO_FIELDS: dict[str, list[str]] = {
     "1a": ["WagesSalariesTipsAmt"],
     ...
@@ -681,9 +681,9 @@ Some older IRS publications are image-based scans. If `parse_publication_pdf()` 
 
 **Adding new publications:**
 
-1. Add the new `pub_number → pub_title` entry to `PUB_TITLES` in `taxflow_kb/layer3/models_layer3.py`.
-2. Add the pub_number to `EXPECTED_PUBS` in `taxflow_kb/layer3/validation/v3_2_coverage.py`.
-3. Add a retrieval probe to `PROBES` in `taxflow_kb/layer3/validation/v3_3_retrieval.py`.
+1. Add the new `pub_number → pub_title` entry to `PUB_TITLES` in `tax_brain/publications/models_layer3.py`.
+2. Add the pub_number to `EXPECTED_PUBS` in `tax_brain/publications/validation/v3_2_coverage.py`.
+3. Add a retrieval probe to `PROBES` in `tax_brain/publications/validation/v3_3_retrieval.py`.
 4. Run `ingest-publications` and `validate-publications` to confirm.
 
 ---

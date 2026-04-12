@@ -10,8 +10,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from taxflow_kb.layer3.topic_ontology import get_ontology
-from taxflow_kb.layer4.query_classifier import classify_query
+from tax_brain.publications.ontology import get_ontology
+from tax_brain.agent.classifier import classify_query
 
 QUERY = "If I financed a vehicle in 2024, can I claim the interest deduction in 2025?"
 

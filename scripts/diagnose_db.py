@@ -11,7 +11,7 @@ import sys
 sys.path.insert(0, ".")
 
 import psycopg2
-from taxflow_kb.config import get_settings
+from tax_brain.config import get_settings
 
 settings = get_settings()
 dsn = settings.pg_dsn

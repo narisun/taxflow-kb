@@ -27,8 +27,9 @@ from dataclasses import dataclass, field
 # ── Setup path ───────────────────────────────────────────────────────────────
 sys.path.insert(0, ".")
 
-from taxflow_kb.layer4.agent import CPAQueryAgent
-from taxflow_kb.layer4.models_layer4 import CPAQueryResult
+from tax_brain.factories import create_agent
+from tax_brain.agent.agent import TaxBrainAgent
+from tax_brain.agent.models import QueryResult
 
 
 @dataclass
@@ -209,7 +210,7 @@ TESTS: list[TestCase] = [
 
 # ── Runner ───────────────────────────────────────────────────────────────────
 
-def run_test(agent: CPAQueryAgent, tc: TestCase, synthesize: bool) -> tuple[bool, str, CPAQueryResult | None]:
+def run_test(agent: TaxBrainAgent, tc: TestCase, synthesize: bool) -> tuple[bool, str, QueryResult | None]:
     """Run a single test. Returns (passed, message, result)."""
     try:
         result = agent.query(
@@ -285,9 +286,9 @@ def main():
     print("=" * 72)
 
     # Build agent
-    print("\nInitializing CPAQueryAgent...")
+    print("\nInitializing TaxBrainAgent...")
     t0 = time.time()
-    agent = CPAQueryAgent()
+    agent = create_agent()
     print(f"  Agent ready in {time.time() - t0:.1f}s\n")
 
     # Filter tests
