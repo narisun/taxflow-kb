@@ -111,44 +111,47 @@ export default function Home() {
     setShowOnboarding(true);
   }, []);
 
-  // Try loading from API on mount
+  // Load clients on mount — mock data first, then overlay real API if available
   useEffect(() => {
     let cancelled = false;
-    async function loadClients() {
-      let data: ApiClient[] = [];
-      try {
-        data = await api.clients.list();
-        if (!cancelled && Array.isArray(data) && data.length > 0) {
-          setUsingApi(true);
-        }
-      } catch {
-        // API unavailable
-      }
 
-      if (!cancelled && data.length === 0) {
-        try {
-          data = await mockApi.clients.list();
-        } catch { /* ignore */ }
-      }
-
-      if (cancelled || !Array.isArray(data) || data.length === 0) return;
-
-      setApiClients(data);
-      const converted: SidebarClient[] = data.map((c: ApiClient) => ({
+    function toSidebar(data: ApiClient[]): SidebarClient[] {
+      return data.map((c) => ({
         id: String(c.id),
         name: c.name,
         meta: `${c.filing_status} \u00b7 ${c.dependents} dep. \u00b7 ${c.tax_year}`,
         status: mapWorkflowStep(c.workflow_step),
-        initials: c.name
-          .split(" ")
-          .map((w) => w[0])
-          .join("")
-          .slice(0, 2)
-          .toUpperCase(),
+        initials: c.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase(),
         color: hashColor(c.name),
       }));
-      setSidebarClients(converted);
-      if (converted.length > 0) setActiveClientId(converted[0].id);
+    }
+
+    async function loadClients() {
+      // Always load mock data first so the UI is never empty
+      let mockData: ApiClient[] = [];
+      try {
+        mockData = await mockApi.clients.list();
+      } catch { /* ignore */ }
+
+      if (cancelled) return;
+      if (mockData.length > 0) {
+        setApiClients(mockData);
+        setSidebarClients(toSidebar(mockData));
+        setActiveClientId(String(mockData[0].id));
+      }
+
+      // Then try real API — if it responds, switch to it
+      try {
+        const apiData = await api.clients.list();
+        if (!cancelled && Array.isArray(apiData) && apiData.length > 0) {
+          setUsingApi(true);
+          setApiClients(apiData);
+          setSidebarClients(toSidebar(apiData));
+          setActiveClientId(String(apiData[0].id));
+        }
+      } catch {
+        // API unavailable — keep using mock data (already loaded)
+      }
     }
     loadClients();
     return () => { cancelled = true; };

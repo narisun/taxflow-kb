@@ -57,6 +57,51 @@ export const mockClients: Client[] = [
     workflow_step: "filed",
     created_at: "2026-01-25T16:00:00Z",
   },
+  {
+    id: 6,
+    name: "Williams, Marcus",
+    filing_status: "hoh",
+    tax_year: 2025,
+    dependents: 2,
+    workflow_step: "review",
+    created_at: "2026-03-01T08:30:00Z",
+  },
+  {
+    id: 7,
+    name: "Kim, Sarah & David",
+    filing_status: "mfj",
+    tax_year: 2025,
+    dependents: 0,
+    workflow_step: "documents",
+    created_at: "2026-03-25T11:00:00Z",
+  },
+  {
+    id: 8,
+    name: "O'Brien, Patrick",
+    filing_status: "single",
+    tax_year: 2025,
+    dependents: 0,
+    workflow_step: "preparation",
+    created_at: "2026-02-20T15:00:00Z",
+  },
+  {
+    id: 9,
+    name: "Nguyen Family",
+    filing_status: "mfj",
+    tax_year: 2025,
+    dependents: 2,
+    workflow_step: "filed",
+    created_at: "2026-01-10T09:00:00Z",
+  },
+  {
+    id: 10,
+    name: "Rivera, Sofia",
+    filing_status: "single",
+    tax_year: 2025,
+    dependents: 1,
+    workflow_step: "intake",
+    created_at: "2026-04-10T13:00:00Z",
+  },
 ];
 
 // ── Documents ──────────────────────────────────────────────
@@ -263,6 +308,164 @@ export const mockDocuments: Record<number, Document[]> = {
       created_at: "2026-02-12T10:00:00Z",
     },
   ],
+
+  // Client 6 — Williams: W-2 + 1099-NEC + flagged 1099-B (HOH, review)
+  6: [
+    {
+      id: 601, client_id: 6, form_type: "W-2",
+      title: "W-2 (Amazon Warehouse)",
+      status: "verified", confidence: 0.98,
+      extracted_data: JSON.stringify({
+        employer_name: "Amazon.com Services LLC",
+        employer_ein: "46-0723335",
+        employee_name: "Marcus Williams",
+        wages: 62000, federal_tax_withheld: 8400,
+        social_security_wages: 62000, social_security_tax: 3844,
+        medicare_wages: 62000, medicare_tax: 899,
+        state: "GA", state_wages: 62000, state_tax: 3100,
+      }),
+      flags: "[]", created_at: "2026-03-01T08:35:00Z",
+    },
+    {
+      id: 602, client_id: 6, form_type: "1099-NEC",
+      title: "1099-NEC (Side Gig — TaskRabbit)",
+      status: "verified", confidence: 0.95,
+      extracted_data: JSON.stringify({
+        payer_name: "TaskRabbit Inc",
+        nonemployee_compensation: 9200,
+        federal_tax_withheld: 0,
+      }),
+      flags: "[]", created_at: "2026-03-01T08:40:00Z",
+    },
+    {
+      id: 603, client_id: 6, form_type: "1099-B",
+      title: "1099-B (Robinhood)",
+      status: "review", confidence: 0.78,
+      extracted_data: JSON.stringify({
+        payer_name: "Robinhood Securities LLC",
+        proceeds: 4500,
+        cost_basis: 3200,
+        date_sold: "2025-09-15",
+      }),
+      flags: JSON.stringify(["Date sold confidence 78% \u2014 verify against statement"]),
+      created_at: "2026-03-02T10:00:00Z",
+    },
+  ],
+
+  // Client 7 — Kim: 2 W-2s (documents stage, still uploading)
+  7: [
+    {
+      id: 701, client_id: 7, form_type: "W-2",
+      title: "W-2 (Sarah \u2014 Deloitte)",
+      status: "verified", confidence: 0.99,
+      extracted_data: JSON.stringify({
+        employer_name: "Deloitte LLP",
+        employer_ein: "86-1065772",
+        employee_name: "Sarah Kim",
+        wages: 135000, federal_tax_withheld: 25000,
+        social_security_wages: 135000, social_security_tax: 8370,
+        medicare_wages: 135000, medicare_tax: 1957.5,
+        state: "NY", state_wages: 135000, state_tax: 8775,
+      }),
+      flags: "[]", created_at: "2026-03-25T11:05:00Z",
+    },
+    {
+      id: 702, client_id: 7, form_type: "W-2",
+      title: "W-2 (David \u2014 NYU Medical)",
+      status: "verified", confidence: 0.97,
+      extracted_data: JSON.stringify({
+        employer_name: "NYU Langone Health",
+        employer_ein: "13-5562308",
+        employee_name: "David Kim",
+        wages: 165000, federal_tax_withheld: 30000,
+        social_security_wages: 165000, social_security_tax: 10230,
+        medicare_wages: 165000, medicare_tax: 2392.5,
+        state: "NY", state_wages: 165000, state_tax: 10725,
+      }),
+      flags: "[]", created_at: "2026-03-25T11:10:00Z",
+    },
+  ],
+
+  // Client 8 — O'Brien: W-2 + K-1 (preparation)
+  8: [
+    {
+      id: 801, client_id: 8, form_type: "W-2",
+      title: "W-2 (Boston Consulting Group)",
+      status: "verified", confidence: 0.99,
+      extracted_data: JSON.stringify({
+        employer_name: "Boston Consulting Group",
+        employer_ein: "04-2738909",
+        employee_name: "Patrick O'Brien",
+        wages: 195000, federal_tax_withheld: 42000,
+        social_security_wages: 168600, social_security_tax: 10453.2,
+        medicare_wages: 195000, medicare_tax: 2827.5,
+        state: "MA", state_wages: 195000, state_tax: 9750,
+      }),
+      flags: "[]", created_at: "2026-02-20T15:05:00Z",
+    },
+    {
+      id: 802, client_id: 8, form_type: "K-1",
+      title: "K-1 (Tech Ventures LP)",
+      status: "verified", confidence: 0.90,
+      extracted_data: JSON.stringify({
+        partnership_name: "Tech Ventures LP",
+        ordinary_income: 28000,
+        guaranteed_payments: 0,
+        capital_gains: 12500,
+      }),
+      flags: "[]", created_at: "2026-02-22T09:00:00Z",
+    },
+  ],
+
+  // Client 9 — Nguyen: W-2 + W-2 + 1099-DIV (filed)
+  9: [
+    {
+      id: 901, client_id: 9, form_type: "W-2",
+      title: "W-2 (Tuan \u2014 Intel Corp)",
+      status: "verified", confidence: 0.99,
+      extracted_data: JSON.stringify({
+        employer_name: "Intel Corporation",
+        employer_ein: "94-1672743",
+        employee_name: "Tuan Nguyen",
+        wages: 155000, federal_tax_withheld: 28000,
+        social_security_wages: 155000, social_security_tax: 9610,
+        medicare_wages: 155000, medicare_tax: 2247.5,
+        state: "OR", state_wages: 155000, state_tax: 13950,
+      }),
+      flags: "[]", created_at: "2026-01-10T09:05:00Z",
+    },
+    {
+      id: 902, client_id: 9, form_type: "W-2",
+      title: "W-2 (Linh \u2014 Nike Inc)",
+      status: "verified", confidence: 0.98,
+      extracted_data: JSON.stringify({
+        employer_name: "Nike Inc",
+        employer_ein: "93-0584541",
+        employee_name: "Linh Nguyen",
+        wages: 92000, federal_tax_withheld: 14800,
+        social_security_wages: 92000, social_security_tax: 5704,
+        medicare_wages: 92000, medicare_tax: 1334,
+        state: "OR", state_wages: 92000, state_tax: 8280,
+      }),
+      flags: "[]", created_at: "2026-01-10T09:10:00Z",
+    },
+    {
+      id: 903, client_id: 9, form_type: "1099-DIV",
+      title: "1099-DIV (Fidelity)",
+      status: "verified", confidence: 0.97,
+      extracted_data: JSON.stringify({
+        payer_name: "Fidelity Investments",
+        ordinary_dividends: 4800,
+        qualified_dividends: 4200,
+        capital_gain_distributions: 1200,
+        federal_tax_withheld: 0,
+      }),
+      flags: "[]", created_at: "2026-01-12T10:00:00Z",
+    },
+  ],
+
+  // Client 10 — Rivera: no docs (just intake)
+  10: [],
 
   // Client 5 — Patel: W-2 + W-2 (filed)
   5: [
@@ -486,6 +689,49 @@ export const mockChat: Record<number, ChatMessage[]> = {
     },
   ],
 
+  // Client 6 — Williams: review stage
+  6: [
+    { id: 6001, role: "assistant", content: "Welcome! I\u2019ve set up the file for Williams, Marcus (HOH, TY 2025, 2 dependents). Ready to receive documents.", message_type: "text", created_at: "2026-03-01T08:30:30Z" },
+    { id: 6002, role: "assistant", content: "<strong>W-2</strong> uploaded \u2014 98% confidence. Wages: $62,000. Employer: Amazon.com Services LLC", message_type: "text", created_at: "2026-03-01T08:35:30Z" },
+    { id: 6003, role: "assistant", content: "<strong>1099-NEC</strong> uploaded \u2014 95% confidence. Nonemployee compensation: $9,200 from TaskRabbit.", message_type: "text", created_at: "2026-03-01T08:40:30Z" },
+    { id: 6004, role: "assistant", content: "<strong>1099-B</strong> uploaded \u2014 78% confidence.\nProceeds: $4,500 \u00b7 Cost basis: $3,200\n\u26A0 1 flag: Date sold confidence 78% \u2014 verify against statement", message_type: "text", created_at: "2026-03-02T10:00:30Z" },
+    { id: 6005, role: "user", content: "The sale date was September 15, 2025. That\u2019s correct.", message_type: "text", created_at: "2026-03-02T10:05:00Z" },
+    { id: 6006, role: "assistant", content: "Got it \u2014 I\u2019ve confirmed the sale date as 09/15/2025. The 1099-B is now ready for review. Short-term capital gain: <strong>$1,300</strong> (held < 1 year).", message_type: "text", created_at: "2026-03-02T10:05:05Z" },
+  ],
+
+  // Client 7 — Kim: documents stage
+  7: [
+    { id: 7001, role: "assistant", content: "Welcome! I\u2019ve set up the file for Kim, Sarah & David (MFJ, TY 2025, 0 dependents). Ready to receive documents.", message_type: "text", created_at: "2026-03-25T11:00:30Z" },
+    { id: 7002, role: "assistant", content: "<strong>W-2</strong> (Sarah) uploaded \u2014 99% confidence. Wages: $135,000. Employer: Deloitte LLP", message_type: "text", created_at: "2026-03-25T11:05:30Z" },
+    { id: 7003, role: "assistant", content: "<strong>W-2</strong> (David) uploaded \u2014 97% confidence. Wages: $165,000. Employer: NYU Langone Health", message_type: "text", created_at: "2026-03-25T11:10:30Z" },
+    { id: 7004, role: "user", content: "We also have a 1099-INT from Chase and a 1098 mortgage statement. Will upload those next.", message_type: "text", created_at: "2026-03-25T11:15:00Z" },
+    { id: 7005, role: "assistant", content: "Sounds good! Combined wages so far: $300,000. With MFJ filing, the standard deduction is $29,200. I\u2019ll update the estimate once the remaining documents are uploaded.", message_type: "text", created_at: "2026-03-25T11:15:05Z" },
+  ],
+
+  // Client 8 — O'Brien: preparation
+  8: [
+    { id: 8001, role: "assistant", content: "Welcome! I\u2019ve set up the file for O\u2019Brien, Patrick (Single, TY 2025, 0 dependents).", message_type: "text", created_at: "2026-02-20T15:00:30Z" },
+    { id: 8002, role: "assistant", content: "<strong>W-2</strong> uploaded \u2014 99% confidence. Wages: $195,000. Employer: Boston Consulting Group", message_type: "text", created_at: "2026-02-20T15:05:30Z" },
+    { id: 8003, role: "assistant", content: "<strong>K-1</strong> uploaded \u2014 90% confidence. Partnership: Tech Ventures LP \u00b7 Ordinary income: $28,000 \u00b7 Capital gains: $12,500", message_type: "text", created_at: "2026-02-22T09:00:30Z" },
+    { id: 8004, role: "user", content: "What\u2019s my estimated tax situation?", message_type: "text", created_at: "2026-02-25T10:00:00Z" },
+    { id: 8005, role: "assistant", content: "With $195,000 in wages and $40,500 in partnership income ($28K ordinary + $12.5K capital gains), your total income is <strong>$235,500</strong>.\n\nStandard deduction: $15,000\nTaxable income: ~$220,500\nEstimated tax: ~$47,800\nWithholding: $42,000\n\nYou may owe approximately <strong>$5,800</strong>. Consider estimated payment options.", message_type: "text", created_at: "2026-02-25T10:00:10Z" },
+  ],
+
+  // Client 9 — Nguyen: filed
+  9: [
+    { id: 9001, role: "assistant", content: "Welcome! I\u2019ve set up the file for Nguyen Family (MFJ, TY 2025, 2 dependents).", message_type: "text", created_at: "2026-01-10T09:00:30Z" },
+    { id: 9002, role: "assistant", content: "W-2 (Tuan) \u2014 99% confidence. Wages: $155,000. W-2 (Linh) \u2014 98% confidence. Wages: $92,000.", message_type: "text", created_at: "2026-01-10T09:15:00Z" },
+    { id: 9003, role: "assistant", content: "1099-DIV uploaded \u2014 97% confidence. Ordinary dividends: $4,800 \u00b7 Qualified: $4,200 \u00b7 Capital gains: $1,200", message_type: "text", created_at: "2026-01-12T10:00:30Z" },
+    { id: 9004, role: "assistant", content: "Return prepared. Combined wages: $247,000 \u00b7 Dividends: $4,800 \u00b7 Total income: $251,800\nStandard deduction (MFJ): $29,200 \u00b7 Child tax credit (2): $4,000\n\nEstimated federal refund: <strong>$2,460</strong>\nOR liability: <strong>-$3,120</strong>", message_type: "text", created_at: "2026-01-15T11:00:00Z" },
+    { id: 9005, role: "user", content: "Approved. Please file.", message_type: "text", created_at: "2026-01-20T14:00:00Z" },
+    { id: 9006, role: "assistant", content: "\u2705 <strong>Return e-filed successfully</strong> on 01/20/2026.\n\nFederal: Accepted \u00b7 Confirmation #: 2026-FED-00127\nOregon: Accepted \u00b7 Confirmation #: 2026-OR-00891\n\nExpected refund: 2\u20133 weeks.", message_type: "text", created_at: "2026-01-20T14:00:10Z" },
+  ],
+
+  // Client 10 — Rivera: just intake
+  10: [
+    { id: 10001, role: "assistant", content: "Welcome! I\u2019ve set up the file for Rivera, Sofia (Single, TY 2025, 1 dependent). Ready to receive documents.", message_type: "text", created_at: "2026-04-10T13:00:30Z" },
+  ],
+
   // Client 5 — Patel: complete, filed
   5: [
     {
@@ -605,6 +851,45 @@ export const mockReturnDrafts: Record<number, TaxReturnDraft> = {
     total_tax: 53760,
     refund_or_owed: 3240,
     effective_rate: 17.3,
+  },
+
+  // Client 8 — O'Brien (single, 0 dep, high income)
+  8: {
+    client_id: 8, tax_year: 2025, filing_status: "single",
+    lines: [
+      { number: "1a", label: "Wages, salaries, tips", value: 195000, section: "Income" },
+      { number: "2b", label: "Partnership income (K-1)", value: 40500, section: "Income" },
+      { number: "9", label: "Total income", value: 235500, section: "Income" },
+      { number: "12", label: "Standard deduction", value: 15000, section: "Deductions" },
+      { number: "15", label: "Taxable income", value: 220500, section: "Deductions" },
+      { number: "16", label: "Tax", value: 47800, section: "Tax & Credits" },
+      { number: "24", label: "Total tax", value: 47800, section: "Tax & Credits" },
+      { number: "25a", label: "W-2 withholding", value: 42000, section: "Payments" },
+      { number: "33", label: "Total payments", value: 42000, section: "Payments" },
+      { number: "37", label: "Amount you owe", value: -5800, section: "Payments" },
+    ],
+    total_income: 235500, taxable_income: 220500,
+    total_tax: 47800, refund_or_owed: -5800, effective_rate: 20.3,
+  },
+
+  // Client 9 — Nguyen (MFJ, 2 dep, filed)
+  9: {
+    client_id: 9, tax_year: 2025, filing_status: "mfj",
+    lines: [
+      { number: "1a", label: "Wages, salaries, tips", value: 247000, section: "Income" },
+      { number: "3b", label: "Ordinary dividends", value: 4800, section: "Income" },
+      { number: "9", label: "Total income", value: 251800, section: "Income" },
+      { number: "12", label: "Standard deduction", value: 29200, section: "Deductions" },
+      { number: "15", label: "Taxable income", value: 222600, section: "Deductions" },
+      { number: "16", label: "Tax", value: 44340, section: "Tax & Credits" },
+      { number: "19", label: "Child tax credit", value: 4000, section: "Tax & Credits" },
+      { number: "24", label: "Total tax", value: 40340, section: "Tax & Credits" },
+      { number: "25a", label: "W-2 withholding", value: 42800, section: "Payments" },
+      { number: "33", label: "Total payments", value: 42800, section: "Payments" },
+      { number: "34", label: "Overpayment / Refund", value: 2460, section: "Payments" },
+    ],
+    total_income: 251800, taxable_income: 222600,
+    total_tax: 40340, refund_or_owed: 2460, effective_rate: 16.0,
   },
 };
 
