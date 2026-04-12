@@ -82,20 +82,20 @@ export function IntakeModal({ open, onClose, onSubmit }: IntakeModalProps) {
 
   const isJoint = form.filingStatus === "mfj" || form.filingStatus === "mfs";
 
-  const inputCls = "w-full border border-gray-200 rounded-lg px-3 py-2 text-[13px] outline-none focus:border-[#0071e3] transition-colors bg-white";
-  const labelCls = "text-[11px] font-medium text-gray-500 uppercase tracking-wider mb-1 block";
-  const sectionCls = "text-[12px] font-semibold text-[#1d1d1f] pb-1.5 mb-3 border-b border-gray-100";
+  const inputCls = "w-full border border-divider rounded-lg px-3 py-2 text-[13px] outline-none focus:border-apple-blue transition-colors bg-surface text-primary placeholder:text-tertiary";
+  const labelCls = "text-[11px] font-medium text-tertiary uppercase tracking-wider mb-1 block";
+  const sectionCls = "text-[12px] font-semibold text-primary pb-1.5 mb-3 border-b border-divider";
 
   return (
     <Modal open={open} onClose={onClose}>
-      <div className="w-[640px] max-h-[85vh] flex flex-col">
+      <div className="w-full max-w-[640px] max-h-[85vh] flex flex-col">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
+        <div className="px-6 py-4 border-b border-divider flex items-center justify-between shrink-0">
           <div>
-            <div className="text-[16px] font-semibold text-[#1d1d1f]">New Client Intake</div>
-            <div className="text-[12px] text-gray-400 mt-0.5">Enter taxpayer details to start a new return</div>
+            <div className="text-[16px] font-semibold text-primary">New Client Intake</div>
+            <div className="text-[12px] text-tertiary mt-0.5">Enter taxpayer details to start a new return</div>
           </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer text-[16px]">
+          <button onClick={onClose} className="w-8 h-8 rounded-lg border border-divider flex items-center justify-center text-tertiary hover:text-primary hover:bg-surface-secondary transition-colors cursor-pointer text-[16px]">
             &times;
           </button>
         </div>
@@ -207,8 +207,8 @@ export function IntakeModal({ open, onClose, onSubmit }: IntakeModalProps) {
             <div className={sectionCls}>Filing Needs</div>
             <div className="flex items-center gap-2 mb-3">
               <input type="checkbox" id="fed" checked={form.filingFederal} onChange={(e) => set("filingFederal", e.target.checked)}
-                className="w-4 h-4 accent-[#0071e3] cursor-pointer" />
-              <label htmlFor="fed" className="text-[13px] text-[#1d1d1f] cursor-pointer">Federal Return</label>
+                className="w-4 h-4 accent-apple-blue cursor-pointer" />
+              <label htmlFor="fed" className="text-[13px] text-primary cursor-pointer">Federal Return</label>
             </div>
             <label className={labelCls}>State Returns (select all that apply)</label>
             <div className="flex flex-wrap gap-1.5 mt-1">
@@ -218,8 +218,8 @@ export function IntakeModal({ open, onClose, onSubmit }: IntakeModalProps) {
                   onClick={() => toggleState(s)}
                   className={`text-[10px] px-2 py-1 rounded-md border cursor-pointer transition-all ${
                     form.filingStates.includes(s)
-                      ? "bg-[#0071e3] text-white border-[#0071e3]"
-                      : "bg-white text-gray-500 border-gray-200 hover:border-gray-400"
+                      ? "bg-apple-blue text-white border-apple-blue"
+                      : "bg-surface text-secondary border-divider hover:border-tertiary"
                   }`}
                 >
                   {s}
@@ -241,14 +241,14 @@ export function IntakeModal({ open, onClose, onSubmit }: IntakeModalProps) {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-3 border-t border-gray-100 flex items-center justify-end gap-2 shrink-0 bg-[#fafafa]">
-          <button onClick={onClose} className="px-4 py-2 rounded-lg border border-gray-200 text-[13px] text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer">
+        <div className="px-6 py-3 border-t border-divider flex items-center justify-end gap-2 shrink-0 bg-surface-secondary">
+          <button onClick={onClose} className="px-4 py-2 rounded-lg border border-divider text-[13px] text-secondary hover:bg-surface-tertiary transition-colors cursor-pointer">
             Cancel
           </button>
           <button
             onClick={handleSubmit}
             disabled={!form.firstName || !form.lastName}
-            className="px-4 py-2 rounded-lg bg-[#0071e3] text-white text-[13px] font-medium hover:brightness-110 transition-all cursor-pointer disabled:opacity-40"
+            className="px-4 py-2 rounded-lg bg-apple-blue text-white text-[13px] font-medium hover:brightness-110 transition-all cursor-pointer disabled:opacity-40"
           >
             Create Client
           </button>

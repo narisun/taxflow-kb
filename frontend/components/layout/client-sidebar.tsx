@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { Badge, type BadgeVariant } from "@/components/ui/badge";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 interface Client {
   id: string;
@@ -39,16 +39,10 @@ function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake }:
   );
 
   return (
-    <aside className="w-72 shrink-0 bg-[#f5f5f7] border-r border-gray-200 flex flex-col overflow-hidden">
-      {/* Search */}
+    <aside className="w-72 shrink-0 bg-bg border-r border-divider flex flex-col overflow-hidden">
       <div className="p-3">
         <div className="relative">
-          <svg
-            className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <circle cx="11" cy="11" r="8" strokeWidth="2" />
             <path d="m21 21-4.3-4.3" strokeWidth="2" strokeLinecap="round" />
           </svg>
@@ -57,37 +51,32 @@ function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake }:
             placeholder="Search clients..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-8 pr-3 py-1.5 text-[12px] bg-white border border-gray-200 rounded-lg outline-none focus:border-[#0071e3] transition-colors"
+            className="w-full pl-8 pr-3 py-1.5 text-[12px] bg-surface border border-divider rounded-lg outline-none focus:border-apple-blue transition-colors text-primary placeholder:text-tertiary"
           />
         </div>
       </div>
 
-      {/* New Intake button */}
       <div className="px-3 pb-2">
         <button
           onClick={onNewIntake}
-          className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0071e3] text-white text-[12px] font-medium cursor-pointer hover:brightness-110 transition-all"
+          className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-apple-blue text-white text-[12px] font-medium cursor-pointer hover:brightness-110 transition-all"
         >
           <span className="text-[14px] leading-none">+</span>
           New Intake
         </button>
       </div>
 
-      {/* Section header */}
       <div className="flex items-center justify-between px-3 pb-1.5">
-        <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+        <span className="text-[10px] font-semibold text-tertiary uppercase tracking-wider">
           Clients ({filtered.length})
         </span>
       </div>
 
-      {/* Client list — accordion style */}
       <div className="flex-1 overflow-y-auto">
         {filtered.map((client) => {
           const isActive = client.id === activeClientId;
-
           return (
             <div key={client.id}>
-              {/* Client row */}
               <div
                 role="button"
                 tabIndex={0}
@@ -96,23 +85,15 @@ function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake }:
                 className={cn(
                   "w-full flex items-center gap-2.5 px-3 py-2.5 text-left transition-all cursor-pointer border-l-3",
                   isActive
-                    ? "bg-white border-l-[#0071e3] shadow-sm"
-                    : "hover:bg-white/60 border-l-transparent"
+                    ? "bg-surface border-l-apple-blue shadow-sm"
+                    : "hover:bg-surface/60 border-l-transparent"
                 )}
               >
                 <div className="flex-1 min-w-0">
-                  <div className={cn(
-                    "text-[13px] truncate transition-all",
-                    isActive
-                      ? "font-semibold text-[#1d1d1f]"
-                      : "font-medium text-gray-600"
-                  )}>
+                  <div className={cn("text-[13px] truncate transition-all", isActive ? "font-semibold text-primary" : "font-medium text-secondary")}>
                     {client.name}
                   </div>
-                  <div className={cn(
-                    "text-[11px] truncate",
-                    isActive ? "text-gray-500" : "text-gray-400"
-                  )}>
+                  <div className={cn("text-[11px] truncate", isActive ? "text-secondary" : "text-tertiary")}>
                     {client.meta}
                   </div>
                 </div>
@@ -120,22 +101,13 @@ function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake }:
                   {statusLabels[client.status] ?? client.status}
                 </Badge>
               </div>
-
-              {/* Accordion panel — auto-expands when client is active */}
               {isActive && client.years && (
-                <div className="bg-white border-l-3 border-l-[#0071e3] px-3 pb-2">
+                <div className="bg-surface border-l-3 border-l-apple-blue px-3 pb-2">
                   {client.years.map((y) => (
                     <div key={y.year} className="mt-1">
-                      <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5 pl-3">
-                        {y.year}
-                      </div>
+                      <div className="text-[10px] font-semibold text-tertiary uppercase tracking-wider mb-0.5 pl-3">{y.year}</div>
                       {y.docs.map((doc) => (
-                        <div
-                          key={doc}
-                          className="text-[11px] text-gray-500 pl-3 py-1 rounded hover:bg-gray-50 cursor-pointer transition-colors"
-                        >
-                          {doc}
-                        </div>
+                        <div key={doc} className="text-[11px] text-secondary pl-3 py-1 rounded hover:bg-surface-secondary cursor-pointer transition-colors">{doc}</div>
                       ))}
                     </div>
                   ))}
