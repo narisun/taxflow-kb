@@ -100,20 +100,20 @@
    Dark Theme Tokens
    ===================================================== */
 [data-theme="dark"] {
-  --t-bg: #161618;
-  --t-surface: #1e1e20;
-  --t-surface-secondary: #2a2a2c;
-  --t-surface-tertiary: #3a3a3c;
-  --t-text: #f5f5f7;
-  --t-text-secondary: #ababaf;
-  --t-text-tertiary: #78787e;
-  --t-divider: rgba(255, 255, 255, 0.12);
-  --t-nav-bg: rgba(22, 22, 24, 0.72);
-  --t-nav-border: rgba(255, 255, 255, 0.10);
-  --t-chat-user: #2f3037;
-  --t-chat-assistant: #262628;
-  --t-form-header: #2a4a6f;
-  --t-shadow: rgba(0, 0, 0, 0.5);
+  --t-bg: #111113;
+  --t-surface: #1a1a1c;
+  --t-surface-secondary: #252527;
+  --t-surface-tertiary: #333336;
+  --t-text: #ececee;
+  --t-text-secondary: #a0a0a5;
+  --t-text-tertiary: #737378;
+  --t-divider: #2d2d30;
+  --t-nav-bg: rgba(17, 17, 19, 0.85);
+  --t-nav-border: #2d2d30;
+  --t-chat-user: #2a2b32;
+  --t-chat-assistant: #212124;
+  --t-form-header: #253d5c;
+  --t-shadow: rgba(0, 0, 0, 0.6);
 
   --t-badge-pending-bg: rgba(142, 142, 147, 0.2);
   --t-badge-pending-text: #a1a1a6;
