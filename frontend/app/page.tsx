@@ -56,6 +56,7 @@ interface LocalDoc {
   flags: string;
   name: string;
   type: string;
+  created_at?: string;
 }
 
 export default function Home() {
