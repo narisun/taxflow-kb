@@ -553,13 +553,6 @@ export default function Home() {
                       <div className="flex items-center gap-2">
                         <Progress
                           value={doc.confidence}
-                          color={
-                            doc.confidence >= 90
-                              ? "green"
-                              : doc.confidence >= 70
-                                ? "orange"
-                                : "red"
-                          }
                           className="flex-1"
                         />
                         <span className="text-[10px] text-gray-400 w-8 text-right">

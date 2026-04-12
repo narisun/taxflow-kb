@@ -43,9 +43,9 @@ export function MessageBubble({ role, content, timestamp, userInitials = "SC" }:
           </span>
         )}
       </div>
-      {/* User avatar — small circle with initials */}
+      {/* User avatar — rounded rectangle matching "T" logo shape */}
       {isUser && (
-        <div className="w-7 h-7 bg-[#6B7280] rounded-full flex items-center justify-center text-white text-[10px] font-semibold shrink-0 mt-0.5">
+        <div className="w-7 h-7 bg-[#6B7280] rounded-md flex items-center justify-center text-white text-[10px] font-bold shrink-0 mt-0.5">
           {userInitials}
         </div>
       )}

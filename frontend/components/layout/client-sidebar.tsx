@@ -1,9 +1,8 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Avatar } from "@/components/ui/avatar";
 import { Badge, type BadgeVariant } from "@/components/ui/badge";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface Client {
   id: string;
@@ -31,22 +30,12 @@ const statusLabels: Record<string, string> = {
 
 function ClientSidebar({ clients, activeClientId, onSelectClient }: ClientSidebarProps) {
   const [search, setSearch] = useState("");
-  const [expandedClients, setExpandedClients] = useState<Set<string>>(new Set());
 
   const filtered = clients.filter(
     (c) =>
       c.name.toLowerCase().includes(search.toLowerCase()) ||
       c.meta.toLowerCase().includes(search.toLowerCase())
   );
-
-  function toggleExpand(id: string) {
-    setExpandedClients((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  }
 
   return (
     <aside className="w-72 shrink-0 bg-[#f5f5f7] border-r border-gray-200 flex flex-col overflow-hidden">
@@ -82,62 +71,60 @@ function ClientSidebar({ clients, activeClientId, onSelectClient }: ClientSideba
         </button>
       </div>
 
-      {/* Client list */}
+      {/* Client list — accordion style */}
       <div className="flex-1 overflow-y-auto">
         {filtered.map((client) => {
           const isActive = client.id === activeClientId;
-          const isExpanded = expandedClients.has(client.id);
 
           return (
             <div key={client.id}>
+              {/* Client row */}
               <div
                 role="button"
                 tabIndex={0}
                 onClick={() => onSelectClient(client.id)}
                 onKeyDown={(e) => { if (e.key === "Enter") onSelectClient(client.id); }}
                 className={cn(
-                  "w-full flex items-center gap-2.5 px-3 py-2 text-left transition-colors cursor-pointer",
+                  "w-full flex items-center gap-2.5 px-3 py-2.5 text-left transition-all cursor-pointer border-l-3",
                   isActive
-                    ? "bg-blue-50 border-l-2 border-[#0071e3]"
-                    : "hover:bg-gray-100 border-l-2 border-transparent"
+                    ? "bg-white border-l-[#0071e3] shadow-sm"
+                    : "hover:bg-white/60 border-l-transparent"
                 )}
               >
                 <div className="flex-1 min-w-0">
-                  <div className="text-[13px] font-medium text-[#1d1d1f] truncate">
+                  <div className={cn(
+                    "text-[13px] truncate transition-all",
+                    isActive
+                      ? "font-semibold text-[#1d1d1f]"
+                      : "font-medium text-gray-600"
+                  )}>
                     {client.name}
                   </div>
-                  <div className="text-[11px] text-gray-500 truncate">{client.meta}</div>
+                  <div className={cn(
+                    "text-[11px] truncate",
+                    isActive ? "text-gray-500" : "text-gray-400"
+                  )}>
+                    {client.meta}
+                  </div>
                 </div>
                 <Badge variant={client.status as BadgeVariant}>
                   {statusLabels[client.status] ?? client.status}
                 </Badge>
-                {client.years && (
-                  <span
-                    role="button"
-                    tabIndex={0}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleExpand(client.id);
-                    }}
-                    onKeyDown={(e) => { if (e.key === "Enter") { e.stopPropagation(); toggleExpand(client.id); } }}
-                    className={cn(
-                      "text-gray-400 text-[10px] transition-transform cursor-pointer",
-                      isExpanded && "rotate-90"
-                    )}
-                  >
-                    &#9654;
-                  </span>
-                )}
               </div>
 
-              {/* Expandable tree */}
-              {isExpanded && client.years && (
-                <div className="pl-12 pr-3 pb-1">
+              {/* Accordion panel — auto-expands when client is active */}
+              {isActive && client.years && (
+                <div className="bg-white border-l-3 border-l-[#0071e3] px-3 pb-2">
                   {client.years.map((y) => (
-                    <div key={y.year} className="mb-1">
-                      <div className="text-[11px] font-semibold text-gray-500">{y.year}</div>
+                    <div key={y.year} className="mt-1">
+                      <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5 pl-3">
+                        {y.year}
+                      </div>
                       {y.docs.map((doc) => (
-                        <div key={doc} className="text-[11px] text-gray-400 pl-2 py-0.5">
+                        <div
+                          key={doc}
+                          className="text-[11px] text-gray-500 pl-3 py-1 rounded hover:bg-gray-50 cursor-pointer transition-colors"
+                        >
                           {doc}
                         </div>
                       ))}
