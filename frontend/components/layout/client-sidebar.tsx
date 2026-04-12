@@ -19,6 +19,7 @@ interface ClientSidebarProps {
   activeClientId: string | null;
   onSelectClient: (id: string) => void;
   onNewIntake?: () => void;
+  onResearchAgent?: () => void;
 }
 
 const statusLabels: Record<string, string> = {
@@ -29,7 +30,7 @@ const statusLabels: Record<string, string> = {
   filed: "Filed",
 };
 
-function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake }: ClientSidebarProps) {
+function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake, onResearchAgent }: ClientSidebarProps) {
   const [search, setSearch] = useState("");
 
   const filtered = clients.filter(
@@ -128,6 +129,22 @@ function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake }:
           );
         })}
       </div>
+
+      {/* Research Agent — fixed at bottom */}
+      {onResearchAgent && (
+        <div className="shrink-0 p-3 border-t border-divider">
+          <button
+            onClick={onResearchAgent}
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-secondary hover:bg-surface-tertiary transition-colors cursor-pointer"
+          >
+            <span className="w-6 h-6 rounded-md flex items-center justify-center text-white text-[10px] font-bold shrink-0" style={{ background: "#6B8BA4" }}>R</span>
+            <div className="text-left min-w-0">
+              <div className="text-[12px] font-medium text-primary">Research Agent</div>
+              <div className="text-[10px] text-tertiary">Tax scenarios &amp; IRS lookup</div>
+            </div>
+          </button>
+        </div>
+      )}
     </aside>
   );
 }

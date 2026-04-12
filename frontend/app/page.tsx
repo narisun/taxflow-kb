@@ -14,6 +14,7 @@ import { ReturnPreview } from "@/components/returns/return-preview";
 import { FilingWorkflow } from "@/components/returns/filing-workflow";
 import { AdvisoryPanel } from "@/components/returns/advisory-panel";
 import { InboxModal } from "@/components/inbox/inbox-modal";
+import { ResearchAgentModal } from "@/components/research/research-agent-modal";
 import { Dashboard } from "@/components/dashboard/dashboard";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -88,6 +89,7 @@ export default function Home() {
   const [intakeOpen, setIntakeOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [inboxOpen, setInboxOpen] = useState(false);
+  const [researchOpen, setResearchOpen] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -413,6 +415,7 @@ export default function Home() {
       activeClientId={activeClientId}
       onSelectClient={handleSelectClient}
       onNewIntake={() => setIntakeOpen(true)}
+      onResearchAgent={() => setResearchOpen(true)}
     />
   );
 
@@ -765,6 +768,7 @@ export default function Home() {
       />
 
       <InboxModal open={inboxOpen} onClose={() => setInboxOpen(false)} />
+      <ResearchAgentModal open={researchOpen} onClose={() => setResearchOpen(false)} />
 
       <SettingsModal
         open={settingsOpen}
