@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, ReactNode } from "react";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { ToastProvider } from "@/components/ui/toast";
 import type { Client, ChatMessage, Document } from "@/lib/api-client";
 
 interface AppState {
@@ -25,16 +26,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   return (
     <ThemeProvider>
-      <AppContext.Provider
-        value={{
-          activeClientId, setActiveClientId,
-          clients, setClients,
-          messages, setMessages,
-          documents, setDocuments,
-        }}
-      >
-        {children}
-      </AppContext.Provider>
+      <ToastProvider>
+        <AppContext.Provider
+          value={{
+            activeClientId, setActiveClientId,
+            clients, setClients,
+            messages, setMessages,
+            documents, setDocuments,
+          }}
+        >
+          {children}
+        </AppContext.Provider>
+      </ToastProvider>
     </ThemeProvider>
   );
 }
