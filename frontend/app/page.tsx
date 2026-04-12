@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { TopBar } from "@/components/layout/top-bar";
 import { ClientSidebar, type Client as SidebarClient } from "@/components/layout/client-sidebar";
 import { ChatPanel } from "@/components/layout/chat-panel";
@@ -233,6 +233,7 @@ export default function Home() {
   const [usingApi, setUsingApi] = useState(false);
   const [returnDraft, setReturnDraft] = useState<TaxReturnDraft | null>(null);
   const [intakeOpen, setIntakeOpen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const activeClient = sidebarClients.find((c) => c.id === activeClientId);
 
@@ -423,6 +424,76 @@ export default function Home() {
     }
   }, [activeClientId, usingApi]);
 
+  // File upload handler
+  const handleFileSelected = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file || !activeClientId) return;
+      e.target.value = ""; // reset so same file can be re-selected
+
+      // Detect form type from filename
+      const fname = file.name.toLowerCase();
+      let formType = "Other";
+      if (fname.includes("w2") || fname.includes("w-2")) formType = "W-2";
+      else if (fname.includes("1099-int") || fname.includes("1099int")) formType = "1099-INT";
+      else if (fname.includes("1099-nec") || fname.includes("1099nec")) formType = "1099-NEC";
+      else if (fname.includes("1099-b") || fname.includes("1099b")) formType = "1099-B";
+      else if (fname.includes("1099-div") || fname.includes("1099div")) formType = "1099-DIV";
+      else if (fname.includes("1099")) formType = "1099";
+      else if (fname.includes("1098")) formType = "1098";
+      else if (fname.includes("k-1") || fname.includes("k1")) formType = "K-1";
+
+      // Log upload start to chat
+      const uploadMsg: LocalMessage = {
+        id: Date.now(),
+        role: "assistant",
+        content: `Uploading <strong>${file.name}</strong> (${formType})...`,
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      };
+      setMessages((prev) => [...prev, uploadMsg]);
+
+      const numId = Number(activeClientId);
+      if (!isNaN(numId)) {
+        try {
+          const doc = await api.documents.upload(numId, file, formType);
+          // Refresh documents list
+          const docData = await api.documents.list(numId);
+          if (Array.isArray(docData)) {
+            setDocuments(docData.map((d: ApiDocument) => ({
+              ...d, client_id: d.client_id, name: d.title, type: d.form_type,
+            })));
+          }
+          // Parse extracted data for chat summary
+          let summary = `<strong>${formType}</strong> uploaded and processed (${doc.confidence}% confidence).`;
+          try {
+            const fields = JSON.parse(doc.extracted_data);
+            if (Array.isArray(fields) && fields.length > 0) {
+              const details = fields.slice(0, 4).map((f: { name: string; value: string }) => `${f.name}: ${f.value}`).join(" · ");
+              summary += `\n${details}`;
+            }
+          } catch { /* ignore parse errors */ }
+          const flags = JSON.parse(doc.flags || "[]");
+          if (flags.length > 0) {
+            summary += `\n⚠ ${flags.length} flag(s): ${flags.join(", ")}`;
+          }
+          setMessages((prev) => [
+            ...prev.filter((m) => m.id !== uploadMsg.id),
+            { id: Date.now() + 1, role: "assistant" as const, content: summary,
+              timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) },
+          ]);
+        } catch (err) {
+          setMessages((prev) => [
+            ...prev.filter((m) => m.id !== uploadMsg.id),
+            { id: Date.now() + 1, role: "assistant" as const,
+              content: `Failed to upload ${file.name}: ${err instanceof Error ? err.message : "Unknown error"}`,
+              timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) },
+          ]);
+        }
+      }
+    },
+    [activeClientId]
+  );
+
   // Stats
   const totalClients = sidebarClients.length;
   const filedCount = sidebarClients.filter((c) => c.status === "filed").length;
@@ -510,8 +581,20 @@ export default function Home() {
           {/* Messages */}
           <MessageList messages={messages} isTyping={isTyping} />
 
+          {/* Hidden file input for document upload */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            accept=".pdf,.png,.jpg,.jpeg,.tiff"
+            onChange={handleFileSelected}
+          />
+
           {/* Input */}
-          <ChatInput onSend={handleSendMessage} />
+          <ChatInput
+            onSend={handleSendMessage}
+            onAttach={() => fileInputRef.current?.click()}
+          />
         </main>
 
         {/* Work panel */}
@@ -658,34 +741,65 @@ export default function Home() {
       <IntakeModal
         open={intakeOpen}
         onClose={() => setIntakeOpen(false)}
-        onSubmit={(data: IntakeFormData) => {
-          const newId = String(Date.now());
+        onSubmit={async (data: IntakeFormData) => {
           const name = data.spouseFirstName
             ? `${data.lastName} Family`
             : `${data.lastName}, ${data.firstName}`;
-          const meta = [
-            data.spouseFirstName ? `${data.firstName} & ${data.spouseFirstName}` : data.firstName,
-            FILING_STATUS_LABELS[data.filingStatus] || data.filingStatus,
-            data.dependents > 0 ? `${data.dependents} dep.` : null,
-          ].filter(Boolean).join(" · ");
-          setSidebarClients((prev) => [
-            {
-              id: newId,
+          const filingLabel = FILING_STATUS_LABELS[data.filingStatus] || data.filingStatus;
+
+          try {
+            // Create client via backend API
+            const created = await api.clients.create({
               name,
-              meta,
-              status: "pending",
-              initials: name.slice(0, 2).toUpperCase(),
-              color: "#6B7280",
-            },
-            ...prev,
-          ]);
-          setActiveClientId(newId);
-          setMessages([{
-            id: "intake-" + newId,
-            role: "assistant" as const,
-            content: `New intake created for <strong>${name}</strong> (${data.taxYear}). ${data.filingFederal ? "Federal" : ""}${data.filingStates.length ? " + " + data.filingStates.join(", ") : ""}. Ready to upload documents.`,
-            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-          }]);
+              filing_status: data.filingStatus,
+              tax_year: data.taxYear,
+              dependents: data.dependents,
+            });
+            const newId = String(created.id);
+            const meta = [
+              data.spouseFirstName ? `${data.firstName} & ${data.spouseFirstName}` : data.firstName,
+              filingLabel,
+              data.dependents > 0 ? `${data.dependents} dep.` : null,
+            ].filter(Boolean).join(" \u00b7 ");
+
+            setSidebarClients((prev) => [
+              {
+                id: newId, name, meta, status: "pending",
+                initials: name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase(),
+                color: hashColor(name),
+              },
+              ...prev,
+            ]);
+            setActiveClientId(newId);
+            setUsingApi(true);
+
+            // Log to chat via API
+            const filingDesc = [data.filingFederal ? "Federal" : "", ...data.filingStates].filter(Boolean).join(", ");
+            await api.chat.send(created.id, `[System] New client intake: ${name}, ${filingLabel}, TY ${data.taxYear}. Filing: ${filingDesc}.`);
+
+            // Reload chat
+            const chatData = await api.chat.history(created.id);
+            if (Array.isArray(chatData)) {
+              setMessages(chatData.map((m: ChatMessage) => ({
+                id: m.id, role: m.role, content: m.content,
+                timestamp: new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+              })));
+            }
+            setDocuments([]);
+          } catch {
+            // Fallback: local-only
+            const newId = String(Date.now());
+            setSidebarClients((prev) => [
+              { id: newId, name, meta: filingLabel, status: "pending", initials: name.slice(0, 2).toUpperCase(), color: "#6B7280" },
+              ...prev,
+            ]);
+            setActiveClientId(newId);
+            setMessages([{
+              id: "intake-" + newId, role: "assistant" as const,
+              content: `New intake created for ${name} (${data.taxYear}). Ready to upload documents.`,
+              timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            }]);
+          }
         }}
       />
     </div>

@@ -42,56 +42,66 @@ export interface TaxReturnDraft {
   effective_rate: number;
 }
 
+async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
+  const resp = await fetch(url, init);
+  if (!resp.ok) {
+    const text = await resp.text().catch(() => "");
+    throw new Error(`API ${resp.status}: ${text}`);
+  }
+  return resp.json();
+}
+
 export const api = {
   clients: {
     list: (): Promise<Client[]> =>
-      fetch(`${API_BASE}/api/clients`).then((r) => r.json()),
+      fetchJson<{ items: Client[]; total: number }>(`${API_BASE}/api/clients`)
+        .then((r) => r.items),
     get: (id: number): Promise<Client> =>
-      fetch(`${API_BASE}/api/clients/${id}`).then((r) => r.json()),
+      fetchJson<Client>(`${API_BASE}/api/clients/${id}`),
     create: (data: Partial<Client>): Promise<Client> =>
-      fetch(`${API_BASE}/api/clients`, {
+      fetchJson<Client>(`${API_BASE}/api/clients`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
-      }).then((r) => r.json()),
+      }),
   },
   chat: {
     history: (clientId: number): Promise<ChatMessage[]> =>
-      fetch(`${API_BASE}/api/clients/${clientId}/chat`).then((r) => r.json()),
+      fetchJson<{ messages: ChatMessage[]; client_id: number }>(
+        `${API_BASE}/api/clients/${clientId}/chat`
+      ).then((r) => r.messages),
     send: (clientId: number, content: string): Promise<ChatMessage> =>
-      fetch(`${API_BASE}/api/clients/${clientId}/chat`, {
+      fetchJson<ChatMessage>(`${API_BASE}/api/clients/${clientId}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ content }),
-      }).then((r) => r.json()),
+      }),
   },
   documents: {
     list: (clientId: number): Promise<Document[]> =>
-      fetch(`${API_BASE}/api/clients/${clientId}/documents`).then((r) =>
-        r.json()
-      ),
-    upload: (
-      clientId: number,
-      file: File,
-      formType: string
-    ): Promise<Document> => {
+      fetchJson<{ items: Document[]; total: number }>(
+        `${API_BASE}/api/clients/${clientId}/documents`
+      ).then((r) => r.items),
+    upload: (clientId: number, file: File, formType: string): Promise<Document> => {
       const fd = new FormData();
       fd.append("file", file);
       fd.append("form_type", formType);
-      return fetch(`${API_BASE}/api/clients/${clientId}/documents`, {
+      return fetchJson<Document>(`${API_BASE}/api/clients/${clientId}/documents`, {
         method: "POST",
         body: fd,
-      }).then((r) => r.json());
+      });
     },
     approve: (docId: number): Promise<Document> =>
-      fetch(`${API_BASE}/api/documents/${docId}/approve`, {
+      fetchJson<Document>(`${API_BASE}/api/documents/${docId}/approve`, {
         method: "PATCH",
-      }).then((r) => r.json()),
+      }),
+    fields: (docId: number): Promise<{ fields: Array<{ name: string; value: string; confidence: number; flagged: boolean; flag_reason: string }> }> =>
+      fetchJson(`${API_BASE}/api/documents/${docId}/fields`),
   },
   returns: {
     draft: (clientId: number): Promise<TaxReturnDraft> =>
-      fetch(`${API_BASE}/api/clients/${clientId}/returns/draft`, {
+      fetchJson<TaxReturnDraft>(`${API_BASE}/api/clients/${clientId}/returns/draft`, {
         method: "POST",
-      }).then((r) => r.json()),
+      }),
   },
 };

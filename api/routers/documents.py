@@ -57,7 +57,23 @@ def _mock_extract(form_type: str) -> tuple[str, float, str]:
             {"name": "Partnership Name", "value": "SMITH HOLDINGS LLC", "confidence": 0.90, "flagged": False, "flag_reason": ""},
         ]
         return json.dumps(fields), 0.90, "[]"
-    return json.dumps([]), 0.0, "[]"
+    elif form_type == "1099-NEC":
+        fields = [
+            {"name": "Box 1 — Nonemployee Compensation", "value": "$15,000.00", "confidence": 0.96, "flagged": False, "flag_reason": ""},
+            {"name": "Payer Name", "value": "CONSULTING INC", "confidence": 0.94, "flagged": False, "flag_reason": ""},
+        ]
+        return json.dumps(fields), 0.96, "[]"
+    elif form_type == "1099-DIV":
+        fields = [
+            {"name": "Box 1a — Total Dividends", "value": "$2,450.00", "confidence": 0.97, "flagged": False, "flag_reason": ""},
+            {"name": "Box 1b — Qualified Dividends", "value": "$1,800.00", "confidence": 0.95, "flagged": False, "flag_reason": ""},
+        ]
+        return json.dumps(fields), 0.97, "[]"
+    # Generic fallback — returns basic extraction
+    fields = [
+        {"name": "Document Type", "value": form_type, "confidence": 0.80, "flagged": True, "flag_reason": "Unrecognized form type — manual review recommended"},
+    ]
+    return json.dumps(fields), 0.80, json.dumps(["Unrecognized form type"])
 
 
 @router.get("/api/clients/{client_id}/documents", response_model=DocumentListResponse)
@@ -93,11 +109,13 @@ async def upload_document(
 
     # Create document record first to get an ID
     extracted_data, confidence, flags = _mock_extract(form_type)
+    has_flags = flags != "[]" and flags != ""
+    doc_status = "review" if (has_flags or confidence < 0.90) else "verified"
     doc = DocumentModel(
         client_id=client_id,
         form_type=form_type,
-        title=file.filename or f"{form_type} document",
-        status="pending",
+        title=f"{form_type} ({file.filename})" if file.filename else f"{form_type} document",
+        status=doc_status,
         confidence=confidence,
         extracted_data=extracted_data,
         flags=flags,
