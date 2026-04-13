@@ -9,3 +9,5 @@ alembic>=1.14
 python-multipart>=0.0.12
 sse-starlette>=2.0
 pytest-asyncio>=0.24
+# Auth
+python-jose[cryptography]>=3.3
