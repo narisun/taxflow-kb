@@ -1,17 +1,34 @@
-"""Async SQLAlchemy engine — uses SQLite for development."""
+"""Async SQLAlchemy engine — PostgreSQL for production, configurable via env."""
+
+import os
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-DATABASE_URL = "sqlite+aiosqlite:///./taxbrain.db"
+DATABASE_URL = os.getenv(
+    "APP_DATABASE_URL",
+    "postgresql+asyncpg://taxflow:taxflow_dev@localhost:5432/taxflow"
+)
 
-engine = create_async_engine(DATABASE_URL, echo=False)
+engine = create_async_engine(
+    DATABASE_URL,
+    echo=False,
+    pool_size=10,
+    max_overflow=20,
+    pool_recycle=3600,
+)
+
 async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
+
 async def init_db():
-    from api.db.models import Base
-    import api.auth.models  # noqa: F401 — register org/user tables
+    """Create all tables on startup (dev convenience — use Alembic in production)."""
+    from api.db.base import Base
+    from api.db.models import ClientModel, DocumentModel, ChatMessageModel  # noqa: F401
+    from api.auth.models import OrganizationModel, UserModel  # noqa: F401
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
+
 async def get_session():
+    """Yield an async session per request."""
     async with async_session() as session:
         yield session
