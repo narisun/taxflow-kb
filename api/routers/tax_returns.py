@@ -1,9 +1,12 @@
 """Tax return draft endpoints."""
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.db.engine import get_session
 from api.db.models import ClientModel
+from api.auth.dependencies import get_current_user
+from api.auth.models import UserModel
 from api.models.tax_return import ReturnLine, TaxReturnDraft
 
 router = APIRouter(tags=["tax_returns"])
@@ -79,8 +82,15 @@ def _compute_draft(client: ClientModel) -> TaxReturnDraft:
 
 
 @router.post("/api/clients/{client_id}/returns/draft", response_model=TaxReturnDraft)
-async def generate_draft(client_id: int, session: AsyncSession = Depends(get_session)):
-    client = await session.get(ClientModel, client_id)
+async def generate_draft(
+    client_id: int,
+    session: AsyncSession = Depends(get_session),
+    user: UserModel = Depends(get_current_user),
+):
+    result = await session.execute(
+        select(ClientModel).where(ClientModel.id == client_id, ClientModel.org_id == user.org_id)
+    )
+    client = result.scalar_one_or_none()
     if not client:
         raise HTTPException(status_code=404, detail="Client not found")
     draft = _compute_draft(client)
@@ -89,8 +99,15 @@ async def generate_draft(client_id: int, session: AsyncSession = Depends(get_ses
 
 
 @router.get("/api/clients/{client_id}/returns/draft", response_model=TaxReturnDraft)
-async def get_draft(client_id: int, session: AsyncSession = Depends(get_session)):
-    client = await session.get(ClientModel, client_id)
+async def get_draft(
+    client_id: int,
+    session: AsyncSession = Depends(get_session),
+    user: UserModel = Depends(get_current_user),
+):
+    result = await session.execute(
+        select(ClientModel).where(ClientModel.id == client_id, ClientModel.org_id == user.org_id)
+    )
+    client = result.scalar_one_or_none()
     if not client:
         raise HTTPException(status_code=404, detail="Client not found")
     draft = _drafts.get(client_id)

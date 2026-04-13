@@ -5,7 +5,7 @@ from datetime import datetime
 class ClientCreate(BaseModel):
     name: str
     filing_status: str = "single"
-    tax_year: int = 2024
+    tax_year: int = 2025
     dependents: int = 0
 
 
@@ -23,7 +23,10 @@ class ClientResponse(BaseModel):
     tax_year: int
     dependents: int
     workflow_step: str
+    org_id: str
+    created_by: str | None = None
     created_at: datetime
+    updated_at: datetime
     model_config = {"from_attributes": True}
 
 

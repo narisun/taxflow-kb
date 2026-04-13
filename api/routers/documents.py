@@ -15,6 +15,8 @@ from api.models.document import (
     ExtractedField,
     ExtractionResult,
 )
+from api.auth.dependencies import get_current_user
+from api.auth.models import UserModel
 from api.services.ocr.mock_extractor import MockOCRExtractor
 
 router = APIRouter(tags=["documents"])
@@ -76,11 +78,23 @@ def _mock_extract(form_type: str) -> tuple[str, float, str]:
     return json.dumps(fields), 0.80, json.dumps(["Unrecognized form type"])
 
 
-@router.get("/api/clients/{client_id}/documents", response_model=DocumentListResponse)
-async def list_documents(client_id: int, session: AsyncSession = Depends(get_session)):
-    client = await session.get(ClientModel, client_id)
+async def _get_client_or_404(client_id: int, session: AsyncSession, user: UserModel):
+    result = await session.execute(
+        select(ClientModel).where(ClientModel.id == client_id, ClientModel.org_id == user.org_id)
+    )
+    client = result.scalar_one_or_none()
     if not client:
         raise HTTPException(status_code=404, detail="Client not found")
+    return client
+
+
+@router.get("/api/clients/{client_id}/documents", response_model=DocumentListResponse)
+async def list_documents(
+    client_id: int,
+    session: AsyncSession = Depends(get_session),
+    user: UserModel = Depends(get_current_user),
+):
+    await _get_client_or_404(client_id, session, user)
     result = await session.execute(
         select(DocumentModel).where(DocumentModel.client_id == client_id)
     )
@@ -102,10 +116,9 @@ async def upload_document(
     form_type: str = Form(...),
     file: UploadFile = File(...),
     session: AsyncSession = Depends(get_session),
+    user: UserModel = Depends(get_current_user),
 ):
-    client = await session.get(ClientModel, client_id)
-    if not client:
-        raise HTTPException(status_code=404, detail="Client not found")
+    await _get_client_or_404(client_id, session, user)
 
     # Create document record first to get an ID
     extracted_data, confidence, flags = _mock_extract(form_type)
@@ -119,6 +132,8 @@ async def upload_document(
         confidence=confidence,
         extracted_data=extracted_data,
         flags=flags,
+        org_id=user.org_id,
+        created_by=user.id,
     )
     session.add(doc)
     await session.commit()
@@ -138,16 +153,30 @@ async def upload_document(
 
 
 @router.get("/api/documents/{doc_id}", response_model=DocumentResponse)
-async def get_document(doc_id: int, session: AsyncSession = Depends(get_session)):
-    doc = await session.get(DocumentModel, doc_id)
+async def get_document(
+    doc_id: int,
+    session: AsyncSession = Depends(get_session),
+    user: UserModel = Depends(get_current_user),
+):
+    result = await session.execute(
+        select(DocumentModel).where(DocumentModel.id == doc_id, DocumentModel.org_id == user.org_id)
+    )
+    doc = result.scalar_one_or_none()
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
     return doc
 
 
 @router.patch("/api/documents/{doc_id}/approve", response_model=DocumentResponse)
-async def approve_document(doc_id: int, session: AsyncSession = Depends(get_session)):
-    doc = await session.get(DocumentModel, doc_id)
+async def approve_document(
+    doc_id: int,
+    session: AsyncSession = Depends(get_session),
+    user: UserModel = Depends(get_current_user),
+):
+    result = await session.execute(
+        select(DocumentModel).where(DocumentModel.id == doc_id, DocumentModel.org_id == user.org_id)
+    )
+    doc = result.scalar_one_or_none()
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
     doc.status = "approved"
@@ -157,8 +186,15 @@ async def approve_document(doc_id: int, session: AsyncSession = Depends(get_sess
 
 
 @router.get("/api/documents/{doc_id}/fields", response_model=list[ExtractedField])
-async def get_document_fields(doc_id: int, session: AsyncSession = Depends(get_session)):
-    doc = await session.get(DocumentModel, doc_id)
+async def get_document_fields(
+    doc_id: int,
+    session: AsyncSession = Depends(get_session),
+    user: UserModel = Depends(get_current_user),
+):
+    result = await session.execute(
+        select(DocumentModel).where(DocumentModel.id == doc_id, DocumentModel.org_id == user.org_id)
+    )
+    doc = result.scalar_one_or_none()
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
     try:
