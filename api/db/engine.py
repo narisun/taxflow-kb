@@ -8,6 +8,7 @@ async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit
 
 async def init_db():
     from api.db.models import Base
+    import api.auth.models  # noqa: F401 — register org/user tables
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
