@@ -13,7 +13,7 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title="Tax Brain API",
         description="CPA tax preparation platform backend",
-        version="0.1.0",
+        version="0.2.0",
         lifespan=lifespan,
     )
     app.add_middleware(
@@ -23,7 +23,8 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    from api.routers import health, clients, chat, documents, tax_returns
+    from api.routers import health, clients, chat, documents, tax_returns, auth
+    app.include_router(auth.router)
     app.include_router(health.router)
     app.include_router(clients.router)
     app.include_router(chat.router)
