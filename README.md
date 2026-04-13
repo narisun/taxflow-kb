@@ -1,82 +1,40 @@
-# TaxFlow AI — Knowledge Base (Layers 1–3)
+# TaxFlow AI — CPA Tax Preparation Platform
 
-**IRS MeF Business Rules + Form Instruction Graph + Publication Semantic Search Ingestion, Parsing, and Validation Pipeline**
+**AI-powered IRS knowledge base and CPA-facing platform with RAG agent, fullstack web UI, and 5-layer knowledge pipeline.**
 
-TaxFlow AI is a CPA-facing agentic platform. Its knowledge base is the foundation every AI agent queries before answering a tax question. This repository implements the first three layers:
+TaxFlow AI ingests IRS business rules, form instructions, and publications into a queryable knowledge base. When a CPA asks a tax question, the retrieval-augmented agent synthesizes an answer grounded in authoritative IRS sources.
 
-| Layer | Source | Store | Status |
-|-------|--------|-------|--------|
-| **1 — MeF Business Rules** | IRS MeF CSV | Neo4j + PostgreSQL | ✅ Complete |
-| **2 — Form Instructions** | IRS HTML (irs.gov/instructions) | Neo4j + PostgreSQL | ✅ Complete |
-| **3 — Publications** | IRS Publication PDFs | PostgreSQL + pgvector | ✅ Complete |
+| Layer | Source | Store | Purpose |
+|-------|--------|-------|---------|
+| **1 — MeF Business Rules** | IRS MeF CSV | Neo4j + PostgreSQL | Machine-readable tax rules parsed into ASTs |
+| **2 — Form Instructions** | IRS HTML (irs.gov) | Neo4j + PostgreSQL | Plain-English line-by-line form explanations |
+| **3 — Publications** | IRS Publication PDFs | PostgreSQL + pgvector | Semantic search via embeddings (8 publications) |
+| **4 — Query Agent** | User questions | In-memory | Retrieval + synthesis pipeline (hybrid search → rerank → synthesize) |
+| **5 — Evaluation** | Gold set Q&A | JSON files | Quality gates, retrieval/generation evaluation |
 
 ---
 
-## What This Does
-
-When a CPA asks "why is line 11 on Form 1040 flagging an error?", the answer comes from here. Layer 1 ingests the machine-readable IRS ruleset and turns it into a queryable, versioned knowledge graph. Layer 2 enriches every FormLine node with the IRS's own plain-English instructions, so agents can explain *why* a rule exists — not just that it does. Layer 3 adds publication-level semantic search: when the CPA asks a nuanced question ("Can I deduct my health insurance premium?"), the agent retrieves the most relevant passage from the appropriate IRS publication.
+## Architecture
 
 ```
-Layer 1 — MeF Business Rules
-─────────────────────────────
-IRS MeF CSV
-    │
-    ▼
-CSV Parser (normalize · dedup · validate)
-    │
-    ▼
-AST Parser  (If/Then/Else · MATH · IN list · must be attached · matches pattern)
-    │
-    ├──► Neo4j       Form → FormLine → Rule → ErrorCode
-    └──► PostgreSQL  irs_kb schema · version history · audit log
-         │
-         ▼
-    Validation Gates
-         V1.1  Structural integrity  (≥ 98% AST parse rate · zero nulls/dupes)
-         V1.2  Expert spot-check     (≥ 95% domain-expert accuracy)
-         V1.3  Test-return replay    (100% ERROR match · ≥ 95% WARNING match)
-         V1.4  Regression            (zero unexpected outcome changes)
-
-Layer 2 — IRS Form Instruction Graph
-──────────────────────────────────────
-IRS Instruction HTML  (irs.gov/instructions/i1040gi)
-    │
-    ▼
-HTML Parser  (h2 container sections · h3 line sections · cross-references)
-    │
-    ├──► Neo4j       InstructionPage → InstructionSection → FormLine
-    │                                                      → Form (cross-refs)
-    └──► PostgreSQL  instruction_pages · instruction_sections · GIN/FTS indexes
-         │
-         ▼
-    Validation Gates
-         V2.1  Structural integrity  (≥ 10 sections · ≥ 5 line sections · no empty h3)
-         V2.2  FormLine link coverage (≥ 70% of Layer 1 fields explained)
-
-Layer 3 — IRS Publication Semantic Search (pgvector)
-──────────────────────────────────────────────────────
-IRS Publication PDFs  (Pub 17, 501, 525, 550, 590a/b, 596, 969)
-    │
-    ▼
-PDF Parser  (pdfplumber · heading detection · paragraph-aware chunking)
-  · Target ~400 tokens/chunk · 50-token overlap · hard max 512 tokens
-  · Extracts form_refs (Form1040, ScheduleA) and line_refs (1a, 12b) per chunk
-    │
-    ▼
-OpenAI Embeddings  (text-embedding-3-small · 1536-dim · cl100k_base)
-  · Batched (512 chunks/request) · 3 retries with backoff
-    │
-    └──► PostgreSQL + pgvector
-           irs_kb.publications        — pub metadata + embedding coverage stats
-           irs_kb.publication_chunks  — text + embedding vector(1536)
-           IVFFlat index              — cosine ANN search (lists=100)
-           GIN indexes                — form_refs[], line_refs[] array filtering
-         │
-         ▼
-    Validation Gates
-         V3.1  Structural integrity  (≥ 10 chunks · no empty text · correct embedding dim)
-         V3.2  Coverage              (all 8 pubs present · avg tokens in [50, 450])
-         V3.3  Retrieval quality     (8 probe queries → expected pub at ≥ 0.50 cosine score)
+┌─────────────────────────────────────────────────────────────┐
+│  Frontend  (Next.js 16 · React 19 · Tailwind CSS 4)        │
+│  http://localhost:3000                                       │
+└──────────────────────┬──────────────────────────────────────┘
+                       │ REST API
+┌──────────────────────▼──────────────────────────────────────┐
+│  Backend API  (FastAPI · SQLAlchemy 2 async · Pydantic v2)  │
+│  http://localhost:8000                                       │
+│  Routers: /api/health · /api/clients · /api/clients/{id}/   │
+│           chat · /api/documents · /api/tax-returns           │
+└──────┬───────────────┬──────────────────────────────────────┘
+       │               │
+┌──────▼───────┐ ┌─────▼─────────────────────────────────────┐
+│  SQLite      │ │  Knowledge Base (tax_brain)                │
+│  (clients,   │ │  PostgreSQL 16 + pgvector · Neo4j 5.18    │
+│   docs,      │ │  OpenAI embeddings · Hybrid search         │
+│   chat)      │ │  Agent: retrieve → rerank → synthesize     │
+└──────────────┘ └────────────────────────────────────────────┘
 ```
 
 ---
@@ -85,91 +43,115 @@ OpenAI Embeddings  (text-embedding-3-small · 1536-dim · cl100k_base)
 
 ```
 taxflow-kb/
+├── api/                                    # FastAPI backend
+│   ├── main.py                             # App factory (CORS, lifespan, routers)
+│   ├── routers/                            # health, clients, chat, documents, tax_returns
+│   ├── models/                             # SQLAlchemy models (Client, Document, ChatMessage)
+│   ├── services/                           # Business logic
+│   └── db/                                 # Engine, sessions, migrations
+├── frontend/                               # Next.js 16 web application
+│   ├── app/                                # App Router (page.tsx entry point)
+│   ├── components/                         # React components
+│   │   ├── ui/                             # Base: button, card, modal, input, badge, tabs
+│   │   ├── chat/                           # Chat: message-list, bubble, input, typing
+│   │   ├── layout/                         # Layout: top-bar, sidebar, chat-panel, work-panel
+│   │   ├── clients/                        # Client: intake-modal
+│   │   ├── forms/                          # Tax forms: W-2, 1099-INT, generic, renderer
+│   │   ├── returns/                        # Return preview
+│   │   ├── documents/                      # Document viewer modal
+│   │   └── dashboard/                      # Dashboard
+│   ├── lib/                                # api-client.ts, utils.ts
+│   └── styles/                             # globals.css (design tokens)
+├── tax_brain/                              # Core Python knowledge base library
+│   ├── models.py                           # Pydantic v2 models (MeFRule, ASTNode, etc.)
+│   ├── protocols.py                        # DI interfaces (Retriever, EmbeddingClient, etc.)
+│   ├── config.py                           # Centralized settings (Pydantic BaseSettings)
+│   ├── factories.py                        # Dependency injection wiring
+│   ├── rules/                              # Layer 1: CSV parser, AST parser, Neo4j/PG ingest
+│   ├── instructions/                       # Layer 2: HTML parser, Neo4j/PG ingest, validation
+│   ├── publications/                       # Layer 3: PDF parser, embeddings, pgvector, search
+│   ├── agent/                              # Layer 4: retriever, synthesizer, classifier, reranker
+│   ├── evaluation/                         # Layer 5: gold set generation, eval metrics
+│   └── adapters/                           # Concrete implementations (OpenAI, PG, Neo4j)
+├── cli/                                    # CLI command modules
+│   ├── main.py                             # Dispatcher (40+ commands)
+│   ├── rules_commands.py                   # Layer 1 commands
+│   ├── instructions_commands.py            # Layer 2 commands
+│   ├── publications_commands.py            # Layer 3 commands
+│   ├── agent_commands.py                   # Layer 4 commands (ask, validate-agent)
+│   └── evaluation_commands.py              # Layer 5 commands (gold set, evaluate)
 ├── data/
-│   ├── sample/
-│   │   └── mef_1040_2024_v5_2.csv             # 60 synthetic MeF rules (Form 1040, TY 2024)
-│   ├── instructions/
-│   │   └── i1040gi_2024_synthetic.html         # Synthetic Form 1040 instruction page
-│   └── publications/                           # IRS publication PDFs (downloaded separately)
-│       ├── p17.pdf                             # Your Federal Income Tax
-│       ├── p501.pdf                            # Dependents, Standard Deduction, Filing Info
-│       ├── p525.pdf                            # Taxable and Nontaxable Income
-│       ├── p550.pdf                            # Investment Income and Expenses
-│       ├── p590a.pdf                           # IRA Contributions
-│       ├── p590b.pdf                           # IRA Distributions
-│       ├── p596.pdf                            # Earned Income Credit (EIC)
-│       └── p969.pdf                            # Health Savings Accounts
+│   ├── sample/                             # Synthetic MeF CSV
+│   ├── instructions/                       # Synthetic instruction HTML
+│   └── publications/                       # IRS PDFs (downloaded separately)
 ├── schema/
-│   ├── postgres_schema.sql                     # Layer 1 DDL — irs_kb schema, views, triggers
-│   ├── postgres_layer2.sql                     # Layer 2 DDL — instruction tables, GIN/FTS indexes
-│   ├── postgres_layer3.sql                     # Layer 3 DDL — publications + chunks + pgvector
-│   └── neo4j_schema.cypher                     # Neo4j constraints, indexes, seed nodes
-├── tax_brain/
-│   ├── models.py                               # Pydantic v2 models (MeFRule, ASTNode, ValidationReport …)
-│   ├── ingestion/
-│   │   ├── csv_parser.py                       # CSV → list[MeFRule]
-│   │   ├── ast_parser.py                       # IRS pseudo-code → typed ASTNode tree
-│   │   ├── neo4j_ingestion.py                  # Layer 1 Neo4j MERGE upserts
-│   │   └── postgres_ingestion.py               # Layer 1 PostgreSQL writes
-│   ├── layer2/
-│   │   ├── models_layer2.py                    # Pydantic models (InstructionPage, InstructionSection)
-│   │   ├── html_parser.py                      # HTML → Layer2ParseResult (stdlib html.parser only)
-│   │   ├── neo4j_layer2.py                     # Layer 2 Neo4j MERGE upserts
-│   │   ├── postgres_layer2.py                  # Layer 2 PostgreSQL upserts
-│   │   └── validation/
-│   │       ├── v2_1_structural.py              # Gate V2.1 — structural integrity
-│   │       └── v2_2_link_coverage.py           # Gate V2.2 — FormLine link coverage
-│   ├── layer3/
-│   │   ├── models_layer3.py                    # Pydantic models (Publication, PublicationChunk, RetrievalResult)
-│   │   ├── pdf_parser.py                       # PDF → paragraph-aware chunks (pdfplumber + tiktoken)
-│   │   ├── embeddings.py                       # OpenAI text-embedding-3-small (batched, retry)
-│   │   ├── postgres_layer3.py                  # pgvector upsert, IVFFlat index, cosine search
-│   │   └── validation/
-│   │       ├── v3_1_structural.py              # Gate V3.1 — chunk structural integrity
-│   │       ├── v3_2_coverage.py                # Gate V3.2 — publication coverage
-│   │       └── v3_3_retrieval.py               # Gate V3.3 — retrieval quality probes
-│   └── validation/
-│       ├── v1_1_structural.py
-│       ├── v1_2_spot_check.py
-│       ├── v1_3_test_replay.py
-│       └── v1_4_regression.py
-├── tests/
-│   ├── test_layer1.py                          # 24 pytest tests (CSV · AST · V1.1 · V1.3)
-│   ├── test_layer2.py                          # 23 pytest tests (HTML parser · V2.1 · V2.2)
-│   └── test_layer3.py                          # 33 pytest tests (models · parser · V3.1–V3.3)
-├── cli.py                                      # CLI: all Layer 1–3 commands
-├── docker-compose.yml                          # Neo4j 5.18 + PostgreSQL 16 (pgvector/pgvector:pg16)
-└── requirements.txt
+│   ├── postgres_schema.sql                 # Layer 1 DDL
+│   ├── postgres_layer2.sql                 # Layer 2 DDL
+│   ├── postgres_layer3.sql                 # Layer 3 DDL + pgvector
+│   └── neo4j_schema.cypher                 # Neo4j constraints and indexes
+├── eval/                                   # Evaluation runner and golden sets
+│   ├── golden_set.json
+│   └── run_eval.py
+├── tests/                                  # 453 pytest tests
+│   ├── conftest.py                         # Fixtures, mock factories
+│   ├── test_rules.py                       # Layer 1 (24 tests)
+│   ├── test_instructions.py                # Layer 2 (23 tests)
+│   ├── test_publications.py                # Layer 3 (33 tests)
+│   ├── test_agent.py                       # Layer 4
+│   ├── test_evaluation.py                  # Layer 5
+│   ├── test_retriever.py                   # Retrieval pipeline
+│   ├── test_config_and_registry.py         # Config & ontology
+│   ├── test_ontology.py                    # Ontology
+│   ├── test_multi_year.py                  # Multi-year support
+│   ├── test_pipeline_wiring.py             # End-to-end wiring
+│   ├── test_irs_download.py                # IRS download
+│   └── api/                                # API endpoint tests
+├── cli.py                                  # CLI entry point
+├── docker-compose.yml                      # Neo4j 5.18 + PostgreSQL 16 (pgvector)
+├── requirements.txt                        # Core + KB dependencies
+├── requirements-api.txt                    # API dependencies (FastAPI, SQLAlchemy, etc.)
+├── pyproject.toml                          # Package metadata, pytest config
+└── .env.example                            # Environment variable template
 ```
 
 ---
 
 ## Prerequisites
 
-| Tool | Minimum version | Purpose |
+| Tool | Minimum Version | Purpose |
 |------|----------------|---------|
-| Python | 3.10+ | Runtime |
+| Python | 3.10+ | Backend runtime |
+| Node.js | 18+ | Frontend runtime |
 | Docker + Docker Compose | 24+ | Neo4j and PostgreSQL containers |
 | pip | any | Python dependencies |
+| npm | any | Frontend dependencies |
 
-> **Neo4j edition:** All constraints use standard `IS UNIQUE` syntax — **Neo4j Community Edition** is sufficient. Enterprise Edition is not required.
+> **Neo4j edition:** All constraints use standard `IS UNIQUE` syntax — **Neo4j Community Edition** is sufficient.
 
 ---
 
-## Build and Run Locally
+## Quick Start
 
-### 1. Clone / open the project
+### 1. Environment configuration
 
 ```bash
-cd taxflow-kb
+cp .env.example .env
+# Edit .env — set OPENAI_API_KEY and review database credentials
 ```
 
-### 2. Install Python dependencies
+### 2. Install dependencies
 
 ```bash
+# Backend — core knowledge base
 python -m venv .venv
 source .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
+
+# Backend — API server
+pip install -r requirements-api.txt
+
+# Frontend
+cd frontend && npm install && cd ..
 ```
 
 ### 3. Start the databases
@@ -183,162 +165,104 @@ docker compose up -d
 | `taxflow-neo4j` | 7474 (browser), 7687 (Bolt) | `neo4j / taxflow_dev` |
 | `taxflow-postgres` | 5432 | `taxflow / taxflow_dev` |
 
-> **Windows/WSL2 note:** The PostgreSQL schemas are NOT auto-applied on startup. Docker Desktop on Windows mounts host files with permissions the container's `postgres` user cannot read, so `docker-entrypoint-initdb.d` is intentionally disabled. Apply both schemas manually in step 5.
-
 Wait ~30 seconds, then verify:
 
 ```bash
 docker compose ps     # both containers should show "healthy"
 ```
 
-### 4. Run the full test suite
-
-No databases, no API key, and no PDF files are required — all tests run entirely in-memory against sample data and mock vectors.
+### 4. Apply database schemas (first time only)
 
 ```bash
-pytest tests/ -v
-```
-
-Expected: **80 passed** (24 Layer 1 + 23 Layer 2 + 33 Layer 3).
-
-To run each layer separately:
-
-```bash
-pytest tests/test_layer1.py -v    # 24 passed
-pytest tests/test_layer2.py -v    # 23 passed
-pytest tests/test_layer3.py -v    # 33 passed
-```
-
-### 5. Apply schemas (first time only)
-
-**PostgreSQL Layer 1:**
-
-```bash
+# PostgreSQL (all three layers)
 docker exec -i taxflow-postgres psql -U taxflow -d taxflow < schema/postgres_schema.sql
-```
-
-**PostgreSQL Layer 2:**
-
-```bash
 docker exec -i taxflow-postgres psql -U taxflow -d taxflow < schema/postgres_layer2.sql
-```
+docker exec -i taxflow-postgres psql -U taxflow -d taxflow < schema/postgres_layer3.sql
 
-Verify both schemas applied:
-
-```bash
-docker exec -it taxflow-postgres psql -U taxflow -d taxflow -c "\dt irs_kb.*"
-```
-
-Expected tables: `form_lines`, `mef_rules`, `rule_version_history`, `ingestion_log`, `instruction_pages`, `instruction_sections`, `instruction_ingestion_log`, `layer2_validation_runs`.
-
-**Neo4j:**
-
-```bash
+# Neo4j
 docker exec -it taxflow-neo4j cypher-shell \
   -u neo4j -p taxflow_dev \
   --file /var/lib/neo4j/import/neo4j_schema.cypher
 ```
 
-### 6. Ingest Layer 1 — MeF business rules
+> **Windows/WSL2 note:** Docker Desktop on Windows mounts host files with permissions the container's `postgres` user cannot read, so `docker-entrypoint-initdb.d` is intentionally disabled. Apply schemas manually as shown above.
+
+### 5. Run the application
+
+```bash
+# Terminal 1 — Backend API
+uvicorn api.main:create_app --factory --host 0.0.0.0 --port 8000 --reload
+
+# Terminal 2 — Frontend
+cd frontend && npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### 6. Run the test suite
+
+No databases, no API key, and no PDF files are required — all tests run entirely in-memory with mocks.
+
+```bash
+pytest tests/ -v
+```
+
+Expected: **453 tests passed**.
+
+---
+
+## Knowledge Base Ingestion
+
+The knowledge base must be populated before the agent can answer questions. Each layer can be ingested independently.
+
+### Layer 1 — MeF Business Rules
 
 ```bash
 python cli.py ingest \
   --csv data/sample/mef_1040_2024_v5_2.csv \
   --neo4j-uri bolt://localhost:7687 \
-  --neo4j-user neo4j \
-  --neo4j-password taxflow_dev \
+  --neo4j-user neo4j --neo4j-password taxflow_dev \
   --pg-dsn "postgresql://taxflow:taxflow_dev@localhost:5432/taxflow"
-```
 
-### 7. Run Layer 1 validation gates
-
-```bash
+# Validate
 python cli.py validate --step all --csv data/sample/mef_1040_2024_v5_2.csv
 ```
 
-Or individual gates:
-
-```bash
-python cli.py validate --step v1.1 --csv data/sample/mef_1040_2024_v5_2.csv
-python cli.py validate --step v1.3 --csv data/sample/mef_1040_2024_v5_2.csv
-```
-
-### 8. Ingest Layer 2 — Form 1040 instruction HTML
+### Layer 2 — Form Instructions
 
 ```bash
 python cli.py ingest-instructions \
   --html data/instructions/i1040gi_2024_synthetic.html \
-  --form-type 1040 \
-  --tax-year 2024 \
+  --form-type 1040 --tax-year 2024 \
   --neo4j-uri bolt://localhost:7687 \
-  --neo4j-user neo4j \
-  --neo4j-password taxflow_dev \
+  --neo4j-user neo4j --neo4j-password taxflow_dev \
   --pg-dsn "postgresql://taxflow:taxflow_dev@localhost:5432/taxflow"
-```
 
-### 9. Run Layer 2 validation gates
-
-```bash
+# Validate
 python cli.py validate-instructions \
   --html data/instructions/i1040gi_2024_synthetic.html \
-  --form-type 1040 \
-  --tax-year 2024
+  --form-type 1040 --tax-year 2024
 ```
 
-Both gates run automatically. Expected output:
+### Layer 3 — IRS Publications
 
-```
-V2.1 PASSED — structural integrity (38 sections, 26 line sections)
-V2.2 PASSED — FormLine link coverage (≥ 70% of Layer 1 fields explained)
-```
-
-### 10. Layer 3 setup — pgvector schema
-
-Layer 3 uses the `pgvector/pgvector:pg16` Docker image (already in `docker-compose.yml`). Apply the Layer 3 schema once:
-
-```bash
-docker exec -i taxflow-postgres psql -U taxflow -d taxflow < schema/postgres_layer3.sql
-```
-
-Verify the new tables:
-
-```bash
-docker exec -it taxflow-postgres psql -U taxflow -d taxflow \
-  -c "\dt irs_kb.*" -c "SELECT extname FROM pg_extension WHERE extname='vector';"
-```
-
-Expected: `publication_chunks`, `publications`, `pub_ingestion_log`, `layer3_validation_runs` tables plus `vector` extension.
-
-### 11. Download IRS Publication PDFs
-
-IRS publications are free public documents available at `https://www.irs.gov/pub/irs-pdf/p{NUMBER}.pdf`.
+Download the IRS PDFs first:
 
 ```bash
 mkdir -p data/publications
-
-# Download all 8 publications for TY 2024
 for pub in 17 501 525 550 590a 590b 596 969; do
-  echo "Downloading p${pub}.pdf …"
   curl -L "https://www.irs.gov/pub/irs-pdf/p${pub}.pdf" \
     -H "User-Agent: Mozilla/5.0" \
     -o "data/publications/p${pub}.pdf" --retry 3 --retry-delay 5
-  sleep 2    # be a considerate client
+  sleep 2
 done
 ```
 
-> **Note:** IRS PDF URLs may redirect. If a publication returns a "Page Not Found", try `https://www.irs.gov/pub/irs-prior/p{NUMBER}--2024.pdf` for the prior-year version.
-
-### 12. Ingest Layer 3 — IRS Publications
-
-Set your OpenAI API key before running:
+Then ingest and embed:
 
 ```bash
 export OPENAI_API_KEY="sk-..."
-```
 
-Ingest all publications in one command (repeat `--pdf`/`--pub-number` pairs):
-
-```bash
 python cli.py ingest-publications \
   --pdf data/publications/p17.pdf   --pub-number 17   \
   --pdf data/publications/p501.pdf  --pub-number 501  \
@@ -351,174 +275,172 @@ python cli.py ingest-publications \
   --tax-year 2025 \
   --pg-dsn "postgresql://taxflow:taxflow_dev@localhost:5432/taxflow" \
   --init-schema
-```
 
-After the first full ingest, build the IVFFlat ANN index for fast cosine search:
-
-```bash
+# Build the IVFFlat ANN index after initial bulk ingest
 python cli.py ingest-publications \
   --pdf data/publications/p17.pdf --pub-number 17 \
   --tax-year 2025 \
   --pg-dsn "postgresql://taxflow:taxflow_dev@localhost:5432/taxflow" \
   --skip-embedding --build-index
-```
 
-**Text-only ingest (no API key required):** Use `--skip-embedding` to ingest text without calling the OpenAI API. You can embed later by re-running without the flag.
-
-### 13. Run Layer 3 validation gates
-
-```bash
-# V3.1 — structural integrity of the parsed PDFs (no DB required)
-python cli.py validate-publications \
-  --step v3.1 \
-  --pdf data/publications/p17.pdf --pub-number 17 \
-  --tax-year 2025
-
-# V3.2 — database coverage (all 8 pubs must be present with adequate chunk counts)
-python cli.py validate-publications \
-  --step v3.2 \
-  --pg-dsn "postgresql://taxflow:taxflow_dev@localhost:5432/taxflow" \
-  --require-embeddings
-
-# V3.3 — retrieval quality (8 probe queries, requires OPENAI_API_KEY)
-python cli.py validate-publications \
-  --step v3.3 \
-  --pg-dsn "postgresql://taxflow:taxflow_dev@localhost:5432/taxflow"
-
-# Run all three gates at once
-python cli.py validate-publications \
-  --step all \
+# Validate
+python cli.py validate-publications --step all \
   --pdf data/publications/p17.pdf --pub-number 17 \
   --tax-year 2025 \
   --pg-dsn "postgresql://taxflow:taxflow_dev@localhost:5432/taxflow" \
   --require-embeddings
 ```
 
-### 14. Semantic search
+> **Text-only ingest:** Use `--skip-embedding` to ingest without calling the OpenAI API. Embed later by re-running without the flag.
+
+### Layer 4 — Query Agent
+
+Once the knowledge base is populated, ask questions via the CLI:
+
+```bash
+python cli.py ask "What is the standard deduction for a single filer?"
+
+# Validate the agent against standard CPA queries
+python cli.py validate-agent
+```
+
+### Layer 5 — Evaluation
+
+```bash
+# Generate a gold set from ingested chunks
+python cli.py generate-gold-set
+
+# Evaluate retrieval quality (HR@k, MRR, Recall)
+python cli.py evaluate-retrieval
+
+# Evaluate generation quality (LLM-as-judge)
+python cli.py evaluate-generation
+```
+
+---
+
+## Semantic Search
 
 ```bash
 # Basic search
 python cli.py search "What is the standard deduction for a single filer?" \
-  --pg-dsn "postgresql://taxflow:taxflow_dev@localhost:5432/taxflow" \
-  --top-k 5
+  --pg-dsn "postgresql://taxflow:taxflow_dev@localhost:5432/taxflow" --top-k 5
 
-# Filter by specific publications
+# Filter by publication
 python cli.py search "IRA contribution limits for 2025" \
   --pg-dsn "postgresql://taxflow:taxflow_dev@localhost:5432/taxflow" \
   --pub-number 590a --pub-number 590b --top-k 3
 
 # Filter by tax year
-python cli.py search "Earned Income Credit eligibility requirements" \
+python cli.py search "Earned Income Credit eligibility" \
   --pg-dsn "postgresql://taxflow:taxflow_dev@localhost:5432/taxflow" \
   --pub-number 596 --tax-year 2025 --top-k 5
 ```
 
-Example output:
-```
-Searching for: 'What is the standard deduction for a single filer?'
+---
 
-──────────────────────────────────────────────────────────────────────────
-[1] Pub 501 — Dependents, Standard Deduction, and Filing Information
-    Chapter: STANDARD DEDUCTION
-    Section: Standard Deduction Amounts
-    Page: 22  |  Score: 0.8743
-    For 2025, the standard deduction for a single filer is $15,000 …
-──────────────────────────────────────────────────────────────────────────
-```
+## REST API Endpoints
 
-### 15. Explore the graph (optional)
-
-Open the Neo4j browser at [http://localhost:7474](http://localhost:7474) and try:
-
-**Layer 1 queries:**
-
-```cypher
--- All rules for Form 1040 after ingest
-MATCH (fl:FormLine {form_type: '1040', tax_year: 2024})-[:GOVERNED_BY]->(r:Rule)
-RETURN fl.field_path, r.rule_id, r.severity, r.rule_text
-ORDER BY r.rule_id;
-
--- Rules that raise a specific error code
-MATCH (r:Rule)-[:RAISES]->(e:ErrorCode {code: 'IND-041-01'})
-RETURN r.rule_id, r.rule_text, e.code;
-```
-
-**Layer 2 queries:**
-
-```cypher
--- All instruction sections for Form 1040
-MATCH (p:InstructionPage {form_type: '1040'})-[:HAS_SECTION]->(s:InstructionSection)
-RETURN s.section_type, s.heading, s.line_reference
-ORDER BY s.sequence;
-
--- Which instruction section explains a given FormLine field?
-MATCH (s:InstructionSection)-[:EXPLAINS]->(fl:FormLine {short_field: 'WagesSalariesTipsAmt'})
-RETURN s.section_id, s.heading, s.text_content;
-
--- Cross-form references from the instruction graph
-MATCH (s:InstructionSection)-[:REFERENCES_FORM]->(f:Form)
-RETURN s.heading, f.form_type
-ORDER BY f.form_type;
-```
-
-**Combined query — rule + plain-English explanation for one field:**
-
-```cypher
-MATCH (fl:FormLine {form_type: '1040', short_field: 'WagesSalariesTipsAmt'})
-OPTIONAL MATCH (fl)-[:GOVERNED_BY]->(r:Rule)
-OPTIONAL MATCH (s:InstructionSection)-[:EXPLAINS]->(fl)
-RETURN fl.short_field, r.rule_id, r.rule_text, s.heading, s.text_content
-LIMIT 5;
-```
-
-### Tear down
-
-```bash
-docker compose down -v    # removes containers and volumes (data is lost)
-```
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| GET | `/api/health` | Readiness check |
+| GET | `/api/clients` | List all clients |
+| POST | `/api/clients` | Create a client |
+| GET | `/api/clients/{id}` | Get client details |
+| PUT | `/api/clients/{id}` | Update a client |
+| DELETE | `/api/clients/{id}` | Delete a client |
+| GET | `/api/clients/{id}/chat` | Get chat history |
+| POST | `/api/clients/{id}/chat` | Send a message |
+| POST | `/api/documents` | Upload a document |
+| GET | `/api/documents` | List documents |
+| POST | `/api/documents/{id}/extract` | Extract data from document |
+| POST | `/api/documents/{id}/approve` | Approve extracted data |
+| POST | `/api/tax-returns/{client_id}/generate` | Generate draft return |
+| GET | `/api/tax-returns/{client_id}` | Get draft return |
 
 ---
 
 ## CLI Reference
 
 ```
-# ── Layer 1 ──────────────────────────────────────────────────────────────────
-python cli.py ingest               --csv FILE
-                                   [--neo4j-uri URI --neo4j-user U --neo4j-password P]
-                                   [--pg-dsn DSN] [--init-schema]
-
+# ── Layer 1 — MeF Business Rules ─────────────────────────────────────────────
+python cli.py ingest               --csv FILE [--neo4j-uri URI] [--pg-dsn DSN]
 python cli.py validate             --csv FILE --step {v1.1 | v1.3 | all}
-
 python cli.py sample               --csv FILE --out OUTPUT_PREFIX
-
 python cli.py score                --annotated ANNOTATED_JSON
-
 python cli.py diff                 --old OLD_CSV --new NEW_CSV [--report-dir DIR]
 
-# ── Layer 2 ──────────────────────────────────────────────────────────────────
+# ── Layer 2 — Form Instructions ──────────────────────────────────────────────
 python cli.py ingest-instructions  --html FILE --form-type FORM --tax-year YEAR
-                                   [--neo4j-uri URI --neo4j-user U --neo4j-password P]
-                                   [--pg-dsn DSN] [--init-schema]
-
+                                   [--neo4j-uri URI] [--pg-dsn DSN]
 python cli.py validate-instructions --html FILE --form-type FORM --tax-year YEAR
                                     --step {all | v2.1 | v2.2}
 
-# ── Layer 3 ──────────────────────────────────────────────────────────────────
-python cli.py ingest-publications  --pdf FILE --pub-number NUM [repeat for more PDFs]
+# ── Layer 3 — Publications ───────────────────────────────────────────────────
+python cli.py ingest-publications  --pdf FILE --pub-number NUM [repeat pairs]
                                    --tax-year YEAR --pg-dsn DSN
-                                   [--api-key KEY] [--skip-embedding]
-                                   [--init-schema] [--build-index]
-
+                                   [--skip-embedding] [--build-index] [--init-schema]
 python cli.py validate-publications --step {all | v3.1 | v3.2 | v3.3}
-                                    [--pg-dsn DSN]
-                                    [--pdf FILE --pub-number NUM]   # required for v3.1
-                                    [--api-key KEY]                  # required for v3.3
-                                    [--require-embeddings]           # enforces V3.2-C
-
-python cli.py search               QUERY --pg-dsn DSN
-                                   [--api-key KEY] [--top-k N]
+                                    [--pg-dsn DSN] [--pdf FILE --pub-number NUM]
+                                    [--require-embeddings]
+python cli.py search               QUERY --pg-dsn DSN [--top-k N]
                                    [--pub-number NUM] [--tax-year YEAR]
+python cli.py download-publications [--output-dir DIR]
+python cli.py build-index          --pg-dsn DSN
+python cli.py add-bm25-index       --pg-dsn DSN
+python cli.py re-embed             --pg-dsn DSN [--model MODEL]
+
+# ── Layer 4 — Agent ──────────────────────────────────────────────────────────
+python cli.py ask                  QUESTION
+python cli.py validate-agent
+
+# ── Layer 5 — Evaluation ─────────────────────────────────────────────────────
+python cli.py generate-gold-set
+python cli.py filter-gold-set
+python cli.py patch-gold-set
+python cli.py validate-gold-set
+python cli.py verify-gold-set
+python cli.py evaluate-retrieval
+python cli.py evaluate-generation
 ```
+
+---
+
+## Tech Stack
+
+| Component | Technology |
+|-----------|-----------|
+| **Frontend** | Next.js 16, React 19, TypeScript 5, Tailwind CSS 4 |
+| **Backend API** | FastAPI, Uvicorn, SQLAlchemy 2 (async), Pydantic v2 |
+| **App Database** | SQLite (clients, documents, chat history) |
+| **Knowledge Graph** | Neo4j 5.18 Community |
+| **Vector Store** | PostgreSQL 16 + pgvector (IVFFlat ANN, 1536-dim) |
+| **Full-Text Search** | PostgreSQL GIN/tsvector (BM25 hybrid search) |
+| **Embeddings** | OpenAI text-embedding-3-large (1536 dimensions) |
+| **LLM Synthesis** | GPT-4o-mini (answers), GPT-4o (judge/evaluation) |
+| **PDF Parsing** | pdfplumber (paragraph-aware chunking) |
+| **Token Counting** | tiktoken (cl100k_base) |
+| **Testing** | pytest (453 tests, all in-memory, no external deps) |
+
+---
+
+## Environment Variables
+
+Copy `.env.example` to `.env` and configure:
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `PG_DSN` | `postgresql://taxflow:taxflow_dev@localhost:5432/taxflow` | PostgreSQL connection |
+| `NEO4J_URI` | `bolt://localhost:7687` | Neo4j connection |
+| `NEO4J_USER` / `NEO4J_PASSWORD` | `neo4j` / `changeme` | Neo4j credentials |
+| `OPENAI_API_KEY` | — | Required for embeddings and synthesis |
+| `EMBEDDING_MODEL` | `text-embedding-3-large` | Embedding model |
+| `EMBEDDING_DIM` | `1536` | Embedding dimensions |
+| `SYNTHESIS_MODEL` | `gpt-4o-mini` | Answer synthesis model |
+| `JUDGE_MODEL` | `gpt-4o` | Evaluation judge model |
+| `RETRIEVAL_TOP_K` | `10` | Top-k results for retrieval |
+| `CHUNK_MAX_TOKENS` | `400` | Target tokens per chunk |
+| `DEFAULT_TAX_YEAR` | `2025` | Default tax year |
 
 ---
 
@@ -526,176 +448,35 @@ python cli.py search               QUERY --pg-dsn DSN
 
 ### Layer 1 — Real MeF Business Rules
 
-The sample CSV (`data/sample/mef_1040_2024_v5_2.csv`) is a realistic synthetic dataset built to match the IRS MeF format exactly. When the actual IRS files become available:
-
-**Where to get them:**
-
-IRS publishes MeF business rules annually as part of the MeF Developer Resources package. Access requires registration with IRS e-Services:
-
-- MeF Developer Portal: [https://www.irs.gov/e-file-providers/modernized-e-file-mef-internet-filing](https://www.irs.gov/e-file-providers/modernized-e-file-mef-internet-filing)
-- Business rules are distributed as a ZIP containing one CSV per form family (e.g., `1040_BusinessRules_2024_v5.2.csv`).
-
-**Column mapping:** The pipeline expects this exact 10-column header (case-insensitive):
+The sample CSV is a realistic synthetic dataset. Real IRS MeF business rules are available from the [MeF Developer Portal](https://www.irs.gov/e-file-providers/modernized-e-file-mef-internet-filing) (requires IRS e-Services registration). The pipeline expects this 10-column header:
 
 ```
 RULE_ID, RULE_TYPE, FORM_FAMILY, FIELD_PATH, RULE_TEXT,
 RULE_EXPRESSION, ERROR_CODE, SEVERITY, TAX_YEAR, SCHEMA_VERSION
 ```
 
-If the IRS file uses different column names, add aliases to `HEADER_ALIASES` in `tax_brain/rules/csv_parser.py`.
+### Layer 2 — Real IRS Instruction HTML
 
-**Multi-form ingestion:**
+IRS publishes instruction HTML at `https://www.irs.gov/instructions/{form-code}`. The HTML parser uses only Python's stdlib `html.parser` and works against live IRS pages with no changes.
 
-```bash
-for f in data/irs_real/1040_*.csv; do
-  python cli.py ingest --csv "$f" \
-    --neo4j-uri bolt://localhost:7687 \
-    --neo4j-user neo4j --neo4j-password taxflow_dev \
-    --pg-dsn "postgresql://taxflow:taxflow_dev@localhost:5432/taxflow"
-done
-```
+### Layer 3 — Real IRS Publications
 
----
-
-### Layer 2 — Real IRS Instruction HTML Pages
-
-The synthetic file (`data/instructions/i1040gi_2024_synthetic.html`) mirrors the structure of real IRS instruction pages. The HTML parser uses only Python's stdlib `html.parser` and makes no assumptions about external CSS or JS, so it works against the live IRS pages with no changes.
-
-#### Fetching the real instruction pages
-
-IRS publishes instruction HTML at `https://www.irs.gov/instructions/{form-code}`. The current year's page is always at the root path; prior years redirect to archived PDF or HTML.
-
-| Form | Live HTML URL | Notes |
-|------|--------------|-------|
-| Form 1040 General Instructions | [https://www.irs.gov/instructions/i1040gi](https://www.irs.gov/instructions/i1040gi) | Main individual return instructions |
-| Form 1040 Schedule A (Itemized) | [https://www.irs.gov/instructions/i1040sca](https://www.irs.gov/instructions/i1040sca) | Itemized deductions |
-| Form 1040 Schedule B (Interest/Dividends) | [https://www.irs.gov/instructions/i1040sb](https://www.irs.gov/instructions/i1040sb) | Interest and dividend income |
-| Form 1040 Schedule C (Business) | [https://www.irs.gov/instructions/i1040sc](https://www.irs.gov/instructions/i1040sc) | Self-employment / sole proprietor |
-| Form 1040 Schedule D (Capital Gains) | [https://www.irs.gov/instructions/i1040sd](https://www.irs.gov/instructions/i1040sd) | Capital gains and losses |
-| Form 1040 Schedule E (Pass-through) | [https://www.irs.gov/instructions/i1040se](https://www.irs.gov/instructions/i1040se) | Partnerships, S-corps, trusts |
-| Form 8960 (Net Investment Income Tax) | [https://www.irs.gov/instructions/i8960](https://www.irs.gov/instructions/i8960) | NIIT — cross-referenced from Line 17 |
-| Form 8812 (Child Tax Credit) | [https://www.irs.gov/instructions/i8812](https://www.irs.gov/instructions/i8812) | CTC/ACTC — cross-referenced from Line 19 |
-| Form 8949 (Capital Asset Sales) | [https://www.irs.gov/instructions/i8949](https://www.irs.gov/instructions/i8949) | Feeds into Schedule D |
-| Schedule SE (Self-Employment Tax) | [https://www.irs.gov/instructions/i1040sse](https://www.irs.gov/instructions/i1040sse) | Self-employment tax calculation |
-
-**Downloading the pages for offline use:**
-
-```bash
-mkdir -p data/instructions/real
-
-# Download each page as a single HTML file (curl follows redirects, saves printable version)
-curl -L "https://www.irs.gov/instructions/i1040gi" \
-  -H "User-Agent: Mozilla/5.0" \
-  -o data/instructions/real/i1040gi_2024.html
-
-curl -L "https://www.irs.gov/instructions/i1040sca" \
-  -H "User-Agent: Mozilla/5.0" \
-  -o data/instructions/real/i1040sca_2024.html
-
-# Repeat for each form above, then ingest each file:
-python cli.py ingest-instructions \
-  --html data/instructions/real/i1040gi_2024.html \
-  --form-type 1040 \
-  --tax-year 2024 \
-  --neo4j-uri bolt://localhost:7687 \
-  --neo4j-user neo4j --neo4j-password taxflow_dev \
-  --pg-dsn "postgresql://taxflow:taxflow_dev@localhost:5432/taxflow"
-```
-
-> **IRS.gov robots.txt:** The IRS permits automated retrieval of public instruction pages. Keep requests to one page at a time and add a `--delay 2` flag (or `sleep 2`) between downloads to be a considerate client. Do not scrape at bulk rates.
-
-#### Parser adaptation for real HTML
-
-The real IRS instruction pages share the same `h2`/`h3` heading structure as the synthetic file. However, real pages may include:
-
-- Navigation sidebars and breadcrumbs (ignored — the parser only processes `h2`, `h3`, `p`, and `ul`/`li` tags)
-- Revision dates in `<div class="field--name-changed-date">` elements (ignored)
-- JavaScript-rendered content that does not appear in the raw HTML — use `curl` or `requests`, not a headless browser
-
-If the live page's structure differs significantly, check the V2.1 structural report:
-
-```bash
-python cli.py validate-instructions \
-  --html data/instructions/real/i1040gi_2024.html \
-  --form-type 1040 \
-  --tax-year 2024
-```
-
-If `SECTION_COUNT` or `LINE_SECTIONS` fail, inspect the raw HTML heading structure:
-
-```bash
-grep -E "<h[23]" data/instructions/real/i1040gi_2024.html | head -40
-```
-
-Adjust the parser's `_classify_section` logic or heading patterns in `tax_brain/instructions/html_parser.py` as needed.
-
-#### V2.2 coverage on real pages
-
-Real instruction pages cover every line of the form, so V2.2 coverage (≥ 70% of Layer 1 fields linked) should pass easily. If it does not, the most likely cause is a mismatch between the line labels in the HTML (`"Line 1a"`) and the keys in `LINE_TO_FIELDS` in `html_parser.py`. Check the V2.2 report for which fields are uncovered, then add or adjust mappings:
-
-```python
-# tax_brain/instructions/html_parser.py — LINE_TO_FIELDS
-LINE_TO_FIELDS: dict[str, list[str]] = {
-    "1a": ["WagesSalariesTipsAmt"],
-    ...
-    # Add any new lines found in the real instructions here
-}
-```
-
-#### Prior-year instruction pages
-
-IRS archives prior-year HTML instructions at:
-
-```
-https://www.irs.gov/pub/irs-prior/i1040gi--{YEAR}.pdf
-```
-
-Note that archived versions are PDF only. To ingest prior-year instructions, download the PDF, extract text with a PDF parser of your choice, convert it to the expected HTML structure, then run `ingest-instructions`. Alternatively, use the IRS's online instructions viewer, which renders HTML for tax years 2021 and later at the same `/instructions/` path after selecting the year via the page's year-picker widget.
-
----
-
-### Layer 3 — Real IRS Publication PDFs
-
-The Layer 3 pipeline is designed for the real IRS PDFs. No synthetic data or special conversion is needed.
-
-**Download URLs:**
-
-| Publication | Title | URL |
-|-------------|-------|-----|
-| Pub 17 | Your Federal Income Tax | https://www.irs.gov/pub/irs-pdf/p17.pdf |
-| Pub 501 | Dependents, Standard Deduction | https://www.irs.gov/pub/irs-pdf/p501.pdf |
-| Pub 525 | Taxable and Nontaxable Income | https://www.irs.gov/pub/irs-pdf/p525.pdf |
-| Pub 550 | Investment Income and Expenses | https://www.irs.gov/pub/irs-pdf/p550.pdf |
-| Pub 590-A | IRA Contributions | https://www.irs.gov/pub/irs-pdf/p590a.pdf |
-| Pub 590-B | IRA Distributions | https://www.irs.gov/pub/irs-pdf/p590b.pdf |
-| Pub 596 | Earned Income Credit | https://www.irs.gov/pub/irs-pdf/p596.pdf |
-| Pub 969 | Health Savings Accounts | https://www.irs.gov/pub/irs-pdf/p969.pdf |
-
-**Embedding cost estimate:**
-
-IRS publications typically contain 150–500 pages. With ~400 tokens/chunk and ~3 chunks/page, a typical publication produces 500–1500 chunks. At $0.02/1M tokens with text-embedding-3-small, embedding all 8 publications costs under **$0.10 total**.
-
-**Scanned PDF handling:**
-
-Some older IRS publications are image-based scans. If `parse_publication_pdf()` returns `chunks=[]` with an error message containing "scanned/image-only", the PDF cannot be processed without OCR. Use `tesseract` or the OpenAI vision API to extract text first, then re-run the pipeline. Current publications (2024–2025) are all text-based.
-
-**Adding new publications:**
-
-1. Add the new `pub_number → pub_title` entry to `PUB_TITLES` in `tax_brain/publications/models_layer3.py`.
-2. Add the pub_number to `EXPECTED_PUBS` in `tax_brain/publications/validation/v3_2_coverage.py`.
-3. Add a retrieval probe to `PROBES` in `tax_brain/publications/validation/v3_3_retrieval.py`.
-4. Run `ingest-publications` and `validate-publications` to confirm.
+The Layer 3 pipeline is designed for real IRS PDFs — no conversion needed. All 8 publications are free at `https://www.irs.gov/pub/irs-pdf/p{NUMBER}.pdf`. Embedding cost for all 8 publications is under $0.10 total.
 
 ---
 
 ## Development Notes
 
-- All database writes use **MERGE / upsert** semantics — re-ingesting the same HTML, CSV, or PDF is idempotent.
-- The `rule_version_history` table in PostgreSQL has an append-only trigger: `UPDATE` and `DELETE` are blocked at the database level.
-- The HTML parser uses only Python's stdlib `html.parser` — no BeautifulSoup, no lxml, no external dependencies beyond `requirements.txt`.
-- For range headings like "Lines 3a–3b", the parser follows IRS convention and registers the *last* line of the range as the primary line reference (3b = ordinary dividends), since that is the field with a data entry.
-- The rule engine in `v1_3_test_replay.py` evaluates expressions using a regex-based interpreter and does **not** call `eval()`. IRS rule expressions are not safe to execute as arbitrary Python.
-- The V1.2 spot-check uses stratified sampling — at least 10 rules per category are included regardless of total count.
-- Layer 3 embedding batches are capped at 512 chunks per OpenAI API call (the API allows up to 2048; 512 is a safe default). Chunks already embedded (non-null embedding) are skipped on re-runs.
-- The IVFFlat index (`lists=100`) should be built once after the initial bulk ingest, not after every individual publication update. PostgreSQL will use a sequential scan for cosine queries until the index exists; this is fine for < 10,000 chunks but noticeable above ~100,000 chunks.
-- The `v3_3_retrieval.py` probes are designed to be conservative (min_score ≥ 0.50–0.60). If a probe fails on a new publication, first verify the publication was fully embedded (`embedded_count == chunk_count` in `v_pub_coverage`), then check whether the probe's `must_contain` substring appears in any real passage of that publication.
+- All database writes use **MERGE / upsert** semantics — re-ingesting is idempotent.
+- Protocol-driven dependency injection — all external deps injected via Protocols.
+- The rule engine in `v1_3_test_replay.py` uses regex-based evaluation, not `eval()`.
+- Embedding batches are capped at 512 chunks per API call with exponential backoff.
+- Hybrid search combines vector (cosine) + BM25 (keyword) via augment or RRF fusion.
+- The IVFFlat index (`lists=100`) should be built once after initial bulk ingest.
+- Tests run entirely in-memory with mock vectors — no databases or API keys needed.
+
+### Tear down
+
+```bash
+docker compose down -v    # removes containers and volumes (data is lost)
+```
