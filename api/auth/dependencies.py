@@ -56,14 +56,16 @@ async def get_current_user(
 
 
 async def _get_or_create_dev_user(session: AsyncSession) -> UserModel:
-    """For local dev without Auth0 — returns a default admin user."""
+    """For local dev without Auth0 — returns the seeded or default admin user."""
+    # Look up by auth0_sub first (matches seed data)
     result = await session.execute(
-        select(UserModel).where(UserModel.email == "dev@taxflow.local")
+        select(UserModel).where(UserModel.auth0_sub == "dev|local")
     )
     user = result.scalar_one_or_none()
     if user:
         return user
 
+    # No dev user exists — create org + user
     org = OrganizationModel(name="Dev Organization", slug="dev-org", plan="enterprise")
     session.add(org)
     await session.flush()

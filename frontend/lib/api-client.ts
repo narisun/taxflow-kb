@@ -7,7 +7,10 @@ export interface Client {
   tax_year: number;
   dependents: number;
   workflow_step: string;
+  org_id?: string;
+  created_by?: string;
   created_at: string;
+  updated_at?: string;
 }
 
 export interface ChatMessage {
