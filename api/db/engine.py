@@ -27,6 +27,11 @@ async def init_db():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
+    # Seed dev data if DB is empty
+    from api.db.seed import seed_dev_data
+    async with async_session() as session:
+        await seed_dev_data(session)
+
 
 async def get_session():
     """Yield an async session per request."""

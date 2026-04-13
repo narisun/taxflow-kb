@@ -34,3 +34,5 @@ htmlcov/
 # ── Misc ────────────────────────────────────────────────────────────────────
 *.log
 .superpowers/
+taxbrain.db
+uploads/
