@@ -25,7 +25,8 @@ export function DocumentCard({ doc, onClick }: DocumentCardProps) {
   const flags = parseJson<string[]>(doc.flags || "[]", []);
 
   const subtitle = data.employer_name || data.payer_name || data.lender_name || doc.form_type;
-  const confidenceRounded = Math.round((doc.confidence * 100) / 10) * 10;
+  const confidencePercent = Math.round(doc.confidence * 100);
+  const confidenceRounded = Math.round(confidencePercent / 10) * 10;
 
   // Build key-value pairs based on form type
   const kvPairs: { label: string; value: string }[] = [];
@@ -81,7 +82,7 @@ export function DocumentCard({ doc, onClick }: DocumentCardProps) {
           </div>
           <div className="flex items-center gap-1.5 shrink-0 ml-2">
             <Progress value={confidenceRounded} color={confidenceRounded >= 90 ? "green" : confidenceRounded >= 70 ? "orange" : "red"} className="w-12" />
-            <span className="text-[11px] font-medium text-secondary">{confidenceRounded}%</span>
+            <span className="text-[11px] font-medium text-secondary">{confidencePercent}%</span>
           </div>
         </div>
 

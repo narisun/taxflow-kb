@@ -1,8 +1,10 @@
 import pytest
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from api.db.models import Base
+from api.db.base import Base
 from api.db.engine import get_session
+from api.auth.models import OrganizationModel, UserModel  # noqa: F401
+from api.db.models import ClientModel, DocumentModel, ChatMessageModel, TaxReturnDraftModel  # noqa: F401
 from api.main import create_app
 
 

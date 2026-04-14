@@ -1,16 +1,6 @@
 """Tests for tax return draft endpoints."""
 import pytest
 
-from api.routers import tax_returns
-
-
-@pytest.fixture(autouse=True)
-def _clear_drafts():
-    """Clear the in-memory drafts store between tests."""
-    tax_returns._drafts.clear()
-    yield
-    tax_returns._drafts.clear()
-
 
 @pytest.mark.asyncio
 async def test_generate_draft_return(client):

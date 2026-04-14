@@ -2,6 +2,8 @@
 from pydantic import BaseModel
 from datetime import datetime
 
+from api.models.enums import FormType, DocumentStatus
+
 
 class DocumentResponse(BaseModel):
     id: int
@@ -19,6 +21,8 @@ class DocumentResponse(BaseModel):
 class DocumentListResponse(BaseModel):
     items: list[DocumentResponse]
     total: int
+    page: int = 1
+    page_size: int = 50
 
 
 class ExtractedField(BaseModel):

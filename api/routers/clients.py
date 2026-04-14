@@ -1,13 +1,14 @@
 """Client CRUD endpoints — tenant-scoped."""
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.db.engine import get_session
 from api.db.models import ClientModel
-from api.auth.dependencies import get_current_user
+from api.auth.dependencies import get_current_user, require_role
 from api.auth.models import UserModel, ROLE_PERMISSIONS
 from api.models.client import ClientCreate, ClientUpdate, ClientResponse, ClientListResponse
+from api.routers._helpers import get_client_or_404
 
 router = APIRouter(prefix="/api/clients", tags=["clients"])
 
@@ -23,18 +24,20 @@ def _client_query(user: UserModel):
 
 @router.get("", response_model=ClientListResponse)
 async def list_clients(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(50, ge=1, le=200),
     session: AsyncSession = Depends(get_session),
     user: UserModel = Depends(get_current_user),
 ):
-    result = await session.execute(_client_query(user))
-    clients = result.scalars().all()
-    count_q = select(func.count(ClientModel.id)).where(ClientModel.org_id == user.org_id)
-    perms = ROLE_PERMISSIONS.get(user.role, {})
-    if not perms.get("can_view_all_clients"):
-        count_q = count_q.where(ClientModel.created_by == user.id)
+    q = _client_query(user)
+    count_q = select(func.count()).select_from(q.subquery())
     count_result = await session.execute(count_q)
     total = count_result.scalar() or 0
-    return ClientListResponse(items=clients, total=total)
+
+    paginated = q.offset((page - 1) * page_size).limit(page_size)
+    result = await session.execute(paginated)
+    clients = result.scalars().all()
+    return ClientListResponse(items=clients, total=total, page=page, page_size=page_size)
 
 
 @router.post("", response_model=ClientResponse, status_code=status.HTTP_201_CREATED)
@@ -89,7 +92,7 @@ async def update_client(
 async def delete_client(
     client_id: int,
     session: AsyncSession = Depends(get_session),
-    user: UserModel = Depends(get_current_user),
+    user: UserModel = Depends(require_role("admin", "supervisor")),
 ):
     result = await session.execute(
         _client_query(user).where(ClientModel.id == client_id)

@@ -1,18 +1,18 @@
 """Tax return draft endpoints."""
+import json
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.db.engine import get_session
-from api.db.models import ClientModel
-from api.auth.dependencies import get_current_user
+from api.db.models import ClientModel, TaxReturnDraftModel
+from api.auth.dependencies import get_current_user, require_role
 from api.auth.models import UserModel
 from api.models.tax_return import ReturnLine, TaxReturnDraft
+from api.routers._helpers import get_client_or_404
 
-router = APIRouter(tags=["tax_returns"])
-
-# In-memory store for drafts (keyed by client_id)
-_drafts: dict[int, TaxReturnDraft] = {}
+router = APIRouter(prefix="/api/clients/{client_id}/returns", tags=["tax_returns"])
 
 
 def _compute_tax(taxable_income: float, filing_status: str) -> float:
@@ -81,36 +81,55 @@ def _compute_draft(client: ClientModel) -> TaxReturnDraft:
     )
 
 
-@router.post("/api/clients/{client_id}/returns/draft", response_model=TaxReturnDraft)
+@router.post("/draft", response_model=TaxReturnDraft)
 async def generate_draft(
     client_id: int,
     session: AsyncSession = Depends(get_session),
-    user: UserModel = Depends(get_current_user),
+    user: UserModel = Depends(require_role("admin", "supervisor", "preparer")),
 ):
-    result = await session.execute(
-        select(ClientModel).where(ClientModel.id == client_id, ClientModel.org_id == user.org_id)
-    )
-    client = result.scalar_one_or_none()
-    if not client:
-        raise HTTPException(status_code=404, detail="Client not found")
+    client = await get_client_or_404(client_id, session, user)
     draft = _compute_draft(client)
-    _drafts[client_id] = draft
+
+    # Upsert draft in database
+    result = await session.execute(
+        select(TaxReturnDraftModel).where(
+            TaxReturnDraftModel.org_id == user.org_id,
+            TaxReturnDraftModel.client_id == client_id,
+        )
+    )
+    existing = result.scalar_one_or_none()
+    if existing:
+        existing.tax_year = draft.tax_year
+        existing.filing_status = draft.filing_status
+        existing.draft_json = draft.model_dump_json()
+    else:
+        db_draft = TaxReturnDraftModel(
+            client_id=client_id,
+            org_id=user.org_id,
+            created_by=user.id,
+            tax_year=draft.tax_year,
+            filing_status=draft.filing_status,
+            draft_json=draft.model_dump_json(),
+        )
+        session.add(db_draft)
+    await session.commit()
     return draft
 
 
-@router.get("/api/clients/{client_id}/returns/draft", response_model=TaxReturnDraft)
+@router.get("/draft", response_model=TaxReturnDraft)
 async def get_draft(
     client_id: int,
     session: AsyncSession = Depends(get_session),
     user: UserModel = Depends(get_current_user),
 ):
+    await get_client_or_404(client_id, session, user)
     result = await session.execute(
-        select(ClientModel).where(ClientModel.id == client_id, ClientModel.org_id == user.org_id)
+        select(TaxReturnDraftModel).where(
+            TaxReturnDraftModel.org_id == user.org_id,
+            TaxReturnDraftModel.client_id == client_id,
+        )
     )
-    client = result.scalar_one_or_none()
-    if not client:
-        raise HTTPException(status_code=404, detail="Client not found")
-    draft = _drafts.get(client_id)
-    if not draft:
+    db_draft = result.scalar_one_or_none()
+    if not db_draft:
         raise HTTPException(status_code=404, detail="No draft found — generate one first")
-    return draft
+    return TaxReturnDraft.model_validate_json(db_draft.draft_json)

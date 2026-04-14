@@ -178,7 +178,7 @@ function TopBar({ stats, deadline, user, onMenuToggle, showMenu, clientName, onD
         <NotificationBell />
 
         {/* Deadline */}
-        <span className="hidden md:inline text-[12px] text-red-500 font-medium bg-surface-secondary px-2.5 py-1 rounded-full shrink-0">
+        <span className="hidden md:inline text-[12px] text-amber-600 dark:text-amber-400 font-medium bg-amber-50 dark:bg-amber-900/20 px-2.5 py-1 rounded-full shrink-0">
           {deadline}
         </span>
 

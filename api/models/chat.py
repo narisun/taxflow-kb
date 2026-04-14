@@ -1,9 +1,9 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import datetime
 
 
 class ChatMessageCreate(BaseModel):
-    content: str
+    content: str = Field(min_length=1, max_length=10000)
 
 
 class ChatMessageResponse(BaseModel):
@@ -18,3 +18,5 @@ class ChatMessageResponse(BaseModel):
 class ChatHistoryResponse(BaseModel):
     messages: list[ChatMessageResponse]
     client_id: int
+    page: int = 1
+    page_size: int = 100

@@ -1,8 +1,9 @@
 """Verify Auth0 RS256 JWT tokens using JWKS."""
 
+import time
 import httpx
 from jose import jwt, JWTError
-from functools import lru_cache
+from cachetools import TTLCache
 
 from api.auth.config import (
     AUTH0_ALGORITHMS,
@@ -18,12 +19,20 @@ class TokenError(Exception):
         self.detail = detail
 
 
-@lru_cache(maxsize=1)
+_jwks_cache: TTLCache = TTLCache(maxsize=1, ttl=3600)
+_JWKS_CACHE_KEY = "jwks"
+
+
 def _fetch_jwks() -> dict:
-    """Fetch and cache Auth0 JWKS (JSON Web Key Set)."""
+    """Fetch Auth0 JWKS with 1-hour TTL cache."""
+    cached = _jwks_cache.get(_JWKS_CACHE_KEY)
+    if cached is not None:
+        return cached
     resp = httpx.get(AUTH0_JWKS_URL, timeout=10)
     resp.raise_for_status()
-    return resp.json()
+    data = resp.json()
+    _jwks_cache[_JWKS_CACHE_KEY] = data
+    return data
 
 
 def _get_signing_key(token: str) -> dict:
@@ -61,8 +70,3 @@ def verify_token(token: str) -> dict:
         raise TokenError("Token verification failed")
 
     return payload
-
-
-def decode_token_unsafe(token: str) -> dict:
-    """Decode a JWT WITHOUT verification — for testing/dev only."""
-    return jwt.get_unverified_claims(token)

@@ -20,7 +20,7 @@ function Badge({ variant, children, className }: BadgeProps) {
   return (
     <span
       className={cn(
-        "text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full inline-block",
+        "text-[9px] font-semibold tracking-wide px-2 py-0.5 rounded-full inline-block capitalize",
         variantClasses[variant],
         className
       )}

@@ -57,10 +57,10 @@ export function MessageList({ messages, isTyping = false }: MessageListProps) {
       <div
         ref={containerRef}
         onScroll={handleScroll}
-        className="absolute inset-0 scroll-visible px-5 py-4 pb-36 space-y-4"
+        className="absolute inset-0 scroll-visible px-5 pb-36 flex flex-col"
       >
         {messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center min-h-full text-tertiary">
+          <div className="flex flex-col items-center justify-center flex-1 text-tertiary">
             <svg className="w-10 h-10 mb-3 text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1}>
               <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -69,14 +69,19 @@ export function MessageList({ messages, isTyping = false }: MessageListProps) {
             </p>
           </div>
         ) : (
-          messages.map((msg) => (
-            <MessageBubble
-              key={msg.id}
-              role={msg.role}
-              content={msg.content}
-              timestamp={msg.timestamp || msg.created_at}
-            />
-          ))
+          <>
+            <div className="flex-1" />
+            <div className="space-y-4 py-4">
+              {messages.map((msg) => (
+                <MessageBubble
+                  key={msg.id}
+                  role={msg.role}
+                  content={msg.content}
+                  timestamp={msg.timestamp || msg.created_at}
+                />
+              ))}
+            </div>
+          </>
         )}
         {isTyping && <TypingIndicator />}
         <div ref={bottomRef} />

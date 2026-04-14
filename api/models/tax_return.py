@@ -1,12 +1,14 @@
 """Tax return Pydantic schemas."""
 from pydantic import BaseModel
 
+from api.models.enums import FilingStatus, ReturnSection
+
 
 class ReturnLine(BaseModel):
     number: str        # "1a", "2b", "9", "12", "15", "16", "19", "24", "25", "35a"
     label: str         # "Total wages, salaries, tips"
     value: float       # 185200.00
-    section: str = ""  # "income", "deductions", "tax_credits", "payments"
+    section: ReturnSection = "income"
 
 
 class TaxReturnDraft(BaseModel):

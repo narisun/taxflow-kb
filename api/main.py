@@ -1,4 +1,5 @@
 """FastAPI application factory for Tax Brain API."""
+import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,15 +14,20 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title="Tax Brain API",
         description="CPA tax preparation platform backend",
-        version="0.2.0",
+        version="0.3.0",
         lifespan=lifespan,
     )
+
+    allowed_origins = os.getenv(
+        "CORS_ALLOWED_ORIGINS", "http://localhost:3000"
+    ).split(",")
+
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:3000"],
+        allow_origins=allowed_origins,
         allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+        allow_headers=["Authorization", "Content-Type"],
     )
     from api.routers import health, clients, chat, documents, tax_returns, auth
     app.include_router(auth.router)

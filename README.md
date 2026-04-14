@@ -14,105 +14,187 @@ TaxFlow AI ingests IRS business rules, form instructions, and publications into 
 
 ---
 
+## Tech Stack
+
+| Component | Technology |
+|-----------|-----------|
+| **Frontend** | Next.js 16, React 19, TypeScript 5, Tailwind CSS 4 |
+| **Backend API** | FastAPI 0.115+, Uvicorn, SQLAlchemy 2 (async), Pydantic v2 |
+| **Authentication** | Auth0 (RS256 JWT), RBAC with 4 roles |
+| **App Database** | PostgreSQL 16 (async via asyncpg) — multi-tenant |
+| **Knowledge Graph** | Neo4j 5.18 Community |
+| **Vector Store** | PostgreSQL 16 + pgvector (IVFFlat ANN, 1536-dim) |
+| **Full-Text Search** | PostgreSQL GIN/tsvector (BM25 hybrid search) |
+| **Embeddings** | OpenAI text-embedding-3-large (1536 dimensions) |
+| **LLM Synthesis** | GPT-4o-mini (answers), GPT-4o (judge/evaluation) |
+| **PDF Parsing** | pdfplumber (paragraph-aware chunking) |
+| **Token Counting** | tiktoken (cl100k_base) |
+| **Testing** | pytest + pytest-asyncio (in-memory SQLite, no external deps) |
+
+---
+
 ## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  Frontend  (Next.js 16 · React 19 · Tailwind CSS 4)        │
 │  http://localhost:3000                                       │
+│  Auth0 SPA login · role-aware UI                            │
 └──────────────────────┬──────────────────────────────────────┘
-                       │ REST API
+                       │ REST API (Bearer JWT)
 ┌──────────────────────▼──────────────────────────────────────┐
 │  Backend API  (FastAPI · SQLAlchemy 2 async · Pydantic v2)  │
 │  http://localhost:8000                                       │
-│  Routers: /api/health · /api/clients · /api/clients/{id}/   │
-│           chat · /api/documents · /api/tax-returns           │
+│  Auth0 RS256 JWT verification · RBAC (4 roles)              │
+│  Routers: auth · health · clients · chat · documents ·      │
+│           tax_returns                                        │
 └──────┬───────────────┬──────────────────────────────────────┘
        │               │
 ┌──────▼───────┐ ┌─────▼─────────────────────────────────────┐
-│  SQLite      │ │  Knowledge Base (tax_brain)                │
-│  (clients,   │ │  PostgreSQL 16 + pgvector · Neo4j 5.18    │
-│   docs,      │ │  OpenAI embeddings · Hybrid search         │
-│   chat)      │ │  Agent: retrieve → rerank → synthesize     │
+│  PostgreSQL  │ │  Knowledge Base (tax_brain)                │
+│  (multi-     │ │  PostgreSQL 16 + pgvector · Neo4j 5.18    │
+│   tenant     │ │  OpenAI embeddings · Hybrid search         │
+│   app data)  │ │  Agent: retrieve → rerank → synthesize     │
 └──────────────┘ └────────────────────────────────────────────┘
 ```
 
 ---
 
-## Project Structure
+## Services
 
+| Service | Port | Purpose |
+|---------|------|---------|
+| **Frontend** (Next.js dev server) | 3000 | CPA-facing web application |
+| **Backend API** (Uvicorn/FastAPI) | 8000 | REST API, auth, business logic |
+| **PostgreSQL** (Docker: `taxflow-postgres`) | 5432 | App database + KB vector store |
+| **Neo4j** (Docker: `taxflow-neo4j`) | 7474 (browser), 7687 (Bolt) | Knowledge graph for rules/instructions |
+
+---
+
+## Database Tables
+
+### Application Database (PostgreSQL — async via SQLAlchemy)
+
+All data tables use multi-tenant isolation via `org_id` foreign key.
+
+| Table | Key Columns | Purpose |
+|-------|-------------|---------|
+| `organizations` | id, name, slug, plan, is_active | Tenant root — each CPA firm is an organization |
+| `users` | id, org_id, auth0_sub, email, role | Auth0-linked users with RBAC roles |
+| `clients` | id, org_id, created_by, name, filing_status, tax_year, workflow_step | Tax preparation clients per firm |
+| `documents` | id, org_id, client_id, form_type, status, confidence, extracted_data | Uploaded tax documents with OCR extraction results |
+| `chat_messages` | id, org_id, client_id, role, content, message_type | AI chat history per client |
+| `tax_return_drafts` | id, org_id, client_id, tax_year, filing_status, draft_json | Persisted tax return draft computations |
+
+### Knowledge Base Tables (PostgreSQL + pgvector)
+
+| Table | Purpose |
+|-------|---------|
+| `mef_rules` | Layer 1 — parsed MeF business rules |
+| `form_instructions` | Layer 2 — parsed form instruction sections |
+| `publication_chunks` | Layer 3 — chunked publication text with 1536-dim embeddings |
+
+### Knowledge Graph (Neo4j)
+
+| Node Label | Purpose |
+|------------|---------|
+| `Rule` | MeF business rule nodes |
+| `FormField` | Form field references |
+| `InstructionSection` | Form instruction sections |
+| `Publication` | Publication metadata |
+
+---
+
+## Auth0 / OAuth Configuration
+
+TaxFlow uses **Auth0** for authentication with RS256 JWT verification.
+
+### Roles (RBAC)
+
+| Role | Permissions |
+|------|-------------|
+| **admin** | Full access — manage users, view all clients, file returns, approve docs, analytics |
+| **supervisor** | View all clients, file returns, approve docs, analytics (no user management) |
+| **preparer** | File returns, approve docs (sees only own clients) |
+| **analyst** | Read-only access to own clients |
+
+### Auth0 Setup
+
+1. **Create an Auth0 Application** (Single Page Application type) for the frontend
+2. **Create an Auth0 API** with identifier `https://api.taxflow.ai`
+3. **Add custom claims** to Auth0 tokens via an Action or Rule:
+   - `https://taxflow.ai/org_id` — the user's organization ID
+   - `https://taxflow.ai/role` — one of: `admin`, `supervisor`, `preparer`, `analyst`
+4. **Set callback URLs** in your Auth0 app:
+   - Allowed Callback URLs: `http://localhost:3000/`
+   - Allowed Logout URLs: `http://localhost:3000/`
+   - Allowed Web Origins: `http://localhost:3000`
+
+### Environment Variables
+
+```bash
+# .env
+AUTH0_DOMAIN=your-tenant.us.auth0.com
+AUTH0_API_AUDIENCE=https://api.taxflow.ai
+AUTH0_CLIENT_ID=your-client-id
+AUTH0_REDIRECT_URI=http://localhost:3000/
 ```
-taxflow-kb/
-├── api/                                    # FastAPI backend
-│   ├── main.py                             # App factory (CORS, lifespan, routers)
-│   ├── routers/                            # health, clients, chat, documents, tax_returns
-│   ├── models/                             # SQLAlchemy models (Client, Document, ChatMessage)
-│   ├── services/                           # Business logic
-│   └── db/                                 # Engine, sessions, migrations
-├── frontend/                               # Next.js 16 web application
-│   ├── app/                                # App Router (page.tsx entry point)
-│   ├── components/                         # React components
-│   │   ├── ui/                             # Base: button, card, modal, input, badge, tabs
-│   │   ├── chat/                           # Chat: message-list, bubble, input, typing
-│   │   ├── layout/                         # Layout: top-bar, sidebar, chat-panel, work-panel
-│   │   ├── clients/                        # Client: intake-modal
-│   │   ├── forms/                          # Tax forms: W-2, 1099-INT, generic, renderer
-│   │   ├── returns/                        # Return preview
-│   │   ├── documents/                      # Document viewer modal
-│   │   └── dashboard/                      # Dashboard
-│   ├── lib/                                # api-client.ts, utils.ts
-│   └── styles/                             # globals.css (design tokens)
-├── tax_brain/                              # Core Python knowledge base library
-│   ├── models.py                           # Pydantic v2 models (MeFRule, ASTNode, etc.)
-│   ├── protocols.py                        # DI interfaces (Retriever, EmbeddingClient, etc.)
-│   ├── config.py                           # Centralized settings (Pydantic BaseSettings)
-│   ├── factories.py                        # Dependency injection wiring
-│   ├── rules/                              # Layer 1: CSV parser, AST parser, Neo4j/PG ingest
-│   ├── instructions/                       # Layer 2: HTML parser, Neo4j/PG ingest, validation
-│   ├── publications/                       # Layer 3: PDF parser, embeddings, pgvector, search
-│   ├── agent/                              # Layer 4: retriever, synthesizer, classifier, reranker
-│   ├── evaluation/                         # Layer 5: gold set generation, eval metrics
-│   └── adapters/                           # Concrete implementations (OpenAI, PG, Neo4j)
-├── cli/                                    # CLI command modules
-│   ├── main.py                             # Dispatcher (40+ commands)
-│   ├── rules_commands.py                   # Layer 1 commands
-│   ├── instructions_commands.py            # Layer 2 commands
-│   ├── publications_commands.py            # Layer 3 commands
-│   ├── agent_commands.py                   # Layer 4 commands (ask, validate-agent)
-│   └── evaluation_commands.py              # Layer 5 commands (gold set, evaluate)
-├── data/
-│   ├── sample/                             # Synthetic MeF CSV
-│   ├── instructions/                       # Synthetic instruction HTML
-│   └── publications/                       # IRS PDFs (downloaded separately)
-├── schema/
-│   ├── postgres_schema.sql                 # Layer 1 DDL
-│   ├── postgres_layer2.sql                 # Layer 2 DDL
-│   ├── postgres_layer3.sql                 # Layer 3 DDL + pgvector
-│   └── neo4j_schema.cypher                 # Neo4j constraints and indexes
-├── eval/                                   # Evaluation runner and golden sets
-│   ├── golden_set.json
-│   └── run_eval.py
-├── tests/                                  # 453 pytest tests
-│   ├── conftest.py                         # Fixtures, mock factories
-│   ├── test_rules.py                       # Layer 1 (24 tests)
-│   ├── test_instructions.py                # Layer 2 (23 tests)
-│   ├── test_publications.py                # Layer 3 (33 tests)
-│   ├── test_agent.py                       # Layer 4
-│   ├── test_evaluation.py                  # Layer 5
-│   ├── test_retriever.py                   # Retrieval pipeline
-│   ├── test_config_and_registry.py         # Config & ontology
-│   ├── test_ontology.py                    # Ontology
-│   ├── test_multi_year.py                  # Multi-year support
-│   ├── test_pipeline_wiring.py             # End-to-end wiring
-│   ├── test_irs_download.py                # IRS download
-│   └── api/                                # API endpoint tests
-├── cli.py                                  # CLI entry point
-├── docker-compose.yml                      # Neo4j 5.18 + PostgreSQL 16 (pgvector)
-├── requirements.txt                        # Core + KB dependencies
-├── requirements-api.txt                    # API dependencies (FastAPI, SQLAlchemy, etc.)
-├── pyproject.toml                          # Package metadata, pytest config
-└── .env.example                            # Environment variable template
-```
+
+### Dev Mode
+
+When `APP_ENV` is not set to `production` and no JWT token is provided, the API auto-creates a dev admin user (`dev|local`) for local development — no Auth0 setup needed to get started. **This bypass is disabled in production.**
+
+---
+
+## REST API Endpoints
+
+All endpoints except `/health` require a valid Auth0 Bearer token (or dev mode).
+
+### Authentication
+
+| Method | Endpoint | Auth | Purpose |
+|--------|----------|------|---------|
+| GET | `/api/auth/me` | JWT | Current user, organization, and permissions |
+
+### Clients
+
+| Method | Endpoint | Auth | Purpose |
+|--------|----------|------|---------|
+| GET | `/api/clients?page=1&page_size=50` | JWT | List clients (tenant-scoped, paginated) |
+| POST | `/api/clients` | JWT | Create a client |
+| GET | `/api/clients/{id}` | JWT | Get client details |
+| PATCH | `/api/clients/{id}` | JWT | Update client fields |
+| DELETE | `/api/clients/{id}` | admin, supervisor | Delete a client |
+
+### Chat
+
+| Method | Endpoint | Auth | Purpose |
+|--------|----------|------|---------|
+| GET | `/api/clients/{id}/chat?page=1&page_size=100` | JWT | Get chat history (paginated) |
+| POST | `/api/clients/{id}/chat` | JWT | Send message, receive AI response |
+
+### Documents
+
+| Method | Endpoint | Auth | Purpose |
+|--------|----------|------|---------|
+| GET | `/api/clients/{id}/documents?page=1&page_size=50` | JWT | List documents (paginated) |
+| POST | `/api/clients/{id}/documents` | JWT | Upload document (multipart, max 20 MB, PDF/PNG/JPEG/TIFF) |
+| GET | `/api/documents/{id}` | JWT | Get document details |
+| PATCH | `/api/documents/{id}/approve` | admin, supervisor, preparer | Approve a document |
+| GET | `/api/documents/{id}/fields` | JWT | Get extracted fields as JSON |
+
+### Tax Returns
+
+| Method | Endpoint | Auth | Purpose |
+|--------|----------|------|---------|
+| POST | `/api/clients/{id}/returns/draft` | admin, supervisor, preparer | Generate tax return draft |
+| GET | `/api/clients/{id}/returns/draft` | JWT | Retrieve generated draft |
+
+### System
+
+| Method | Endpoint | Auth | Purpose |
+|--------|----------|------|---------|
+| GET | `/health` | None | Readiness check |
 
 ---
 
@@ -137,6 +219,7 @@ taxflow-kb/
 ```bash
 cp .env.example .env
 # Edit .env — set OPENAI_API_KEY and review database credentials
+# Auth0 variables are optional for local dev (dev mode auto-creates an admin user)
 ```
 
 ### 2. Install dependencies
@@ -173,6 +256,10 @@ docker compose ps     # both containers should show "healthy"
 
 ### 4. Apply database schemas (first time only)
 
+The **application tables** (organizations, users, clients, documents, chat_messages, tax_return_drafts) are auto-created on API startup via SQLAlchemy `create_all`.
+
+The **knowledge base tables** must be applied manually:
+
 ```bash
 # PostgreSQL (all three layers)
 docker exec -i taxflow-postgres psql -U taxflow -d taxflow < schema/postgres_schema.sql
@@ -199,6 +286,8 @@ cd frontend && npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
+In dev mode (default), the API auto-seeds a sample organization ("Chen & Associates CPA"), an admin user, and 5 sample clients.
+
 ### 6. Run the test suite
 
 No databases, no API key, and no PDF files are required — all tests run entirely in-memory with mocks.
@@ -206,8 +295,6 @@ No databases, no API key, and no PDF files are required — all tests run entire
 ```bash
 pytest tests/ -v
 ```
-
-Expected: **453 tests passed**.
 
 ---
 
@@ -339,24 +426,95 @@ python cli.py search "Earned Income Credit eligibility" \
 
 ---
 
-## REST API Endpoints
+## Environment Variables
 
-| Method | Endpoint | Purpose |
-|--------|----------|---------|
-| GET | `/api/health` | Readiness check |
-| GET | `/api/clients` | List all clients |
-| POST | `/api/clients` | Create a client |
-| GET | `/api/clients/{id}` | Get client details |
-| PUT | `/api/clients/{id}` | Update a client |
-| DELETE | `/api/clients/{id}` | Delete a client |
-| GET | `/api/clients/{id}/chat` | Get chat history |
-| POST | `/api/clients/{id}/chat` | Send a message |
-| POST | `/api/documents` | Upload a document |
-| GET | `/api/documents` | List documents |
-| POST | `/api/documents/{id}/extract` | Extract data from document |
-| POST | `/api/documents/{id}/approve` | Approve extracted data |
-| POST | `/api/tax-returns/{client_id}/generate` | Generate draft return |
-| GET | `/api/tax-returns/{client_id}` | Get draft return |
+Copy `.env.example` to `.env` and configure:
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| **Application** | | |
+| `APP_ENV` | `development` | Set to `production` to disable dev auth bypass and seed data |
+| `APP_DATABASE_URL` | `postgresql+asyncpg://...localhost:5432/taxflow` | Async PostgreSQL connection for app tables |
+| `CORS_ALLOWED_ORIGINS` | `http://localhost:3000` | Comma-separated allowed origins |
+| **Auth0** | | |
+| `AUTH0_DOMAIN` | — | Your Auth0 tenant domain |
+| `AUTH0_API_AUDIENCE` | — | Auth0 API identifier |
+| `AUTH0_CLIENT_ID` | — | Auth0 SPA client ID |
+| `AUTH0_REDIRECT_URI` | `http://localhost:3000/` | Post-login redirect |
+| **Knowledge Base** | | |
+| `PG_DSN` | `postgresql://taxflow:taxflow_dev@localhost:5432/taxflow` | PostgreSQL connection for KB |
+| `NEO4J_URI` | `bolt://localhost:7687` | Neo4j connection |
+| `NEO4J_USER` / `NEO4J_PASSWORD` | `neo4j` / `changeme` | Neo4j credentials |
+| `OPENAI_API_KEY` | — | Required for embeddings and synthesis |
+| `EMBEDDING_MODEL` | `text-embedding-3-large` | Embedding model |
+| `EMBEDDING_DIM` | `1536` | Embedding dimensions |
+| `SYNTHESIS_MODEL` | `gpt-4o-mini` | Answer synthesis model |
+| `JUDGE_MODEL` | `gpt-4o` | Evaluation judge model |
+| `RETRIEVAL_TOP_K` | `10` | Top-k results for retrieval |
+| `CHUNK_MAX_TOKENS` | `400` | Target tokens per chunk |
+| `DEFAULT_TAX_YEAR` | `2025` | Default tax year |
+
+---
+
+## Project Structure
+
+```
+taxflow-kb/
+├── api/                                    # FastAPI backend
+│   ├── main.py                             # App factory (CORS, lifespan, routers)
+│   ├── auth/                               # Auth0 JWT verification, RBAC, user provisioning
+│   │   ├── config.py                       # Auth0 env config (APP_ENV, domain, audience)
+│   │   ├── dependencies.py                 # get_current_user, require_role dependencies
+│   │   ├── models.py                       # Organization, User ORM models, ROLE_PERMISSIONS
+│   │   └── token.py                        # RS256 JWT verification with JWKS TTL cache
+│   ├── routers/                            # auth, health, clients, chat, documents, tax_returns
+│   │   └── _helpers.py                     # Shared get_client_or_404 helper
+│   ├── models/                             # Pydantic request/response schemas
+│   │   ├── enums.py                        # Shared Literal types (FilingStatus, FormType, etc.)
+│   │   ├── client.py, chat.py, document.py # CRUD schemas with validation
+│   │   └── tax_return.py                   # Tax return draft schemas
+│   ├── services/ocr/                       # OCR extraction (mock for dev)
+│   └── db/                                 # Engine, base models, seed data
+│       ├── base.py                         # DeclarativeBase + TenantMixin (org_id, timestamps)
+│       ├── models.py                       # Client, Document, ChatMessage, TaxReturnDraft ORM
+│       ├── engine.py                       # Async engine, session factory, init_db
+│       └── seed.py                         # Dev seed data (org, user, sample clients)
+├── frontend/                               # Next.js 16 web application
+│   ├── app/                                # App Router (page.tsx entry point)
+│   ├── components/                         # React components
+│   │   ├── ui/                             # Base: button, card, modal, input, badge, tabs
+│   │   ├── chat/                           # Chat: message-list, bubble, input, typing
+│   │   ├── layout/                         # Layout: top-bar, sidebar, chat-panel, work-panel
+│   │   ├── clients/                        # Client: intake-modal
+│   │   ├── forms/                          # Tax forms: W-2, 1099-INT, generic, renderer
+│   │   ├── returns/                        # Return preview
+│   │   ├── documents/                      # Document viewer modal
+│   │   └── dashboard/                      # Dashboard
+│   ├── lib/                                # api-client.ts, utils.ts
+│   └── styles/                             # globals.css (design tokens)
+├── tax_brain/                              # Core Python knowledge base library
+│   ├── models.py                           # Pydantic v2 models (MeFRule, ASTNode, etc.)
+│   ├── protocols.py                        # DI interfaces (Retriever, EmbeddingClient, etc.)
+│   ├── config.py                           # Centralized settings (Pydantic BaseSettings)
+│   ├── factories.py                        # Dependency injection wiring
+│   ├── rules/                              # Layer 1: CSV parser, AST parser, Neo4j/PG ingest
+│   ├── instructions/                       # Layer 2: HTML parser, Neo4j/PG ingest, validation
+│   ├── publications/                       # Layer 3: PDF parser, embeddings, pgvector, search
+│   ├── agent/                              # Layer 4: retriever, synthesizer, classifier, reranker
+│   ├── evaluation/                         # Layer 5: gold set generation, eval metrics
+│   └── adapters/                           # Concrete implementations (OpenAI, PG, Neo4j)
+├── cli/                                    # CLI command modules
+├── data/                                   # Sample data and IRS PDFs
+├── schema/                                 # SQL and Cypher schema files
+├── eval/                                   # Evaluation runner and golden sets
+├── tests/                                  # pytest tests (all in-memory)
+│   └── api/                                # API endpoint tests
+├── docker-compose.yml                      # Neo4j 5.18 + PostgreSQL 16 (pgvector)
+├── requirements.txt                        # Core + KB dependencies
+├── requirements-api.txt                    # API dependencies (FastAPI, SQLAlchemy, etc.)
+├── pyproject.toml                          # Package metadata, pytest config
+└── .env.example                            # Environment variable template
+```
 
 ---
 
@@ -406,44 +564,6 @@ python cli.py evaluate-generation
 
 ---
 
-## Tech Stack
-
-| Component | Technology |
-|-----------|-----------|
-| **Frontend** | Next.js 16, React 19, TypeScript 5, Tailwind CSS 4 |
-| **Backend API** | FastAPI, Uvicorn, SQLAlchemy 2 (async), Pydantic v2 |
-| **App Database** | SQLite (clients, documents, chat history) |
-| **Knowledge Graph** | Neo4j 5.18 Community |
-| **Vector Store** | PostgreSQL 16 + pgvector (IVFFlat ANN, 1536-dim) |
-| **Full-Text Search** | PostgreSQL GIN/tsvector (BM25 hybrid search) |
-| **Embeddings** | OpenAI text-embedding-3-large (1536 dimensions) |
-| **LLM Synthesis** | GPT-4o-mini (answers), GPT-4o (judge/evaluation) |
-| **PDF Parsing** | pdfplumber (paragraph-aware chunking) |
-| **Token Counting** | tiktoken (cl100k_base) |
-| **Testing** | pytest (453 tests, all in-memory, no external deps) |
-
----
-
-## Environment Variables
-
-Copy `.env.example` to `.env` and configure:
-
-| Variable | Default | Purpose |
-|----------|---------|---------|
-| `PG_DSN` | `postgresql://taxflow:taxflow_dev@localhost:5432/taxflow` | PostgreSQL connection |
-| `NEO4J_URI` | `bolt://localhost:7687` | Neo4j connection |
-| `NEO4J_USER` / `NEO4J_PASSWORD` | `neo4j` / `changeme` | Neo4j credentials |
-| `OPENAI_API_KEY` | — | Required for embeddings and synthesis |
-| `EMBEDDING_MODEL` | `text-embedding-3-large` | Embedding model |
-| `EMBEDDING_DIM` | `1536` | Embedding dimensions |
-| `SYNTHESIS_MODEL` | `gpt-4o-mini` | Answer synthesis model |
-| `JUDGE_MODEL` | `gpt-4o` | Evaluation judge model |
-| `RETRIEVAL_TOP_K` | `10` | Top-k results for retrieval |
-| `CHUNK_MAX_TOKENS` | `400` | Target tokens per chunk |
-| `DEFAULT_TAX_YEAR` | `2025` | Default tax year |
-
----
-
 ## Switching to Real IRS Data
 
 ### Layer 1 — Real MeF Business Rules
@@ -474,6 +594,9 @@ The Layer 3 pipeline is designed for real IRS PDFs — no conversion needed. All
 - Hybrid search combines vector (cosine) + BM25 (keyword) via augment or RRF fusion.
 - The IVFFlat index (`lists=100`) should be built once after initial bulk ingest.
 - Tests run entirely in-memory with mock vectors — no databases or API keys needed.
+- JWKS keys are cached with a 1-hour TTL to handle Auth0 key rotations.
+- File uploads are validated: 20 MB max, PDF/PNG/JPEG/TIFF only, filenames sanitized.
+- All queries are tenant-scoped via `org_id` for multi-tenant data isolation.
 
 ### Tear down
 

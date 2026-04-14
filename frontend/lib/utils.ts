@@ -33,5 +33,5 @@ export function fmtDate(iso: string): string {
 
 /** Format time only */
 export function fmtTime(iso: string): string {
-  return new Date(iso).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+  return new Date(iso).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
 }

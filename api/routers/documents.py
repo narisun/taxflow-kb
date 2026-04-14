@@ -1,133 +1,111 @@
 """Document management endpoints."""
 import json
 import os
+import re
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, status
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Query, status
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.db.engine import get_session
-from api.db.models import DocumentModel, ClientModel
+from api.db.models import DocumentModel
 from api.models.document import (
     DocumentResponse,
     DocumentListResponse,
     ExtractedField,
-    ExtractionResult,
 )
-from api.auth.dependencies import get_current_user
+from api.models.enums import FormType
+from api.auth.dependencies import get_current_user, require_role
 from api.auth.models import UserModel
+from api.routers._helpers import get_client_or_404
 from api.services.ocr.mock_extractor import MockOCRExtractor
 
-router = APIRouter(tags=["documents"])
+router = APIRouter(prefix="/api", tags=["documents"])
 
 UPLOAD_DIR = Path("uploads")
+MAX_FILE_SIZE = 20 * 1024 * 1024  # 20 MB
+ALLOWED_CONTENT_TYPES = {
+    "application/pdf",
+    "image/png",
+    "image/jpeg",
+    "image/tiff",
+}
 _ocr = MockOCRExtractor()
 
 
-def _mock_extract(form_type: str) -> tuple[str, float, str]:
-    """Return (extracted_data_json, confidence, flags_json) for mock OCR."""
-    if form_type == "W-2":
-        fields = [
-            {"name": "Box 1 — Wages", "value": "$112,400.00", "confidence": 0.99, "flagged": False, "flag_reason": ""},
-            {"name": "Box 2 — Federal Tax Withheld", "value": "$18,750.00", "confidence": 0.99, "flagged": False, "flag_reason": ""},
-            {"name": "Employer", "value": "ACME CORPORATION", "confidence": 0.97, "flagged": False, "flag_reason": ""},
-        ]
-        return json.dumps(fields), 0.99, "[]"
-    elif form_type == "1099-INT":
-        fields = [
-            {"name": "Box 1 — Interest Income", "value": "$3,847.00", "confidence": 0.96, "flagged": False, "flag_reason": ""},
-            {"name": "Account Number", "value": "••••8821", "confidence": 0.82, "flagged": True, "flag_reason": "Partially illegible"},
-        ]
-        return json.dumps(fields), 0.82, json.dumps(["Account number 82% confidence"])
-    elif form_type == "1098":
-        fields = [
-            {"name": "Box 1 — Mortgage Interest", "value": "$14,220.00", "confidence": 0.98, "flagged": False, "flag_reason": ""},
-            {"name": "Lender", "value": "FIRST NATIONAL BANK", "confidence": 0.95, "flagged": False, "flag_reason": ""},
-        ]
-        return json.dumps(fields), 0.95, "[]"
-    elif form_type == "1099-B":
-        fields = [
-            {"name": "1d — Proceeds", "value": "$52,300.00", "confidence": 0.94, "flagged": False, "flag_reason": ""},
-            {"name": "1e — Cost Basis", "value": "$48,100.00", "confidence": 0.91, "flagged": False, "flag_reason": ""},
-            {"name": "Date Sold", "value": "09/15/2024", "confidence": 0.78, "flagged": True, "flag_reason": "Date partially obscured"},
-        ]
-        return json.dumps(fields), 0.78, json.dumps(["Date sold 78% confidence"])
-    elif form_type == "K-1":
-        fields = [
-            {"name": "Box 1 — Ordinary Business Income", "value": "$8,400.00", "confidence": 0.93, "flagged": False, "flag_reason": ""},
-            {"name": "Partnership Name", "value": "SMITH HOLDINGS LLC", "confidence": 0.90, "flagged": False, "flag_reason": ""},
-        ]
-        return json.dumps(fields), 0.90, "[]"
-    elif form_type == "1099-NEC":
-        fields = [
-            {"name": "Box 1 — Nonemployee Compensation", "value": "$15,000.00", "confidence": 0.96, "flagged": False, "flag_reason": ""},
-            {"name": "Payer Name", "value": "CONSULTING INC", "confidence": 0.94, "flagged": False, "flag_reason": ""},
-        ]
-        return json.dumps(fields), 0.96, "[]"
-    elif form_type == "1099-DIV":
-        fields = [
-            {"name": "Box 1a — Total Dividends", "value": "$2,450.00", "confidence": 0.97, "flagged": False, "flag_reason": ""},
-            {"name": "Box 1b — Qualified Dividends", "value": "$1,800.00", "confidence": 0.95, "flagged": False, "flag_reason": ""},
-        ]
-        return json.dumps(fields), 0.97, "[]"
-    # Generic fallback — returns basic extraction
-    fields = [
-        {"name": "Document Type", "value": form_type, "confidence": 0.80, "flagged": True, "flag_reason": "Unrecognized form type — manual review recommended"},
-    ]
-    return json.dumps(fields), 0.80, json.dumps(["Unrecognized form type"])
+def _sanitize_filename(filename: str) -> str:
+    """Remove path separators and dangerous characters from a filename."""
+    name = os.path.basename(filename)
+    name = re.sub(r"[^\w.\-]", "_", name)
+    return name or "upload"
 
 
-async def _get_client_or_404(client_id: int, session: AsyncSession, user: UserModel):
-    result = await session.execute(
-        select(ClientModel).where(ClientModel.id == client_id, ClientModel.org_id == user.org_id)
-    )
-    client = result.scalar_one_or_none()
-    if not client:
-        raise HTTPException(status_code=404, detail="Client not found")
-    return client
-
-
-@router.get("/api/clients/{client_id}/documents", response_model=DocumentListResponse)
+@router.get("/clients/{client_id}/documents", response_model=DocumentListResponse)
 async def list_documents(
     client_id: int,
+    page: int = Query(1, ge=1),
+    page_size: int = Query(50, ge=1, le=200),
     session: AsyncSession = Depends(get_session),
     user: UserModel = Depends(get_current_user),
 ):
-    await _get_client_or_404(client_id, session, user)
-    result = await session.execute(
-        select(DocumentModel).where(DocumentModel.client_id == client_id)
+    await get_client_or_404(client_id, session, user)
+    base = select(DocumentModel).where(
+        DocumentModel.client_id == client_id,
+        DocumentModel.org_id == user.org_id,
     )
-    docs = result.scalars().all()
-    count_result = await session.execute(
-        select(func.count(DocumentModel.id)).where(DocumentModel.client_id == client_id)
-    )
+    count_q = select(func.count()).select_from(base.subquery())
+    count_result = await session.execute(count_q)
     total = count_result.scalar() or 0
-    return DocumentListResponse(items=docs, total=total)
+
+    paginated = base.offset((page - 1) * page_size).limit(page_size)
+    result = await session.execute(paginated)
+    docs = result.scalars().all()
+    return DocumentListResponse(items=docs, total=total, page=page, page_size=page_size)
 
 
 @router.post(
-    "/api/clients/{client_id}/documents",
+    "/clients/{client_id}/documents",
     response_model=DocumentResponse,
     status_code=status.HTTP_201_CREATED,
 )
 async def upload_document(
     client_id: int,
-    form_type: str = Form(...),
+    form_type: FormType = Form(...),
     file: UploadFile = File(...),
     session: AsyncSession = Depends(get_session),
     user: UserModel = Depends(get_current_user),
 ):
-    await _get_client_or_404(client_id, session, user)
+    await get_client_or_404(client_id, session, user)
 
-    # Create document record first to get an ID
-    extracted_data, confidence, flags = _mock_extract(form_type)
-    has_flags = flags != "[]" and flags != ""
+    # Validate content type
+    if file.content_type and file.content_type not in ALLOWED_CONTENT_TYPES:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"File type '{file.content_type}' not allowed. Accepted: PDF, PNG, JPEG, TIFF.",
+        )
+
+    # Read and validate file size
+    content = await file.read()
+    if len(content) > MAX_FILE_SIZE:
+        raise HTTPException(
+            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            detail=f"File exceeds maximum size of {MAX_FILE_SIZE // (1024 * 1024)} MB.",
+        )
+
+    # Run OCR extraction
+    extraction = await _ocr.extract("", form_type)
+    extracted_data = json.dumps([f.model_dump() for f in extraction.fields])
+    flags = json.dumps(extraction.flags)
+    confidence = extraction.overall_confidence
+
+    has_flags = extraction.has_flags
     doc_status = "review" if (has_flags or confidence < 0.90) else "verified"
+
     doc = DocumentModel(
         client_id=client_id,
         form_type=form_type,
-        title=f"{form_type} ({file.filename})" if file.filename else f"{form_type} document",
+        title=f"{form_type} ({_sanitize_filename(file.filename or 'upload')})",
         status=doc_status,
         confidence=confidence,
         extracted_data=extracted_data,
@@ -142,8 +120,8 @@ async def upload_document(
     # Save file to uploads/{doc_id}/
     doc_dir = UPLOAD_DIR / str(doc.id)
     doc_dir.mkdir(parents=True, exist_ok=True)
-    file_path = doc_dir / (file.filename or "upload")
-    content = await file.read()
+    safe_name = _sanitize_filename(file.filename or "upload")
+    file_path = doc_dir / safe_name
     file_path.write_bytes(content)
 
     doc.file_path = str(file_path)
@@ -152,14 +130,17 @@ async def upload_document(
     return doc
 
 
-@router.get("/api/documents/{doc_id}", response_model=DocumentResponse)
+@router.get("/documents/{doc_id}", response_model=DocumentResponse)
 async def get_document(
     doc_id: int,
     session: AsyncSession = Depends(get_session),
     user: UserModel = Depends(get_current_user),
 ):
     result = await session.execute(
-        select(DocumentModel).where(DocumentModel.id == doc_id, DocumentModel.org_id == user.org_id)
+        select(DocumentModel).where(
+            DocumentModel.id == doc_id,
+            DocumentModel.org_id == user.org_id,
+        )
     )
     doc = result.scalar_one_or_none()
     if not doc:
@@ -167,14 +148,17 @@ async def get_document(
     return doc
 
 
-@router.patch("/api/documents/{doc_id}/approve", response_model=DocumentResponse)
+@router.patch("/documents/{doc_id}/approve", response_model=DocumentResponse)
 async def approve_document(
     doc_id: int,
     session: AsyncSession = Depends(get_session),
-    user: UserModel = Depends(get_current_user),
+    user: UserModel = Depends(require_role("admin", "supervisor", "preparer")),
 ):
     result = await session.execute(
-        select(DocumentModel).where(DocumentModel.id == doc_id, DocumentModel.org_id == user.org_id)
+        select(DocumentModel).where(
+            DocumentModel.id == doc_id,
+            DocumentModel.org_id == user.org_id,
+        )
     )
     doc = result.scalar_one_or_none()
     if not doc:
@@ -185,14 +169,17 @@ async def approve_document(
     return doc
 
 
-@router.get("/api/documents/{doc_id}/fields", response_model=list[ExtractedField])
+@router.get("/documents/{doc_id}/fields", response_model=list[ExtractedField])
 async def get_document_fields(
     doc_id: int,
     session: AsyncSession = Depends(get_session),
     user: UserModel = Depends(get_current_user),
 ):
     result = await session.execute(
-        select(DocumentModel).where(DocumentModel.id == doc_id, DocumentModel.org_id == user.org_id)
+        select(DocumentModel).where(
+            DocumentModel.id == doc_id,
+            DocumentModel.org_id == user.org_id,
+        )
     )
     doc = result.scalar_one_or_none()
     if not doc:

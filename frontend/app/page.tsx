@@ -191,7 +191,7 @@ export default function Home() {
               role: m.role,
               content: m.content,
               timestamp: new Date(m.created_at).toLocaleTimeString([], {
-                hour: "2-digit",
+                hour: "numeric",
                 minute: "2-digit",
               }),
               created_at: m.created_at,
@@ -226,7 +226,7 @@ export default function Home() {
         role: "user",
         content,
         timestamp: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
+          hour: "numeric",
           minute: "2-digit",
         }),
       };
@@ -248,7 +248,7 @@ export default function Home() {
                 timestamp: new Date(
                   response.created_at || Date.now()
                 ).toLocaleTimeString([], {
-                  hour: "2-digit",
+                  hour: "numeric",
                   minute: "2-digit",
                 }),
               },
@@ -271,7 +271,7 @@ export default function Home() {
             role: "assistant",
             content: response.content,
             timestamp: new Date(response.created_at || Date.now()).toLocaleTimeString([], {
-              hour: "2-digit",
+              hour: "numeric",
               minute: "2-digit",
             }),
           },
@@ -337,7 +337,7 @@ export default function Home() {
         id: Date.now(),
         role: "assistant",
         content: `Uploading <strong>${file.name}</strong> (${formType})...`,
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        timestamp: new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }),
       };
       setMessages((prev) => [...prev, uploadMsg]);
 
@@ -369,14 +369,14 @@ export default function Home() {
         setMessages((prev) => [
           ...prev.filter((m) => m.id !== uploadMsg.id),
           { id: Date.now() + 1, role: "assistant" as const, content: summary,
-            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) },
+            timestamp: new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) },
         ]);
       } catch (err) {
         setMessages((prev) => [
           ...prev.filter((m) => m.id !== uploadMsg.id),
           { id: Date.now() + 1, role: "assistant" as const,
             content: `Failed to upload ${file.name}: ${err instanceof Error ? err.message : "Unknown error"}`,
-            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) },
+            timestamp: new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) },
         ]);
       }
     },
@@ -478,14 +478,14 @@ export default function Home() {
         {/* Top row: client info + tracking labels */}
         <div className="flex items-center gap-3">
           <div className="flex-1 min-w-0 flex items-center gap-3">
-            <span className="text-[14px] font-semibold text-primary">
+            <span className="text-[16px] font-semibold text-primary tracking-tight">
               {activeClient?.name || "Select a client"}
             </span>
             {activeClient && (
               <>
-                <span className="text-[11px] text-tertiary hidden md:inline">{activeClient.meta}</span>
+                <span className="text-[12px] text-secondary hidden md:inline">{activeClient.meta}</span>
                 <Badge variant={activeClient.status as "pending" | "inProgress" | "review" | "completed" | "filed"}>
-                  {activeClient.status === "inProgress" ? "In Progress" : activeClient.status}
+                  {activeClient.status === "pending" ? "Intake" : activeClient.status === "inProgress" ? "Documents" : activeClient.status === "completed" ? "Prepare" : activeClient.status}
                 </Badge>
               </>
             )}
@@ -505,10 +505,10 @@ export default function Home() {
           )}
 
           {/* Federal / State tracking labels */}
-          <span className="hidden xl:inline text-[12px] font-semibold text-green-600 dark:text-green-400 bg-surface-secondary px-2.5 py-1 rounded-md">
+          <span className="hidden xl:inline text-[12px] font-semibold text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/15 px-2.5 py-1 rounded-md">
             Federal: +$4,820
           </span>
-          <span className="hidden xl:inline text-[12px] font-semibold text-red-500 dark:text-red-400 bg-surface-secondary px-2.5 py-1 rounded-md">
+          <span className="hidden xl:inline text-[12px] font-semibold text-primary bg-surface-secondary px-2.5 py-1 rounded-md">
             NJ: -$1,240
           </span>
         </div>
@@ -648,11 +648,6 @@ export default function Home() {
         </div>
       )}
 
-      {/* Footer */}
-      <footer className="shrink-0 flex items-center justify-center px-4 py-1.5 bg-surface-secondary border-t border-divider">
-        <span className="text-[10px] text-tertiary">&copy; 2026 SciEncephalon Corp. All rights reserved.</span>
-      </footer>
-
       {/* Sidebar overlay — tablet (below lg) */}
       {!isMobile && (
         <PanelOverlay open={sidebarOpen} onClose={() => setSidebarOpen(false)} side="left" className="w-72">
@@ -741,7 +736,7 @@ export default function Home() {
             if (Array.isArray(chatData)) {
               setMessages(chatData.map((m: ChatMessage) => ({
                 id: m.id, role: m.role, content: m.content,
-                timestamp: new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+                timestamp: new Date(m.created_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }),
               })));
             }
             setDocuments([]);
@@ -774,7 +769,7 @@ export default function Home() {
               if (Array.isArray(chatData)) {
                 setMessages(chatData.map((m: ChatMessage) => ({
                   id: m.id, role: m.role, content: m.content,
-                  timestamp: new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+                  timestamp: new Date(m.created_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }),
                 })));
               }
               setDocuments([]);

@@ -162,18 +162,17 @@ export function AdvisoryPanel({ clientName = "Client", filingStatus = "single", 
   }
 
   return (
-    <div className="space-y-3">
+    <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-3">
         <div>
-          <div className="text-[11px] font-semibold text-secondary uppercase tracking-wider">Tax Advisory</div>
+          <div className="text-[12px] font-semibold text-secondary tracking-wide">Tax Advisory</div>
           <div className="text-[11px] text-tertiary mt-0.5">Select items to include in client letter</div>
         </div>
-        <span className="text-[10px] text-tertiary">{selectedCount} selected</span>
       </div>
 
-      {/* Advisory items */}
-      <div className="space-y-2">
+      {/* Advisory items — scrollable */}
+      <div className="flex-1 overflow-y-auto space-y-2 min-h-0">
         {items.map((item) => (
           <div
             key={item.id}
@@ -182,7 +181,7 @@ export function AdvisoryPanel({ clientName = "Client", filingStatus = "single", 
               "rounded-lg border p-2.5 cursor-pointer transition-all",
               item.selected
                 ? "border-apple-blue/30 bg-apple-blue/5"
-                : "border-divider hover:border-tertiary"
+                : "border-divider bg-surface-secondary/50 opacity-70 hover:opacity-90 hover:border-tertiary"
             )}
           >
             <div className="flex items-start gap-2">
@@ -197,7 +196,10 @@ export function AdvisoryPanel({ clientName = "Client", filingStatus = "single", 
                 {/* Title row */}
                 <div className="flex items-center gap-1.5">
                   <span className="text-[12px]">{categoryIcons[item.category]}</span>
-                  <span className="text-[12px] font-medium text-primary">{item.title}</span>
+                  <span className={cn(
+                    "text-[12px] font-medium",
+                    item.selected ? "text-primary" : "text-secondary"
+                  )}>{item.title}</span>
                 </div>
                 {/* Category + savings */}
                 <div className="flex items-center gap-2 mt-0.5">
@@ -211,7 +213,10 @@ export function AdvisoryPanel({ clientName = "Client", filingStatus = "single", 
                   )}
                 </div>
                 {/* Detail */}
-                <div className="text-[10px] text-tertiary mt-1 leading-relaxed">
+                <div className={cn(
+                  "text-[10px] mt-1 leading-relaxed",
+                  item.selected ? "text-tertiary" : "text-tertiary/70"
+                )}>
                   {item.detail}
                 </div>
               </div>
@@ -220,15 +225,15 @@ export function AdvisoryPanel({ clientName = "Client", filingStatus = "single", 
         ))}
       </div>
 
-      {/* Send button */}
-      <div className="flex justify-end pt-1">
+      {/* Sticky CTA footer */}
+      <div className="shrink-0 pt-3 mt-2 border-t border-divider">
         <Button
           variant="primary"
           onClick={handleSend}
           disabled={selectedCount === 0}
-          className="text-[12px] px-4 py-1.5"
+          className="w-full text-[12px] py-2"
         >
-          Send to {clientName} ({selectedCount})
+          Generate Advisory Letter ({selectedCount} item{selectedCount !== 1 ? "s" : ""})
         </Button>
       </div>
     </div>

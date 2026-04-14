@@ -7,7 +7,7 @@ from jose import jwt
 from unittest.mock import patch
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
-from api.auth.token import verify_token, decode_token_unsafe, TokenError
+from api.auth.token import verify_token, TokenError
 
 
 def _int_to_base64url(n: int) -> str:
@@ -40,13 +40,6 @@ _TEST_PUB = {"kty": "RSA", "kid": _TEST_KID, "n": _TEST_KEY["n"], "e": _TEST_KEY
 
 def _make_token(claims: dict) -> str:
     return jwt.encode(claims, _TEST_KEY, algorithm="RS256", headers={"kid": _TEST_KID})
-
-
-def test_decode_token_unsafe():
-    token = _make_token({"sub": "auth0|123", "email": "test@test.com"})
-    payload = decode_token_unsafe(token)
-    assert payload["sub"] == "auth0|123"
-    assert payload["email"] == "test@test.com"
 
 
 def test_verify_token_expired():

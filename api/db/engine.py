@@ -22,15 +22,17 @@ async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit
 async def init_db():
     """Create all tables on startup (dev convenience — use Alembic in production)."""
     from api.db.base import Base
-    from api.db.models import ClientModel, DocumentModel, ChatMessageModel  # noqa: F401
+    from api.db.models import ClientModel, DocumentModel, ChatMessageModel, TaxReturnDraftModel  # noqa: F401
     from api.auth.models import OrganizationModel, UserModel  # noqa: F401
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
-    # Seed dev data if DB is empty
-    from api.db.seed import seed_dev_data
-    async with async_session() as session:
-        await seed_dev_data(session)
+    # Seed dev data only in development
+    app_env = os.getenv("APP_ENV", "development")
+    if app_env != "production":
+        from api.db.seed import seed_dev_data
+        async with async_session() as session:
+            await seed_dev_data(session)
 
 
 async def get_session():

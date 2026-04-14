@@ -1,7 +1,7 @@
 """Base classes for multi-tenant models."""
 
 import uuid
-from datetime import datetime
+from datetime import datetime, UTC
 from sqlalchemy import String, DateTime, ForeignKey
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
@@ -19,8 +19,8 @@ class TenantMixin:
         String(36), ForeignKey("users.id"), nullable=True
     )
     created_at: Mapped[datetime] = mapped_column(
-        DateTime, default=datetime.utcnow
+        DateTime, default=lambda: datetime.now(UTC)
     )
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+        DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC)
     )

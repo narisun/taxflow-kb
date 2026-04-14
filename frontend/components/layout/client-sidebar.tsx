@@ -23,10 +23,10 @@ interface ClientSidebarProps {
 }
 
 const statusLabels: Record<string, string> = {
-  pending: "Pending",
-  inProgress: "In Progress",
+  pending: "Intake",
+  inProgress: "Documents",
   review: "Review",
-  completed: "Completed",
+  completed: "Prepare",
   filed: "Filed",
 };
 
@@ -61,7 +61,7 @@ function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake, o
 
       {/* Section header + New Intake button */}
       <div className="flex items-center justify-between px-3 pb-2">
-        <span className="text-[10px] font-semibold text-tertiary uppercase tracking-wider">
+        <span className="text-[10px] font-semibold text-tertiary tracking-wide">
           Clients ({filtered.length})
         </span>
         <button
@@ -95,8 +95,8 @@ function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake, o
                 className={cn(
                   "w-full px-3 py-2.5 text-left transition-all cursor-pointer",
                   isActive
-                    ? "bg-apple-blue/10 text-apple-blue"
-                    : "hover:bg-surface-secondary text-secondary"
+                    ? "bg-apple-blue/8 border-l-3 border-l-apple-blue"
+                    : "hover:bg-surface-secondary text-secondary border-l-3 border-l-transparent"
                 )}
               >
                 <div className={cn(

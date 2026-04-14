@@ -4,9 +4,10 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from datetime import datetime
+from datetime import datetime, UTC
 
 from api.db.engine import get_session
+from api.auth.config import APP_ENV
 from api.auth.token import verify_token, TokenError
 from api.auth.models import UserModel, OrganizationModel, ROLE_PERMISSIONS
 
@@ -23,6 +24,12 @@ async def get_current_user(
     On first login, auto-provisions user from Auth0 claims.
     """
     if credentials is None:
+        if APP_ENV == "production":
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Authentication required",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
         return await _get_or_create_dev_user(session)
 
     token = credentials.credentials
@@ -50,7 +57,7 @@ async def get_current_user(
     if not user.is_active:
         raise HTTPException(status_code=403, detail="User account is deactivated")
 
-    user.last_login_at = datetime.utcnow()
+    user.last_login_at = datetime.now(UTC)
     await session.commit()
     return user
 
