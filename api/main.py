@@ -29,11 +29,12 @@ def create_app() -> FastAPI:
         allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
         allow_headers=["Authorization", "Content-Type"],
     )
-    from api.routers import health, clients, chat, documents, tax_returns, auth
+    from api.routers import health, clients, chat, documents, tax_returns, auth, dependents
     app.include_router(auth.router)
     app.include_router(health.router)
     app.include_router(clients.router)
     app.include_router(chat.router)
     app.include_router(documents.router)
     app.include_router(tax_returns.router)
+    app.include_router(dependents.router)
     return app
