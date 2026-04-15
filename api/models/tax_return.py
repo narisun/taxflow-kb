@@ -24,3 +24,4 @@ class TaxReturnDraft(BaseModel):
     refund_or_owed: float
     effective_rate: float
     validation_results: list[dict] = []
+    computed_at: str | None = None

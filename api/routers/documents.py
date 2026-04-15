@@ -228,6 +228,12 @@ async def approve_document(
     doc.status = "approved"
     await session.commit()
     await session.refresh(doc)
+    # Auto-recompute draft after approval
+    try:
+        from api.routers.tax_returns import _compute_and_save_draft
+        await _compute_and_save_draft(doc.client_id, session, user)
+    except Exception:
+        pass  # Don't fail the approve if recompute fails
     return doc
 
 
@@ -317,5 +323,12 @@ async def delete_document(
     doc = result.scalar_one_or_none()
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
+    client_id = doc.client_id
     await session.delete(doc)
     await session.commit()
+    # Auto-recompute draft after deletion
+    try:
+        from api.routers.tax_returns import _compute_and_save_draft
+        await _compute_and_save_draft(client_id, session, user)
+    except Exception:
+        pass

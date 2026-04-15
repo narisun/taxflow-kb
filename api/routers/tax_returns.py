@@ -28,13 +28,9 @@ class ManualEntryRequest(BaseModel):
     value: str
 
 
-@router.post("/draft", response_model=TaxReturnDraft)
-async def generate_draft(
-    client_id: int,
-    session: AsyncSession = Depends(get_session),
-    user: UserModel = Depends(require_role("admin", "supervisor", "preparer")),
-):
-    """Generate a tax return draft using the calculation engine."""
+async def _compute_and_save_draft(client_id: int, session: AsyncSession, user: UserModel) -> TaxReturnDraft:
+    """Compute tax return draft and save to DB. Used by draft endpoint and auto-recompute triggers."""
+    from api.db.models import ClientModel
     client = await get_client_or_404(client_id, session, user)
 
     assembler = DocumentAssembler()
@@ -46,11 +42,12 @@ async def generate_draft(
     engine = TaxCalculationEngine(constants)
     result = engine.compute(tax_return)
 
+    # Validation
     from api.tax_engine.validation.engine import ValidationEngine as TaxValidationEngine
     validator = TaxValidationEngine()
     validation_results = [r.model_dump() for r in validator.validate(tax_return)]
 
-    # Convert to TaxReturnDraft response
+    # Convert to TaxReturnDraft
     lines = []
     f1040 = result.form_results.get("1040")
     if f1040:
@@ -72,6 +69,9 @@ async def generate_draft(
     total_deductions = float(ded_result.total) if ded_result else 0.0
     effective_rate = round(float(result.total_tax) / total_income * 100, 1) if total_income > 0 else 0.0
 
+    from datetime import datetime, timezone
+    now = datetime.now(timezone.utc).replace(tzinfo=None).isoformat()
+
     draft = TaxReturnDraft(
         client_id=client_id,
         tax_year=client.tax_year,
@@ -85,9 +85,10 @@ async def generate_draft(
         refund_or_owed=float(result.refund_or_owed),
         effective_rate=effective_rate,
         validation_results=validation_results,
+        computed_at=now,
     )
 
-    # Upsert draft in database
+    # Upsert
     db_result = await session.execute(
         select(TaxReturnDraftModel).where(
             TaxReturnDraftModel.org_id == user.org_id,
@@ -108,6 +109,15 @@ async def generate_draft(
         session.add(db_draft)
     await session.commit()
     return draft
+
+
+@router.post("/draft", response_model=TaxReturnDraft)
+async def generate_draft(
+    client_id: int,
+    session: AsyncSession = Depends(get_session),
+    user: UserModel = Depends(require_role("admin", "supervisor", "preparer")),
+):
+    return await _compute_and_save_draft(client_id, session, user)
 
 
 @router.get("/draft", response_model=TaxReturnDraft)
@@ -159,6 +169,11 @@ async def create_manual_entry(
         )
         session.add(me)
     await session.commit()
+    # Auto-recompute draft
+    try:
+        await _compute_and_save_draft(client_id, session, user)
+    except Exception:
+        pass
     return {"status": "ok"}
 
 

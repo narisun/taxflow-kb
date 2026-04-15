@@ -43,6 +43,9 @@ export interface TaxReturnDraft {
   total_tax: number;
   refund_or_owed: number;
   effective_rate: number;
+  total_deductions?: number;
+  total_payments?: number;
+  computed_at?: string;
 }
 
 async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
@@ -110,5 +113,8 @@ export const api = {
       fetchJson<TaxReturnDraft>(`${API_BASE}/api/clients/${clientId}/returns/draft`, {
         method: "POST",
       }),
+    get: (clientId: number): Promise<TaxReturnDraft | null> =>
+      fetchJson<TaxReturnDraft>(`${API_BASE}/api/clients/${clientId}/returns/draft`)
+        .catch(() => null),
   },
 };

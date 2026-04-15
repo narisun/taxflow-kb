@@ -1,6 +1,8 @@
 """SQLAlchemy models — multi-tenant with org_id on all data tables."""
 
-from sqlalchemy import String, Integer, Text, Float, ForeignKey, Index, UniqueConstraint, LargeBinary
+from datetime import datetime
+
+from sqlalchemy import String, Integer, Text, Float, ForeignKey, Index, UniqueConstraint, LargeBinary, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from api.db.base import Base, TenantMixin
@@ -118,6 +120,7 @@ class TaxReturnDraftModel(TenantMixin, Base):
     tax_year: Mapped[int] = mapped_column(Integer)
     filing_status: Mapped[str] = mapped_column(String(10))
     draft_json: Mapped[str] = mapped_column(Text)
+    computed_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
     client: Mapped["ClientModel"] = relationship()
 

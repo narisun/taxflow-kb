@@ -221,6 +221,16 @@ export default function Home() {
     return () => { cancelled = true; };
   }, [activeClientId, usingApi, setApiMessages, setApiDocuments]);
 
+  // Auto-load draft when switching to Tax Return tab
+  useEffect(() => {
+    if (activeWorkTab !== "Tax Return") return;
+    const numId = Number(activeClientId);
+    if (isNaN(numId) || !usingApi) return;
+    api.returns.get(numId).then((draft) => {
+      if (draft) setReturnDraft(draft);
+    });
+  }, [activeWorkTab, activeClientId, usingApi, documents.length]);
+
   // Send message handler
   const handleSendMessage = useCallback(
     async (content: string) => {
@@ -491,13 +501,15 @@ export default function Home() {
 
         {activeWorkTab === "Tax Return" && (
           <ReturnPreview
-            lines={
-              returnDraft
-                ? returnDraft.lines
-                : undefined
-            }
+            lines={returnDraft?.lines}
+            totalIncome={returnDraft?.total_income}
+            totalDeductions={returnDraft?.total_deductions}
+            taxableIncome={returnDraft?.taxable_income}
+            totalTax={returnDraft?.total_tax}
+            totalPayments={returnDraft?.total_payments}
             refundOrOwed={returnDraft?.refund_or_owed}
             effectiveRate={returnDraft?.effective_rate}
+            computedAt={returnDraft?.computed_at}
             onViewFull={handleGenerateReturn}
           />
         )}
@@ -650,9 +662,15 @@ export default function Home() {
                 <div className="flex-1 overflow-y-auto p-3">
                   {(activeWorkTab === "Tax Return" || activeWorkTab === "Documents") && (
                     <ReturnPreview
-                      lines={returnDraft ? returnDraft.lines : undefined}
+                      lines={returnDraft?.lines}
+                      totalIncome={returnDraft?.total_income}
+                      totalDeductions={returnDraft?.total_deductions}
+                      taxableIncome={returnDraft?.taxable_income}
+                      totalTax={returnDraft?.total_tax}
+                      totalPayments={returnDraft?.total_payments}
                       refundOrOwed={returnDraft?.refund_or_owed}
                       effectiveRate={returnDraft?.effective_rate}
+                      computedAt={returnDraft?.computed_at}
                       onViewFull={handleGenerateReturn}
                     />
                   )}
