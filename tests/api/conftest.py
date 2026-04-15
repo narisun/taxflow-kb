@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from api.db.base import Base
 from api.db.engine import get_session
 from api.auth.models import OrganizationModel, UserModel  # noqa: F401
-from api.db.models import ClientModel, DocumentModel, ChatMessageModel, TaxReturnDraftModel  # noqa: F401
+from api.db.models import ClientModel, DocumentModel, ChatMessageModel, TaxReturnDraftModel, ManualEntryModel  # noqa: F401
 from api.main import create_app
 
 

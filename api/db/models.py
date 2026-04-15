@@ -80,3 +80,19 @@ class TaxReturnDraftModel(TenantMixin, Base):
         UniqueConstraint("org_id", "client_id", name="uq_draft_org_client"),
         Index("ix_drafts_org_client", "org_id", "client_id"),
     )
+
+
+class ManualEntryModel(TenantMixin, Base):
+    __tablename__ = "manual_entries"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    client_id: Mapped[int] = mapped_column(ForeignKey("clients.id"), index=True)
+    form_type: Mapped[str] = mapped_column(String(30))
+    form_index: Mapped[int] = mapped_column(Integer, default=0)
+    field_name: Mapped[str] = mapped_column(String(50))
+    value: Mapped[str] = mapped_column(Text)
+    entered_by: Mapped[int] = mapped_column(ForeignKey("users.id"))
+
+    __table_args__ = (
+        Index("ix_manual_entries_org_client", "org_id", "client_id"),
+    )
