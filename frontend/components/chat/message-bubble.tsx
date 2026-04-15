@@ -1,5 +1,7 @@
 "use client";
 
+import ReactMarkdown from "react-markdown";
+
 interface MessageBubbleProps {
   role: "user" | "assistant";
   content: string;
@@ -28,10 +30,9 @@ export function MessageBubble({ role, content, timestamp, userInitials = "SC" }:
           {isUser ? (
             <p className="whitespace-pre-wrap">{content}</p>
           ) : (
-            <div
-              className="whitespace-pre-wrap [&_strong]:font-semibold [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4"
-              dangerouslySetInnerHTML={{ __html: content }}
-            />
+            <div className="prose-chat">
+              <ReactMarkdown>{content}</ReactMarkdown>
+            </div>
           )}
         </div>
         {timestamp && (

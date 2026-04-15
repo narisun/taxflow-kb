@@ -240,4 +240,104 @@ html.theme-transitioning * {
   .animate-skeleton {
     animation: pulse-skeleton 1.5s ease-in-out infinite;
   }
+
+  /* ── Chat Markdown (LLM response formatting) ──────────────────────── */
+  .prose-chat {
+    font-size: 13px;
+    line-height: 1.6;
+    color: inherit;
+  }
+  .prose-chat p {
+    margin: 0.4em 0;
+  }
+  .prose-chat p:first-child {
+    margin-top: 0;
+  }
+  .prose-chat p:last-child {
+    margin-bottom: 0;
+  }
+  .prose-chat strong {
+    font-weight: 600;
+    color: var(--t-text);
+  }
+  .prose-chat em {
+    font-style: italic;
+  }
+  .prose-chat ul, .prose-chat ol {
+    margin: 0.4em 0;
+    padding-left: 1.4em;
+  }
+  .prose-chat ul {
+    list-style-type: disc;
+  }
+  .prose-chat ol {
+    list-style-type: decimal;
+  }
+  .prose-chat li {
+    margin: 0.15em 0;
+  }
+  .prose-chat li > p {
+    margin: 0;
+  }
+  .prose-chat h1, .prose-chat h2, .prose-chat h3, .prose-chat h4 {
+    font-weight: 600;
+    margin: 0.6em 0 0.3em;
+    color: var(--t-text);
+  }
+  .prose-chat h1 { font-size: 1.15em; }
+  .prose-chat h2 { font-size: 1.1em; }
+  .prose-chat h3 { font-size: 1.05em; }
+  .prose-chat h4 { font-size: 1em; }
+  .prose-chat code {
+    font-family: ui-monospace, "SF Mono", Menlo, Monaco, monospace;
+    font-size: 0.9em;
+    background: var(--t-surface-secondary);
+    border: 1px solid var(--t-divider);
+    border-radius: 4px;
+    padding: 0.15em 0.35em;
+  }
+  .prose-chat pre {
+    margin: 0.5em 0;
+    padding: 0.75em 1em;
+    background: var(--t-surface-secondary);
+    border: 1px solid var(--t-divider);
+    border-radius: 8px;
+    overflow-x: auto;
+  }
+  .prose-chat pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 0.85em;
+  }
+  .prose-chat blockquote {
+    margin: 0.4em 0;
+    padding: 0.3em 0 0.3em 0.8em;
+    border-left: 3px solid var(--color-apple-blue);
+    color: var(--t-text-secondary);
+  }
+  .prose-chat hr {
+    border: none;
+    border-top: 1px solid var(--t-divider);
+    margin: 0.6em 0;
+  }
+  .prose-chat a {
+    color: var(--color-link-blue);
+    text-decoration: underline;
+  }
+  .prose-chat table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.5em 0;
+    font-size: 0.95em;
+  }
+  .prose-chat th, .prose-chat td {
+    padding: 0.3em 0.6em;
+    border: 1px solid var(--t-divider);
+    text-align: left;
+  }
+  .prose-chat th {
+    font-weight: 600;
+    background: var(--t-surface-secondary);
+  }
 }
