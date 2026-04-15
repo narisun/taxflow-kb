@@ -25,15 +25,13 @@ interface DocumentViewerModalProps {
   onApprove?: (docId: number) => void;
 }
 
-function getPdfUrl(formType: string): string {
-  switch (formType) {
-    case "W-2": return "/sample-forms/fw2.pdf";
-    case "1099-INT":
-    case "1099-DIV": return "/sample-forms/f1099div.pdf";
-    case "1099-NEC":
-    case "1099-MISC": return "/sample-forms/f1099msc.pdf";
-    default: return "/sample-forms/f1065sk1.pdf";
+function getDocUrl(docId: number | string): string {
+  const apiBase = process.env.NEXT_PUBLIC_API_URL;
+  if (apiBase) {
+    return `${apiBase}/api/documents/${docId}/file`;
   }
+  // Fallback to sample for dev without API
+  return "/sample-forms/fw2.pdf";
 }
 
 export function DocumentViewerModal({
@@ -89,7 +87,7 @@ export function DocumentViewerModal({
         <div className="grid grid-cols-2 max-md:grid-cols-1 h-full">
           {/* Left: PDF viewer */}
           <div className="p-4 border-r border-divider max-md:border-r-0 max-md:border-b">
-            <PdfViewer src={getPdfUrl(doc.form_type)} />
+            <PdfViewer src={getDocUrl(doc.id)} />
           </div>
 
           {/* Right: Extracted fields */}
