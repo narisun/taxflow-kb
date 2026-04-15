@@ -92,9 +92,9 @@ export function PdfViewer({ src, className }: PdfViewerProps) {
   }
 
   return (
-    <div className={className}>
+    <div className={`flex flex-col h-full ${className || ""}`}>
       {/* Controls */}
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-2 shrink-0">
         <div className="flex items-center gap-1">
           <button onClick={prevPage} disabled={currentPage <= 1} className="w-7 h-7 rounded-lg flex items-center justify-center text-secondary hover:bg-surface-secondary disabled:opacity-30 transition-colors cursor-pointer text-[12px]" aria-label="Previous page">
             &larr;
@@ -117,8 +117,8 @@ export function PdfViewer({ src, className }: PdfViewerProps) {
         </div>
       </div>
 
-      {/* Canvas */}
-      <div className="overflow-auto rounded-lg border border-divider bg-surface-tertiary max-h-[55vh]">
+      {/* Canvas — fills remaining height */}
+      <div className="overflow-auto rounded-lg border border-divider bg-surface-tertiary flex-1 min-h-0">
         {loading ? (
           <div className="p-4 space-y-3">
             <Skeleton className="h-6 w-[80%]" />
