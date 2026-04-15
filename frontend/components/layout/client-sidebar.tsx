@@ -20,6 +20,7 @@ interface ClientSidebarProps {
   onSelectClient: (id: string) => void;
   onNewIntake?: () => void;
   onResearchAgent?: () => void;
+  onEditClient?: (clientId: string) => void;
 }
 
 const statusLabels: Record<string, string> = {
@@ -30,7 +31,7 @@ const statusLabels: Record<string, string> = {
   filed: "Filed",
 };
 
-function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake, onResearchAgent }: ClientSidebarProps) {
+function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake, onResearchAgent, onEditClient }: ClientSidebarProps) {
   const [search, setSearch] = useState("");
 
   const filtered = clients.filter(
@@ -93,7 +94,7 @@ function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake, o
                 onClick={() => onSelectClient(client.id)}
                 onKeyDown={(e) => { if (e.key === "Enter") onSelectClient(client.id); }}
                 className={cn(
-                  "w-full px-3 py-2.5 text-left transition-all cursor-pointer",
+                  "group w-full px-3 py-2.5 text-left transition-all cursor-pointer",
                   isActive
                     ? "bg-apple-blue/8 border-l-3 border-l-apple-blue"
                     : "hover:bg-surface-secondary text-secondary border-l-3 border-l-transparent"
@@ -120,6 +121,18 @@ function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake, o
                   )}>
                     {filingInfo} &middot; {taxYear}
                   </span>
+                  {onEditClient && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); onEditClient(client.id); }}
+                      className="w-5 h-5 rounded flex items-center justify-center text-tertiary hover:text-apple-blue hover:bg-surface-secondary opacity-0 group-hover:opacity-100 transition-all cursor-pointer shrink-0"
+                      title="Edit client"
+                    >
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                      </svg>
+                    </button>
+                  )}
                   <span className="shrink-0 text-[9px] font-medium px-1.5 py-px rounded-full bg-surface-tertiary text-secondary">
                     {statusLabel}
                   </span>

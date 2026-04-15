@@ -85,6 +85,8 @@ export default function Home() {
   const [usingApi, setUsingApi] = useState(false);
   const [returnDraft, setReturnDraft] = useState<TaxReturnDraft | null>(null);
   const [intakeOpen, setIntakeOpen] = useState(false);
+  const [intakeMode, setIntakeMode] = useState<"create" | "edit">("create");
+  const [intakeEditData, setIntakeEditData] = useState<Partial<IntakeFormData> & { id?: number } | undefined>();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [inboxOpen, setInboxOpen] = useState(false);
   const [researchOpen, setResearchOpen] = useState(false);
@@ -426,8 +428,27 @@ export default function Home() {
       clients={sidebarClients}
       activeClientId={activeClientId}
       onSelectClient={handleSelectClient}
-      onNewIntake={() => setIntakeOpen(true)}
+      onNewIntake={() => { setIntakeMode("create"); setIntakeEditData(undefined); setIntakeOpen(true); }}
       onResearchAgent={() => setResearchOpen(true)}
+      onEditClient={(clientId) => {
+        const numId = Number(clientId);
+        const c = apiClients.find((cl) => cl.id === numId);
+        if (c) {
+          setIntakeEditData({
+            id: c.id,
+            firstName: c.name.split(" ")[0] || "",
+            lastName: c.name.split(" ").slice(1).join(" ") || "",
+            filingStatus: c.filing_status,
+            taxYear: c.tax_year,
+            dependents: c.dependents,
+            city: (c as any).city || "",
+            state: (c as any).state || "",
+            ...(c as any),
+          });
+          setIntakeMode("edit");
+          setIntakeOpen(true);
+        }
+      }}
     />
   );
 
@@ -845,13 +866,69 @@ export default function Home() {
 
       <IntakeModal
         open={intakeOpen}
-        onClose={() => setIntakeOpen(false)}
+        onClose={() => { setIntakeOpen(false); setIntakeMode("create"); setIntakeEditData(undefined); }}
+        mode={intakeMode}
+        editData={intakeEditData}
         onSubmit={async (data: IntakeFormData) => {
-          const name = data.spouseFirstName
-            ? `${data.lastName} Family`
-            : `${data.lastName}, ${data.firstName}`;
+          const name = data.familyGroupName
+            ? data.familyGroupName
+            : data.spouseFirstName
+              ? `${data.lastName} Family`
+              : `${data.lastName}, ${data.firstName}`;
           const filingLabel = FILING_STATUS_LABELS[data.filingStatus] || data.filingStatus;
 
+          // ── Edit mode: PATCH existing client ──
+          if (intakeMode === "edit" && intakeEditData?.id) {
+            try {
+              const updated = await api.clients.update(intakeEditData.id, {
+                name,
+                filing_status: data.filingStatus,
+                tax_year: data.taxYear,
+                dependents: data.dependents,
+              });
+
+              // Post dependents
+              for (const dep of data.dependentDetails) {
+                if (dep.firstName) {
+                  try {
+                    await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/clients/${intakeEditData.id}/dependents`, {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        first_name: dep.firstName,
+                        last_name: dep.lastName,
+                        ssn: dep.ssn,
+                        date_of_birth: dep.dob,
+                        relationship: dep.relationship,
+                      }),
+                    });
+                  } catch { /* ignore */ }
+                }
+              }
+
+              // Refresh client list
+              try {
+                const apiData = await api.clients.list();
+                if (Array.isArray(apiData) && apiData.length > 0) {
+                  setApiClients(apiData);
+                  setSidebarClients(apiData.map((c) => ({
+                    id: String(c.id),
+                    name: c.name,
+                    meta: `${c.filing_status} \u00b7 ${c.dependents} dep. \u00b7 ${c.tax_year}`,
+                    status: mapWorkflowStep(c.workflow_step),
+                    initials: c.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase(),
+                    color: hashColor(c.name),
+                    adults: mockAdults[c.id] || undefined,
+                  })));
+                }
+              } catch { /* ignore */ }
+            } catch (err) {
+              console.error("Failed to update client:", err);
+            }
+            return;
+          }
+
+          // ── Create mode ──
           try {
             // Create client via backend API
             const created = await api.clients.create({
@@ -859,7 +936,18 @@ export default function Home() {
               filing_status: data.filingStatus,
               tax_year: data.taxYear,
               dependents: data.dependents,
-            });
+              primary_ssn: data.ssn || undefined,
+              primary_dob: data.dateOfBirth || undefined,
+              spouse_first_name: data.spouseFirstName || undefined,
+              spouse_last_name: data.spouseLastName || undefined,
+              spouse_ssn: data.spouseSsn || undefined,
+              spouse_dob: data.spouseDob || undefined,
+              street: data.street || undefined,
+              city: data.city || undefined,
+              state: data.state || undefined,
+              zip_code: data.zip || undefined,
+              family_group_name: data.familyGroupName || undefined,
+            } as any);
             const newId = String(created.id);
             const meta = [
               data.spouseFirstName ? `${data.firstName} & ${data.spouseFirstName}` : data.firstName,
@@ -877,6 +965,25 @@ export default function Home() {
             ]);
             setActiveClientId(newId);
             setUsingApi(true);
+
+            // Post dependents
+            for (const dep of data.dependentDetails) {
+              if (dep.firstName) {
+                try {
+                  await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/clients/${created.id}/dependents`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      first_name: dep.firstName,
+                      last_name: dep.lastName,
+                      ssn: dep.ssn,
+                      date_of_birth: dep.dob,
+                      relationship: dep.relationship,
+                    }),
+                  });
+                } catch { /* ignore */ }
+              }
+            }
 
             // Log to chat via API
             const filingDesc = [data.filingFederal ? "Federal" : "", ...data.filingStates].filter(Boolean).join(", ");

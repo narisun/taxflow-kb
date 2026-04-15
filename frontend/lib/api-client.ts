@@ -7,6 +7,22 @@ export interface Client {
   tax_year: number;
   dependents: number;
   workflow_step: string;
+  primary_ssn?: string;
+  primary_ssn_masked?: string;
+  primary_dob?: string;
+  primary_dob_masked?: string;
+  spouse_first_name?: string;
+  spouse_last_name?: string;
+  spouse_ssn?: string;
+  spouse_ssn_masked?: string;
+  spouse_dob?: string;
+  spouse_dob_masked?: string;
+  street?: string;
+  street_masked?: string;
+  city?: string;
+  state?: string;
+  zip_code?: string;
+  family_group_name?: string;
   org_id?: string;
   created_by?: string;
   created_at: string;
@@ -67,6 +83,12 @@ export const api = {
     create: (data: Partial<Client>): Promise<Client> =>
       fetchJson<Client>(`${API_BASE}/api/clients`, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      }),
+    update: (id: number, data: Partial<Client>): Promise<Client> =>
+      fetchJson<Client>(`${API_BASE}/api/clients/${id}`, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       }),
