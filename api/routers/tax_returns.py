@@ -198,3 +198,29 @@ async def delete_manual_entry(
     await session.delete(entry)
     await session.commit()
     return {"status": "deleted"}
+
+
+from api.tax_engine.advisory.models import AdvisoryItem
+from api.tax_engine.advisory.engine import AdvisoryEngine
+
+
+@router.get("/advisory", response_model=list[AdvisoryItem])
+async def get_advisory(
+    client_id: int,
+    session: AsyncSession = Depends(get_session),
+    user: UserModel = Depends(get_current_user),
+):
+    """Generate personalized tax advisory recommendations."""
+    client = await get_client_or_404(client_id, session, user)
+
+    assembler = DocumentAssembler()
+    tax_return = await assembler.assemble(client_id, session)
+
+    import api.tax_engine.constants  # noqa: F401
+    from api.tax_engine.constants.registry import get_constants
+    constants = get_constants(client.tax_year)
+    engine = TaxCalculationEngine(constants)
+    result = engine.compute(tax_return)
+
+    advisory = AdvisoryEngine()
+    return advisory.analyze(tax_return, result, constants)
