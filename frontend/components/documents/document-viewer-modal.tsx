@@ -34,63 +34,97 @@ function getDocUrl(docId: number | string): string {
 }
 
 /* ── Full field definitions per form type ────────────────────────────────
-   Each entry: [fieldKey, fieldNumber, fieldLabel]
-   fieldNumber is the IRS box/line number (or "" for non-numbered fields).
-   All fields are shown even if empty — CPAs need to see what's missing.
+   Each entry: [fieldKey, fieldNumber, fieldLabel, valueType]
+   - fieldNumber: IRS box/line number ("" for non-numbered fields)
+   - valueType: "money" | "text" | "ein" | "ssn" | "id" | "state"
+   All fields shown even if empty — CPAs need to see what's missing.
 */
-type FieldDef = [string, string, string];
+type ValueType = "money" | "text" | "ein" | "ssn" | "id" | "state";
+type FieldDef = [string, string, string, ValueType];
 
 const FORM_FIELDS: Record<string, FieldDef[]> = {
   "W-2": [
-    ["employer_name", "", "Employer Name"],
-    ["employer_ein", "", "Employer EIN"],
-    ["box1_wages", "1", "Wages, salaries, tips"],
-    ["box2_fed_withheld", "2", "Federal income tax withheld"],
-    ["box3_ss_wages", "3", "Social Security wages"],
-    ["box4_ss_withheld", "4", "Social Security tax withheld"],
-    ["box5_medicare_wages", "5", "Medicare wages and tips"],
-    ["box6_medicare_withheld", "6", "Medicare tax withheld"],
-    ["box15_state", "15", "State"],
-    ["box16_state_wages", "16", "State wages, tips"],
-    ["box17_state_withheld", "17", "State income tax"],
+    ["employee_ssn", "a", "Employee SSN", "ssn"],
+    ["employer_ein", "b", "Employer EIN", "ein"],
+    ["employer_name", "c", "Employer Name", "text"],
+    ["employer_address", "c", "Employer Address", "text"],
+    ["control_number", "d", "Control Number", "id"],
+    ["employee_name", "e", "Employee Name", "text"],
+    ["employee_address", "f", "Employee Address", "text"],
+    ["box1_wages", "1", "Wages, salaries, tips", "money"],
+    ["box2_fed_withheld", "2", "Federal income tax withheld", "money"],
+    ["box3_ss_wages", "3", "Social Security wages", "money"],
+    ["box4_ss_withheld", "4", "Social Security tax withheld", "money"],
+    ["box5_medicare_wages", "5", "Medicare wages and tips", "money"],
+    ["box6_medicare_withheld", "6", "Medicare tax withheld", "money"],
+    ["box7_ss_tips", "7", "Social Security tips", "money"],
+    ["box8_allocated_tips", "8", "Allocated tips", "money"],
+    ["box10_dependent_care", "10", "Dependent care benefits", "money"],
+    ["box11_nonqualified_plans", "11", "Nonqualified plans", "money"],
+    ["box12a", "12a", "Code 12a", "text"],
+    ["box12b", "12b", "Code 12b", "text"],
+    ["box12c", "12c", "Code 12c", "text"],
+    ["box12d", "12d", "Code 12d", "text"],
+    ["box13_statutory", "13", "Statutory employee / Retirement / Third-party sick pay", "text"],
+    ["box14a_other", "14a", "Other", "text"],
+    ["box15_state", "15", "State", "state"],
+    ["box15_state_ein", "15", "State Employer ID", "id"],
+    ["box16_state_wages", "16", "State wages, tips", "money"],
+    ["box17_state_withheld", "17", "State income tax", "money"],
+    ["box18_local_wages", "18", "Local wages, tips", "money"],
+    ["box19_local_tax", "19", "Local income tax", "money"],
+    ["box20_locality_name", "20", "Locality name", "text"],
   ],
   "1099-INT": [
-    ["payer", "", "Payer Name"],
-    ["box1_interest", "1", "Interest income"],
-    ["box4_fed_withheld", "4", "Federal income tax withheld"],
+    ["payer", "", "Payer Name", "text"],
+    ["box1_interest", "1", "Interest income", "money"],
+    ["box2_early_withdrawal_penalty", "2", "Early withdrawal penalty", "money"],
+    ["box3_savings_bond_interest", "3", "Interest on U.S. Savings Bonds", "money"],
+    ["box4_fed_withheld", "4", "Federal income tax withheld", "money"],
+    ["box5_investment_expenses", "5", "Investment expenses", "money"],
+    ["box6_foreign_tax", "6", "Foreign tax paid", "money"],
+    ["box8_tax_exempt_interest", "8", "Tax-exempt interest", "money"],
   ],
   "1099-DIV": [
-    ["payer", "", "Payer Name"],
-    ["box1a_ordinary_dividends", "1a", "Total ordinary dividends"],
-    ["box1b_qualified_dividends", "1b", "Qualified dividends"],
-    ["box2a_capital_gain_distributions", "2a", "Total capital gain distributions"],
+    ["payer", "", "Payer Name", "text"],
+    ["box1a_ordinary_dividends", "1a", "Total ordinary dividends", "money"],
+    ["box1b_qualified_dividends", "1b", "Qualified dividends", "money"],
+    ["box2a_capital_gain_distributions", "2a", "Total capital gain distributions", "money"],
+    ["box4_fed_withheld", "4", "Federal income tax withheld", "money"],
+    ["box5_section_199a", "5", "Section 199A dividends", "money"],
+    ["box7_foreign_tax_paid", "7", "Foreign tax paid", "money"],
   ],
   "1099-B": [
-    ["payer", "", "Broker Name"],
-    ["short_term_proceeds", "", "Short-term proceeds"],
-    ["short_term_cost_basis", "", "Short-term cost basis"],
-    ["long_term_proceeds", "", "Long-term proceeds"],
-    ["long_term_cost_basis", "", "Long-term cost basis"],
+    ["payer", "", "Broker Name", "text"],
+    ["short_term_proceeds", "", "Short-term proceeds", "money"],
+    ["short_term_cost_basis", "", "Short-term cost basis", "money"],
+    ["long_term_proceeds", "", "Long-term proceeds", "money"],
+    ["long_term_cost_basis", "", "Long-term cost basis", "money"],
+    ["box4_fed_withheld", "4", "Federal income tax withheld", "money"],
   ],
   "1099-NEC": [
-    ["payer", "", "Payer Name"],
-    ["nec_compensation", "1", "Nonemployee compensation"],
-    ["fed_tax_withheld", "4", "Federal income tax withheld"],
+    ["payer", "", "Payer Name", "text"],
+    ["nec_compensation", "1", "Nonemployee compensation", "money"],
+    ["fed_tax_withheld", "4", "Federal income tax withheld", "money"],
   ],
   "1098": [
-    ["lender", "", "Lender Name"],
-    ["box1_interest", "1", "Mortgage interest received"],
-    ["box10_property_taxes", "10", "Property taxes"],
+    ["lender", "", "Lender Name", "text"],
+    ["box1_interest", "1", "Mortgage interest received", "money"],
+    ["box2_outstanding_principal", "2", "Outstanding mortgage principal", "money"],
+    ["box5_mortgage_insurance", "5", "Mortgage insurance premiums", "money"],
+    ["box6_points_paid", "6", "Points paid on purchase", "money"],
+    ["box7_property_address", "7", "Property address", "text"],
+    ["box10_property_taxes", "10", "Property taxes", "money"],
   ],
   "K-1": [
-    ["entity_name", "", "Entity Name"],
-    ["entity_ein", "", "Entity EIN"],
-    ["entity_type", "", "Entity Type (P/S)"],
-    ["box1_ordinary_income", "1", "Ordinary business income/loss"],
-    ["box2_rental_income", "2", "Net rental real estate income/loss"],
-    ["box4a_guaranteed_payments", "4a", "Guaranteed payments"],
-    ["box14a_se_earnings", "14a", "Self-employment earnings"],
-    ["box20z_section_199a_qbi", "20-Z", "Section 199A QBI"],
+    ["entity_name", "", "Entity Name", "text"],
+    ["entity_ein", "", "Entity EIN", "ein"],
+    ["entity_type", "", "Entity Type (P/S)", "text"],
+    ["box1_ordinary_income", "1", "Ordinary business income/loss", "money"],
+    ["box2_rental_income", "2", "Net rental real estate income/loss", "money"],
+    ["box4a_guaranteed_payments", "4a", "Guaranteed payments", "money"],
+    ["box14a_se_earnings", "14a", "Self-employment earnings", "money"],
+    ["box20z_section_199a_qbi", "20-Z", "Section 199A QBI", "money"],
   ],
 };
 
@@ -101,15 +135,34 @@ function formatFieldLabel(fieldNumber: string, fieldLabel: string): string {
   return fieldLabel;
 }
 
-function formatValue(val: unknown): string {
-  if (val === null || val === undefined || val === "") return "\u2014"; // em dash for empty
+function formatValue(val: unknown, valueType: ValueType = "text"): string {
+  if (val === null || val === undefined || val === "") return "\u2014";
   const s = String(val);
-  // Format numeric values as currency
-  const num = parseFloat(s);
-  if (!isNaN(num) && s.match(/^\d+\.?\d*$/)) {
-    return `$${num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+  switch (valueType) {
+    case "money": {
+      const num = parseFloat(s.replace(/,/g, ""));
+      if (!isNaN(num)) {
+        return `$${num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      }
+      return s;
+    }
+    case "ssn":
+      // Show masked: ***-**-1234
+      if (s.length >= 4) {
+        const last4 = s.replace(/-/g, "").slice(-4);
+        return `***-**-${last4}`;
+      }
+      return s;
+    case "ein":
+      // Show as-is (XX-XXXXXXX format)
+      return s;
+    case "id":
+    case "state":
+    case "text":
+    default:
+      return s;
   }
-  return s;
 }
 
 export function DocumentViewerModal({
@@ -146,13 +199,13 @@ export function DocumentViewerModal({
 
   // Get field definitions for this form type, or build from extracted data
   const fieldDefs: FieldDef[] = FORM_FIELDS[doc.form_type] ||
-    Object.keys(parsedData).map((key) => [key, "", key.replace(/_/g, " ")] as FieldDef);
+    Object.keys(parsedData).map((key) => [key, "", key.replace(/_/g, " "), "text"] as FieldDef);
 
-  // Also include any extracted keys not in the field defs (unexpected fields from Claude)
+  // Also include any extracted keys not in the field defs (unexpected fields)
   const definedKeys = new Set(fieldDefs.map(([key]) => key));
   const extraFields: FieldDef[] = Object.keys(parsedData)
     .filter((key) => !definedKeys.has(key))
-    .map((key) => [key, "", key.replace(/_/g, " ")] as FieldDef);
+    .map((key) => [key, "", key.replace(/_/g, " "), "text"] as FieldDef);
   const allFields = [...fieldDefs, ...extraFields];
 
   return (
@@ -187,7 +240,7 @@ export function DocumentViewerModal({
             </div>
 
             <div className="space-y-1">
-              {allFields.map(([key, fieldNumber, fieldLabel]) => {
+              {allFields.map(([key, fieldNumber, fieldLabel, valueType]) => {
                 const value = parsedData[key];
                 const hasValue = value !== null && value !== undefined && value !== "";
                 const flagged = isFlagged(key);
@@ -215,7 +268,7 @@ export function DocumentViewerModal({
                           </span>
                         </div>
                         <Input
-                          value={editedFields[key] !== undefined ? editedFields[key] : formatValue(value)}
+                          value={editedFields[key] !== undefined ? editedFields[key] : formatValue(value, valueType)}
                           onChange={(e) => handleFieldEdit(key, e.target.value)}
                           validation="warning"
                           className="text-[13px]"
@@ -234,7 +287,7 @@ export function DocumentViewerModal({
                         <span className={`text-[13px] font-medium text-right ${
                           hasValue ? "text-primary" : "text-tertiary/50"
                         }`}>
-                          {hasValue ? formatValue(value) : "\u2014"}
+                          {hasValue ? formatValue(value, valueType) : "\u2014"}
                         </span>
                       </div>
                     )}
