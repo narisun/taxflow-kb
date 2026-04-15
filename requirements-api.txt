@@ -16,3 +16,5 @@ cachetools>=5.3
 anthropic>=0.40
 # PDF generation
 pypdf>=4.0
+# PII encryption
+cryptography>=43.0
