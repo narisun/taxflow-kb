@@ -10,7 +10,7 @@ interface DashboardModalProps {
 
 export function DashboardModal({ open, onClose }: DashboardModalProps) {
   return (
-    <Modal open={open} onClose={onClose} className="max-w-5xl">
+    <Modal open={open} onClose={onClose} className="max-w-6xl w-[92vw]">
       <ModalHeader onClose={onClose}>Dashboard</ModalHeader>
       <ModalBody className="p-0 max-h-[75vh]">
         <AnalyticsDashboard />

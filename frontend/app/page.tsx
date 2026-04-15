@@ -795,7 +795,6 @@ export default function Home() {
           }
         }}
         onViewDoc={(doc) => {
-          setDocManagerOpen(false);
           setViewerDoc(doc);
           setViewerOpen(true);
         }}

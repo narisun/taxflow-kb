@@ -136,7 +136,7 @@ export function ResearchAgentModal({ open, onClose }: ResearchAgentModalProps) {
   };
 
   return (
-    <Modal open={open} onClose={onClose} className="max-w-5xl">
+    <Modal open={open} onClose={onClose} className="max-w-6xl w-[92vw]">
       <div className="flex h-[75vh] max-h-[700px]">
         {/* Left: Thread list */}
         <div className="w-64 shrink-0 border-r border-divider flex flex-col bg-bg">

@@ -47,7 +47,7 @@ export function InboxModal({ open, onClose }: InboxModalProps) {
   };
 
   return (
-    <Modal open={open} onClose={onClose} className="max-w-4xl">
+    <Modal open={open} onClose={onClose} className="max-w-6xl w-[92vw]">
       <ModalHeader onClose={onClose}>Inbox</ModalHeader>
       <ModalBody className="p-0 max-h-[70vh]">
         <div className="flex min-h-[450px]">

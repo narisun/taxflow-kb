@@ -209,7 +209,7 @@ export function DocumentViewerModal({
   const allFields = [...fieldDefs, ...extraFields];
 
   return (
-    <Modal open={open} onClose={onClose} className="max-w-7xl w-[95vw]">
+    <Modal open={open} onClose={onClose} className="max-w-6xl w-[92vw]">
       <ModalHeader onClose={onClose}>
         <div className="flex items-center gap-3">
           <span>{doc.title}</span>
