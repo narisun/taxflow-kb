@@ -26,11 +26,12 @@ class DocumentListResponse(BaseModel):
 
 
 class ExtractedField(BaseModel):
-    name: str
-    value: str
+    name: str               # Structured key: "box1_wages"
+    value: str              # Clean value: "112400.00"
     confidence: float
     flagged: bool = False
     flag_reason: str = ""
+    label: str = ""         # Display label, populated by router
 
 
 class ExtractionResult(BaseModel):
@@ -38,3 +39,8 @@ class ExtractionResult(BaseModel):
     overall_confidence: float
     has_flags: bool
     flags: list[str]
+
+    @property
+    def structured_data(self) -> dict[str, str]:
+        """Return model-ready dict of field name -> value."""
+        return {f.name: f.value for f in self.fields}

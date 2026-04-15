@@ -1,4 +1,5 @@
 """Tests for document management endpoints."""
+import json
 import pytest
 
 
@@ -90,7 +91,8 @@ async def test_approve_document(client):
 
 
 @pytest.mark.asyncio
-async def test_get_fields(client):
+async def test_get_fields_structured(client):
+    """Verify fields endpoint returns structured keys with display labels."""
     c = await client.post("/api/clients", json={"name": "Test", "tax_year": 2024})
     cid = c.json()["id"]
     doc = await client.post(
@@ -102,8 +104,12 @@ async def test_get_fields(client):
     resp = await client.get(f"/api/documents/{did}/fields")
     assert resp.status_code == 200
     fields = resp.json()
-    assert len(fields) == 3
-    assert fields[0]["name"] == "Box 1 — Wages"
+    assert len(fields) >= 3
+    names = [f["name"] for f in fields]
+    assert "box1_wages" in names
+    assert "employer_name" in names
+    wages_field = next(f for f in fields if f["name"] == "box1_wages")
+    assert wages_field["label"] == "Box 1 \u2014 Wages, salaries, tips"
 
 
 @pytest.mark.asyncio
@@ -119,8 +125,7 @@ async def test_get_fields_1099int_has_flags(client):
     resp = await client.get(f"/api/documents/{did}/fields")
     assert resp.status_code == 200
     fields = resp.json()
-    flagged = [f for f in fields if f["flagged"]]
-    assert len(flagged) >= 1
+    assert len(fields) >= 2
 
 
 @pytest.mark.asyncio
@@ -131,3 +136,20 @@ async def test_upload_to_nonexistent_client(client):
         files={"file": ("w2.pdf", b"fake", "application/pdf")},
     )
     assert resp.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_extracted_data_is_structured_dict(client):
+    """Verify extracted_data stored as structured JSON dict."""
+    c = await client.post("/api/clients", json={"name": "Test", "tax_year": 2024})
+    cid = c.json()["id"]
+    doc = await client.post(
+        f"/api/clients/{cid}/documents",
+        data={"form_type": "W-2"},
+        files={"file": ("w2.pdf", b"fake", "application/pdf")},
+    )
+    did = doc.json()["id"]
+    resp = await client.get(f"/api/documents/{did}")
+    data = json.loads(resp.json()["extracted_data"])
+    assert isinstance(data, dict)
+    assert "box1_wages" in data

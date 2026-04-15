@@ -19,7 +19,8 @@ from api.models.enums import FormType
 from api.auth.dependencies import get_current_user, require_role
 from api.auth.models import UserModel
 from api.routers._helpers import get_client_or_404
-from api.services.ocr.mock_extractor import MockOCRExtractor
+from api.services.ocr.protocol import OCRExtractor
+from api.services.ocr.field_mapping import get_display_label
 
 router = APIRouter(prefix="/api", tags=["documents"])
 
@@ -31,11 +32,22 @@ ALLOWED_CONTENT_TYPES = {
     "image/jpeg",
     "image/tiff",
 }
-_ocr = MockOCRExtractor()
+
+
+def _get_ocr_extractor() -> OCRExtractor:
+    """Select extractor based on config."""
+    if os.getenv("OCR_EXTRACTOR", "mock") == "claude":
+        import anthropic
+        from api.services.ocr.claude_extractor import ClaudeVisionExtractor
+        return ClaudeVisionExtractor(anthropic.Anthropic())
+    from api.services.ocr.mock_extractor import MockOCRExtractor
+    return MockOCRExtractor()
+
+
+_ocr = _get_ocr_extractor()
 
 
 def _sanitize_filename(filename: str) -> str:
-    """Remove path separators and dangerous characters from a filename."""
     name = os.path.basename(filename)
     name = re.sub(r"[^\w.\-]", "_", name)
     return name or "upload"
@@ -57,7 +69,6 @@ async def list_documents(
     count_q = select(func.count()).select_from(base.subquery())
     count_result = await session.execute(count_q)
     total = count_result.scalar() or 0
-
     paginated = base.offset((page - 1) * page_size).limit(page_size)
     result = await session.execute(paginated)
     docs = result.scalars().all()
@@ -78,14 +89,12 @@ async def upload_document(
 ):
     await get_client_or_404(client_id, session, user)
 
-    # Validate content type
     if file.content_type and file.content_type not in ALLOWED_CONTENT_TYPES:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"File type '{file.content_type}' not allowed. Accepted: PDF, PNG, JPEG, TIFF.",
         )
 
-    # Read and validate file size
     content = await file.read()
     if len(content) > MAX_FILE_SIZE:
         raise HTTPException(
@@ -93,9 +102,13 @@ async def upload_document(
             detail=f"File exceeds maximum size of {MAX_FILE_SIZE // (1024 * 1024)} MB.",
         )
 
-    # Run OCR extraction
+    safe_name = _sanitize_filename(file.filename or "upload")
+
+    # Run extraction
     extraction = await _ocr.extract("", form_type)
-    extracted_data = json.dumps([f.model_dump() for f in extraction.fields])
+
+    # Store as structured JSON dict (model-ready)
+    extracted_data = json.dumps(extraction.structured_data)
     flags = json.dumps(extraction.flags)
     confidence = extraction.overall_confidence
 
@@ -105,7 +118,7 @@ async def upload_document(
     doc = DocumentModel(
         client_id=client_id,
         form_type=form_type,
-        title=f"{form_type} ({_sanitize_filename(file.filename or 'upload')})",
+        title=f"{form_type} ({safe_name})",
         status=doc_status,
         confidence=confidence,
         extracted_data=extracted_data,
@@ -117,10 +130,8 @@ async def upload_document(
     await session.commit()
     await session.refresh(doc)
 
-    # Save file to uploads/{doc_id}/
     doc_dir = UPLOAD_DIR / str(doc.id)
     doc_dir.mkdir(parents=True, exist_ok=True)
-    safe_name = _sanitize_filename(file.filename or "upload")
     file_path = doc_dir / safe_name
     file_path.write_bytes(content)
 
@@ -184,8 +195,22 @@ async def get_document_fields(
     doc = result.scalar_one_or_none()
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
+
     try:
         raw = json.loads(doc.extracted_data)
     except (json.JSONDecodeError, TypeError):
-        raw = []
-    return [ExtractedField(**f) for f in raw]
+        raw = {}
+
+    # Handle both structured dict format (new) and list format (legacy)
+    if isinstance(raw, dict):
+        fields = []
+        for key, value in raw.items():
+            label = get_display_label(doc.form_type, key)
+            fields.append(ExtractedField(
+                name=key, value=str(value), confidence=doc.confidence,
+                label=label,
+            ))
+        return fields
+    elif isinstance(raw, list):
+        return [ExtractedField(**f) for f in raw]
+    return []
