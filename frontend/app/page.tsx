@@ -16,6 +16,7 @@ import { ClientMasterModal } from "@/components/clients/client-master-modal";
 import { DashboardModal } from "@/components/dashboard/dashboard-modal";
 import { ResearchAgentModal } from "@/components/research/research-agent-modal";
 import { DocumentCard } from "@/components/documents/document-card";
+import { DocumentManagerModal } from "@/components/documents/document-manager-modal";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs } from "@/components/ui/tabs";
@@ -89,6 +90,8 @@ export default function Home() {
   const [researchOpen, setResearchOpen] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [dashboardOpen, setDashboardOpen] = useState(false);
+  const [docManagerOpen, setDocManagerOpen] = useState(false);
+  const [clientDependents, setClientDependents] = useState<Array<{id: number; first_name: string; last_name: string; relationship: string; ssn_masked?: string}>>([]);
   const [clientMasterOpen, setClientMasterOpen] = useState(false);
   const [clientMasterFilter, setClientMasterFilter] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -466,6 +469,23 @@ export default function Home() {
                 />
               );
             })}
+            {/* Manage Documents button */}
+            <button
+              onClick={async () => {
+                // Load dependents for the document manager
+                const numId = Number(activeClientId);
+                if (!isNaN(numId) && usingApi) {
+                  try {
+                    const deps = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/clients/${numId}/dependents`);
+                    if (deps.ok) setClientDependents(await deps.json());
+                  } catch { /* ignore */ }
+                }
+                setDocManagerOpen(true);
+              }}
+              className="w-full mt-2 py-2 text-[12px] text-apple-blue hover:bg-surface-secondary rounded-lg border border-dashed border-divider hover:border-apple-blue/40 transition-all cursor-pointer"
+            >
+              Manage Documents
+            </button>
           </div>
         )}
 
@@ -697,6 +717,88 @@ export default function Home() {
         onClose={() => setViewerOpen(false)}
         document={viewerDoc}
         onApprove={handleApproveDoc}
+      />
+
+      {/* Document Manager modal */}
+      <DocumentManagerModal
+        open={docManagerOpen}
+        onClose={() => setDocManagerOpen(false)}
+        client={(() => {
+          const numId = Number(activeClientId);
+          const c = apiClients.find((c) => c.id === numId);
+          if (!c) return null;
+          return {
+            name: c.name,
+            filing_status: c.filing_status,
+            tax_year: c.tax_year,
+            dependents: c.dependents,
+            ...(c as any),
+          };
+        })()}
+        dependents={clientDependents}
+        documents={documents}
+        onUpload={async (files) => {
+          const numId = Number(activeClientId);
+          if (isNaN(numId)) return;
+          const source = usingApi ? api : mockApi;
+          for (const file of files) {
+            const fname = file.name.toLowerCase();
+            let formType = "Other";
+            if (fname.includes("w2") || fname.includes("w-2")) formType = "W-2";
+            else if (fname.includes("1099-int") || fname.includes("1099int")) formType = "1099-INT";
+            else if (fname.includes("1099-nec") || fname.includes("1099nec")) formType = "1099-NEC";
+            else if (fname.includes("1099-b") || fname.includes("1099b")) formType = "1099-B";
+            else if (fname.includes("1099-div") || fname.includes("1099div")) formType = "1099-DIV";
+            else if (fname.includes("1099")) formType = "1099";
+            else if (fname.includes("1098")) formType = "1098";
+            else if (fname.includes("k-1") || fname.includes("k1")) formType = "K-1";
+            try {
+              await source.documents.upload(numId, file, formType);
+            } catch (err) {
+              console.error(`Upload failed for ${file.name}:`, err);
+            }
+          }
+          // Refresh document list
+          try {
+            const docData = await source.documents.list(numId);
+            if (Array.isArray(docData)) {
+              setDocuments(docData.map((d: any) => ({
+                ...d, client_id: d.client_id, name: d.title, type: d.form_type,
+              })));
+            }
+          } catch { /* ignore */ }
+        }}
+        onDelete={async (docId) => {
+          const numId = Number(activeClientId);
+          if (isNaN(numId)) return;
+          const source = usingApi ? api : mockApi;
+          try {
+            if (usingApi) await api.documents.delete(docId);
+            const docData = await source.documents.list(numId);
+            if (Array.isArray(docData)) {
+              setDocuments(docData.map((d: any) => ({
+                ...d, client_id: d.client_id, name: d.title, type: d.form_type,
+              })));
+            }
+          } catch (err) {
+            console.error("Delete failed:", err);
+          }
+        }}
+        onApprove={async (docId) => {
+          try {
+            if (usingApi) await api.documents.approve(docId);
+            setDocuments((prev) =>
+              prev.map((d) => (d.id === docId ? { ...d, status: "approved" } : d))
+            );
+          } catch (err) {
+            console.error("Approve failed:", err);
+          }
+        }}
+        onViewDoc={(doc) => {
+          setDocManagerOpen(false);
+          setViewerDoc(doc);
+          setViewerOpen(true);
+        }}
       />
 
       <DashboardModal open={dashboardOpen} onClose={() => setDashboardOpen(false)} />
