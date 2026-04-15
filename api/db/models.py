@@ -1,9 +1,20 @@
 """SQLAlchemy models — multi-tenant with org_id on all data tables."""
 
-from sqlalchemy import String, Integer, Text, Float, ForeignKey, Index, UniqueConstraint
+from sqlalchemy import String, Integer, Text, Float, ForeignKey, Index, UniqueConstraint, LargeBinary
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from api.db.base import Base, TenantMixin
+
+
+class FamilyGroupModel(TenantMixin, Base):
+    __tablename__ = "family_groups"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    display_name: Mapped[str] = mapped_column(String(200))
+    primary_first_name: Mapped[str] = mapped_column(String(100), default="")
+    primary_last_name: Mapped[str] = mapped_column(String(100), default="")
+    spouse_first_name: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    spouse_last_name: Mapped[str | None] = mapped_column(String(100), nullable=True)
 
 
 class ClientModel(TenantMixin, Base):
@@ -16,6 +27,16 @@ class ClientModel(TenantMixin, Base):
     dependents: Mapped[int] = mapped_column(Integer, default=0)
     workflow_step: Mapped[str] = mapped_column(String(20), default="intake")
 
+    family_group_id: Mapped[int | None] = mapped_column(ForeignKey("family_groups.id"), nullable=True)
+    primary_ssn_enc: Mapped[bytes | None] = mapped_column(LargeBinary, nullable=True)
+    primary_dob_enc: Mapped[bytes | None] = mapped_column(LargeBinary, nullable=True)
+    spouse_ssn_enc: Mapped[bytes | None] = mapped_column(LargeBinary, nullable=True)
+    spouse_dob_enc: Mapped[bytes | None] = mapped_column(LargeBinary, nullable=True)
+    street_enc: Mapped[bytes | None] = mapped_column(LargeBinary, nullable=True)
+    city: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    state: Mapped[str | None] = mapped_column(String(2), nullable=True)
+    zip_code: Mapped[str | None] = mapped_column(String(10), nullable=True)
+
     documents: Mapped[list["DocumentModel"]] = relationship(
         back_populates="client", cascade="all, delete-orphan"
     )
@@ -25,6 +46,26 @@ class ClientModel(TenantMixin, Base):
 
     __table_args__ = (
         Index("ix_clients_org_created_by", "org_id", "created_by"),
+    )
+
+
+class DependentModel(TenantMixin, Base):
+    __tablename__ = "dependents"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    client_id: Mapped[int] = mapped_column(ForeignKey("clients.id"), index=True)
+    first_name: Mapped[str] = mapped_column(String(100))
+    last_name: Mapped[str] = mapped_column(String(100))
+    ssn_enc: Mapped[bytes | None] = mapped_column(LargeBinary, nullable=True)
+    dob_enc: Mapped[bytes | None] = mapped_column(LargeBinary, nullable=True)
+    relationship: Mapped[str] = mapped_column(String(30))
+    months_lived_with: Mapped[int] = mapped_column(Integer, default=12)
+    is_student: Mapped[bool] = mapped_column(default=False)
+    is_qualifying_child: Mapped[bool] = mapped_column(default=True)
+    is_us_citizen: Mapped[bool] = mapped_column(default=True)
+
+    __table_args__ = (
+        Index("ix_dependents_org_client", "org_id", "client_id"),
     )
 
 

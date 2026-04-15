@@ -51,6 +51,7 @@ ROLE_PERMISSIONS = {
         "can_approve_documents": True,
         "can_send_advisory": True,
         "can_view_analytics": True,
+        "can_view_pii": True,
     },
     "supervisor": {
         "can_view_all_clients": True,
@@ -59,6 +60,7 @@ ROLE_PERMISSIONS = {
         "can_approve_documents": True,
         "can_send_advisory": True,
         "can_view_analytics": True,
+        "can_view_pii": True,
     },
     "preparer": {
         "can_view_all_clients": False,
@@ -67,6 +69,7 @@ ROLE_PERMISSIONS = {
         "can_approve_documents": True,
         "can_send_advisory": True,
         "can_view_analytics": False,
+        "can_view_pii": False,
     },
     "analyst": {
         "can_view_all_clients": False,
@@ -75,5 +78,6 @@ ROLE_PERMISSIONS = {
         "can_approve_documents": False,
         "can_send_advisory": False,
         "can_view_analytics": False,
+        "can_view_pii": False,
     },
 }
