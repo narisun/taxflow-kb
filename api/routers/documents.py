@@ -5,6 +5,7 @@ import re
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Query, status
+from pydantic import BaseModel as PydanticBaseModel
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -21,6 +22,11 @@ from api.auth.models import UserModel
 from api.routers._helpers import get_client_or_404
 from api.services.ocr.protocol import OCRExtractor
 from api.services.ocr.field_mapping import get_display_label
+
+
+class FieldEditRequest(PydanticBaseModel):
+    field_name: str
+    value: str
 
 router = APIRouter(prefix="/api", tags=["documents"])
 
@@ -214,3 +220,37 @@ async def get_document_fields(
     elif isinstance(raw, list):
         return [ExtractedField(**f) for f in raw]
     return []
+
+
+@router.patch("/documents/{doc_id}/fields")
+async def edit_document_field(
+    doc_id: int,
+    edit: FieldEditRequest,
+    session: AsyncSession = Depends(get_session),
+    user: UserModel = Depends(require_role("admin", "supervisor", "preparer")),
+):
+    """Edit an extracted field and reset document status to review."""
+    result = await session.execute(
+        select(DocumentModel).where(DocumentModel.id == doc_id, DocumentModel.org_id == user.org_id)
+    )
+    doc = result.scalar_one_or_none()
+    if not doc:
+        raise HTTPException(status_code=404, detail="Document not found")
+
+    # Parse current extracted data
+    try:
+        data = json.loads(doc.extracted_data) if doc.extracted_data else {}
+    except (json.JSONDecodeError, TypeError):
+        data = {}
+    if not isinstance(data, dict):
+        data = {}
+
+    # Update the field
+    data[edit.field_name] = edit.value
+
+    # Save back and reset status
+    doc.extracted_data = json.dumps(data)
+    doc.status = "review"
+    await session.commit()
+    await session.refresh(doc)
+    return {"status": doc.status, "updated_field": edit.field_name}

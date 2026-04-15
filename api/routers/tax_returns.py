@@ -46,6 +46,10 @@ async def generate_draft(
     engine = TaxCalculationEngine(constants)
     result = engine.compute(tax_return)
 
+    from api.tax_engine.validation.engine import ValidationEngine as TaxValidationEngine
+    validator = TaxValidationEngine()
+    validation_results = [r.model_dump() for r in validator.validate(tax_return)]
+
     # Convert to TaxReturnDraft response
     lines = []
     f1040 = result.form_results.get("1040")
@@ -80,6 +84,7 @@ async def generate_draft(
         total_payments=float(result.total_payments),
         refund_or_owed=float(result.refund_or_owed),
         effective_rate=effective_rate,
+        validation_results=validation_results,
     )
 
     # Upsert draft in database
@@ -298,3 +303,29 @@ async def compare_years(
 
     engine = ComparisonEngine()
     return engine.compare(current_result, prior_result, client_id=client_id)
+
+
+@router.post("/validate")
+async def validate_return(
+    client_id: int,
+    session: AsyncSession = Depends(get_session),
+    user: UserModel = Depends(get_current_user),
+):
+    """Run validation without computing taxes."""
+    client = await get_client_or_404(client_id, session, user)
+    assembler = DocumentAssembler()
+    tax_return = await assembler.assemble(client_id, session)
+
+    import api.tax_engine.constants  # noqa: F401
+    from api.tax_engine.constants.registry import get_constants
+    from api.tax_engine.validation.engine import ValidationEngine as TaxValidationEngine
+
+    constants = get_constants(client.tax_year)
+
+    validator = TaxValidationEngine()
+    results = validator.validate(tax_return)
+
+    return {
+        "results": [r.model_dump() for r in results],
+        "has_errors": any(r.severity == "ERROR" for r in results),
+    }
