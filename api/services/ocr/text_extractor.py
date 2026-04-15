@@ -226,17 +226,19 @@ def _extract_w2_from_table(tables: list, text: str) -> list[ExtractedField]:
                             return line.split(",")[0].strip() if "," in line else line
         return ""
 
-    # Employer EIN
-    ein_val = _find_in_cells([r"employer\s+identification\s+number", r"\bEIN\b"])
+    # Employer EIN — use EIN regex directly (not _extract_number which treats it as currency)
+    ein_val = ""
+    for cell in cell_texts:
+        if re.search(r"employer\s+identification\s+number|\bEIN\b", cell, re.IGNORECASE):
+            m = _EIN_RE.search(cell)
+            if m:
+                ein_val = m.group(1)
+                break
     if not ein_val:
         m = _EIN_RE.search(text)
         if m:
             ein_val = m.group(1)
     if ein_val:
-        # EIN might be a plain number — format it
-        if re.match(r"^\d{9}$", ein_val.replace(".", "").replace("-", "")):
-            clean = ein_val.replace("-", "").replace(".", "")[:9]
-            ein_val = f"{clean[:2]}-{clean[2:]}"
         fields.append(ExtractedField(name="employer_ein", value=ein_val, confidence=0.98))
 
     # Employer name
