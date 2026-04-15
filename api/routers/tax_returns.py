@@ -2,6 +2,7 @@
 from decimal import Decimal
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import Response
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,6 +16,7 @@ from api.routers._helpers import get_client_or_404
 from api.tax_engine.dependencies import get_tax_engine, get_assembler
 from api.tax_engine.services.engine import TaxCalculationEngine
 from api.tax_engine.assembler import DocumentAssembler
+from api.tax_engine.pdf.generator import PDFGenerator
 
 router = APIRouter(prefix="/api/clients/{client_id}/returns", tags=["tax_returns"])
 
@@ -224,3 +226,34 @@ async def get_advisory(
 
     advisory = AdvisoryEngine()
     return advisory.analyze(tax_return, result, constants)
+
+
+@router.get("/pdf")
+async def download_pdf(
+    client_id: int,
+    session: AsyncSession = Depends(get_session),
+    user: UserModel = Depends(get_current_user),
+):
+    """Generate and download a filled Form 1040 PDF."""
+    client = await get_client_or_404(client_id, session, user)
+
+    assembler = DocumentAssembler()
+    tax_return = await assembler.assemble(client_id, session)
+
+    import api.tax_engine.constants  # noqa: F401
+    from api.tax_engine.constants.registry import get_constants
+    constants = get_constants(client.tax_year)
+    engine = TaxCalculationEngine(constants)
+    result = engine.compute(tax_return)
+
+    generator = PDFGenerator()
+    pdf_bytes = generator.generate(tax_return, result)
+
+    safe_name = client.name.replace(" ", "_") if client.name else "client"
+    filename = f"1040_{safe_name}_{client.tax_year}.pdf"
+
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
