@@ -100,6 +100,10 @@ export const api = {
       }),
     fields: (docId: number): Promise<{ fields: Array<{ name: string; value: string; confidence: number; flagged: boolean; flag_reason: string }> }> =>
       fetchJson(`${API_BASE}/api/documents/${docId}/fields`),
+    delete: async (docId: number): Promise<void> => {
+      const resp = await fetch(`${API_BASE}/api/documents/${docId}`, { method: "DELETE" });
+      if (!resp.ok) throw new Error(`Delete failed: ${resp.status}`);
+    },
   },
   returns: {
     draft: (clientId: number): Promise<TaxReturnDraft> =>

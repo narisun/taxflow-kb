@@ -299,3 +299,23 @@ async def edit_document_field(
     await session.commit()
     await session.refresh(doc)
     return {"status": doc.status, "updated_field": edit.field_name}
+
+
+@router.delete("/documents/{doc_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_document(
+    doc_id: int,
+    session: AsyncSession = Depends(get_session),
+    user: UserModel = Depends(require_role("admin", "supervisor", "preparer")),
+):
+    """Delete a document."""
+    result = await session.execute(
+        select(DocumentModel).where(
+            DocumentModel.id == doc_id,
+            DocumentModel.org_id == user.org_id,
+        )
+    )
+    doc = result.scalar_one_or_none()
+    if not doc:
+        raise HTTPException(status_code=404, detail="Document not found")
+    await session.delete(doc)
+    await session.commit()

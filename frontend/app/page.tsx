@@ -430,13 +430,42 @@ export default function Home() {
       <div className="flex-1 overflow-y-auto p-3">
         {activeWorkTab === "Documents" && (
           <div className="space-y-3">
-            {documents.map((doc) => (
-              <DocumentCard
-                key={doc.id}
-                doc={doc}
-                onClick={() => { setViewerDoc(doc); setViewerOpen(true); }}
-              />
-            ))}
+            {documents.map((doc) => {
+              // Duplicate detection: same form_type with similar extracted data
+              const isDuplicate = documents.some(
+                (other) =>
+                  other.id !== doc.id &&
+                  other.form_type === doc.form_type &&
+                  other.extracted_data === doc.extracted_data &&
+                  other.extracted_data !== "{}"
+              );
+              return (
+                <DocumentCard
+                  key={doc.id}
+                  doc={doc}
+                  onClick={() => { setViewerDoc(doc); setViewerOpen(true); }}
+                  onDelete={async (docId) => {
+                    const numId = Number(activeClientId);
+                    if (isNaN(numId)) return;
+                    const source = usingApi ? api : mockApi;
+                    try {
+                      if (usingApi) {
+                        await api.documents.delete(docId);
+                      }
+                      const docData = await source.documents.list(numId);
+                      if (Array.isArray(docData)) {
+                        setDocuments(docData.map((d: any) => ({
+                          ...d, client_id: d.client_id, name: d.title, type: d.form_type,
+                        })));
+                      }
+                    } catch (err) {
+                      console.error("Delete failed:", err);
+                    }
+                  }}
+                  isDuplicate={isDuplicate}
+                />
+              );
+            })}
           </div>
         )}
 
