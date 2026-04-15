@@ -1,84 +1,29 @@
-"""Tax return draft endpoints."""
-import json
+"""Tax return draft endpoints — powered by tax calculation engine."""
+from decimal import Decimal
 
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.db.engine import get_session
-from api.db.models import ClientModel, TaxReturnDraftModel
+from api.db.models import ClientModel, TaxReturnDraftModel, ManualEntryModel
 from api.auth.dependencies import get_current_user, require_role
 from api.auth.models import UserModel
 from api.models.tax_return import ReturnLine, TaxReturnDraft
 from api.routers._helpers import get_client_or_404
+from api.tax_engine.dependencies import get_tax_engine, get_assembler
+from api.tax_engine.services.engine import TaxCalculationEngine
+from api.tax_engine.assembler import DocumentAssembler
 
 router = APIRouter(prefix="/api/clients/{client_id}/returns", tags=["tax_returns"])
 
 
-def _compute_tax(taxable_income: float, filing_status: str) -> float:
-    """2024 tax brackets (simplified)."""
-    if filing_status == "mfj":
-        brackets = [
-            (23200, 0.10),
-            (94300 - 23200, 0.12),
-            (201050 - 94300, 0.22),
-            (383900 - 201050, 0.24),
-        ]
-    else:
-        brackets = [
-            (11600, 0.10),
-            (47150 - 11600, 0.12),
-            (100525 - 47150, 0.22),
-            (191950 - 100525, 0.24),
-        ]
-    tax = 0.0
-    remaining = taxable_income
-    for width, rate in brackets:
-        chunk = min(remaining, width)
-        tax += chunk * rate
-        remaining -= chunk
-        if remaining <= 0:
-            break
-    return round(tax, 2)
-
-
-def _compute_draft(client: ClientModel) -> TaxReturnDraft:
-    """Simple 1040 computation from extracted document data."""
-    wages = 185200.0  # mock for now
-    interest = 3847.0
-    total_income = wages + interest
-    standard_deduction = 29200.0 if client.filing_status == "mfj" else 14600.0
-    taxable_income = max(0, total_income - standard_deduction)
-    tax = _compute_tax(taxable_income, client.filing_status)
-    child_credit = client.dependents * 2000.0
-    total_tax = max(0, tax - child_credit)
-    withholding = 29240.0  # mock
-    refund = withholding - total_tax
-
-    return TaxReturnDraft(
-        client_id=client.id,
-        tax_year=client.tax_year,
-        filing_status=client.filing_status,
-        lines=[
-            ReturnLine(number="1a", label="Total wages", value=wages, section="income"),
-            ReturnLine(number="2b", label="Taxable interest", value=interest, section="income"),
-            ReturnLine(number="9", label="Total income", value=total_income, section="income"),
-            ReturnLine(number="12", label="Standard deduction", value=standard_deduction, section="deductions"),
-            ReturnLine(number="15", label="Taxable income", value=taxable_income, section="deductions"),
-            ReturnLine(number="16", label="Tax", value=tax, section="tax_credits"),
-            ReturnLine(number="19", label="Child Tax Credit", value=-child_credit, section="tax_credits"),
-            ReturnLine(number="24", label="Total tax", value=total_tax, section="tax_credits"),
-            ReturnLine(number="25", label="Withholding", value=withholding, section="payments"),
-            ReturnLine(number="35a", label="Refund", value=refund, section="payments"),
-        ],
-        total_income=total_income,
-        total_deductions=standard_deduction,
-        taxable_income=taxable_income,
-        total_tax=total_tax,
-        total_payments=withholding,
-        refund_or_owed=refund,
-        effective_rate=round(total_tax / total_income * 100, 1) if total_income else 0,
-    )
+class ManualEntryRequest(BaseModel):
+    form_type: str
+    form_index: int = 0
+    field_name: str
+    value: str
 
 
 @router.post("/draft", response_model=TaxReturnDraft)
@@ -87,28 +32,70 @@ async def generate_draft(
     session: AsyncSession = Depends(get_session),
     user: UserModel = Depends(require_role("admin", "supervisor", "preparer")),
 ):
+    """Generate a tax return draft using the calculation engine."""
     client = await get_client_or_404(client_id, session, user)
-    draft = _compute_draft(client)
+
+    assembler = DocumentAssembler()
+    tax_return = await assembler.assemble(client_id, session)
+
+    import api.tax_engine.constants  # noqa: F401
+    from api.tax_engine.constants.registry import get_constants
+    constants = get_constants(client.tax_year)
+    engine = TaxCalculationEngine(constants)
+    result = engine.compute(tax_return)
+
+    # Convert to TaxReturnDraft response
+    lines = []
+    f1040 = result.form_results.get("1040")
+    if f1040:
+        for line_num, trace in sorted(f1040.lines.items()):
+            section = "income"
+            if line_num in ("12", "13a", "15"):
+                section = "deductions"
+            elif line_num in ("16", "23", "24"):
+                section = "tax_credits"
+            elif line_num in ("25", "26", "33", "35a", "37"):
+                section = "payments"
+            lines.append(ReturnLine(
+                number=line_num, label=trace.label,
+                value=float(trace.value), section=section,
+            ))
+
+    total_income = float(result.total_income)
+    ded_result = result.form_results.get("deduction")
+    total_deductions = float(ded_result.total) if ded_result else 0.0
+    effective_rate = round(float(result.total_tax) / total_income * 100, 1) if total_income > 0 else 0.0
+
+    draft = TaxReturnDraft(
+        client_id=client_id,
+        tax_year=client.tax_year,
+        filing_status=client.filing_status,
+        lines=lines,
+        total_income=total_income,
+        total_deductions=total_deductions,
+        taxable_income=float(result.taxable_income),
+        total_tax=float(result.total_tax),
+        total_payments=float(result.total_payments),
+        refund_or_owed=float(result.refund_or_owed),
+        effective_rate=effective_rate,
+    )
 
     # Upsert draft in database
-    result = await session.execute(
+    db_result = await session.execute(
         select(TaxReturnDraftModel).where(
             TaxReturnDraftModel.org_id == user.org_id,
             TaxReturnDraftModel.client_id == client_id,
         )
     )
-    existing = result.scalar_one_or_none()
+    existing = db_result.scalar_one_or_none()
     if existing:
         existing.tax_year = draft.tax_year
         existing.filing_status = draft.filing_status
         existing.draft_json = draft.model_dump_json()
     else:
         db_draft = TaxReturnDraftModel(
-            client_id=client_id,
-            org_id=user.org_id,
-            created_by=user.id,
-            tax_year=draft.tax_year,
-            filing_status=draft.filing_status,
+            client_id=client_id, org_id=user.org_id, created_by=user.id,
+            tax_year=draft.tax_year, filing_status=draft.filing_status,
             draft_json=draft.model_dump_json(),
         )
         session.add(db_draft)
@@ -133,3 +120,81 @@ async def get_draft(
     if not db_draft:
         raise HTTPException(status_code=404, detail="No draft found — generate one first")
     return TaxReturnDraft.model_validate_json(db_draft.draft_json)
+
+
+@router.post("/entries")
+async def create_manual_entry(
+    client_id: int,
+    entry: ManualEntryRequest,
+    session: AsyncSession = Depends(get_session),
+    user: UserModel = Depends(require_role("admin", "supervisor", "preparer")),
+):
+    """Add or update a manual override for a tax form field."""
+    await get_client_or_404(client_id, session, user)
+    result = await session.execute(
+        select(ManualEntryModel).where(
+            ManualEntryModel.org_id == user.org_id,
+            ManualEntryModel.client_id == client_id,
+            ManualEntryModel.form_type == entry.form_type,
+            ManualEntryModel.form_index == entry.form_index,
+            ManualEntryModel.field_name == entry.field_name,
+        )
+    )
+    existing = result.scalar_one_or_none()
+    if existing:
+        existing.value = entry.value
+    else:
+        me = ManualEntryModel(
+            org_id=user.org_id, created_by=user.id, client_id=client_id,
+            form_type=entry.form_type, form_index=entry.form_index,
+            field_name=entry.field_name, value=entry.value,
+            entered_by=user.id,
+        )
+        session.add(me)
+    await session.commit()
+    return {"status": "ok"}
+
+
+@router.get("/entries")
+async def list_manual_entries(
+    client_id: int,
+    session: AsyncSession = Depends(get_session),
+    user: UserModel = Depends(get_current_user),
+):
+    """List all manual overrides for a client."""
+    await get_client_or_404(client_id, session, user)
+    result = await session.execute(
+        select(ManualEntryModel).where(
+            ManualEntryModel.org_id == user.org_id,
+            ManualEntryModel.client_id == client_id,
+        )
+    )
+    entries = result.scalars().all()
+    return [
+        {"id": e.id, "form_type": e.form_type, "form_index": e.form_index,
+         "field_name": e.field_name, "value": e.value}
+        for e in entries
+    ]
+
+
+@router.delete("/entries/{entry_id}")
+async def delete_manual_entry(
+    client_id: int,
+    entry_id: int,
+    session: AsyncSession = Depends(get_session),
+    user: UserModel = Depends(require_role("admin", "supervisor", "preparer")),
+):
+    """Remove a manual override."""
+    result = await session.execute(
+        select(ManualEntryModel).where(
+            ManualEntryModel.id == entry_id,
+            ManualEntryModel.org_id == user.org_id,
+            ManualEntryModel.client_id == client_id,
+        )
+    )
+    entry = result.scalar_one_or_none()
+    if not entry:
+        raise HTTPException(status_code=404, detail="Manual entry not found")
+    await session.delete(entry)
+    await session.commit()
+    return {"status": "deleted"}
