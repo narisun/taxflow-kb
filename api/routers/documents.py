@@ -2,9 +2,9 @@
 import json
 import os
 import re
-from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Query, status
+from fastapi.responses import Response
 from pydantic import BaseModel as PydanticBaseModel
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -22,6 +22,7 @@ from api.auth.models import UserModel
 from api.routers._helpers import get_client_or_404
 from api.services.ocr.protocol import OCRExtractor
 from api.services.ocr.field_mapping import get_display_label
+from api.services.pii.encryptor import get_pii_encryptor
 
 
 class FieldEditRequest(PydanticBaseModel):
@@ -30,7 +31,6 @@ class FieldEditRequest(PydanticBaseModel):
 
 router = APIRouter(prefix="/api", tags=["documents"])
 
-UPLOAD_DIR = Path("uploads")
 MAX_FILE_SIZE = 20 * 1024 * 1024  # 20 MB
 ALLOWED_CONTENT_TYPES = {
     "application/pdf",
@@ -101,8 +101,8 @@ async def upload_document(
             detail=f"File type '{file.content_type}' not allowed. Accepted: PDF, PNG, JPEG, TIFF.",
         )
 
-    content = await file.read()
-    if len(content) > MAX_FILE_SIZE:
+    file_bytes = await file.read()
+    if len(file_bytes) > MAX_FILE_SIZE:
         raise HTTPException(
             status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
             detail=f"File exceeds maximum size of {MAX_FILE_SIZE // (1024 * 1024)} MB.",
@@ -110,14 +110,18 @@ async def upload_document(
 
     safe_name = _sanitize_filename(file.filename or "upload")
 
-    # Run extraction
-    extraction = await _ocr.extract("", form_type)
+    # Run extraction with actual file content
+    extraction = await _ocr.extract(file_bytes, form_type)
 
-    # Store as structured JSON dict (model-ready)
-    extracted_data = json.dumps(extraction.structured_data)
+    # Encrypt extracted data and file content
+    enc = get_pii_encryptor()
+
+    extracted_data_json = json.dumps(extraction.structured_data)
+    extracted_data_enc = enc.fernet.encrypt(extracted_data_json.encode("utf-8"))
+    file_content_enc = enc.fernet.encrypt(file_bytes)
+
     flags = json.dumps(extraction.flags)
     confidence = extraction.overall_confidence
-
     has_flags = extraction.has_flags
     doc_status = "review" if (has_flags or confidence < 0.90) else "verified"
 
@@ -127,21 +131,16 @@ async def upload_document(
         title=f"{form_type} ({safe_name})",
         status=doc_status,
         confidence=confidence,
-        extracted_data=extracted_data,
+        extracted_data=extracted_data_json,  # Keep plaintext for backward compat (fields endpoint)
+        extracted_data_enc=extracted_data_enc,
+        file_content_enc=file_content_enc,
+        file_content_type=file.content_type or "application/pdf",
+        file_name=safe_name,
         flags=flags,
         org_id=user.org_id,
         created_by=user.id,
     )
     session.add(doc)
-    await session.commit()
-    await session.refresh(doc)
-
-    doc_dir = UPLOAD_DIR / str(doc.id)
-    doc_dir.mkdir(parents=True, exist_ok=True)
-    file_path = doc_dir / safe_name
-    file_path.write_bytes(content)
-
-    doc.file_path = str(file_path)
     await session.commit()
     await session.refresh(doc)
     return doc
@@ -163,6 +162,32 @@ async def get_document(
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
     return doc
+
+
+@router.get("/documents/{doc_id}/file")
+async def download_document_file(
+    doc_id: int,
+    session: AsyncSession = Depends(get_session),
+    user: UserModel = Depends(get_current_user),
+):
+    """Download the original uploaded file."""
+    result = await session.execute(
+        select(DocumentModel).where(DocumentModel.id == doc_id, DocumentModel.org_id == user.org_id)
+    )
+    doc = result.scalar_one_or_none()
+    if not doc:
+        raise HTTPException(status_code=404, detail="Document not found")
+    if not doc.file_content_enc:
+        raise HTTPException(status_code=404, detail="File content not available")
+
+    enc = get_pii_encryptor()
+    file_bytes = enc.fernet.decrypt(doc.file_content_enc)
+
+    return Response(
+        content=file_bytes,
+        media_type=doc.file_content_type or "application/pdf",
+        headers={"Content-Disposition": f'inline; filename="{doc.file_name or "document.pdf"}"'},
+    )
 
 
 @router.patch("/documents/{doc_id}/approve", response_model=DocumentResponse)

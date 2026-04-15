@@ -80,6 +80,10 @@ class DocumentModel(TenantMixin, Base):
     confidence: Mapped[float] = mapped_column(Float, default=0.0)
     extracted_data: Mapped[str] = mapped_column(Text, default="{}")
     file_path: Mapped[str] = mapped_column(String(500), default="")
+    extracted_data_enc: Mapped[bytes | None] = mapped_column(LargeBinary, nullable=True)
+    file_content_enc: Mapped[bytes | None] = mapped_column(LargeBinary, nullable=True)
+    file_content_type: Mapped[str] = mapped_column(String(50), default="application/pdf")
+    file_name: Mapped[str] = mapped_column(String(200), default="")
     flags: Mapped[str] = mapped_column(Text, default="[]")
 
     client: Mapped["ClientModel"] = relationship(back_populates="documents")

@@ -1,7 +1,6 @@
 """Claude Vision extractor — sends PDFs/images to Claude API for structured extraction."""
 import base64
 import json
-from pathlib import Path
 
 from api.models.document import ExtractionResult, ExtractedField
 from api.services.ocr.prompts import get_prompt
@@ -9,28 +8,25 @@ from api.services.ocr.prompts import get_prompt
 CONFIDENCE_FLAG_THRESHOLD = 0.90
 DEFAULT_MODEL = "claude-sonnet-4-20250514"
 
-_MEDIA_TYPES = {
-    ".pdf": ("application/pdf", "document"),
-    ".png": ("image/png", "image"),
-    ".jpg": ("image/jpeg", "image"),
-    ".jpeg": ("image/jpeg", "image"),
-    ".tiff": ("image/tiff", "image"),
-    ".tif": ("image/tiff", "image"),
-}
-
 
 class ClaudeVisionExtractor:
     def __init__(self, client, model: str = DEFAULT_MODEL):
         self.client = client
         self.model = model
 
-    async def extract(self, file_path: str, form_type: str) -> ExtractionResult:
-        path = Path(file_path)
-        file_bytes = path.read_bytes()
+    async def extract(self, file_bytes: bytes, form_type: str) -> ExtractionResult:
+        """Extract structured data from a tax document."""
         b64_data = base64.standard_b64encode(file_bytes).decode("utf-8")
 
-        suffix = path.suffix.lower()
-        media_type, block_type = _MEDIA_TYPES.get(suffix, ("application/pdf", "document"))
+        # Detect media type from file magic bytes
+        if file_bytes[:4] == b"%PDF":
+            media_type, block_type = "application/pdf", "document"
+        elif file_bytes[:8] == b"\x89PNG\r\n\x1a\n":
+            media_type, block_type = "image/png", "image"
+        elif file_bytes[:2] in (b"\xff\xd8",):
+            media_type, block_type = "image/jpeg", "image"
+        else:
+            media_type, block_type = "application/pdf", "document"
 
         prompt = get_prompt(form_type)
 
