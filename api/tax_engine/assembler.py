@@ -7,8 +7,9 @@ from decimal import Decimal
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.db.models import ClientModel, DocumentModel, ManualEntryModel
-from api.tax_engine.models.people import Person, Address
+from api.db.models import ClientModel, DocumentModel, ManualEntryModel, DependentModel, FamilyGroupModel
+from api.services.pii.encryptor import get_pii_encryptor
+from api.tax_engine.models.people import Person, Dependent, Address
 from api.tax_engine.models.income import (
     W2, Income1099Int, Income1099Div, Income1099B, Income1099NEC, ScheduleK1,
 )
@@ -32,7 +33,12 @@ _FILING_STATUS_MAP = {
 
 
 class DocumentAssembler:
+    def __init__(self):
+        self.skipped_documents: list[dict] = []
+
     async def assemble(self, client_id: int, session: AsyncSession) -> TaxReturn:
+        self.skipped_documents = []
+
         result = await session.execute(select(ClientModel).where(ClientModel.id == client_id))
         client = result.scalar_one()
 
@@ -75,23 +81,83 @@ class DocumentAssembler:
             try:
                 model = model_cls(**data)
                 form_lists[field_name].append(model)
-            except Exception:
+            except Exception as e:
+                self.skipped_documents.append({
+                    "document_id": doc.id,
+                    "form_type": form_type,
+                    "reason": str(e),
+                })
                 continue
 
         filing_status = _FILING_STATUS_MAP.get(client.filing_status, "S")
+
+        enc = get_pii_encryptor()
+
+        # Primary person
+        ssn = enc.decrypt(client.primary_ssn_enc) if client.primary_ssn_enc else "999119999"
+        dob_str = enc.decrypt(client.primary_dob_enc) if client.primary_dob_enc else "1980-01-01"
+        dob = date.fromisoformat(dob_str)
         name_parts = client.name.split() if client.name else ["Unknown"]
         primary = Person(
             first_name=name_parts[0],
             last_name=name_parts[-1] if len(name_parts) > 1 else "Unknown",
-            ssn="999119999",
-            date_of_birth=date(1980, 1, 1),
+            ssn=ssn,
+            date_of_birth=dob,
         )
+
+        # Address
+        street = enc.decrypt(client.street_enc) if client.street_enc else "TBD"
+        address = Address(
+            street=street,
+            city=client.city or "TBD",
+            state=client.state or "XX",
+            zip_code=client.zip_code or "00000",
+        )
+
+        # Spouse (if encrypted data exists)
+        spouse = None
+        if client.spouse_ssn_enc:
+            spouse_ssn = enc.decrypt(client.spouse_ssn_enc)
+            spouse_dob_str = enc.decrypt(client.spouse_dob_enc) if client.spouse_dob_enc else "1980-01-01"
+            spouse_first = "Spouse"
+            spouse_last = name_parts[-1] if len(name_parts) > 1 else "Unknown"
+            if client.family_group_id:
+                fg_result = await session.execute(
+                    select(FamilyGroupModel).where(FamilyGroupModel.id == client.family_group_id)
+                )
+                fg = fg_result.scalar_one_or_none()
+                if fg and fg.spouse_first_name:
+                    spouse_first = fg.spouse_first_name
+                    spouse_last = fg.spouse_last_name or spouse_last
+            spouse = Person(
+                first_name=spouse_first, last_name=spouse_last,
+                ssn=spouse_ssn, date_of_birth=date.fromisoformat(spouse_dob_str),
+            )
+
+        # Dependents from DB
+        dep_result = await session.execute(
+            select(DependentModel).where(DependentModel.client_id == client_id)
+        )
+        db_deps = dep_result.scalars().all()
+        dependents = []
+        for dep in db_deps:
+            dep_ssn = enc.decrypt(dep.ssn_enc) if dep.ssn_enc else "999999999"
+            dep_dob_str = enc.decrypt(dep.dob_enc) if dep.dob_enc else "2000-01-01"
+            dependents.append(Dependent(
+                first_name=dep.first_name, last_name=dep.last_name,
+                ssn=dep_ssn, date_of_birth=date.fromisoformat(dep_dob_str),
+                relationship=dep.relationship, months_lived_with=dep.months_lived_with,
+                is_student=dep.is_student, is_qualifying_child=dep.is_qualifying_child,
+                is_us_citizen=dep.is_us_citizen,
+            ))
 
         return TaxReturn(
             tax_year=client.tax_year,
             filing_status=filing_status,
             primary=primary,
-            address=Address(street="TBD", city="TBD", state="XX", zip_code="00000"),
+            spouse=spouse,
+            dependents=dependents,
+            address=address,
             w2s=form_lists.get("w2s", []),
             interest_1099s=form_lists.get("interest_1099s", []),
             dividend_1099s=form_lists.get("dividend_1099s", []),

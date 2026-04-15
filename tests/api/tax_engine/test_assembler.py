@@ -67,3 +67,45 @@ async def test_pending_docs_excluded(db_session):
     await session.commit()
     tr = await DocumentAssembler().assemble(client_id, session)
     assert len(tr.w2s) == 0
+
+
+@pytest.mark.asyncio
+async def test_assemble_with_real_client_pii(db_session):
+    session, client_id, org_id, user_id = db_session
+    from api.services.pii.encryptor import get_pii_encryptor
+    from sqlalchemy import select
+
+    enc = get_pii_encryptor()
+    result = await session.execute(select(ClientModel).where(ClientModel.id == client_id))
+    client = result.scalar_one()
+    client.primary_ssn_enc = enc.encrypt("123456789")
+    client.primary_dob_enc = enc.encrypt("1985-03-15")
+    client.street_enc = enc.encrypt("123 Main St")
+    client.city = "Springfield"
+    client.state = "IL"
+    client.zip_code = "62701"
+    await session.commit()
+
+    assembler = DocumentAssembler()
+    tr = await assembler.assemble(client_id, session)
+    assert tr.primary.ssn == "123456789"
+    assert str(tr.primary.date_of_birth) == "1985-03-15"
+    assert tr.address.street == "123 Main St"
+    assert tr.address.city == "Springfield"
+
+
+@pytest.mark.asyncio
+async def test_assemble_tracks_skipped_documents(db_session):
+    session, client_id, org_id, user_id = db_session
+    doc = DocumentModel(
+        org_id=org_id, created_by=user_id, client_id=client_id,
+        form_type="W-2", title="Bad W-2", status="approved", confidence=0.95,
+        extracted_data=json.dumps({"invalid_field_only": "bad data"}),
+    )
+    session.add(doc)
+    await session.commit()
+
+    assembler = DocumentAssembler()
+    tr = await assembler.assemble(client_id, session)
+    assert len(assembler.skipped_documents) >= 1
+    assert assembler.skipped_documents[0]["form_type"] == "W-2"
