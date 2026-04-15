@@ -565,13 +565,16 @@ export default function Home() {
             </button>
           )}
 
-          {/* Federal / State tracking labels */}
-          <span className="hidden xl:inline text-[12px] font-semibold text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/15 px-2.5 py-1 rounded-md">
-            Federal: +$4,820
-          </span>
-          <span className="hidden xl:inline text-[12px] font-semibold text-primary bg-surface-secondary px-2.5 py-1 rounded-md">
-            NJ: -$1,240
-          </span>
+          {/* Federal refund/owed — dynamically updated from computed draft */}
+          {returnDraft && returnDraft.refund_or_owed !== 0 && (
+            <span className={`hidden xl:inline text-[12px] font-semibold px-2.5 py-1 rounded-md ${
+              returnDraft.refund_or_owed >= 0
+                ? "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/15"
+                : "text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/15"
+            }`}>
+              Federal: {returnDraft.refund_or_owed >= 0 ? "+" : "-"}${Math.abs(returnDraft.refund_or_owed).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+            </span>
+          )}
         </div>
 
         {/* Second row: workflow stepper — grayscale */}
