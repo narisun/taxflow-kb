@@ -1,6 +1,10 @@
+import os
 import pytest
 from httpx import AsyncClient, ASGITransport
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+
+# Use mock extractor in tests (fake PDF bytes don't have text layers)
+os.environ.setdefault("OCR_EXTRACTOR", "mock")
 from api.db.base import Base
 from api.db.engine import get_session
 from api.auth.models import OrganizationModel, UserModel  # noqa: F401

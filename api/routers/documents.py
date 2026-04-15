@@ -41,13 +41,33 @@ ALLOWED_CONTENT_TYPES = {
 
 
 def _get_ocr_extractor() -> OCRExtractor:
-    """Select extractor based on config."""
-    if os.getenv("OCR_EXTRACTOR", "mock") == "claude":
+    """Select extractor based on config.
+
+    Modes:
+    - 'cascade' (default): Text layer first → Claude Vision fallback
+    - 'claude': Claude Vision only (all docs sent to API)
+    - 'mock': Hardcoded mock data (dev/test)
+    """
+    mode = os.getenv("OCR_EXTRACTOR", "cascade")
+
+    if mode == "claude":
         import anthropic
         from api.services.ocr.claude_extractor import ClaudeVisionExtractor
         return ClaudeVisionExtractor(anthropic.Anthropic())
-    from api.services.ocr.mock_extractor import MockOCRExtractor
-    return MockOCRExtractor()
+
+    if mode == "mock":
+        from api.services.ocr.mock_extractor import MockOCRExtractor
+        return MockOCRExtractor()
+
+    # Default: cascade (text layer → vision fallback)
+    from api.services.ocr.cascading_extractor import CascadingExtractor
+    vision = None
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if api_key:
+        import anthropic
+        from api.services.ocr.claude_extractor import ClaudeVisionExtractor
+        vision = ClaudeVisionExtractor(anthropic.Anthropic(api_key=api_key))
+    return CascadingExtractor(vision_extractor=vision)
 
 
 _ocr = _get_ocr_extractor()

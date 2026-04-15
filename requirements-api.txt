@@ -18,3 +18,5 @@ anthropic>=0.40
 pypdf>=4.0
 # PII encryption
 cryptography>=43.0
+# Text layer extraction
+pdfplumber>=0.10
