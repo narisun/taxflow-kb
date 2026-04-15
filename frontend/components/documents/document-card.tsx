@@ -122,7 +122,7 @@ export function DocumentCard({ doc, onClick, onDelete, isDuplicate }: DocumentCa
   };
 
   return (
-    <button onClick={onClick} className="w-full text-left cursor-pointer group">
+    <div onClick={onClick} role="button" tabIndex={0} className="w-full text-left cursor-pointer group">
       <Card className="p-0 overflow-hidden hover:shadow-md transition-shadow">
         {/* Header */}
         <div className="flex items-center justify-between px-3 pt-2.5 pb-1.5">
@@ -190,6 +190,6 @@ export function DocumentCard({ doc, onClick, onDelete, isDuplicate }: DocumentCa
           </div>
         </div>
       </Card>
-    </button>
+    </div>
   );
 }
