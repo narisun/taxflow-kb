@@ -11,7 +11,7 @@ from cryptography.fernet import Fernet
 
 # Dev-only key — NOT SECURE. Used when PII_ENCRYPTION_KEY is not set.
 # Generate a real key: python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
-_DEV_KEY = Fernet.generate_key()  # Random key per process in dev
+_DEV_KEY = b"1GSIXE2641DMBbBishzM5Oa6f9DqLzzmsD6m0I1RqPk="  # Static dev key — NOT SECURE, replace in production
 
 
 class PIIEncryptor:
