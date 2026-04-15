@@ -56,7 +56,18 @@ class DocumentAssembler:
             if form_type not in _FORM_MAP:
                 continue
             model_cls, field_name = _FORM_MAP[form_type]
-            data = json.loads(doc.extracted_data) if doc.extracted_data else {}
+            raw = json.loads(doc.extracted_data) if doc.extracted_data else {}
+
+            # Handle both structured dict (new) and list of ExtractedField dicts (legacy)
+            if isinstance(raw, list):
+                data = {}
+                for item in raw:
+                    if isinstance(item, dict) and "name" in item and "value" in item:
+                        data[item["name"]] = item["value"]
+            elif isinstance(raw, dict):
+                data = raw
+            else:
+                data = {}
             idx = form_type_counts[form_type]
             if (form_type, idx) in override_map:
                 data.update(override_map[(form_type, idx)])
