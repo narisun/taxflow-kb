@@ -257,3 +257,44 @@ async def download_pdf(
         media_type="application/pdf",
         headers={"Content-Disposition": f'attachment; filename="{filename}"'},
     )
+
+
+from api.tax_engine.comparison.models import ComparisonReport
+from api.tax_engine.comparison.engine import ComparisonEngine
+
+
+@router.get("/compare", response_model=ComparisonReport)
+async def compare_years(
+    client_id: int,
+    prior_year: int,
+    session: AsyncSession = Depends(get_session),
+    user: UserModel = Depends(get_current_user),
+):
+    """Compare current tax year against a prior year for the same client."""
+    client = await get_client_or_404(client_id, session, user)
+
+    if prior_year == client.tax_year:
+        raise HTTPException(status_code=400, detail="Cannot compare a year to itself")
+
+    assembler = DocumentAssembler()
+
+    # Compute current year
+    tax_return_current = await assembler.assemble(client_id, session)
+
+    import api.tax_engine.constants  # noqa: F401
+    from api.tax_engine.constants.registry import get_constants
+
+    current_constants = get_constants(client.tax_year)
+    current_result = TaxCalculationEngine(current_constants).compute(tax_return_current)
+
+    # Compute prior year (assemble with same docs — prior year uses different constants)
+    prior_return = await assembler.assemble(client_id, session)
+    prior_return.tax_year = prior_year
+    try:
+        prior_constants = get_constants(prior_year)
+    except ValueError:
+        raise HTTPException(status_code=400, detail=f"Tax year {prior_year} is not supported")
+    prior_result = TaxCalculationEngine(prior_constants).compute(prior_return)
+
+    engine = ComparisonEngine()
+    return engine.compare(current_result, prior_result, client_id=client_id)
