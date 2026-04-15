@@ -221,15 +221,15 @@ export function DocumentViewerModal({
         </div>
       </ModalHeader>
 
-      <ModalBody className="max-h-[80vh] p-0">
-        <div className="grid grid-cols-[1fr_400px] max-md:grid-cols-1 h-full">
-          {/* Left: PDF viewer — takes most space */}
-          <div className="p-4 border-r border-divider max-md:border-r-0 max-md:border-b min-h-[60vh]">
+      <ModalBody className="h-[80vh] p-0 overflow-hidden">
+        <div className="grid grid-cols-[1fr_380px] max-md:grid-cols-1 h-full">
+          {/* Left: PDF viewer — independently scrollable, full height */}
+          <div className="p-4 border-r border-divider max-md:border-r-0 max-md:border-b overflow-y-auto">
             <PdfViewer src={getDocUrl(doc.id)} />
           </div>
 
-          {/* Right: Extracted fields */}
-          <div className="p-4 overflow-y-auto">
+          {/* Right: Extracted fields — independently scrollable */}
+          <div className="p-3 overflow-y-auto">
             <div className="flex items-center justify-between mb-3">
               <div className="text-[13px] font-semibold text-primary">
                 Extracted Fields
@@ -312,22 +312,23 @@ export function DocumentViewerModal({
       </ModalBody>
 
       <ModalFooter>
-        <div className="flex items-center gap-3 w-full">
+        <div className="flex items-center gap-2 w-full">
           <div className="flex items-center gap-2 flex-1">
-            <span className="text-[12px] text-secondary">AI Confidence:</span>
+            <span className="text-[11px] text-secondary">Confidence:</span>
             <Progress
               value={doc.confidence}
               color={doc.confidence >= 90 ? "green" : doc.confidence >= 70 ? "orange" : "red"}
-              className="w-24"
+              className="w-20"
             />
-            <span className="text-[12px] font-medium text-primary">{Math.round(doc.confidence * 100)}%</span>
+            <span className="text-[11px] font-medium text-primary">{Math.round(doc.confidence * 100)}%</span>
           </div>
-          <Button variant="secondary" onClick={onClose}>
+          <Button variant="secondary" onClick={onClose} className="text-[12px] px-3 py-1.5 h-auto">
             Close
           </Button>
           {doc.status !== "approved" && (
             <Button
               variant="primary"
+              className="text-[12px] px-3 py-1.5 h-auto"
               onClick={() => {
                 if (onApprove) onApprove(doc.id);
                 onClose();
