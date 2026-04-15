@@ -14,3 +14,5 @@ python-jose[cryptography]>=3.3
 cachetools>=5.3
 # Document extraction
 anthropic>=0.40
+# PDF generation
+pypdf>=4.0
