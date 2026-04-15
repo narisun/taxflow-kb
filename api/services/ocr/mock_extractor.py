@@ -74,4 +74,8 @@ class MockOCRExtractor:
             ]
             return ExtractionResult(fields=fields, overall_confidence=0.90, has_flags=False, flags=[])
 
-        return ExtractionResult(fields=[], overall_confidence=0.0, has_flags=False, flags=[])
+        # Unknown/Other form type — flag for manual review
+        return ExtractionResult(
+            fields=[], overall_confidence=0.0, has_flags=True,
+            flags=["Unrecognized form type — manual classification and data entry required"],
+        )

@@ -336,7 +336,7 @@ export default function Home() {
       const uploadMsg: LocalMessage = {
         id: Date.now(),
         role: "assistant",
-        content: `Uploading <strong>${file.name}</strong> (${formType})...`,
+        content: `Uploading **${file.name}** (${formType})...`,
         timestamp: new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }),
       };
       setMessages((prev) => [...prev, uploadMsg]);
@@ -353,7 +353,7 @@ export default function Home() {
             ...d, client_id: d.client_id, name: d.title, type: d.form_type,
           })));
         }
-        let summary = `<strong>${formType}</strong> uploaded and processed (${Math.round(doc.confidence * 100)}% confidence).`;
+        let summary = `**${formType}** uploaded and processed (${Math.round(doc.confidence * 100)}% confidence).`;
         try {
           const data = JSON.parse(doc.extracted_data);
           if (typeof data === "object" && data !== null) {
