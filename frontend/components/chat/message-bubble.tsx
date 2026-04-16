@@ -1,6 +1,7 @@
 "use client";
 
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface MessageBubbleProps {
   role: "user" | "assistant";
@@ -19,11 +20,11 @@ export function MessageBubble({ role, content, timestamp, userInitials = "SC" }:
           T
         </div>
       )}
-      <div className="flex flex-col max-w-[min(70%,560px)] max-md:max-w-[85%]">
+      <div className={`flex flex-col ${isUser ? "max-w-[min(70%,480px)]" : "max-w-[min(90%,720px)]"} max-md:max-w-[90%]`}>
         <div
           className={
             isUser
-              ? "bg-chat-user rounded-2xl px-4 py-3 text-[13px] leading-relaxed text-primary"
+              ? "bg-chat-user rounded-2xl px-4 py-2.5 text-[13px] leading-relaxed text-primary"
               : "bg-chat-assistant rounded-2xl px-4 py-3 text-[13px] leading-relaxed text-primary"
           }
         >
@@ -31,7 +32,7 @@ export function MessageBubble({ role, content, timestamp, userInitials = "SC" }:
             <p className="whitespace-pre-wrap">{content}</p>
           ) : (
             <div className="prose-chat">
-              <ReactMarkdown>{content}</ReactMarkdown>
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
             </div>
           )}
         </div>
