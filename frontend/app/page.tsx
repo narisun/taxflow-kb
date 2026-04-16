@@ -233,6 +233,134 @@ export default function Home() {
     });
   }, [activeWorkTab, activeClientId, usingApi, documents.length]);
 
+  // Command handler for prompt chips — intercepts specific commands
+  const handleCommand = useCallback(async (command: string): Promise<string | null> => {
+    const numId = Number(activeClientId);
+    if (isNaN(numId) || !usingApi) return null;
+    const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
+    try {
+      switch (command) {
+        case "Check status": {
+          const client = apiClients.find(c => c.id === numId);
+          if (!client) return "Client not found.";
+          const docs = documents;
+          const approved = docs.filter(d => d.status === "approved" || d.status === "verified").length;
+          const review = docs.filter(d => d.status === "review" || d.status === "flagged").length;
+          const pending = docs.filter(d => d.status === "pending").length;
+          const hasReturn = returnDraft !== null;
+          const parts: string[] = [];
+          parts.push(`**${client.name}** — ${client.filing_status.toUpperCase()}, TY ${client.tax_year}`);
+          parts.push("");
+          if (docs.length === 0) {
+            parts.push("- No documents uploaded yet");
+          } else {
+            parts.push(`- **${docs.length}** documents uploaded (${approved} approved, ${review} needs review, ${pending} pending)`);
+          }
+          if (hasReturn) {
+            parts.push(`- Tax return computed — refund: **$${Math.abs(returnDraft!.refund_or_owed).toLocaleString()}** ${returnDraft!.refund_or_owed >= 0 ? "(refund)" : "(owed)"}`);
+          } else {
+            parts.push("- Tax return not yet computed");
+          }
+          parts.push("");
+          parts.push("**Next steps:**");
+          if (docs.length === 0) parts.push("1. Upload W-2s, 1099s, and other tax documents");
+          else if (review > 0) parts.push(`1. Review and approve ${review} flagged document${review > 1 ? "s" : ""}`);
+          else if (!hasReturn) parts.push("1. Compute the tax return (click Tax Return tab → Compute Return)");
+          else parts.push("1. Review advisory recommendations and generate PDF for client");
+          return parts.join("\n");
+        }
+
+        case "Review docs": {
+          const docs = documents;
+          if (docs.length === 0) return "No documents uploaded. Upload W-2s, 1099s, and other tax documents to get started.";
+          const issues: string[] = [];
+          const review = docs.filter(d => d.status === "review" || d.status === "flagged");
+          const lowConf = docs.filter(d => d.confidence < 0.9);
+          if (review.length > 0) {
+            issues.push(`**${review.length} document${review.length > 1 ? "s" : ""} pending review:**`);
+            review.forEach(d => issues.push(`- ${d.form_type}: ${d.name || d.title} (${Math.round(d.confidence * 100)}% confidence)`));
+          }
+          if (lowConf.length > 0 && review.length === 0) {
+            issues.push(`**${lowConf.length} document${lowConf.length > 1 ? "s" : ""} with low confidence:**`);
+            lowConf.forEach(d => issues.push(`- ${d.form_type}: ${Math.round(d.confidence * 100)}%`));
+          }
+          if (issues.length === 0) {
+            return `All **${docs.length}** documents are approved and ready. No issues found.`;
+          }
+          return issues.join("\n");
+        }
+
+        case "Run rules": {
+          const resp = await fetch(`${API}/api/clients/${numId}/returns/validate`, { method: "POST" });
+          if (!resp.ok) return "Failed to run validation. Make sure documents are uploaded.";
+          const data = await resp.json();
+          if (!data.has_errors && data.results.length === 0) return "All validation rules passed. No issues found.";
+          const parts = [`**Validation Results** (${data.results.length} items):\n`];
+          for (const r of data.results) {
+            const icon = r.severity === "ERROR" ? "❌" : r.severity === "WARNING" ? "⚠️" : "ℹ️";
+            parts.push(`${icon} **${r.rule_id}** (${r.severity}): ${r.message}`);
+            if (r.suggestion) parts.push(`   → ${r.suggestion}`);
+          }
+          return parts.join("\n");
+        }
+
+        case "Analyze yoy": {
+          const client = apiClients.find(c => c.id === numId);
+          const priorYear = (client?.tax_year || 2024) === 2024 ? 2025 : 2024;
+          const resp = await fetch(`${API}/api/clients/${numId}/returns/compare?prior_year=${priorYear}`);
+          if (!resp.ok) return "Could not generate year-over-year comparison. Make sure a tax return has been computed.";
+          const data = await resp.json();
+          const parts = [`**Year-over-Year Comparison** (TY${data.current_year} vs TY${data.prior_year})\n`];
+          for (const section of data.sections) {
+            parts.push(`**${section.title}:**`);
+            for (const row of section.rows) {
+              if (row.current === 0 && row.prior === 0) continue;
+              const arrow = row.change > 0 ? "↑" : row.change < 0 ? "↓" : "→";
+              parts.push(`- ${row.label}: $${Math.abs(row.current).toLocaleString()} ${arrow} (${row.pct_change > 0 ? "+" : ""}${row.pct_change}%)`);
+            }
+          }
+          const s = data.summary;
+          parts.push(`\n**Bottom line:** ${s.current >= 0 ? "Refund" : "Owed"} $${Math.abs(s.current).toLocaleString()} (${s.change >= 0 ? "+" : ""}$${s.change.toLocaleString()} vs prior year)`);
+          return parts.join("\n");
+        }
+
+        case "Estimate refund": {
+          const resp = await fetch(`${API}/api/clients/${numId}/returns/draft`, { method: "POST" });
+          if (!resp.ok) return "Failed to compute tax return. Make sure documents are uploaded and approved.";
+          const draft = await resp.json();
+          setReturnDraft(draft);
+          const parts = ["**Federal Return Estimate:**\n"];
+          parts.push(`- Total Income: **$${draft.total_income.toLocaleString()}**`);
+          parts.push(`- Taxable Income: **$${draft.taxable_income.toLocaleString()}**`);
+          parts.push(`- Total Tax: **$${draft.total_tax.toLocaleString()}**`);
+          parts.push(`- Total Payments: **$${draft.total_payments.toLocaleString()}**`);
+          parts.push(`- Effective Rate: **${draft.effective_rate}%**`);
+          parts.push("");
+          if (draft.refund_or_owed >= 0) {
+            parts.push(`### Estimated Refund: **$${draft.refund_or_owed.toLocaleString()}**`);
+          } else {
+            parts.push(`### Estimated Amount Owed: **$${Math.abs(draft.refund_or_owed).toLocaleString()}**`);
+          }
+          return parts.join("\n");
+        }
+
+        // LLM-based commands — send with specific prompts
+        case "Draft email":
+          return null; // Let it go to LLM with the command text
+        case "Draft advisory":
+          return null;
+        case "Run pre-filing checks":
+          return null;
+
+        default:
+          return null; // Not a command — send as regular chat
+      }
+    } catch (e) {
+      return `Error: ${e instanceof Error ? e.message : "Something went wrong"}`;
+    }
+  }, [activeClientId, usingApi, apiClients, documents, returnDraft]);
+
   // Send message handler
   const handleSendMessage = useCallback(
     async (content: string) => {
@@ -248,10 +376,32 @@ export default function Home() {
       setMessages((prev) => [...prev, newUserMsg]);
       setIsTyping(true);
 
+      // Try command handler first (prompt chips with local responses)
+      const commandResult = await handleCommand(content);
+      if (commandResult !== null) {
+        setIsTyping(false);
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now() + 1,
+            role: "assistant" as const,
+            content: commandResult,
+            timestamp: new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }),
+          },
+        ]);
+        return;
+      }
+
       const numId = Number(activeClientId);
       if (usingApi && !isNaN(numId)) {
         try {
-          const response = await api.chat.send(numId, content);
+          // For LLM commands, enhance the prompt
+          let prompt = content;
+          if (content === "Draft email") prompt = "Draft a professional email to this client summarizing the current status of their tax return, any pending items, and next steps. Use a warm but professional tone.";
+          else if (content === "Draft advisory") prompt = "Generate detailed tax-saving advisory recommendations for this client for next year. Include specific dollar amounts and strategies based on their current return data.";
+          else if (content === "Run pre-filing checks") prompt = "Run a comprehensive pre-filing checklist for this client. Check for: missing documents, data consistency, optimization opportunities, common filing errors, and any red flags that could trigger an audit. Format as a checklist with pass/fail status.";
+
+          const response = await api.chat.send(numId, prompt);
           setIsTyping(false);
           if (response && response.content) {
             setMessages((prev) => [
@@ -637,10 +787,7 @@ export default function Home() {
             accept=".pdf,.png,.jpg,.jpeg,.tiff"
             onChange={handleFileSelected}
           />
-          <ChatInput
-            onSend={handleSendMessage}
-            onAttach={() => fileInputRef.current?.click()}
-          />
+          <ChatInput onSend={handleSendMessage} />
         </div>
       </div>
     </main>
