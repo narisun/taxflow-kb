@@ -869,7 +869,7 @@ export default function Home() {
         onClose={() => { setIntakeOpen(false); setIntakeMode("create"); setIntakeEditData(undefined); }}
         mode={intakeMode}
         editData={intakeEditData}
-        onSubmit={async (data: IntakeFormData) => {
+        onSubmit={async (data: IntakeFormData, files?: File[]) => {
           const name = data.familyGroupName
             ? data.familyGroupName
             : data.spouseFirstName
@@ -998,6 +998,29 @@ export default function Home() {
               })));
             }
             setDocuments([]);
+
+            // Upload attached files
+            if (files && files.length > 0) {
+              for (const file of files) {
+                const fname = file.name.toLowerCase();
+                let formType = "Other";
+                if (fname.includes("w2") || fname.includes("w-2")) formType = "W-2";
+                else if (fname.includes("1099")) formType = "1099";
+                else if (fname.includes("1098")) formType = "1098";
+                else if (fname.includes("k-1") || fname.includes("k1")) formType = "K-1";
+                try {
+                  await api.documents.upload(created.id, file, formType);
+                } catch { /* ignore */ }
+              }
+              try {
+                const docData = await api.documents.list(created.id);
+                if (Array.isArray(docData)) {
+                  setDocuments(docData.map((d: any) => ({
+                    ...d, client_id: d.client_id, name: d.title, type: d.form_type,
+                  })));
+                }
+              } catch { /* ignore */ }
+            }
           } catch {
             try {
               const created = await mockApi.clients.create({
