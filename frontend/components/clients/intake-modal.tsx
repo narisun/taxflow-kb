@@ -80,7 +80,11 @@ export function IntakeModal({ open, onClose, onSubmit, editData, mode = "create"
   // Initialize form from editData when in edit mode, or reset for create
   useEffect(() => {
     if (editData && mode === "edit") {
-      setForm({ ...defaultForm, ...editData });
+      // Sanitize nulls to empty strings to prevent uncontrolled input warnings
+      const sanitized = Object.fromEntries(
+        Object.entries(editData).map(([k, v]) => [k, v ?? (typeof defaultForm[k as keyof IntakeFormData] === "number" ? 0 : "")])
+      );
+      setForm({ ...defaultForm, ...sanitized });
     } else {
       setForm({ ...defaultForm });
     }
@@ -88,6 +92,9 @@ export function IntakeModal({ open, onClose, onSubmit, editData, mode = "create"
 
   const set = (field: keyof IntakeFormData, value: string | number | boolean | string[]) =>
     setForm((prev) => ({ ...prev, [field]: value }));
+
+  // Safe getter — never returns null/undefined for input values
+  const v = (field: keyof IntakeFormData): string => String(form[field] ?? "");
 
   const toggleState = (code: string) => {
     setForm((prev) => ({
@@ -155,19 +162,19 @@ export function IntakeModal({ open, onClose, onSubmit, editData, mode = "create"
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className={labelCls}>First Name</label>
-                <input className={inputCls} value={form.firstName} onChange={(e) => set("firstName", e.target.value)} placeholder="John" />
+                <input className={inputCls} value={v("firstName")} onChange={(e) => set("firstName", e.target.value)} placeholder="John" />
               </div>
               <div>
                 <label className={labelCls}>Last Name</label>
-                <input className={inputCls} value={form.lastName} onChange={(e) => set("lastName", e.target.value)} placeholder="Smith" />
+                <input className={inputCls} value={v("lastName")} onChange={(e) => set("lastName", e.target.value)} placeholder="Smith" />
               </div>
               <div>
                 <label className={labelCls}>SSN</label>
-                <input className={inputCls} value={form.ssn} onChange={(e) => set("ssn", e.target.value)} placeholder="XXX-XX-XXXX" />
+                <input className={inputCls} value={v("ssn")} onChange={(e) => set("ssn", e.target.value)} placeholder="XXX-XX-XXXX" />
               </div>
               <div>
                 <label className={labelCls}>Date of Birth</label>
-                <input type="date" className={inputCls} value={form.dateOfBirth} onChange={(e) => set("dateOfBirth", e.target.value)} />
+                <input type="date" className={inputCls} value={v("dateOfBirth")} onChange={(e) => set("dateOfBirth", e.target.value)} />
               </div>
             </div>
           </div>
@@ -198,7 +205,7 @@ export function IntakeModal({ open, onClose, onSubmit, editData, mode = "create"
               </div>
               <div>
                 <label className={labelCls}>Family Group Name</label>
-                <input className={inputCls} value={form.familyGroupName} onChange={(e) => set("familyGroupName", e.target.value)} placeholder="e.g. Smith Family" />
+                <input className={inputCls} value={v("familyGroupName")} onChange={(e) => set("familyGroupName", e.target.value)} placeholder="e.g. Smith Family" />
               </div>
             </div>
           </div>
@@ -210,19 +217,19 @@ export function IntakeModal({ open, onClose, onSubmit, editData, mode = "create"
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className={labelCls}>First Name</label>
-                  <input className={inputCls} value={form.spouseFirstName} onChange={(e) => set("spouseFirstName", e.target.value)} placeholder="Jane" />
+                  <input className={inputCls} value={v("spouseFirstName")} onChange={(e) => set("spouseFirstName", e.target.value)} placeholder="Jane" />
                 </div>
                 <div>
                   <label className={labelCls}>Last Name</label>
-                  <input className={inputCls} value={form.spouseLastName} onChange={(e) => set("spouseLastName", e.target.value)} placeholder="Smith" />
+                  <input className={inputCls} value={v("spouseLastName")} onChange={(e) => set("spouseLastName", e.target.value)} placeholder="Smith" />
                 </div>
                 <div>
                   <label className={labelCls}>SSN</label>
-                  <input className={inputCls} value={form.spouseSsn} onChange={(e) => set("spouseSsn", e.target.value)} placeholder="XXX-XX-XXXX" />
+                  <input className={inputCls} value={v("spouseSsn")} onChange={(e) => set("spouseSsn", e.target.value)} placeholder="XXX-XX-XXXX" />
                 </div>
                 <div>
                   <label className={labelCls}>Date of Birth</label>
-                  <input type="date" className={inputCls} value={form.spouseDob} onChange={(e) => set("spouseDob", e.target.value)} />
+                  <input type="date" className={inputCls} value={v("spouseDob")} onChange={(e) => set("spouseDob", e.target.value)} />
                 </div>
               </div>
             </div>
@@ -235,23 +242,23 @@ export function IntakeModal({ open, onClose, onSubmit, editData, mode = "create"
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className={labelCls}>First Name</label>
-                  <input className={inputCls} value={dep.firstName} onChange={(e) => updateDependent(idx, "firstName", e.target.value)} />
+                  <input className={inputCls} value={dep.firstName || ""} onChange={(e) => updateDependent(idx, "firstName", e.target.value)} />
                 </div>
                 <div>
                   <label className={labelCls}>Last Name</label>
-                  <input className={inputCls} value={dep.lastName} onChange={(e) => updateDependent(idx, "lastName", e.target.value)} />
+                  <input className={inputCls} value={dep.lastName || ""} onChange={(e) => updateDependent(idx, "lastName", e.target.value)} />
                 </div>
                 <div>
                   <label className={labelCls}>SSN</label>
-                  <input className={inputCls} value={dep.ssn} onChange={(e) => updateDependent(idx, "ssn", e.target.value)} placeholder="XXX-XX-XXXX" />
+                  <input className={inputCls} value={dep.ssn || ""} onChange={(e) => updateDependent(idx, "ssn", e.target.value)} placeholder="XXX-XX-XXXX" />
                 </div>
                 <div>
                   <label className={labelCls}>Date of Birth</label>
-                  <input type="date" className={inputCls} value={dep.dob} onChange={(e) => updateDependent(idx, "dob", e.target.value)} />
+                  <input type="date" className={inputCls} value={dep.dob || ""} onChange={(e) => updateDependent(idx, "dob", e.target.value)} />
                 </div>
                 <div>
                   <label className={labelCls}>Relationship</label>
-                  <select className={inputCls} value={dep.relationship} onChange={(e) => updateDependent(idx, "relationship", e.target.value)}>
+                  <select className={inputCls} value={dep.relationship || ""} onChange={(e) => updateDependent(idx, "relationship", e.target.value)}>
                     <option value="">Select...</option>
                     <option value="son">Son</option>
                     <option value="daughter">Daughter</option>
@@ -272,23 +279,23 @@ export function IntakeModal({ open, onClose, onSubmit, editData, mode = "create"
             <div className="grid grid-cols-2 gap-3">
               <div className="col-span-2">
                 <label className={labelCls}>Street</label>
-                <input className={inputCls} value={form.street} onChange={(e) => set("street", e.target.value)} placeholder="42 Oak Street" />
+                <input className={inputCls} value={v("street")} onChange={(e) => set("street", e.target.value)} placeholder="42 Oak Street" />
               </div>
               <div>
                 <label className={labelCls}>City</label>
-                <input className={inputCls} value={form.city} onChange={(e) => set("city", e.target.value)} placeholder="Princeton" />
+                <input className={inputCls} value={v("city")} onChange={(e) => set("city", e.target.value)} placeholder="Princeton" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className={labelCls}>State</label>
-                  <select className={inputCls} value={form.state} onChange={(e) => set("state", e.target.value)}>
+                  <select className={inputCls} value={v("state")} onChange={(e) => set("state", e.target.value)}>
                     <option value="">--</option>
                     {STATES.map((s) => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
                 <div>
                   <label className={labelCls}>ZIP</label>
-                  <input className={inputCls} value={form.zip} onChange={(e) => set("zip", e.target.value)} placeholder="08540" />
+                  <input className={inputCls} value={v("zip")} onChange={(e) => set("zip", e.target.value)} placeholder="08540" />
                 </div>
               </div>
             </div>
@@ -325,7 +332,7 @@ export function IntakeModal({ open, onClose, onSubmit, editData, mode = "create"
             <div className={sectionCls}>Notes</div>
             <textarea
               className={`${inputCls} min-h-[60px] resize-none`}
-              value={form.notes}
+              value={v("notes")}
               onChange={(e) => set("notes", e.target.value)}
               placeholder="Special circumstances, prior year issues, etc."
             />
