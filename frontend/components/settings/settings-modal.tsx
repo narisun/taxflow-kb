@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Modal, ModalHeader, ModalBody } from "@/components/ui/modal";
 import { useTheme } from "@/components/providers/theme-provider";
 import { cn } from "@/lib/utils";
+import { useMe } from "@/components/auth/me-context";
 
 interface SettingsModalProps {
   open: boolean;
@@ -12,13 +13,12 @@ interface SettingsModalProps {
   onReplayTour?: () => void;
 }
 
-type Section = "profile" | "appearance" | "notifications" | "defaults" | "shortcuts" | "about";
+type Section = "profile" | "appearance" | "notifications" | "shortcuts" | "about";
 
 const sections: { id: Section; label: string }[] = [
   { id: "profile", label: "Profile" },
   { id: "appearance", label: "Appearance" },
   { id: "notifications", label: "Notifications" },
-  { id: "defaults", label: "Tax Defaults" },
   { id: "shortcuts", label: "Shortcuts" },
   { id: "about", label: "About" },
 ];
@@ -38,16 +38,11 @@ const SHORTCUTS = [
   { keys: "Tab", action: "Navigate between panels" },
 ];
 
-const STATES = [
-  "AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA",
-  "KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ",
-  "NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT",
-  "VA","WA","WV","WI","WY","DC",
-];
-
 export function SettingsModal({ open, onClose, onReplayTour }: SettingsModalProps) {
   const [active, setActive] = useState<Section>("profile");
   const { theme, setTheme } = useTheme();
+  let me: ReturnType<typeof useMe> | null = null;
+  try { me = useMe(); } catch { /* MeProvider not mounted yet */ }
   const [notifPrefs, setNotifPrefs] = useState<Record<string, boolean>>(
     Object.fromEntries(NOTIFICATION_CATEGORIES.map((c) => [c.key, true]))
   );
@@ -91,10 +86,10 @@ export function SettingsModal({ open, onClose, onReplayTour }: SettingsModalProp
               <div className="space-y-4">
                 <h3 className="text-[15px] font-semibold text-primary">Profile</h3>
                 <div className="grid grid-cols-2 gap-3">
-                  <div><label className={labelCls}>Name</label><input className={inputCls} defaultValue="Sarah Chen" readOnly /></div>
-                  <div><label className={labelCls}>Email</label><input className={inputCls} defaultValue="sarah@taxfirm.com" readOnly /></div>
-                  <div><label className={labelCls}>Firm</label><input className={inputCls} defaultValue="Chen & Associates CPA" readOnly /></div>
-                  <div><label className={labelCls}>Role</label><input className={inputCls} defaultValue="Senior Tax Preparer" readOnly /></div>
+                  <div><label className={labelCls}>Name</label><input className={inputCls} defaultValue={me?.user?.name || ""} readOnly /></div>
+                  <div><label className={labelCls}>Email</label><input className={inputCls} defaultValue={me?.user?.email || ""} readOnly /></div>
+                  <div><label className={labelCls}>Firm</label><input className={inputCls} defaultValue={me?.organization?.name || ""} readOnly /></div>
+                  <div><label className={labelCls}>Role</label><input className={inputCls} defaultValue={me?.user?.role || ""} readOnly /></div>
                 </div>
               </div>
             )}
@@ -155,37 +150,6 @@ export function SettingsModal({ open, onClose, onReplayTour }: SettingsModalProp
                       </div>
                     </div>
                   ))}
-                </div>
-              </div>
-            )}
-
-            {active === "defaults" && (
-              <div className="space-y-4">
-                <h3 className="text-[15px] font-semibold text-primary">Tax Defaults</h3>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className={labelCls}>Default Tax Year</label>
-                    <select className={inputCls} defaultValue="2025">
-                      {[2025, 2024, 2023, 2022].map((y) => <option key={y} value={y}>{y}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className={labelCls}>Filing Status</label>
-                    <select className={inputCls} defaultValue="single">
-                      <option value="single">Single</option>
-                      <option value="mfj">Married Filing Jointly</option>
-                      <option value="mfs">Married Filing Separately</option>
-                      <option value="hoh">Head of Household</option>
-                      <option value="qw">Qualifying Surviving Spouse</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className={labelCls}>Default State</label>
-                    <select className={inputCls} defaultValue="">
-                      <option value="">None</option>
-                      {STATES.map((s) => <option key={s} value={s}>{s}</option>)}
-                    </select>
-                  </div>
                 </div>
               </div>
             )}
