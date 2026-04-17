@@ -20,6 +20,10 @@ from api.services.ocr.factory import OCRExtractorFactory
 from api.services.ocr.protocol import OCRExtractor
 from api.services.pii.encryptor import PIIEncryptor, build_pii_encryptor
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 if TYPE_CHECKING:
     import anthropic
 
@@ -131,4 +135,36 @@ def get_agent_service(
         max_tool_rounds=settings.agent_max_tool_rounds,
         history_token_budget=settings.agent_history_token_budget,
         tool_registry=build_tool_registry(),
+    )
+
+
+@lru_cache(maxsize=1)
+def _cached_tax_brain_pool():
+    """Lazy singleton psycopg2 pool for tax_brain KB access."""
+    try:
+        from tax_brain.factories import create_pool
+        return create_pool()
+    except Exception:
+        logger.warning("tax_brain pool unavailable — research tools will be degraded")
+        return None
+
+
+def get_tax_brain_pool():
+    return _cached_tax_brain_pool()
+
+
+def get_research_service(
+    settings: SettingsDep,
+    anthropic_client: AnthropicClientDep,
+):
+    """Construct a ResearchService with research tool registry."""
+    from api.agent.research_service import ResearchService
+    from api.agent.tools.research_tools import build_research_tool_registry
+
+    return ResearchService(
+        anthropic_client=anthropic_client,
+        model=settings.agent_model,
+        max_tokens=settings.agent_max_tokens,
+        max_tool_rounds=settings.agent_max_tool_rounds,
+        tool_registry=build_research_tool_registry(),
     )

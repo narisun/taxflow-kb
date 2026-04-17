@@ -44,6 +44,7 @@ def create_app() -> FastAPI:
         dependents,
         documents,
         health,
+        research,
         tax_returns,
     )
 
@@ -55,4 +56,5 @@ def create_app() -> FastAPI:
     app.include_router(documents.router)
     app.include_router(tax_returns.router)
     app.include_router(dependents.router)
+    app.include_router(research.router)
     return app
