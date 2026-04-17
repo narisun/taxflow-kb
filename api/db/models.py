@@ -192,14 +192,15 @@ class ConversationModel(TenantMixin, Base):
     __tablename__ = "conversations"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_uuid)
-    client_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("clients.id"), index=True
+    client_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("clients.id"), nullable=True, index=True
     )
     user_id: Mapped[str] = mapped_column(
         String(36), ForeignKey("users.id"), nullable=False
     )
     title: Mapped[str] = mapped_column(String(200), default="New conversation")
     is_active: Mapped[bool] = mapped_column(default=True)
+    conversation_type: Mapped[str] = mapped_column(String(20), default="client")
 
     messages: Mapped[list["ConversationMessageModel"]] = relationship(
         back_populates="conversation", cascade="all, delete-orphan",
@@ -208,6 +209,7 @@ class ConversationModel(TenantMixin, Base):
 
     __table_args__ = (
         Index("ix_conv_org_client_user", "org_id", "client_id", "user_id"),
+        Index("ix_conv_type_user", "conversation_type", "user_id", "org_id"),
     )
 
 
