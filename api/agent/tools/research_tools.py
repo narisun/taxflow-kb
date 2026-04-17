@@ -71,12 +71,20 @@ async def find_relevant_publications(
     session: ResearchSession, *, query: str, tax_year: int = 2025,
 ) -> dict:
     """Stage 1: Navigate summary chunks to find relevant publications."""
-    retriever = _get_retriever()
-    expanded = await asyncio.to_thread(_expand, query)
+    try:
+        retriever = _get_retriever()
+        expanded = await asyncio.to_thread(_expand, query)
 
-    nav_pubs, nav_sections, ms = await asyncio.to_thread(
-        retriever._navigate, expanded, tax_year,
-    )
+        nav_pubs, nav_sections, ms = await asyncio.to_thread(
+            retriever._navigate, expanded, tax_year,
+        )
+    except Exception as exc:
+        logger.warning("find_relevant_publications failed: %s", exc)
+        return {
+            "publications": [], "sections": [],
+            "kb_unavailable": True,
+            "suggestion": "The IRS knowledge base is not available. Answer the question using your own tax knowledge and clearly note it is not verified against the KB.",
+        }
 
     publications = [
         {"pub_number": pn, "title": _pub_title(pn)}
@@ -95,7 +103,10 @@ async def find_relevant_publications(
             f"Use search_publication_details with pub_numbers={top_pubs} to get specific rules."
         )
     else:
-        suggestion = "No publications found. Try rephrasing the query with different tax terminology."
+        suggestion = (
+            "No publications found in the knowledge base. "
+            "Answer using your own tax knowledge and clearly note it is not verified against the KB."
+        )
 
     return {
         "publications": publications,
@@ -110,14 +121,22 @@ async def search_publication_details(
     pub_numbers: list[str], tax_year: int = 2025,
 ) -> dict:
     """Stage 2: Drill into specific publications for detailed passages."""
-    retriever = _get_retriever()
-    expanded = await asyncio.to_thread(_expand, query)
+    try:
+        retriever = _get_retriever()
+        expanded = await asyncio.to_thread(_expand, query)
 
-    contexts, ms = await asyncio.to_thread(
-        retriever._search,
-        query=expanded, top_k=_MAX_PASSAGES,
-        pub_filter=pub_numbers, tax_year=tax_year,
-    )
+        contexts, ms = await asyncio.to_thread(
+            retriever._search,
+            query=expanded, top_k=_MAX_PASSAGES,
+            pub_filter=pub_numbers, tax_year=tax_year,
+        )
+    except Exception as exc:
+        logger.warning("search_publication_details failed: %s", exc)
+        return {
+            "passages": [], "total_found": 0,
+            "kb_unavailable": True,
+            "suggestion": "The IRS knowledge base is not available. Answer using your own tax knowledge.",
+        }
 
     passages = [
         {
@@ -144,25 +163,29 @@ async def find_cross_references(
     already_found_pubs: list[str] | None = None,
 ) -> dict:
     """Find related publications via the topic ontology."""
-    ontology = _get_ontology()
-    already = set(already_found_pubs or [])
+    try:
+        ontology = _get_ontology()
+        already = set(already_found_pubs or [])
 
-    matched_topics = await asyncio.to_thread(ontology.find_by_query, topic)
+        matched_topics = await asyncio.to_thread(ontology.find_by_query, topic)
 
-    related = []
-    seen = set()
-    for t in matched_topics[:5]:
-        pub_numbers = await asyncio.to_thread(
-            ontology.get_pub_numbers_for_topic, t.topic_id,
-        )
-        for pn in pub_numbers:
-            if pn not in already and pn not in seen:
-                seen.add(pn)
-                related.append({
-                    "pub_number": pn,
-                    "title": _pub_title(pn),
-                    "topic": t.label if hasattr(t, "label") else t.topic_id,
-                })
+        related = []
+        seen = set()
+        for t in matched_topics[:5]:
+            pub_numbers = await asyncio.to_thread(
+                ontology.get_pub_numbers_for_topic, t.topic_id,
+            )
+            for pn in pub_numbers:
+                if pn not in already and pn not in seen:
+                    seen.add(pn)
+                    related.append({
+                        "pub_number": pn,
+                        "title": _pub_title(pn),
+                        "topic": t.label if hasattr(t, "label") else t.topic_id,
+                    })
+    except Exception as exc:
+        logger.warning("find_cross_references failed: %s", exc)
+        return {"related_publications": [], "suggestion": "Cross-reference lookup unavailable."}
 
     suggestion = ""
     if related:
@@ -182,15 +205,20 @@ async def search_form_instructions(
     form_number: str | None = None, line_reference: str | None = None,
 ) -> dict:
     """Search IRS form instructions for line-by-line guidance."""
-    searcher = _get_instruction_searcher(session)
+    try:
+        searcher = _get_instruction_searcher(session)
 
-    form_refs = [form_number] if form_number else []
-    line_refs = [line_reference] if line_reference else []
+        form_refs = [form_number] if form_number else []
+        line_refs = [line_reference] if line_reference else []
 
-    contexts, ms = await asyncio.to_thread(
-        searcher.retrieve, query,
-        form_refs=form_refs, line_refs=line_refs, top_k=5,
-    )
+        contexts, ms = await asyncio.to_thread(
+            searcher.retrieve, query,
+            form_refs=form_refs, line_refs=line_refs, top_k=5,
+        )
+    except Exception as exc:
+        logger.warning("search_form_instructions failed: %s", exc)
+        return {"instructions": [], "kb_unavailable": True,
+                "suggestion": "Form instruction lookup unavailable. Answer using your own knowledge."}
 
     instructions = [
         {
@@ -210,12 +238,17 @@ async def search_mef_rules(
     form_refs: list[str] | None = None, tax_year: int = 2025,
 ) -> dict:
     """Search MeF validation rules for e-file requirements."""
-    searcher = _get_rule_searcher(session)
+    try:
+        searcher = _get_rule_searcher(session)
 
-    contexts, ms = await asyncio.to_thread(
-        searcher.retrieve, query,
-        form_refs=form_refs or [], top_k=5, tax_year=tax_year,
-    )
+        contexts, ms = await asyncio.to_thread(
+            searcher.retrieve, query,
+            form_refs=form_refs or [], top_k=5, tax_year=tax_year,
+        )
+    except Exception as exc:
+        logger.warning("search_mef_rules failed: %s", exc)
+        return {"rules": [], "kb_unavailable": True,
+                "suggestion": "MeF rule lookup unavailable. Answer using your own knowledge."}
 
     rules = [
         {
@@ -235,12 +268,17 @@ async def compare_tax_years(
     years: list[int], pub_filter: list[str] | None = None,
 ) -> dict:
     """Compare rules across multiple tax years."""
-    retriever = _get_retriever()
+    try:
+        retriever = _get_retriever()
 
-    contexts, ms, metadata = await asyncio.to_thread(
-        retriever._retrieve_cross_year,
-        query, top_k=8, pub_filter=pub_filter, comparison_years=years,
-    )
+        contexts, ms, metadata = await asyncio.to_thread(
+            retriever._retrieve_cross_year,
+            query, top_k=8, pub_filter=pub_filter, comparison_years=years,
+        )
+    except Exception as exc:
+        logger.warning("compare_tax_years failed: %s", exc)
+        return {"passages": [], "years": years, "kb_unavailable": True,
+                "suggestion": "Year comparison unavailable. Answer using your own knowledge."}
 
     passages = [
         {
