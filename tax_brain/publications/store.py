@@ -54,6 +54,7 @@ class PublicationStore:
         self,
         conn      = None,
         pool      = None,
+        dsn       = None,
         autocommit: bool = True,
     ):
         self._pool = None
@@ -64,8 +65,12 @@ class PublicationStore:
             self._conn = pool.getconn()
             self._pool = pool
             self._owns_conn = True  # we'll return to pool on close
+        elif dsn is not None:
+            import psycopg2
+            self._conn = psycopg2.connect(dsn)
+            self._owns_conn = True
         else:
-            raise ValueError("Either conn or pool must be provided.")
+            raise ValueError("Either conn, pool, or dsn must be provided.")
         if autocommit:
             self._conn.autocommit = True
 
@@ -371,6 +376,12 @@ class PublicationStore:
         This is a one-time migration — safe to run multiple times
         (ADD COLUMN IF NOT EXISTS / CREATE INDEX IF NOT EXISTS).
 
+        The tsvector concatenates text AND context_annotation so BM25 search
+        benefits from LLM-generated annotation keywords (IRC section numbers,
+        publication references, topic names, dollar amounts).  The annotation
+        vector is weighted 'B' (lower than text's default 'A') so raw text
+        matches still rank higher, but annotation keywords are discoverable.
+
         After this runs, search_bm25() becomes available and
         TaxBrainRetriever automatically enables hybrid retrieval.
 
@@ -378,17 +389,26 @@ class PublicationStore:
         """
         logger.info("BM25 migration — adding text_tsvector column …")
         with self._cursor() as cur:
+            # Drop and recreate the generated column to pick up the new
+            # expression.  ALTER COLUMN ... SET EXPRESSION is not supported
+            # for generated columns in PostgreSQL, so drop-then-add is the
+            # only safe migration path.  The GIN index is rebuilt below.
+            cur.execute(
+                "ALTER TABLE irs_kb.publication_chunks "
+                "DROP COLUMN IF EXISTS text_tsvector"
+            )
             cur.execute(
                 """
                 ALTER TABLE irs_kb.publication_chunks
-                ADD COLUMN IF NOT EXISTS text_tsvector tsvector
+                ADD COLUMN text_tsvector tsvector
                 GENERATED ALWAYS AS (
-                    to_tsvector('english', coalesce(text, ''))
+                    setweight(to_tsvector('english', coalesce(text, '')), 'A') ||
+                    setweight(to_tsvector('english', coalesce(context_annotation, '')), 'B')
                 ) STORED
                 """
             )
         self._commit()
-        logger.info("  text_tsvector column ready.")
+        logger.info("  text_tsvector column ready (text='A' + annotation='B').")
 
         logger.info("BM25 migration — creating GIN index …")
         with self._cursor() as cur:

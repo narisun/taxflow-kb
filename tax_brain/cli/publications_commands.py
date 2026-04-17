@@ -1,5 +1,5 @@
 """
-cli/publications_commands.py
+tax_brain/cli/publications_commands.py
 
 Layer 3 command handlers: cmd_ingest_publications, cmd_validate_publications,
 cmd_search, cmd_build_index, cmd_add_bm25_index, cmd_add_hierarchy_columns,
@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
+
+from tax_brain.cli.config_adapter import resolve_openai_key
 
 logger = logging.getLogger("taxflow.cli")
 
@@ -22,7 +24,7 @@ def cmd_ingest_publications(args) -> int:
     from tax_brain.publications.pdf_parser    import parse_publication_pdf
     from tax_brain.publications.store import PublicationStore
 
-    api_key = getattr(args, "api_key", None) or os.getenv("OPENAI_API_KEY")
+    api_key = resolve_openai_key(args)
     if not api_key and not args.skip_embedding:
         logger.error(
             "OPENAI_API_KEY is not set. Pass --api-key or set the env var, "
@@ -48,7 +50,10 @@ def cmd_ingest_publications(args) -> int:
 
     overall_ok = True
 
-    with PublicationStore(dsn=dsn) as store:
+    import psycopg2
+    conn = psycopg2.connect(dsn)
+    conn.autocommit = True
+    with PublicationStore(conn=conn) as store:
         if args.init_schema:
             schema_path = Path(__file__).resolve().parent.parent / "schema" / "postgres_layer3.sql"
             store.apply_schema(str(schema_path))
@@ -147,7 +152,7 @@ def cmd_validate_publications(args) -> int:
             logger.error("V3.3 requires --pg-dsn.")
             return 1
 
-        api_key = getattr(args, "api_key", None) or os.getenv("OPENAI_API_KEY")
+        api_key = resolve_openai_key(args)
         if not api_key:
             logger.error("V3.3 requires OPENAI_API_KEY or --api-key.")
             return 1
@@ -252,7 +257,7 @@ def cmd_search(args) -> int:
         logger.error("--mode must be one of: vector, bm25, hybrid")
         return 1
 
-    api_key = getattr(args, "api_key", None) or os.getenv("OPENAI_API_KEY")
+    api_key = resolve_openai_key(args)
     if not api_key and mode in ("vector", "hybrid"):
         logger.error(
             "OPENAI_API_KEY is required for vector and hybrid modes. "
@@ -363,7 +368,7 @@ def cmd_re_embed(args) -> int:
     from tax_brain.publications.embeddings       import embed_chunks, EMBEDDING_MODEL
     from tax_brain.publications.chunk_enrichment import enrich_for_embedding
 
-    api_key = getattr(args, "api_key", None) or os.getenv("OPENAI_API_KEY")
+    api_key = resolve_openai_key(args)
     if not api_key:
         logger.error("OPENAI_API_KEY is required.")
         return 1
