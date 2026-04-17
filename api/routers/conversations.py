@@ -133,6 +133,17 @@ async def send_message(
 ):
     conv = await _get_conversation_or_404(conversation_id, session, user)
 
+    # Update title from first user message (check before adding the new one
+    # so the autoflush doesn't inflate the count).
+    existing = await session.execute(
+        select(func.count()).where(
+            ConversationMessageModel.conversation_id == conv.id,
+            ConversationMessageModel.role == "user",
+        )
+    )
+    if (existing.scalar() or 0) == 0:
+        conv.title = body.content[:80]
+
     # Persist user message
     user_msg = ConversationMessageModel(
         conversation_id=conv.id,
@@ -142,16 +153,6 @@ async def send_message(
         created_by=user.id,
     )
     session.add(user_msg)
-
-    # Update title from first user message
-    existing = await session.execute(
-        select(func.count()).where(
-            ConversationMessageModel.conversation_id == conv.id,
-            ConversationMessageModel.role == "user",
-        )
-    )
-    if (existing.scalar() or 0) == 0:
-        conv.title = body.content[:80]
 
     # Placeholder assistant response (real agent wired in Task 14)
     ai_content = f"[Agent placeholder] Received: {body.content[:100]}"
