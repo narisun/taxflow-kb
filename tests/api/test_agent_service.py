@@ -93,3 +93,26 @@ async def test_agent_tool_call_then_text(app):
         assert "Tool Client" in result
         assert "MFJ" in result
         assert mock_client.messages.create.call_count == 2
+
+
+@pytest.mark.asyncio
+async def test_agent_end_to_end_via_http(client):
+    """Full round-trip: create client -> conversation -> send message -> verify response."""
+    c = await client.post("/api/clients", json={
+        "name": "E2E Client", "filing_status": "single", "tax_year": 2025,
+    })
+    cid = c.json()["id"]
+    conv = await client.post(f"/api/clients/{cid}/conversations", json={})
+    conv_id = conv.json()["id"]
+    resp = await client.post(
+        f"/api/conversations/{conv_id}/messages",
+        json={"content": "What is this client's filing status?"},
+    )
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["role"] == "assistant"
+    assert len(body["content"]) > 0
+    # Verify history persisted
+    hist = await client.get(f"/api/conversations/{conv_id}/messages")
+    assert hist.status_code == 200
+    assert len(hist.json()["messages"]) >= 2
