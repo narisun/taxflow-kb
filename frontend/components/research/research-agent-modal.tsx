@@ -143,12 +143,8 @@ export function ResearchAgentModal({ open, onClose }: ResearchAgentModalProps) {
     setResearchSteps([]);
     setStepsCollapsed(false);
 
-    // Placeholder for streaming assistant message
     const assistantMsgId = `stream-${Date.now()}`;
-    setMessages((prev) => [
-      ...prev,
-      { id: assistantMsgId, role: "assistant", content: "", created_at: new Date().toISOString() },
-    ]);
+    let assistantAdded = false;
 
     try {
       const response = await api.research.sendMessage(activeThreadId, trimmed);
@@ -191,13 +187,21 @@ export function ResearchAgentModal({ open, onClose }: ResearchAgentModalProps) {
                 )
               );
             } else if (eventType === "text_delta") {
-              setMessages((prev) =>
-                prev.map((m) =>
-                  m.id === assistantMsgId
-                    ? { ...m, content: m.content + (payload.text ?? "") }
-                    : m
-                )
-              );
+              if (!assistantAdded) {
+                assistantAdded = true;
+                setMessages((prev) => [
+                  ...prev,
+                  { id: assistantMsgId, role: "assistant", content: payload.text ?? "", created_at: new Date().toISOString() },
+                ]);
+              } else {
+                setMessages((prev) =>
+                  prev.map((m) =>
+                    m.id === assistantMsgId
+                      ? { ...m, content: m.content + (payload.text ?? "") }
+                      : m
+                  )
+                );
+              }
             } else if (eventType === "done") {
               // Auto-collapse steps when done
               setStepsCollapsed(true);
@@ -212,8 +216,10 @@ export function ResearchAgentModal({ open, onClose }: ResearchAgentModalProps) {
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Failed to send message";
       setError(msg);
-      // Remove the empty assistant placeholder on error
-      setMessages((prev) => prev.filter((m) => m.id !== assistantMsgId || m.content.length > 0));
+      // Remove the assistant placeholder if it was added but still empty
+      if (assistantAdded) {
+        setMessages((prev) => prev.filter((m) => m.id !== assistantMsgId || m.content.length > 0));
+      }
     } finally {
       setIsStreaming(false);
     }
