@@ -175,14 +175,14 @@ export function ResearchAgentModal({ open, onClose }: ResearchAgentModalProps) {
 
           try {
             const payload = JSON.parse(jsonStr);
-            const event = payload.event;
+            const eventType = payload.type;
 
-            if (event === "step_start") {
+            if (eventType === "step_start") {
               setResearchSteps((prev) => [
                 ...prev,
                 { tool: payload.tool, description: payload.description, status: "running" },
               ]);
-            } else if (event === "step_complete") {
+            } else if (eventType === "step_complete") {
               setResearchSteps((prev) =>
                 prev.map((s) =>
                   s.tool === payload.tool && s.status === "running"
@@ -190,7 +190,7 @@ export function ResearchAgentModal({ open, onClose }: ResearchAgentModalProps) {
                     : s
                 )
               );
-            } else if (event === "text_delta") {
+            } else if (eventType === "text_delta") {
               setMessages((prev) =>
                 prev.map((m) =>
                   m.id === assistantMsgId
@@ -198,10 +198,10 @@ export function ResearchAgentModal({ open, onClose }: ResearchAgentModalProps) {
                     : m
                 )
               );
-            } else if (event === "done") {
+            } else if (eventType === "done") {
               // Auto-collapse steps when done
               setStepsCollapsed(true);
-            } else if (event === "error") {
+            } else if (eventType === "error") {
               setError(payload.message || "Stream error");
             }
           } catch {
