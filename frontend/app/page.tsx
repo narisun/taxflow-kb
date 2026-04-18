@@ -720,7 +720,7 @@ export default function Home() {
                     className={cn(
                       "text-[11px] px-2 py-0.5 rounded-full",
                       step.complete
-                        ? "text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-50 dark:bg-emerald-950/30"
+                        ? "text-emerald-600 dark:text-emerald-400 font-semibold bg-gray-50 dark:bg-emerald-950/20"
                         : "text-tertiary"
                     )}
                   >
