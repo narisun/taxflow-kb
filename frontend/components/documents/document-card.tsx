@@ -72,10 +72,16 @@ export function DocumentCard({ doc, onClick, onDelete, isDuplicate }: DocumentCa
 
   const confidencePercent = Math.round(doc.confidence * 100);
 
+  // The header subtitle already shows the entity name (employer/payer/lender).
+  // Skip it in the body grid to avoid duplication.
+  const headerEntityKey = ["employer_name", "payer", "lender", "entity_name"]
+    .find((k) => data[k] != null && data[k] !== "");
+
   // Get key fields for this form type
   const keyFields = FORM_KEY_FIELDS[doc.form_type] || [];
   const kvPairs: { label: string; value: string }[] = [];
   for (const [key, label, isMoney] of keyFields) {
+    if (key === headerEntityKey) continue; // already in header
     const val = data[key];
     if (val != null && val !== "" && val !== "0.00") {
       if (isMoney) {
