@@ -173,16 +173,16 @@ export function DocumentCard({ doc, onClick, onDelete, isDuplicate }: DocumentCa
         {/* Divider */}
         <div className="border-t border-divider mx-3" />
 
-        {/* Body: two columns */}
-        <div className="grid grid-cols-[1fr_auto] gap-3 px-3 py-2">
-          {/* Left: key data points — grid so labels and values form aligned columns */}
+        {/* Body: 40% data | 60% timeline */}
+        <div className="grid grid-cols-[2fr_3fr] gap-2 px-3 py-2">
+          {/* Left: key data points */}
           <div className="text-[11px] min-w-0">
             {kvPairs.length > 0 ? (
-              <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5">
+              <div className="grid grid-cols-[auto_auto] gap-x-2 gap-y-0.5">
                 {kvPairs.slice(0, 5).map((kv) => (
                   <React.Fragment key={kv.label}>
                     <span className="text-tertiary">{kv.label}</span>
-                    <span className="text-primary font-medium text-right truncate">{kv.value}</span>
+                    <span className="text-primary font-medium text-right">{kv.value}</span>
                   </React.Fragment>
                 ))}
               </div>
@@ -192,7 +192,7 @@ export function DocumentCard({ doc, onClick, onDelete, isDuplicate }: DocumentCa
           </div>
 
           {/* Right: timeline */}
-          <div className="space-y-0.5 text-[10px] max-w-[160px]">
+          <div className="space-y-0.5 text-[10px]">
             {events.map((evt, i) => (
               <div key={i} className={cn("leading-tight", evt.accent || "text-tertiary")}>
                 <span className="mr-0.5">{evt.icon}</span>{evt.text}
