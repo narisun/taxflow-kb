@@ -13,6 +13,7 @@ from api.models.client import (
     ClientCreate, ClientUpdate, ClientResponse, ClientListResponse, PIIRevealRequest,
 )
 from api.services.pii.encryptor import PIIEncryptor, get_pii_encryptor
+from api.routers._helpers import get_client_or_404
 
 router = APIRouter(prefix="/api/clients", tags=["clients"])
 
