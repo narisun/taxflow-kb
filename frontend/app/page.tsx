@@ -314,18 +314,14 @@ export default function Home() {
           if (approved.length > 0) {
             lines.push(`**${approved.length} document${approved.length > 1 ? "s" : ""} approved:**`);
             for (const d of approved) {
-              lines.push(`- **${d.form_type}** — ${docFileLabel(d)}`);
-              // docReviewedTrail() already starts with the verb (e.g.
-              // "Reviewed by …") — do NOT prepend "Reviewed " here.
-              lines.push(`    Uploaded ${docUploadedTrail(d)} · ${docReviewedTrail(d)}`);
+              lines.push(`- **${d.form_type}** — ${docFileLabel(d)} · ${docReviewedTrail(d)}`);
             }
             lines.push("");
           }
           if (verified.length > 0) {
-            lines.push(`**${verified.length} document${verified.length > 1 ? "s" : ""} auto-verified at upload (awaiting human review):**`);
+            lines.push(`**${verified.length} document${verified.length > 1 ? "s" : ""} verified (awaiting CPA review):**`);
             for (const d of verified) {
               lines.push(`- **${d.form_type}** — ${docFileLabel(d)} (${Math.round(d.confidence * 100)}% conf)`);
-              lines.push(`    Uploaded ${docUploadedTrail(d)}`);
             }
           }
           if (lines.length === 0) {
@@ -1237,27 +1233,31 @@ function docUploadedTrail(d: LocalDoc): string {
  *   - "Not yet reviewed"                                 (anything else)
  */
 function docReviewedTrail(d: LocalDoc): string {
-  if (d.reviewed_at) {
-    const who = d.reviewed_by_name || "unknown user";
-    const when = formatAuditTimestamp(d.reviewed_at) || "unknown time";
-    return `Reviewed by ${who} on ${when}`;
+  if (d.status === "approved") {
+    if (d.reviewed_at) {
+      const who = d.reviewed_by_name || "CPA";
+      const when = formatAuditTimestamp(d.reviewed_at) || "unknown time";
+      return `Approved by ${who} on ${when}`;
+    }
+    return "Approved";
   }
-  if (d.status === "verified") return "Auto-verified at upload (no human review)";
-  if (d.status === "review" || d.status === "flagged") return "Pending review";
-  return "Not yet reviewed";
+  if (d.status === "verified") return "Auto-verified (high confidence, no flags)";
+  if (d.status === "review" || d.status === "flagged") return "Needs review";
+  if (d.status === "pending") return "Processing";
+  return "Pending";
 }
 
 function docStatusBadge(status: string): string {
   switch (status) {
     case "approved":
-      return "approved";
+      return "Approved";
     case "verified":
-      return "auto-verified";
+      return "Verified";
     case "review":
     case "flagged":
-      return "needs review";
+      return "Needs Review";
     case "pending":
-      return "pending";
+      return "Processing";
     default:
       return status;
   }

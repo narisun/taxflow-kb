@@ -8,7 +8,7 @@ import { Progress } from "@/components/ui/progress";
 
 interface DocumentCardProps {
   doc: {
-    id: number;
+    id: string;
     form_type: string;
     name: string;
     status: string;
@@ -18,7 +18,7 @@ interface DocumentCardProps {
     created_at?: string;
   };
   onClick: () => void;
-  onDelete?: (docId: number) => void;
+  onDelete?: (docId: string) => void;
   isDuplicate?: boolean;
 }
 
@@ -102,11 +102,12 @@ export function DocumentCard({ doc, onClick, onDelete, isDuplicate }: DocumentCa
     { icon: "\u2B06", text: `Uploaded ${fmtTimestamp(ts.toISOString())}` },
   ];
   if (doc.status === "review" || doc.status === "flagged") {
-    events.push({ icon: "\u23F3", text: "Pending review" });
+    events.push({ icon: "\u23F3", text: "Needs Review" });
   } else if (doc.status === "verified") {
     events.push({ icon: "\u2713", text: "Verified" });
   } else if (doc.status === "approved") {
-    events.push({ icon: "\u2713", text: `Approved ${fmtTimestamp(new Date(ts.getTime() + 3600000).toISOString())}` });
+    const approvedAt = doc.reviewed_at ? fmtTimestamp(doc.reviewed_at) : "";
+    events.push({ icon: "\u2713", text: approvedAt ? `Approved ${approvedAt}` : "Approved" });
   }
   if (flags.length > 0) {
     flags.forEach((flag) => {
