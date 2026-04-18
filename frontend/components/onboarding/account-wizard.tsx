@@ -85,9 +85,6 @@ export function AccountWizard({ userName, userEmail, emailVerified, onComplete }
     } catch (err) {
       const raw = err instanceof Error ? err.message : "Unknown error";
       setSubmitError(_humanizeError(raw));
-      // Toast still fires for visibility; inline banner persists so the user
-      // can read and act on the message even after the toast auto-dismisses.
-      toast("error", "Could not complete onboarding", _humanizeError(raw));
       setSubmitting(false);
     }
   }, [firmName, timezone, toast, onComplete]);
@@ -125,6 +122,8 @@ export function AccountWizard({ userName, userEmail, emailVerified, onComplete }
             <StepConfirm
               firmName={firmName}
               timezone={timezone}
+              userEmail={userEmail}
+              emailVerified={emailVerified}
               submitting={submitting}
               error={submitError}
               onBack={back}
@@ -388,6 +387,8 @@ function StepFirmDetails({
 function StepConfirm({
   firmName,
   timezone,
+  userEmail,
+  emailVerified,
   submitting,
   error,
   onBack,
@@ -395,6 +396,8 @@ function StepConfirm({
 }: {
   firmName: string;
   timezone: string;
+  userEmail: string;
+  emailVerified?: boolean;
   submitting: boolean;
   error: string | null;
   onBack: () => void;
@@ -428,7 +431,30 @@ function StepConfirm({
         </div>
       </dl>
 
-      {error && (
+      {emailVerified === false && (
+        <div className="mt-5 rounded-lg border border-amber-300 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-800 p-4">
+          <div className="flex items-start gap-2.5">
+            <svg className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+            </svg>
+            <div>
+              <div className="text-[13px] font-semibold text-amber-800 dark:text-amber-300">
+                Email verification required
+              </div>
+              <p className="text-[12px] text-amber-700 dark:text-amber-400 mt-1 leading-relaxed">
+                Check your inbox for a verification email from Auth0 and click the
+                link to verify <span className="font-medium">{userEmail}</span>.
+                You&apos;ll need to verify your email before you can create your workspace.
+              </p>
+              <p className="text-[11px] text-amber-600 dark:text-amber-500 mt-2">
+                Don&apos;t see it? Check your spam folder or sign out and sign in again to resend.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {error && emailVerified !== false && (
         <div className="mt-6 rounded-lg border border-red-300 bg-red-50 dark:bg-red-950/30 dark:border-red-900 p-3">
           <div className="text-[12px] font-semibold text-red-700 dark:text-red-300 mb-0.5">
             Couldn&apos;t create your workspace
