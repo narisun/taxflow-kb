@@ -398,6 +398,11 @@ async def delete_document(
         raise HTTPException(status_code=404, detail="Document not found")
     client_id = doc.client_id
     await session.delete(doc)
+
+    # Recalculate workflow step after deletion
+    from api.services.workflow import on_document_deleted
+    await on_document_deleted(session, client_id, user.org_id)
+
     await session.commit()
 
     from api.services.tax import TaxReturnService

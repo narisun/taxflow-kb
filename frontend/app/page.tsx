@@ -521,16 +521,16 @@ export default function Home() {
                   onDelete={async (docId) => {
                     const cid = activeClientId;
                     if (!cid) return;
-                                  try {
-                      {
-                        await api.documents.delete(docId);
-                      }
+                    try {
+                      await api.documents.delete(docId);
                       const docData = await api.documents.list(cid);
                       if (Array.isArray(docData)) {
                         setDocuments(docData.map((d: any) => ({
                           ...d, client_id: d.client_id, name: d.title, type: d.form_type,
                         })));
                       }
+                      // Deletion may roll back workflow step
+                      refreshActiveClient();
                     } catch (err) {
                       console.error("Delete failed:", err);
                     }
@@ -858,7 +858,7 @@ export default function Home() {
         onDelete={async (docId) => {
           const cid = activeClientId;
           if (!cid) return;
-              try {
+          try {
             await api.documents.delete(docId);
             const docData = await api.documents.list(cid);
             if (Array.isArray(docData)) {
@@ -866,6 +866,7 @@ export default function Home() {
                 ...d, client_id: d.client_id, name: d.title, type: d.form_type,
               })));
             }
+            refreshActiveClient();
           } catch (err) {
             console.error("Delete failed:", err);
           }

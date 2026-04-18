@@ -93,3 +93,54 @@ async def on_return_computed(
 ) -> None:
     """Called after a tax return is computed. Advances review → filing."""
     await _advance_to(session, client_id, org_id, "filing")
+
+
+async def on_document_deleted(
+    session: AsyncSession, client_id: str, org_id: str,
+) -> None:
+    """Called after a document is deleted. Recalculates the correct step.
+
+    Deleting a document can invalidate the current workflow position:
+    - If no documents remain → back to intake
+    - If unapproved documents exist → back to documents
+    - Otherwise stay at current step (or review if all remaining are approved)
+    """
+    result = await session.execute(
+        select(ClientModel).where(
+            ClientModel.id == client_id,
+            ClientModel.org_id == org_id,
+        )
+    )
+    client = result.scalar_one_or_none()
+    if not client:
+        return
+
+    # Count documents by status
+    total_result = await session.execute(
+        select(func.count()).where(
+            DocumentModel.client_id == client_id,
+            DocumentModel.org_id == org_id,
+        )
+    )
+    total_docs = total_result.scalar() or 0
+
+    if total_docs == 0:
+        new_step = "intake"
+    else:
+        pending_result = await session.execute(
+            select(func.count()).where(
+                DocumentModel.client_id == client_id,
+                DocumentModel.org_id == org_id,
+                DocumentModel.status.in_(["pending", "review", "flagged"]),
+            )
+        )
+        pending = pending_result.scalar() or 0
+        new_step = "documents" if pending > 0 else "review"
+
+    current = client.workflow_step or "intake"
+    if current != new_step and _step_index(current) > _step_index(new_step):
+        client.workflow_step = new_step
+        logger.info(
+            "Workflow rollback: client %s %s → %s (document deleted)",
+            client_id[:8], current, new_step,
+        )
