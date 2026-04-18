@@ -11,7 +11,7 @@ interface ChatInputProps {
 export function ChatInput({
   onSend,
   disabled = false,
-  hints = ["Check status", "Review docs", "Run rules", "Analyze yoy", "Estimate refund", "Draft email", "Draft advisory", "Run pre-filing checks"],
+  hints = ["Check status", "Review docs", "Run validations", "Compute return", "Analyze yoy", "Estimate refund", "Draft email", "Draft advisory", "Run pre-filing checks"],
 }: ChatInputProps) {
   const [input, setInput] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
