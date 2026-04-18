@@ -8,7 +8,7 @@ class TestGetDisplayLabel:
         assert get_display_label("W-2", "box1_wages") == "Box 1 \u2014 Wages, salaries, tips"
 
     def test_w2_employer(self):
-        assert get_display_label("W-2", "employer_name") == "Employer Name"
+        assert get_display_label("W-2", "employer_name") == "Box c \u2014 Employer name"
 
     def test_1099_int_interest(self):
         assert get_display_label("1099-INT", "box1_interest") == "Box 1 \u2014 Interest income"
