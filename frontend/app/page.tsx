@@ -87,6 +87,7 @@ export default function Home() {
   const [activeWorkTab, setActiveWorkTab] = useState("Documents");
   const { toast } = useToast();
   const [returnDraft, setReturnDraft] = useState<TaxReturnDraft | null>(null);
+  const [workflowSteps, setWorkflowSteps] = useState<Array<{ id: string; label: string; complete: boolean; can_complete?: boolean }>>([]);
   const [intakeOpen, setIntakeOpen] = useState(false);
   const [intakeMode, setIntakeMode] = useState<"create" | "edit">("create");
   const [intakeEditData, setIntakeEditData] = useState<
@@ -118,14 +119,15 @@ export default function Home() {
 
   const activeClient = sidebarClients.find((c) => c.id === activeClientId);
 
-  // Refresh a single client's data (workflow_step, return draft, etc.) after state-changing actions
+  // Refresh a single client's data (workflow, return draft, etc.) after state-changing actions
   const refreshActiveClient = useCallback(async () => {
     const cid = activeClientId;
     if (!cid) return;
     try {
-      const [updated, draft] = await Promise.all([
+      const [updated, draft, workflow] = await Promise.all([
         api.clients.get(cid),
         api.returns.get(cid).catch(() => null),
+        api.clients.getWorkflow(cid).catch(() => null),
       ]);
       if (updated) {
         setApiClients((prev) => prev.map((c) => (c.id === cid ? updated : c)));
@@ -134,7 +136,7 @@ export default function Home() {
             c.id === cid
               ? {
                   ...c,
-                  status: mapWorkflowStep(updated.workflow_step),
+                  status: updated.workflow_step,
                   meta: `${updated.filing_status} \u00b7 ${updated.dependents} dep. \u00b7 ${updated.tax_year}`,
                   adults: deriveAdults(updated),
                 }
@@ -143,6 +145,7 @@ export default function Home() {
         );
       }
       if (draft) setReturnDraft(draft);
+      if (workflow?.steps) setWorkflowSteps(workflow.steps);
     } catch {
       // Non-critical — UI will update on next full refresh
     }
@@ -214,9 +217,10 @@ export default function Home() {
     let cancelled = false;
     async function loadClientData() {
       try {
-        const [chatData, docData] = await Promise.all([
+        const [chatData, docData, workflowData] = await Promise.all([
           api.chat.history(cid),
           api.documents.list(cid),
+          api.clients.getWorkflow(cid).catch(() => null),
         ]);
         if (cancelled) return;
         if (Array.isArray(chatData)) {
@@ -245,6 +249,7 @@ export default function Home() {
             }))
           );
         }
+        if (workflowData?.steps) setWorkflowSteps(workflowData.steps);
       } catch {
         setMessages([]);
         setDocuments([]);
@@ -560,6 +565,33 @@ export default function Home() {
             >
               Manage Documents
             </button>
+            {/* Mark Documents complete/incomplete */}
+            {(() => {
+              const step = workflowSteps.find((s) => s.id === "documents");
+              if (!step) return null;
+              if (step.complete) {
+                return (
+                  <div className="group flex items-center justify-center gap-1.5 mt-3 py-2 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 text-[12px] font-medium">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}><path d="M4.5 12.75l6 6 9-13.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    Documents Complete
+                    <button
+                      onClick={async () => { const cid = activeClientId; if (cid) { await api.clients.incompleteStep(cid, "documents"); refreshActiveClient(); } }}
+                      className="ml-1 opacity-0 group-hover:opacity-100 text-[10px] text-tertiary hover:text-red-500 transition-all cursor-pointer"
+                      title="Mark incomplete"
+                    >&times;</button>
+                  </div>
+                );
+              }
+              return (
+                <button
+                  onClick={async () => { const cid = activeClientId; if (cid) { await api.clients.completeStep(cid, "documents"); refreshActiveClient(); } }}
+                  disabled={!step.can_complete}
+                  className="w-full mt-3 py-2 text-[12px] font-medium text-apple-blue hover:bg-apple-blue/5 rounded-lg border border-apple-blue/30 hover:border-apple-blue transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  Mark Documents Complete
+                </button>
+              );
+            })()}
           </div>
         )}
 
@@ -576,13 +608,69 @@ export default function Home() {
             computedAt={returnDraft?.computed_at}
             onViewFull={handleGenerateReturn}
           />
+          {/* Mark Tax Return complete/incomplete */}
+          {(() => {
+            const step = workflowSteps.find((s) => s.id === "tax_return");
+            if (!step) return null;
+            if (step.complete) {
+              return (
+                <div className="group flex items-center justify-center gap-1.5 mt-3 py-2 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 text-[12px] font-medium">
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}><path d="M4.5 12.75l6 6 9-13.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  Tax Return Complete
+                  <button
+                    onClick={async () => { const cid = activeClientId; if (cid) { await api.clients.incompleteStep(cid, "tax_return"); refreshActiveClient(); } }}
+                    className="ml-1 opacity-0 group-hover:opacity-100 text-[10px] text-tertiary hover:text-red-500 transition-all cursor-pointer"
+                    title="Mark incomplete"
+                  >&times;</button>
+                </div>
+              );
+            }
+            return (
+              <button
+                onClick={async () => { const cid = activeClientId; if (cid) { await api.clients.completeStep(cid, "tax_return"); refreshActiveClient(); } }}
+                disabled={!step.can_complete}
+                className="w-full mt-3 py-2 text-[12px] font-medium text-apple-blue hover:bg-apple-blue/5 rounded-lg border border-apple-blue/30 hover:border-apple-blue transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                Mark Tax Return Complete
+              </button>
+            );
+          })()}
         )}
 
         {activeWorkTab === "Filing" && (
+          <>
           <FilingWorkflow
             clientName={activeClient?.name}
             filingStatus={activeClient?.meta.split(" \u00b7 ")[0]}
           />
+          {/* Mark Filed */}
+          {(() => {
+            const step = workflowSteps.find((s) => s.id === "filed");
+            if (!step) return null;
+            if (step.complete) {
+              return (
+                <div className="group flex items-center justify-center gap-1.5 mt-3 py-2 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 text-[12px] font-medium">
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}><path d="M4.5 12.75l6 6 9-13.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  Filed
+                  <button
+                    onClick={async () => { const cid = activeClientId; if (cid) { await api.clients.incompleteStep(cid, "filed"); refreshActiveClient(); } }}
+                    className="ml-1 opacity-0 group-hover:opacity-100 text-[10px] text-tertiary hover:text-red-500 transition-all cursor-pointer"
+                    title="Mark incomplete"
+                  >&times;</button>
+                </div>
+              );
+            }
+            return (
+              <button
+                onClick={async () => { const cid = activeClientId; if (cid) { await api.clients.completeStep(cid, "filed"); refreshActiveClient(); } }}
+                disabled={!step.can_complete}
+                className="w-full mt-3 py-2 text-[12px] font-medium text-apple-blue hover:bg-apple-blue/5 rounded-lg border border-apple-blue/30 hover:border-apple-blue transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                Mark as Filed
+              </button>
+            );
+          })()}
+          </>
         )}
 
         {activeWorkTab === "Advisory" && (
@@ -608,11 +696,6 @@ export default function Home() {
               <span className="text-[16px] font-semibold text-primary tracking-tight">
                 {activeClient?.name || "Select a client"}
               </span>
-              {activeClient && (
-                <Badge variant={activeClient.status as "pending" | "inProgress" | "review" | "completed" | "filed"}>
-                  {activeClient.status === "pending" ? "Intake" : activeClient.status === "inProgress" ? "Documents" : activeClient.status === "completed" ? "Prepare" : activeClient.status}
-                </Badge>
-              )}
             </div>
             {activeClient?.adults && (
               <div className="text-[12px] text-secondary mt-0.5">{activeClient.adults}</div>
@@ -656,31 +739,24 @@ export default function Home() {
           )}
         </div>
 
-        {/* Second row: workflow stepper — highlights based on client status */}
-        {activeClient && (() => {
-          const steps = ["Intake", "Documents", "Review", "Prepare", "File"];
-          const statusToStep: Record<string, number> = {
-            pending: 0, inProgress: 1, review: 2, completed: 3, filed: 4,
-          };
-          const activeStep = statusToStep[activeClient.status] ?? 0;
+        {/* Second row: workflow stepper — green for complete, gray for incomplete */}
+        {activeClient && workflowSteps.length > 0 && (() => {
           const clientYear = activeClient.meta.match(/\d{4}/)?.[0] || "2025";
           return (
             <div className="hidden md:flex items-center gap-1 mt-2">
               <span className="text-[11px] text-tertiary mr-1">{clientYear}</span>
-              {steps.map((step, i) => (
-                <div key={step} className="flex items-center gap-1">
-                  {i > 0 && <div className={cn("w-3 h-px", i <= activeStep ? "bg-apple-blue/30" : "bg-divider")} />}
+              {workflowSteps.map((step, i) => (
+                <div key={step.id} className="flex items-center gap-1">
+                  {i > 0 && <div className={cn("w-3 h-px", step.complete ? "bg-green-400/50" : "bg-divider")} />}
                   <span
                     className={cn(
                       "text-[11px] px-2 py-0.5 rounded-full",
-                      i < activeStep
-                        ? "text-secondary font-medium bg-surface-secondary"
-                        : i === activeStep
-                          ? "text-apple-blue font-semibold bg-apple-blue/10"
-                          : "text-tertiary"
+                      step.complete
+                        ? "text-green-700 dark:text-green-400 font-medium bg-green-50 dark:bg-green-900/20"
+                        : "text-tertiary"
                     )}
                   >
-                    {step}
+                    {step.label}
                   </span>
                 </div>
               ))}
@@ -1023,20 +1099,8 @@ const FILING_STATUS_LABELS: Record<string, string> = {
 // ────────────────────────────────────────────
 
 function mapWorkflowStep(step: string): string {
-  switch (step) {
-    case "intake":
-      return "pending";
-    case "documents":
-    case "preparation":
-      return "inProgress";
-    case "review":
-      return "review";
-    case "filing":
-      return "completed";
-    case "filed":
-      return "filed";
-    default:
-      return "pending";
+  // Pass through directly — sidebar now uses the raw step ID
+  return step || "intake";
   }
 }
 

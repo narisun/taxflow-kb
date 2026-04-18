@@ -258,6 +258,12 @@ const realApi = {
           body: JSON.stringify({ fields }),
         },
       ),
+    getWorkflow: (id: string) =>
+      fetchJson<{ workflow_step: string; steps: Array<{ id: string; label: string; complete: boolean; can_complete?: boolean }> }>(`${API_BASE}/api/clients/${id}/workflow`),
+    completeStep: (id: string, step: string) =>
+      fetchJson<{ workflow_step: string; steps: Array<{ id: string; label: string; complete: boolean }> }>(`${API_BASE}/api/clients/${id}/workflow/${step}/complete`, { method: "POST" }),
+    incompleteStep: (id: string, step: string) =>
+      fetchJson<{ workflow_step: string; steps: Array<{ id: string; label: string; complete: boolean }> }>(`${API_BASE}/api/clients/${id}/workflow/${step}/incomplete`, { method: "POST" }),
   },
   chat: {
     history: (clientId: string): Promise<ChatMessage[]> =>

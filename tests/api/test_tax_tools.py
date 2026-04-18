@@ -93,8 +93,7 @@ class TestComputeTaxReturn:
         mock_service.compute_and_save_draft = AsyncMock(return_value=mock_draft)
 
         with patch("api.agent.tools.tax_tools._get_tax_service", return_value=mock_service), \
-             patch("api.agent.tools.tax_tools._get_user", return_value=MagicMock()), \
-             patch("api.services.workflow.on_return_computed", new_callable=AsyncMock):
+             patch("api.agent.tools.tax_tools._get_user", return_value=MagicMock()):
             result = await compute_tax_return(_make_session())
 
         assert result["total_income"] == 85000

@@ -1,11 +1,13 @@
 """Client CRUD endpoints — tenant-scoped, with PII encryption."""
+import json
+
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.db.engine import get_session
 from api.db.models import ClientModel, FamilyGroupModel
-from api.auth.dependencies import get_current_user, require_role
+from api.auth.dependencies import get_current_user, require_onboarded_user, require_role
 from api.auth.models import UserModel, ROLE_PERMISSIONS
 from api.models.client import (
     ClientCreate, ClientUpdate, ClientResponse, ClientListResponse, PIIRevealRequest,
@@ -18,6 +20,21 @@ router = APIRouter(prefix="/api/clients", tags=["clients"])
 _PII_FIELDS = {"primary_ssn", "primary_dob", "spouse_ssn", "spouse_dob", "street"}
 # Fields that belong to FamilyGroup, not ClientModel directly
 _FAMILY_FIELDS = {"family_group_name", "spouse_first_name", "spouse_last_name"}
+# Fields the API exposes as native lists/etc but the DB stores as JSON-encoded text
+_JSON_LIST_FIELDS = {"filing_states"}
+
+
+def _decode_state_list(raw: str | None) -> list[str]:
+    """Parse a JSON-encoded list of state codes from the DB. Tolerant of NULL/garbage."""
+    if not raw:
+        return []
+    try:
+        value = json.loads(raw)
+    except (TypeError, ValueError):
+        return []
+    if not isinstance(value, list):
+        return []
+    return [s for s in value if isinstance(s, str)]
 
 
 def _client_query(user: UserModel):
@@ -40,6 +57,8 @@ def _build_response(client: ClientModel, enc: PIIEncryptor, family_group: Family
     return ClientResponse(
         id=client.id,
         name=client.name,
+        primary_first_name=client.primary_first_name,
+        primary_last_name=client.primary_last_name,
         filing_status=client.filing_status,
         tax_year=client.tax_year,
         dependents=client.dependents,
@@ -54,7 +73,13 @@ def _build_response(client: ClientModel, enc: PIIEncryptor, family_group: Family
         city=client.city,
         state=client.state,
         zip_code=client.zip_code,
+        email=client.email,
+        phone=client.phone,
+        spouse_email=client.spouse_email,
+        spouse_phone=client.spouse_phone,
         family_group_name=family_group.display_name if family_group else None,
+        filing_federal=bool(client.filing_federal),
+        filing_states=_decode_state_list(client.filing_states),
         org_id=client.org_id,
         created_by=client.created_by,
         created_at=client.created_at,
@@ -73,7 +98,7 @@ async def list_clients(
     page: int = Query(1, ge=1),
     page_size: int = Query(50, ge=1, le=200),
     session: AsyncSession = Depends(get_session),
-    user: UserModel = Depends(get_current_user),
+    user: UserModel = Depends(require_onboarded_user),
 ):
     q = _client_query(user)
     count_q = select(func.count()).select_from(q.subquery())
@@ -97,21 +122,18 @@ async def list_clients(
 async def create_client(
     data: ClientCreate,
     session: AsyncSession = Depends(get_session),
-    user: UserModel = Depends(get_current_user),
+    user: UserModel = Depends(require_onboarded_user),
 ):
     enc = get_pii_encryptor()
 
-    # Handle family group creation
+    # Handle family group creation. Primary first/last come from the request
+    # (no more error-prone parsing of the display name).
     family_group = None
     if data.family_group_name or data.spouse_first_name or data.spouse_last_name:
-        # Parse primary name from the client name (first/last)
-        name_parts = data.name.split(maxsplit=1)
-        primary_first = name_parts[0] if name_parts else ""
-        primary_last = name_parts[1] if len(name_parts) > 1 else ""
         family_group = FamilyGroupModel(
             display_name=data.family_group_name or data.name,
-            primary_first_name=primary_first,
-            primary_last_name=primary_last,
+            primary_first_name=data.primary_first_name or "",
+            primary_last_name=data.primary_last_name or "",
             spouse_first_name=data.spouse_first_name,
             spouse_last_name=data.spouse_last_name,
             org_id=user.org_id,
@@ -123,6 +145,10 @@ async def create_client(
     # Build client model excluding PII and family fields
     exclude_fields = _PII_FIELDS | _FAMILY_FIELDS
     model_data = data.model_dump(exclude=exclude_fields)
+    # JSON-encode list fields for the DB column
+    for f in _JSON_LIST_FIELDS:
+        if f in model_data:
+            model_data[f] = json.dumps(model_data[f] or [])
     client = ClientModel(
         **model_data,
         org_id=user.org_id,
@@ -150,9 +176,9 @@ async def create_client(
 
 @router.get("/{client_id}", response_model=ClientResponse)
 async def get_client(
-    client_id: int,
+    client_id: str,
     session: AsyncSession = Depends(get_session),
-    user: UserModel = Depends(get_current_user),
+    user: UserModel = Depends(require_onboarded_user),
 ):
     result = await session.execute(
         _client_query(user).where(ClientModel.id == client_id)
@@ -168,10 +194,10 @@ async def get_client(
 
 @router.patch("/{client_id}", response_model=ClientResponse)
 async def update_client(
-    client_id: int,
+    client_id: str,
     data: ClientUpdate,
     session: AsyncSession = Depends(get_session),
-    user: UserModel = Depends(get_current_user),
+    user: UserModel = Depends(require_onboarded_user),
 ):
     result = await session.execute(
         _client_query(user).where(ClientModel.id == client_id)
@@ -224,6 +250,11 @@ async def update_client(
             await session.flush()
             client.family_group_id = fg.id
 
+    # JSON-encode list fields before storage
+    for f in _JSON_LIST_FIELDS:
+        if f in updates:
+            updates[f] = json.dumps(updates[f] or [])
+
     # Set remaining non-PII fields directly
     for field, value in updates.items():
         setattr(client, field, value)
@@ -236,7 +267,7 @@ async def update_client(
 
 @router.delete("/{client_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_client(
-    client_id: int,
+    client_id: str,
     session: AsyncSession = Depends(get_session),
     user: UserModel = Depends(require_role("admin", "supervisor")),
 ):
@@ -252,10 +283,10 @@ async def delete_client(
 
 @router.post("/{client_id}/reveal-pii")
 async def reveal_pii(
-    client_id: int,
+    client_id: str,
     req: PIIRevealRequest,
     session: AsyncSession = Depends(get_session),
-    user: UserModel = Depends(get_current_user),
+    user: UserModel = Depends(require_onboarded_user),
 ):
     perms = ROLE_PERMISSIONS.get(user.role, {})
     if not perms.get("can_view_pii"):
@@ -287,3 +318,52 @@ async def reveal_pii(
         revealed[f] = enc.decrypt(enc_value) if enc_value else None
 
     return revealed
+
+
+# ── Workflow step management ──────────────────────────────────────────────────
+
+
+@router.get("/{client_id}/workflow")
+async def get_workflow(
+    client_id: str,
+    session: AsyncSession = Depends(get_session),
+    user: UserModel = Depends(require_onboarded_user),
+):
+    """Get current workflow status with step completion states."""
+    from api.services.workflow import get_workflow_status
+    await get_client_or_404(client_id, session, user)
+    return await get_workflow_status(session, client_id, user.org_id)
+
+
+@router.post("/{client_id}/workflow/{step}/complete")
+async def complete_workflow_step(
+    client_id: str,
+    step: str,
+    session: AsyncSession = Depends(get_session),
+    user: UserModel = Depends(require_onboarded_user),
+):
+    """Mark a workflow step as complete."""
+    from api.services.workflow import mark_step_complete
+    await get_client_or_404(client_id, session, user)
+    result = await mark_step_complete(session, client_id, user.org_id, step)
+    if "error" in result:
+        raise HTTPException(status_code=400, detail=result["error"])
+    await session.commit()
+    return result
+
+
+@router.post("/{client_id}/workflow/{step}/incomplete")
+async def incomplete_workflow_step(
+    client_id: str,
+    step: str,
+    session: AsyncSession = Depends(get_session),
+    user: UserModel = Depends(require_onboarded_user),
+):
+    """Mark a workflow step as incomplete. Cascades to subsequent steps."""
+    from api.services.workflow import mark_step_incomplete
+    await get_client_or_404(client_id, session, user)
+    result = await mark_step_incomplete(session, client_id, user.org_id, step)
+    if "error" in result:
+        raise HTTPException(status_code=400, detail=result["error"])
+    await session.commit()
+    return result

@@ -194,11 +194,6 @@ async def upload_document(
         created_by=user.id,
     )
     session.add(doc)
-
-    # Advance workflow: intake → documents on first upload
-    from api.services.workflow import on_document_uploaded
-    await on_document_uploaded(session, client_id, user.org_id)
-
     await session.commit()
     await session.refresh(doc)
     names = await _resolve_user_names(session, {doc.created_by} if doc.created_by else set())
@@ -276,10 +271,6 @@ async def approve_document(
     # schema (TenantMixin uses naive timestamps as well — see api/db/base.py).
     doc.reviewed_by = user.id
     doc.reviewed_at = datetime.now(timezone.utc).replace(tzinfo=None)
-
-    # Advance workflow: documents → review when all docs approved
-    from api.services.workflow import on_document_approved
-    await on_document_approved(session, doc.client_id, user.org_id)
 
     await session.commit()
     await session.refresh(doc)
@@ -398,11 +389,6 @@ async def delete_document(
         raise HTTPException(status_code=404, detail="Document not found")
     client_id = doc.client_id
     await session.delete(doc)
-
-    # Recalculate workflow step after deletion
-    from api.services.workflow import on_document_deleted
-    await on_document_deleted(session, client_id, user.org_id)
-
     await session.commit()
 
     from api.services.tax import TaxReturnService

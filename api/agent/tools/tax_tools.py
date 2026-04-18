@@ -158,9 +158,6 @@ async def compute_tax_return(session: AgentSession) -> dict:
         draft = await service.compute_and_save_draft(
             client_id=session.client_id, session=session.db_session, user=user,
         )
-        # Advance workflow: review → filing
-        from api.services.workflow import on_return_computed
-        await on_return_computed(session.db_session, session.client_id, session.org_id)
     except Exception as exc:
         logger.warning("compute_tax_return failed: %s", exc)
         return {"error": f"Computation failed: {exc}"}

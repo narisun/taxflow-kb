@@ -1,18 +1,20 @@
-"""Workflow step transitions — automatically advances client state.
+"""Workflow step management — user-driven status progression.
 
 The workflow_step column on ClientModel tracks where a client is in the
-tax preparation pipeline:
+tax preparation pipeline. There are 4 ordered steps:
 
-    intake → documents → review → filing → filed
+    intake → documents → tax_return → filed
 
-Transitions are forward-only and conditional:
-- intake → documents:  first document uploaded
-- documents → review:  all documents approved (none pending/flagged)
-- review → filing:     tax return computed
-- filing → filed:      (future: e-file submission)
+Each step is marked complete by explicit user action:
+- intake:     auto-completed on client creation
+- documents:  user clicks "Mark Documents Complete"
+- tax_return: user clicks "Mark Tax Return Complete"
+- filed:      user clicks "Mark Filed"
 
-Each transition function is idempotent: calling it when the client is
-already past the target step is a no-op.
+Marking a step incomplete cascades: all subsequent steps also become
+incomplete.
+
+The workflow_step value represents the LAST COMPLETED step.
 """
 from __future__ import annotations
 
@@ -20,25 +22,53 @@ import logging
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.db.models import ClientModel, DocumentModel
+from api.db.models import ClientModel, DocumentModel, TaxReturnDraftModel
 
 logger = logging.getLogger(__name__)
 
-# Ordered steps — transitions only move forward
-_STEP_ORDER = ["intake", "documents", "review", "filing", "filed"]
+# Ordered steps
+STEPS = ["intake", "documents", "tax_return", "filed"]
 
 
 def _step_index(step: str) -> int:
     try:
-        return _STEP_ORDER.index(step)
+        return STEPS.index(step)
     except ValueError:
         return 0
 
 
-async def _advance_to(
-    session: AsyncSession, client_id: str, org_id: str, target_step: str,
-) -> str | None:
-    """Advance client to target_step if currently before it. Returns new step or None."""
+def can_complete_step(
+    step: str,
+    has_documents: bool,
+    has_return_draft: bool,
+    current_step: str,
+) -> bool:
+    """Check if a step can be marked complete given current state."""
+    idx = _step_index(step)
+    current_idx = _step_index(current_step)
+
+    # Can't complete a step if previous step isn't complete
+    if idx > 0 and current_idx < idx - 1:
+        return False
+
+    # Step-specific gating
+    if step == "documents" and not has_documents:
+        return False
+    if step == "tax_return" and not has_return_draft:
+        return False
+    if step == "filed" and current_idx < _step_index("tax_return"):
+        return False
+
+    return True
+
+
+async def mark_step_complete(
+    session: AsyncSession, client_id: str, org_id: str, step: str,
+) -> dict:
+    """Mark a workflow step as complete. Returns updated workflow state."""
+    if step not in STEPS:
+        return {"error": f"Invalid step: {step}"}
+
     result = await session.execute(
         select(ClientModel).where(
             ClientModel.id == client_id,
@@ -47,64 +77,32 @@ async def _advance_to(
     )
     client = result.scalar_one_or_none()
     if not client:
-        return None
+        return {"error": "Client not found"}
 
     current = client.workflow_step or "intake"
-    if _step_index(current) >= _step_index(target_step):
-        return None  # already at or past target
 
-    client.workflow_step = target_step
-    logger.info(
-        "Workflow transition: client %s %s → %s",
-        client_id[:8], current, target_step,
-    )
-    return target_step
+    # Check gating
+    has_docs = await _has_documents(session, client_id, org_id)
+    has_draft = await _has_return_draft(session, client_id, org_id)
 
+    if not can_complete_step(step, has_docs, has_draft, current):
+        return {"error": f"Cannot complete '{step}' — prerequisites not met"}
 
-async def on_document_uploaded(
-    session: AsyncSession, client_id: str, org_id: str,
-) -> None:
-    """Called after a document is uploaded. Advances intake → documents."""
-    await _advance_to(session, client_id, org_id, "documents")
+    # Advance to this step
+    if _step_index(step) > _step_index(current):
+        client.workflow_step = step
+        logger.info("Workflow: client %s → %s (marked complete)", client_id[:8], step)
+
+    return {"workflow_step": client.workflow_step, "steps": _build_step_status(client.workflow_step)}
 
 
-async def on_document_approved(
-    session: AsyncSession, client_id: str, org_id: str,
-) -> None:
-    """Called after a document is approved. If all docs are now approved/verified,
-    advances documents → review."""
-    # Check if any docs still need review
-    pending_count_result = await session.execute(
-        select(func.count()).where(
-            DocumentModel.client_id == client_id,
-            DocumentModel.org_id == org_id,
-            DocumentModel.status.in_(["pending", "review", "flagged"]),
-        )
-    )
-    pending = pending_count_result.scalar() or 0
+async def mark_step_incomplete(
+    session: AsyncSession, client_id: str, org_id: str, step: str,
+) -> dict:
+    """Mark a step incomplete. Cascades: all subsequent steps also become incomplete."""
+    if step not in STEPS or step == "intake":
+        return {"error": f"Cannot unmark '{step}'"}
 
-    if pending == 0:
-        # All docs approved/verified — advance to review
-        await _advance_to(session, client_id, org_id, "review")
-
-
-async def on_return_computed(
-    session: AsyncSession, client_id: str, org_id: str,
-) -> None:
-    """Called after a tax return is computed. Advances review → filing."""
-    await _advance_to(session, client_id, org_id, "filing")
-
-
-async def on_document_deleted(
-    session: AsyncSession, client_id: str, org_id: str,
-) -> None:
-    """Called after a document is deleted. Recalculates the correct step.
-
-    Deleting a document can invalidate the current workflow position:
-    - If no documents remain → back to intake
-    - If unapproved documents exist → back to documents
-    - Otherwise stay at current step (or review if all remaining are approved)
-    """
     result = await session.execute(
         select(ClientModel).where(
             ClientModel.id == client_id,
@@ -113,34 +111,87 @@ async def on_document_deleted(
     )
     client = result.scalar_one_or_none()
     if not client:
-        return
+        return {"error": "Client not found"}
 
-    # Count documents by status
-    total_result = await session.execute(
+    current = client.workflow_step or "intake"
+    step_idx = _step_index(step)
+    current_idx = _step_index(current)
+
+    if current_idx < step_idx:
+        return {"workflow_step": current, "steps": _build_step_status(current)}
+
+    # Roll back to the step before this one
+    new_step = STEPS[step_idx - 1] if step_idx > 0 else "intake"
+    client.workflow_step = new_step
+    logger.info("Workflow: client %s → %s (unmarked %s)", client_id[:8], new_step, step)
+
+    return {"workflow_step": client.workflow_step, "steps": _build_step_status(client.workflow_step)}
+
+
+async def get_workflow_status(
+    session: AsyncSession, client_id: str, org_id: str,
+) -> dict:
+    """Get current workflow status with step completion states and gate info."""
+    result = await session.execute(
+        select(ClientModel).where(
+            ClientModel.id == client_id,
+            ClientModel.org_id == org_id,
+        )
+    )
+    client = result.scalar_one_or_none()
+    if not client:
+        return {"error": "Client not found"}
+
+    current = client.workflow_step or "intake"
+    has_docs = await _has_documents(session, client_id, org_id)
+    has_draft = await _has_return_draft(session, client_id, org_id)
+
+    steps = _build_step_status(current)
+
+    # Add gate info (can this step be completed?)
+    for s in steps:
+        s["can_complete"] = can_complete_step(s["id"], has_docs, has_draft, current)
+
+    return {"workflow_step": current, "steps": steps}
+
+
+def _build_step_status(current_step: str) -> list[dict]:
+    """Build step status list from current workflow_step."""
+    current_idx = _step_index(current_step)
+    return [
+        {
+            "id": step,
+            "label": _step_label(step),
+            "complete": i <= current_idx,
+        }
+        for i, step in enumerate(STEPS)
+    ]
+
+
+def _step_label(step: str) -> str:
+    return {
+        "intake": "Intake",
+        "documents": "Documents",
+        "tax_return": "Tax Return",
+        "filed": "Filed",
+    }.get(step, step)
+
+
+async def _has_documents(session: AsyncSession, client_id: str, org_id: str) -> bool:
+    result = await session.execute(
         select(func.count()).where(
             DocumentModel.client_id == client_id,
             DocumentModel.org_id == org_id,
         )
     )
-    total_docs = total_result.scalar() or 0
+    return (result.scalar() or 0) > 0
 
-    if total_docs == 0:
-        new_step = "intake"
-    else:
-        pending_result = await session.execute(
-            select(func.count()).where(
-                DocumentModel.client_id == client_id,
-                DocumentModel.org_id == org_id,
-                DocumentModel.status.in_(["pending", "review", "flagged"]),
-            )
-        )
-        pending = pending_result.scalar() or 0
-        new_step = "documents" if pending > 0 else "review"
 
-    current = client.workflow_step or "intake"
-    if current != new_step and _step_index(current) > _step_index(new_step):
-        client.workflow_step = new_step
-        logger.info(
-            "Workflow rollback: client %s %s → %s (document deleted)",
-            client_id[:8], current, new_step,
+async def _has_return_draft(session: AsyncSession, client_id: str, org_id: str) -> bool:
+    result = await session.execute(
+        select(func.count()).where(
+            TaxReturnDraftModel.client_id == client_id,
+            TaxReturnDraftModel.org_id == org_id,
         )
+    )
+    return (result.scalar() or 0) > 0

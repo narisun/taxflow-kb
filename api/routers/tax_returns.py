@@ -55,14 +55,7 @@ async def generate_draft(
     user: UserModel = Depends(require_role("admin", "supervisor", "preparer")),
     service: TaxReturnService = Depends(get_tax_return_service),
 ):
-    draft = await service.compute_and_save_draft(client_id, session, user)
-
-    # Advance workflow: review → filing when return is computed
-    from api.services.workflow import on_return_computed
-    await on_return_computed(session, client_id, user.org_id)
-    await session.commit()
-
-    return draft
+    return await service.compute_and_save_draft(client_id, session, user)
 
 
 @router.get("/draft", response_model=TaxReturnDraft)

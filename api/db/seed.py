@@ -26,15 +26,16 @@ async def seed_dev_data(session):
         email="sarah@chen-cpa.com",
         name="Sarah Chen",
         role="admin",
+        onboarding_status="complete",
     )
     session.add(user)
     await session.flush()
 
     sample_clients = [
-        {"name": "Smith, John", "filing_status": "single", "tax_year": 2025, "dependents": 1, "workflow_step": "review"},
+        {"name": "Smith, John", "filing_status": "single", "tax_year": 2025, "dependents": 1, "workflow_step": "tax_return"},
         {"name": "Johnson Family", "filing_status": "mfj", "tax_year": 2025, "dependents": 3, "workflow_step": "documents"},
         {"name": "Chen, Wei", "filing_status": "single", "tax_year": 2025, "dependents": 0, "workflow_step": "intake"},
-        {"name": "Garcia Household", "filing_status": "mfj", "tax_year": 2025, "dependents": 4, "workflow_step": "filing"},
+        {"name": "Garcia Household", "filing_status": "mfj", "tax_year": 2025, "dependents": 4, "workflow_step": "tax_return"},
         {"name": "Patel Family", "filing_status": "mfj", "tax_year": 2025, "dependents": 1, "workflow_step": "filed"},
     ]
     for data in sample_clients:
