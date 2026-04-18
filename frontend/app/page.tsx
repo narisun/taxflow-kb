@@ -118,26 +118,31 @@ export default function Home() {
 
   const activeClient = sidebarClients.find((c) => c.id === activeClientId);
 
-  // Refresh a single client's data (workflow_step, etc.) after state-changing actions
+  // Refresh a single client's data (workflow_step, return draft, etc.) after state-changing actions
   const refreshActiveClient = useCallback(async () => {
     const cid = activeClientId;
     if (!cid) return;
     try {
-      const updated = await api.clients.get(cid);
-      if (!updated) return;
-      setApiClients((prev) => prev.map((c) => (c.id === cid ? updated : c)));
-      setSidebarClients((prev) =>
-        prev.map((c) =>
-          c.id === cid
-            ? {
-                ...c,
-                status: mapWorkflowStep(updated.workflow_step),
-                meta: `${updated.filing_status} \u00b7 ${updated.dependents} dep. \u00b7 ${updated.tax_year}`,
-                adults: deriveAdults(updated),
-              }
-            : c
-        )
-      );
+      const [updated, draft] = await Promise.all([
+        api.clients.get(cid),
+        api.returns.get(cid).catch(() => null),
+      ]);
+      if (updated) {
+        setApiClients((prev) => prev.map((c) => (c.id === cid ? updated : c)));
+        setSidebarClients((prev) =>
+          prev.map((c) =>
+            c.id === cid
+              ? {
+                  ...c,
+                  status: mapWorkflowStep(updated.workflow_step),
+                  meta: `${updated.filing_status} \u00b7 ${updated.dependents} dep. \u00b7 ${updated.tax_year}`,
+                  adults: deriveAdults(updated),
+                }
+              : c
+          )
+        );
+      }
+      if (draft) setReturnDraft(draft);
     } catch {
       // Non-critical — UI will update on next full refresh
     }
@@ -627,15 +632,27 @@ export default function Home() {
             </button>
           )}
 
-          {/* Federal refund/owed — dynamically updated from computed draft */}
-          {returnDraft && returnDraft.refund_or_owed !== 0 && (
-            <span className={`hidden xl:inline text-[12px] font-semibold px-2.5 py-1 rounded-md ${
-              returnDraft.refund_or_owed >= 0
-                ? "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/15"
-                : "text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/15"
-            }`}>
-              Federal: {returnDraft.refund_or_owed >= 0 ? "+" : "-"}${Math.abs(returnDraft.refund_or_owed).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-            </span>
+          {/* Federal + State refund/owed — always visible, placeholder when not computed */}
+          {activeClient && (
+            <div className="hidden md:flex items-center gap-2 shrink-0">
+              {returnDraft && returnDraft.refund_or_owed !== undefined ? (
+                <span className={cn(
+                  "text-[12px] font-semibold px-2.5 py-1 rounded-md",
+                  returnDraft.refund_or_owed >= 0
+                    ? "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/15"
+                    : "text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/15"
+                )}>
+                  Federal: {returnDraft.refund_or_owed >= 0 ? "+" : ""}${returnDraft.refund_or_owed.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                </span>
+              ) : (
+                <span className="text-[12px] font-medium text-tertiary px-2.5 py-1 rounded-md bg-surface-secondary">
+                  Federal: --
+                </span>
+              )}
+              <span className="text-[12px] font-medium text-tertiary px-2.5 py-1 rounded-md bg-surface-secondary">
+                State: --
+              </span>
+            </div>
           )}
         </div>
 
@@ -698,7 +715,7 @@ export default function Home() {
     <div className="flex flex-col h-screen overflow-hidden">
       <TopBar
         stats={{ clients: totalClients, filed: filedCount, review: reviewCount }}
-        deadline="April 15 in 4 days"
+        deadline=""
         showMenu={!isDesktopXL}
         onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
         clientName={isMobile ? activeClient?.name : undefined}

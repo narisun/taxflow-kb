@@ -177,10 +177,12 @@ function TopBar({ stats, deadline, onMenuToggle, showMenu, clientName, onDashboa
 
         <NotificationBell />
 
-        {/* Deadline */}
-        <span className="hidden md:inline text-[12px] text-amber-600 dark:text-amber-400 font-medium bg-amber-50 dark:bg-amber-900/20 px-2.5 py-1 rounded-full shrink-0">
-          {deadline}
-        </span>
+        {/* Deadline — hidden when empty */}
+        {deadline && (
+          <span className="hidden md:inline text-[12px] text-amber-600 dark:text-amber-400 font-medium bg-amber-50 dark:bg-amber-900/20 px-2.5 py-1 rounded-full shrink-0">
+            {deadline}
+          </span>
+        )}
 
         <ThemeToggle />
 
