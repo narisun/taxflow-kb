@@ -596,6 +596,7 @@ export default function Home() {
         )}
 
         {activeWorkTab === "Tax Return" && (
+          <>
           <ReturnPreview
             lines={returnDraft?.lines}
             totalIncome={returnDraft?.total_income}
@@ -635,6 +636,7 @@ export default function Home() {
               </button>
             );
           })()}
+          </>
         )}
 
         {activeWorkTab === "Filing" && (
