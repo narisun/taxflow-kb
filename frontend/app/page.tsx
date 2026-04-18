@@ -20,9 +20,8 @@ import { DocumentManagerModal } from "@/components/documents/document-manager-mo
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs } from "@/components/ui/tabs";
-import { api } from "@/lib/api-client";
-import { mockApi } from "@/lib/mock-api";
-import { mockAdults } from "@/lib/mock-data";
+import { api, USE_MOCK } from "@/lib/api-client";
+import { useToast } from "@/components/ui/toast";
 import type {
   Client as ApiClient,
   ChatMessage,
@@ -34,14 +33,14 @@ import { BottomTabBar, type TabId } from "@/components/layout/bottom-tab-bar";
 import { useIsMobile, useIsDesktopXL } from "@/lib/hooks/use-media-query";
 import { useApp } from "./providers";
 import { SettingsModal } from "@/components/settings/settings-modal";
-import { OnboardingTour } from "@/components/onboarding/onboarding-tour";
+import { ProductTour } from "@/components/onboarding/product-tour";
 
 // ────────────────────────────────────────────
 // Page component
 // ────────────────────────────────────────────
 
 interface LocalMessage {
-  id: string | number;
+  id: string;
   role: "user" | "assistant";
   content: string;
   timestamp: string;
@@ -49,7 +48,7 @@ interface LocalMessage {
 }
 
 interface LocalDoc {
-  id: number;
+  id: string;
   form_type: string;
   title: string;
   status: string;
@@ -58,7 +57,11 @@ interface LocalDoc {
   flags: string;
   name: string;
   type: string;
+  file_name?: string;
   created_at?: string;
+  created_by_name?: string | null;
+  reviewed_at?: string | null;
+  reviewed_by_name?: string | null;
 }
 
 export default function Home() {
@@ -82,18 +85,27 @@ export default function Home() {
   const [viewerDoc, setViewerDoc] = useState<LocalDoc | null>(null);
   const [viewerOpen, setViewerOpen] = useState(false);
   const [activeWorkTab, setActiveWorkTab] = useState("Documents");
-  const [usingApi, setUsingApi] = useState(false);
+  const { toast } = useToast();
   const [returnDraft, setReturnDraft] = useState<TaxReturnDraft | null>(null);
   const [intakeOpen, setIntakeOpen] = useState(false);
   const [intakeMode, setIntakeMode] = useState<"create" | "edit">("create");
-  const [intakeEditData, setIntakeEditData] = useState<Partial<IntakeFormData> & { id?: number } | undefined>();
+  const [intakeEditData, setIntakeEditData] = useState<
+    Partial<IntakeFormData> & {
+      id?: string;
+      ssnMasked?: string;
+      dobMasked?: string;
+      spouseSsnMasked?: string;
+      spouseDobMasked?: string;
+      streetMasked?: string;
+    } | undefined
+  >();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [inboxOpen, setInboxOpen] = useState(false);
   const [researchOpen, setResearchOpen] = useState(false);
-  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showProductTour, setShowProductTour] = useState(false);
   const [dashboardOpen, setDashboardOpen] = useState(false);
   const [docManagerOpen, setDocManagerOpen] = useState(false);
-  const [clientDependents, setClientDependents] = useState<Array<{id: number; first_name: string; last_name: string; relationship: string; ssn_masked?: string}>>([]);
+  const [clientDependents, setClientDependents] = useState<Array<{id: string; first_name: string; last_name: string; relationship: string; ssn_masked?: string}>>([]);
   const [clientMasterOpen, setClientMasterOpen] = useState(false);
   const [clientMasterFilter, setClientMasterFilter] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -108,25 +120,26 @@ export default function Home() {
 
   // Check onboarding on mount
   useEffect(() => {
-    if (!localStorage.getItem("taxflow_onboarding_complete")) {
-      setShowOnboarding(true);
+    if (!localStorage.getItem("taxflow_product_tour_complete")) {
+      setShowProductTour(true);
     }
   }, []);
 
-  const completeOnboarding = useCallback(() => {
-    localStorage.setItem("taxflow_onboarding_complete", "true");
-    setShowOnboarding(false);
+  const completeProductTour = useCallback(() => {
+    localStorage.setItem("taxflow_product_tour_complete", "true");
+    setShowProductTour(false);
   }, []);
 
   const replayTour = useCallback(() => {
     setSettingsOpen(false);
-    localStorage.removeItem("taxflow_onboarding_complete");
-    setShowOnboarding(true);
+    localStorage.removeItem("taxflow_product_tour_complete");
+    setShowProductTour(true);
   }, []);
 
-  // Load clients on mount — use real API only if NEXT_PUBLIC_API_URL is explicitly set
-  const useRealApi = Boolean(process.env.NEXT_PUBLIC_API_URL);
-
+  // Load clients on mount. The `api` object is whichever implementation
+  // (real or mock) was selected at module load via NEXT_PUBLIC_USE_MOCK_DATA.
+  // No silent fallback — backend errors surface as toasts so failures are
+  // visible instead of being papered over with stale mock data.
   useEffect(() => {
     let cancelled = false;
 
@@ -138,54 +151,42 @@ export default function Home() {
         status: mapWorkflowStep(c.workflow_step),
         initials: c.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase(),
         color: hashColor(c.name),
-        adults: mockAdults[c.id] || undefined,
+        adults: deriveAdults(c),
       }));
     }
 
     async function loadClients() {
-      // If explicitly configured to use real API, try that first
-      if (useRealApi) {
-        try {
-          const apiData = await api.clients.list();
-          if (!cancelled && Array.isArray(apiData) && apiData.length > 0) {
-            setUsingApi(true);
-            setApiClients(apiData);
-            setSidebarClients(toSidebar(apiData));
-            setActiveClientId(String(apiData[0].id));
-            return;
-          }
-        } catch {
-          // Fall through to mock
-        }
-      }
-
-      // Use mock data
       try {
-        const mockData = await mockApi.clients.list();
-        if (!cancelled && mockData.length > 0) {
-          setApiClients(mockData);
-          setSidebarClients(toSidebar(mockData));
-          setActiveClientId(String(mockData[0].id));
-        }
-      } catch { /* ignore */ }
+        const data = await api.clients.list();
+        if (cancelled || !Array.isArray(data)) return;
+        setApiClients(data);
+        setSidebarClients(toSidebar(data));
+        if (data.length > 0) setActiveClientId(String(data[0].id));
+      } catch (err) {
+        if (cancelled) return;
+        toast(
+          "error",
+          "Failed to load clients",
+          err instanceof Error ? err.message : "Unknown error",
+        );
+      }
     }
     loadClients();
     return () => { cancelled = true; };
-  }, [setApiClients, useRealApi]);
+  }, [setApiClients, toast]);
 
   // Load chat and documents when active client changes
   useEffect(() => {
     if (!activeClientId) return;
-    const numId = Number(activeClientId);
-    if (isNaN(numId)) return;
+    const cid = activeClientId;
+    if (!cid) return;
 
     let cancelled = false;
     async function loadClientData() {
-      const source = usingApi ? api : mockApi;
       try {
         const [chatData, docData] = await Promise.all([
-          source.chat.history(numId),
-          source.documents.list(numId),
+          api.chat.history(cid),
+          api.documents.list(cid),
         ]);
         if (cancelled) return;
         if (Array.isArray(chatData)) {
@@ -221,28 +222,27 @@ export default function Home() {
     }
     loadClientData();
     return () => { cancelled = true; };
-  }, [activeClientId, usingApi, setApiMessages, setApiDocuments]);
+  }, [activeClientId, setApiMessages, setApiDocuments]);
 
   // Auto-load draft when switching to Tax Return tab
   useEffect(() => {
     if (activeWorkTab !== "Tax Return") return;
-    const numId = Number(activeClientId);
-    if (isNaN(numId) || !usingApi) return;
-    api.returns.get(numId).then((draft) => {
+    const cid = activeClientId;
+    if (!cid) return;
+    api.returns.get(cid).then((draft) => {
       if (draft) setReturnDraft(draft);
     });
-  }, [activeWorkTab, activeClientId, usingApi, documents.length]);
+  }, [activeWorkTab, activeClientId, documents.length]);
 
   // Command handler for prompt chips — intercepts specific commands
   const handleCommand = useCallback(async (command: string): Promise<string | null> => {
-    const numId = Number(activeClientId);
-    if (isNaN(numId) || !usingApi) return null;
-    const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const cid = activeClientId;
+    if (!cid) return null;
 
     try {
       switch (command) {
         case "Check status": {
-          const client = apiClients.find(c => c.id === numId);
+          const client = apiClients.find(c => c.id === cid);
           if (!client) return "Client not found.";
           const docs = documents;
           const approved = docs.filter(d => d.status === "approved" || d.status === "verified").length;
@@ -256,6 +256,11 @@ export default function Home() {
             parts.push("- No documents uploaded yet");
           } else {
             parts.push(`- **${docs.length}** documents uploaded (${approved} approved, ${review} needs review, ${pending} pending)`);
+            // Inline list so the user can verify what's actually on file
+            // without opening the Documents panel.
+            for (const d of docs) {
+              parts.push(`    - **${d.form_type}** — ${docFileLabel(d)} (${docStatusBadge(d.status)})`);
+            }
           }
           if (hasReturn) {
             parts.push(`- Tax return computed — refund: **$${Math.abs(returnDraft!.refund_or_owed).toLocaleString()}** ${returnDraft!.refund_or_owed >= 0 ? "(refund)" : "(owed)"}`);
@@ -274,27 +279,68 @@ export default function Home() {
         case "Review docs": {
           const docs = documents;
           if (docs.length === 0) return "No documents uploaded. Upload W-2s, 1099s, and other tax documents to get started.";
-          const issues: string[] = [];
+
+          // Bucket by review state. We deliberately split "approved" (a
+          // human clicked Approve — has reviewed_by/reviewed_at) from
+          // "verified" (auto-passed at upload because confidence was high
+          // and no flags fired). Lumping them together produced a
+          // misleading "Reviewed not yet reviewed" line for verified docs.
           const review = docs.filter(d => d.status === "review" || d.status === "flagged");
-          const lowConf = docs.filter(d => d.confidence < 0.9);
+          const lowConf = docs.filter(d => d.confidence < 0.9 && !(d.status === "review" || d.status === "flagged"));
+          const approved = docs.filter(d => d.status === "approved");
+          const verified = docs.filter(d => d.status === "verified");
+
+          const lines: string[] = [];
           if (review.length > 0) {
-            issues.push(`**${review.length} document${review.length > 1 ? "s" : ""} pending review:**`);
-            review.forEach(d => issues.push(`- ${d.form_type}: ${d.name || d.title} (${Math.round(d.confidence * 100)}% confidence)`));
+            lines.push(`**${review.length} document${review.length > 1 ? "s" : ""} pending review:**`);
+            for (const d of review) {
+              lines.push(
+                `- **${d.form_type}** — ${docFileLabel(d)} (${Math.round(d.confidence * 100)}% conf)`,
+              );
+              lines.push(`    Uploaded ${docUploadedTrail(d)}`);
+            }
+            lines.push("");
           }
-          if (lowConf.length > 0 && review.length === 0) {
-            issues.push(`**${lowConf.length} document${lowConf.length > 1 ? "s" : ""} with low confidence:**`);
-            lowConf.forEach(d => issues.push(`- ${d.form_type}: ${Math.round(d.confidence * 100)}%`));
+          if (lowConf.length > 0) {
+            lines.push(`**${lowConf.length} document${lowConf.length > 1 ? "s" : ""} with low confidence:**`);
+            for (const d of lowConf) {
+              lines.push(
+                `- **${d.form_type}** — ${docFileLabel(d)} (${Math.round(d.confidence * 100)}% conf)`,
+              );
+              lines.push(`    Uploaded ${docUploadedTrail(d)}`);
+            }
+            lines.push("");
           }
-          if (issues.length === 0) {
+          if (approved.length > 0) {
+            lines.push(`**${approved.length} document${approved.length > 1 ? "s" : ""} approved:**`);
+            for (const d of approved) {
+              lines.push(`- **${d.form_type}** — ${docFileLabel(d)}`);
+              // docReviewedTrail() already starts with the verb (e.g.
+              // "Reviewed by …") — do NOT prepend "Reviewed " here.
+              lines.push(`    Uploaded ${docUploadedTrail(d)} · ${docReviewedTrail(d)}`);
+            }
+            lines.push("");
+          }
+          if (verified.length > 0) {
+            lines.push(`**${verified.length} document${verified.length > 1 ? "s" : ""} auto-verified at upload (awaiting human review):**`);
+            for (const d of verified) {
+              lines.push(`- **${d.form_type}** — ${docFileLabel(d)} (${Math.round(d.confidence * 100)}% conf)`);
+              lines.push(`    Uploaded ${docUploadedTrail(d)}`);
+            }
+          }
+          if (lines.length === 0) {
             return `All **${docs.length}** documents are approved and ready. No issues found.`;
           }
-          return issues.join("\n");
+          return lines.join("\n").trimEnd();
         }
 
         case "Run rules": {
-          const resp = await fetch(`${API}/api/clients/${numId}/returns/validate`, { method: "POST" });
-          if (!resp.ok) return "Failed to run validation. Make sure documents are uploaded.";
-          const data = await resp.json();
+          let data;
+          try {
+            data = await api.returns.validate(cid);
+          } catch {
+            return "Failed to run validation. Make sure documents are uploaded.";
+          }
           if (!data.has_errors && data.results.length === 0) return "All validation rules passed. No issues found.";
           const parts = [`**Validation Results** (${data.results.length} items):\n`];
           for (const r of data.results) {
@@ -306,11 +352,14 @@ export default function Home() {
         }
 
         case "Analyze yoy": {
-          const client = apiClients.find(c => c.id === numId);
+          const client = apiClients.find(c => c.id === cid);
           const priorYear = (client?.tax_year || 2024) === 2024 ? 2025 : 2024;
-          const resp = await fetch(`${API}/api/clients/${numId}/returns/compare?prior_year=${priorYear}`);
-          if (!resp.ok) return "Could not generate year-over-year comparison. Make sure a tax return has been computed.";
-          const data = await resp.json();
+          let data;
+          try {
+            data = await api.returns.compare(cid, priorYear);
+          } catch {
+            return "Could not generate year-over-year comparison. Make sure a tax return has been computed.";
+          }
           const parts = [`**Year-over-Year Comparison** (TY${data.current_year} vs TY${data.prior_year})\n`];
           for (const section of data.sections) {
             parts.push(`**${section.title}:**`);
@@ -326,15 +375,18 @@ export default function Home() {
         }
 
         case "Estimate refund": {
-          const resp = await fetch(`${API}/api/clients/${numId}/returns/draft`, { method: "POST" });
-          if (!resp.ok) return "Failed to compute tax return. Make sure documents are uploaded and approved.";
-          const draft = await resp.json();
+          let draft;
+          try {
+            draft = await api.returns.draft(cid);
+          } catch {
+            return "Failed to compute tax return. Make sure documents are uploaded and approved.";
+          }
           setReturnDraft(draft);
           const parts = ["**Federal Return Estimate:**\n"];
           parts.push(`- Total Income: **$${draft.total_income.toLocaleString()}**`);
           parts.push(`- Taxable Income: **$${draft.taxable_income.toLocaleString()}**`);
           parts.push(`- Total Tax: **$${draft.total_tax.toLocaleString()}**`);
-          parts.push(`- Total Payments: **$${draft.total_payments.toLocaleString()}**`);
+          parts.push(`- Total Payments: **$${(draft.total_payments ?? 0).toLocaleString()}**`);
           parts.push(`- Effective Rate: **${draft.effective_rate}%**`);
           parts.push("");
           if (draft.refund_or_owed >= 0) {
@@ -359,13 +411,13 @@ export default function Home() {
     } catch (e) {
       return `Error: ${e instanceof Error ? e.message : "Something went wrong"}`;
     }
-  }, [activeClientId, usingApi, apiClients, documents, returnDraft]);
+  }, [activeClientId, apiClients, documents, returnDraft]);
 
   // Send message handler
   const handleSendMessage = useCallback(
     async (content: string) => {
       const newUserMsg: LocalMessage = {
-        id: Date.now(),
+        id: `m-${Date.now()}`,
         role: "user",
         content,
         timestamp: new Date().toLocaleTimeString([], {
@@ -383,7 +435,7 @@ export default function Home() {
         setMessages((prev) => [
           ...prev,
           {
-            id: Date.now() + 1,
+            id: `m-${Date.now()}-1`,
             role: "assistant" as const,
             content: commandResult,
             timestamp: new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }),
@@ -392,91 +444,107 @@ export default function Home() {
         return;
       }
 
-      const numId = Number(activeClientId);
-      if (usingApi && !isNaN(numId)) {
-        try {
-          // For LLM commands, enhance the prompt
-          let prompt = content;
-          if (content === "Draft email") prompt = "Draft a professional email to this client summarizing the current status of their tax return, any pending items, and next steps. Use a warm but professional tone.";
-          else if (content === "Draft advisory") prompt = "Generate detailed tax-saving advisory recommendations for this client for next year. Include specific dollar amounts and strategies based on their current return data.";
-          else if (content === "Run pre-filing checks") prompt = "Run a comprehensive pre-filing checklist for this client. Check for: missing documents, data consistency, optimization opportunities, common filing errors, and any red flags that could trigger an audit. Format as a checklist with pass/fail status.";
-
-          const response = await api.chat.send(numId, prompt);
-          setIsTyping(false);
-          if (response && response.content) {
-            setMessages((prev) => [
-              ...prev,
-              {
-                id: response.id || Date.now() + 1,
-                role: "assistant",
-                content: response.content,
-                timestamp: new Date(
-                  response.created_at || Date.now()
-                ).toLocaleTimeString([], {
-                  hour: "numeric",
-                  minute: "2-digit",
-                }),
-              },
-            ]);
-          }
-          return;
-        } catch {
-          // Fall through to mock response
-        }
-      }
-
-      // Fallback to mock API
-      try {
-        const response = await mockApi.chat.send(numId, content);
+      const cid = activeClientId;
+      if (!cid) {
         setIsTyping(false);
         setMessages((prev) => [
           ...prev,
           {
-            id: response.id || Date.now() + 1,
-            role: "assistant",
-            content: response.content,
-            timestamp: new Date(response.created_at || Date.now()).toLocaleTimeString([], {
-              hour: "numeric",
-              minute: "2-digit",
-            }),
+            id: `m-${Date.now()}-no-client`,
+            role: "assistant" as const,
+            content:
+              "No client is currently selected. To get started:\n\n" +
+              "1. **Create a new client** using the **+ New Intake** button in the sidebar\n" +
+              "2. **Select an existing client** from the sidebar\n\n" +
+              "Once a client is selected, I can help you with their tax return, documents, and advisory work.",
+            timestamp: new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }),
           },
         ]);
-      } catch {
+        return;
+      }
+
+      // For LLM commands, enhance the prompt
+      let prompt = content;
+      if (content === "Draft email") prompt = "Draft a professional email to this client summarizing the current status of their tax return, any pending items, and next steps. Use a warm but professional tone.";
+      else if (content === "Draft advisory") prompt = "Generate detailed tax-saving advisory recommendations for this client for next year. Include specific dollar amounts and strategies based on their current return data.";
+      else if (content === "Run pre-filing checks") prompt = "Run a comprehensive pre-filing checklist for this client. Check for: missing documents, data consistency, optimization opportunities, common filing errors, and any red flags that could trigger an audit. Format as a checklist with pass/fail status.";
+
+      try {
+        const response = await api.chat.send(cid, prompt);
         setIsTyping(false);
+        if (response && response.content) {
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: response.id || `m-${Date.now()}-r`,
+              role: "assistant",
+              content: response.content,
+              timestamp: new Date(
+                response.created_at || Date.now()
+              ).toLocaleTimeString([], {
+                hour: "numeric",
+                minute: "2-digit",
+              }),
+            },
+          ]);
+        }
+      } catch (err) {
+        setIsTyping(false);
+        toast(
+          "error",
+          "Chat request failed",
+          err instanceof Error ? err.message : "Backend unavailable",
+        );
       }
     },
-    [activeClientId, usingApi]
+    // ``handleCommand`` is rebuilt whenever documents/returnDraft/apiClients
+    // change. If we omit it here, this useCallback caches the old reference
+    // and prompt-chips like "Check status" run against stale state — e.g.
+    // reporting "No documents uploaded" right after an upload.
+    [activeClientId, toast, handleCommand]
   );
 
   // Document approve handler
   const handleApproveDoc = useCallback(
-    async (docId: number) => {
-      if (usingApi) {
-        try {
-          await api.documents.approve(docId);
-        } catch {
-          // Silently fall through
-        }
+    async (docId: string) => {
+      // Round-trip through the API and merge the *response* back into local
+      // state. The backend stamps ``reviewed_by`` / ``reviewed_at`` and
+      // sets ``status='approved'``; if we instead just locally flipped the
+      // status to "verified" (the previous behavior) the chip's audit-trail
+      // line was permanently wrong until the next full list-refetch.
+      let updated;
+      try {
+        updated = await api.documents.approve(docId);
+      } catch {
+        return;
       }
       setDocuments((prev) =>
         prev.map((d) =>
-          d.id === docId ? { ...d, status: "verified" } : d
-        )
+          d.id === docId
+            ? {
+                ...d,
+                status: updated.status,
+                reviewed_at: updated.reviewed_at,
+                reviewed_by: updated.reviewed_by,
+                reviewed_by_name: updated.reviewed_by_name,
+              }
+            : d,
+        ),
       );
     },
-    [usingApi]
+    []
   );
 
   // Generate return draft
   const handleGenerateReturn = useCallback(async () => {
-    const numId = Number(activeClientId);
-    if (isNaN(numId)) return;
-    const source = usingApi ? api : mockApi;
+    const cid = activeClientId;
+    if (!cid) return;
+    const source = api;
     try {
-      const draft = await source.returns.draft(numId);
+      const draft = await api.returns.draft(cid);
       setReturnDraft(draft);
     } catch { /* ignore */ }
-  }, [activeClientId, usingApi]);
+  }, [activeClientId]);
 
   // File upload handler
   const handleFileSelected = useCallback(
@@ -499,20 +567,19 @@ export default function Home() {
 
       // Log upload start to chat
       const uploadMsg: LocalMessage = {
-        id: Date.now(),
+        id: `m-${Date.now()}`,
         role: "assistant",
         content: `Uploading **${file.name}** (${formType})...`,
         timestamp: new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }),
       };
       setMessages((prev) => [...prev, uploadMsg]);
 
-      const numId = Number(activeClientId);
-      if (isNaN(numId)) return;
+      const cid = activeClientId;
+      if (!cid) return;
 
-      const source = usingApi ? api : mockApi;
       try {
-        const doc = await source.documents.upload(numId, file, formType);
-        const docData = await source.documents.list(numId);
+        const doc = await api.documents.upload(cid, file, formType);
+        const docData = await api.documents.list(cid);
         if (Array.isArray(docData)) {
           setDocuments(docData.map((d: ApiDocument) => ({
             ...d, client_id: d.client_id, name: d.title, type: d.form_type,
@@ -533,19 +600,19 @@ export default function Home() {
         }
         setMessages((prev) => [
           ...prev.filter((m) => m.id !== uploadMsg.id),
-          { id: Date.now() + 1, role: "assistant" as const, content: summary,
+          { id: `m-${Date.now()}-1`, role: "assistant" as const, content: summary,
             timestamp: new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) },
         ]);
       } catch (err) {
         setMessages((prev) => [
           ...prev.filter((m) => m.id !== uploadMsg.id),
-          { id: Date.now() + 1, role: "assistant" as const,
+          { id: `m-${Date.now()}-1`, role: "assistant" as const,
             content: `Failed to upload ${file.name}: ${err instanceof Error ? err.message : "Unknown error"}`,
             timestamp: new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) },
         ]);
       }
     },
-    [activeClientId, usingApi]
+    [activeClientId]
   );
 
   const handleMobileTabChange = useCallback((tab: TabId) => {
@@ -581,23 +648,18 @@ export default function Home() {
       onNewIntake={() => { setIntakeMode("create"); setIntakeEditData(undefined); setIntakeOpen(true); }}
       onResearchAgent={() => setResearchOpen(true)}
       onEditClient={(clientId) => {
-        const numId = Number(clientId);
-        const c = apiClients.find((cl) => cl.id === numId);
-        if (c) {
-          setIntakeEditData({
-            id: c.id,
-            firstName: c.name.split(" ")[0] || "",
-            lastName: c.name.split(" ").slice(1).join(" ") || "",
-            filingStatus: c.filing_status,
-            taxYear: c.tax_year,
-            dependents: c.dependents,
-            city: (c as any).city || "",
-            state: (c as any).state || "",
-            ...(c as any),
-          });
-          setIntakeMode("edit");
-          setIntakeOpen(true);
-        }
+        const cid = clientId;
+        const c = apiClients.find((cl) => cl.id === cid);
+        if (!c) return;
+        // Mask-by-default policy: PII fields stay empty in the form. The
+        // masked snippets (***-**-1234, **/**/1985, etc.) are passed through
+        // as `*Masked` props so PiiInput can show the snippet as a
+        // placeholder + render the eye-toggle reveal button (gated by
+        // can_view_pii on the user's session). This avoids leaking PII onto
+        // the screen during screen-share / over-the-shoulder scenarios.
+        setIntakeEditData(clientToFormData(c));
+        setIntakeMode("edit");
+        setIntakeOpen(true);
       }}
     />
   );
@@ -629,14 +691,13 @@ export default function Home() {
                   doc={doc}
                   onClick={() => { setViewerDoc(doc); setViewerOpen(true); }}
                   onDelete={async (docId) => {
-                    const numId = Number(activeClientId);
-                    if (isNaN(numId)) return;
-                    const source = usingApi ? api : mockApi;
-                    try {
-                      if (usingApi) {
+                    const cid = activeClientId;
+                    if (!cid) return;
+                                  try {
+                      {
                         await api.documents.delete(docId);
                       }
-                      const docData = await source.documents.list(numId);
+                      const docData = await api.documents.list(cid);
                       if (Array.isArray(docData)) {
                         setDocuments(docData.map((d: any) => ({
                           ...d, client_id: d.client_id, name: d.title, type: d.form_type,
@@ -654,11 +715,10 @@ export default function Home() {
             <button
               onClick={async () => {
                 // Load dependents for the document manager
-                const numId = Number(activeClientId);
-                if (!isNaN(numId) && usingApi) {
+                const cid = activeClientId;
+                if (!!cid) {
                   try {
-                    const deps = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/clients/${numId}/dependents`);
-                    if (deps.ok) setClientDependents(await deps.json());
+                    setClientDependents(await api.dependents.list(cid));
                   } catch { /* ignore */ }
                 }
                 setDocManagerOpen(true);
@@ -694,6 +754,7 @@ export default function Home() {
 
         {activeWorkTab === "Advisory" && (
           <AdvisoryPanel
+            clientId={activeClientId}
             clientName={activeClient?.name}
             filingStatus={activeClient?.meta.split(" \u00b7 ")[0]}
             dependents={Number(activeClient?.meta.match(/(\d+) dep/)?.[1] || 0)}
@@ -800,7 +861,6 @@ export default function Home() {
       <TopBar
         stats={{ clients: totalClients, filed: filedCount, review: reviewCount }}
         deadline="April 15 in 4 days"
-        user={{ initials: "SC" }}
         showMenu={!isDesktopXL}
         onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
         clientName={isMobile ? activeClient?.name : undefined}
@@ -853,6 +913,7 @@ export default function Home() {
                   )}
                   {activeWorkTab === "Advisory" && (
                     <AdvisoryPanel
+                      clientId={activeClientId}
                       clientName={activeClient?.name}
                       filingStatus={activeClient?.meta.split(" \u00b7 ")[0]}
                       dependents={Number(activeClient?.meta.match(/(\d+) dep/)?.[1] || 0)}
@@ -913,8 +974,8 @@ export default function Home() {
         open={docManagerOpen}
         onClose={() => setDocManagerOpen(false)}
         client={(() => {
-          const numId = Number(activeClientId);
-          const c = apiClients.find((c) => c.id === numId);
+          const cid = activeClientId;
+          const c = apiClients.find((c) => c.id === cid);
           if (!c) return null;
           return {
             name: c.name,
@@ -927,10 +988,9 @@ export default function Home() {
         dependents={clientDependents}
         documents={documents}
         onUpload={async (files) => {
-          const numId = Number(activeClientId);
-          if (isNaN(numId)) return;
-          const source = usingApi ? api : mockApi;
-          for (const file of files) {
+          const cid = activeClientId;
+          if (!cid) return;
+              for (const file of files) {
             const fname = file.name.toLowerCase();
             let formType = "Other";
             if (fname.includes("w2") || fname.includes("w-2")) formType = "W-2";
@@ -942,14 +1002,14 @@ export default function Home() {
             else if (fname.includes("1098")) formType = "1098";
             else if (fname.includes("k-1") || fname.includes("k1")) formType = "K-1";
             try {
-              await source.documents.upload(numId, file, formType);
+              await api.documents.upload(cid, file, formType);
             } catch (err) {
               console.error(`Upload failed for ${file.name}:`, err);
             }
           }
           // Refresh document list
           try {
-            const docData = await source.documents.list(numId);
+            const docData = await api.documents.list(cid);
             if (Array.isArray(docData)) {
               setDocuments(docData.map((d: any) => ({
                 ...d, client_id: d.client_id, name: d.title, type: d.form_type,
@@ -958,12 +1018,11 @@ export default function Home() {
           } catch { /* ignore */ }
         }}
         onDelete={async (docId) => {
-          const numId = Number(activeClientId);
-          if (isNaN(numId)) return;
-          const source = usingApi ? api : mockApi;
-          try {
-            if (usingApi) await api.documents.delete(docId);
-            const docData = await source.documents.list(numId);
+          const cid = activeClientId;
+          if (!cid) return;
+              try {
+            await api.documents.delete(docId);
+            const docData = await api.documents.list(cid);
             if (Array.isArray(docData)) {
               setDocuments(docData.map((d: any) => ({
                 ...d, client_id: d.client_id, name: d.title, type: d.form_type,
@@ -975,7 +1034,7 @@ export default function Home() {
         }}
         onApprove={async (docId) => {
           try {
-            if (usingApi) await api.documents.approve(docId);
+            await api.documents.approve(docId);
             setDocuments((prev) =>
               prev.map((d) => (d.id === docId ? { ...d, status: "approved" } : d))
             );
@@ -1006,9 +1065,9 @@ export default function Home() {
         onReplayTour={replayTour}
       />
 
-      <OnboardingTour
-        active={showOnboarding}
-        onComplete={completeOnboarding}
+      <ProductTour
+        active={showProductTour}
+        onComplete={completeProductTour}
       />
 
       <IntakeModal
@@ -1016,201 +1075,79 @@ export default function Home() {
         onClose={() => { setIntakeOpen(false); setIntakeMode("create"); setIntakeEditData(undefined); }}
         mode={intakeMode}
         editData={intakeEditData}
-        onSubmit={async (data: IntakeFormData, files?: File[]) => {
+        onSubmit={async (data: IntakeFormData) => {
+          // Throws on failure — IntakeModal catches and shows inline error.
+          // No silent fallbacks; no mock retries; no document upload.
+          // Display name uses a consistent "First Last" format. Earlier
+          // versions wrote "Last, First" which round-tripped badly (every
+          // edit mangled the format further).
           const name = data.familyGroupName
             ? data.familyGroupName
-            : data.spouseFirstName
-              ? `${data.lastName} Family`
-              : `${data.lastName}, ${data.firstName}`;
-          const filingLabel = FILING_STATUS_LABELS[data.filingStatus] || data.filingStatus;
+            : `${data.firstName.trim()} ${data.lastName.trim()}`.trim();
 
-          // ── Edit mode: PATCH existing client ──
+          const payload = {
+            name,
+            primary_first_name: data.firstName.trim() || undefined,
+            primary_last_name: data.lastName.trim() || undefined,
+            filing_status: data.filingStatus,
+            tax_year: data.taxYear,
+            dependents: data.dependents,
+            primary_ssn: data.ssn || undefined,
+            primary_dob: data.dateOfBirth || undefined,
+            email: data.email || undefined,
+            phone: data.phone || undefined,
+            spouse_first_name: data.spouseFirstName || undefined,
+            spouse_last_name: data.spouseLastName || undefined,
+            spouse_ssn: data.spouseSsn || undefined,
+            spouse_dob: data.spouseDob || undefined,
+            spouse_email: data.spouseEmail || undefined,
+            spouse_phone: data.spousePhone || undefined,
+            street: data.street || undefined,
+            city: data.city || undefined,
+            state: data.state || undefined,
+            zip_code: data.zip || undefined,
+            family_group_name: data.familyGroupName || undefined,
+            filing_federal: data.filingFederal,
+            filing_states: data.filingStates ?? [],
+          };
+
+          let clientId: string;
           if (intakeMode === "edit" && intakeEditData?.id) {
-            try {
-              const updated = await api.clients.update(intakeEditData.id, {
-                name,
-                filing_status: data.filingStatus,
-                tax_year: data.taxYear,
-                dependents: data.dependents,
-              });
-
-              // Post dependents
-              for (const dep of data.dependentDetails) {
-                if (dep.firstName) {
-                  try {
-                    await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/clients/${intakeEditData.id}/dependents`, {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({
-                        first_name: dep.firstName,
-                        last_name: dep.lastName,
-                        ssn: dep.ssn,
-                        date_of_birth: dep.dob,
-                        relationship: dep.relationship,
-                      }),
-                    });
-                  } catch { /* ignore */ }
-                }
-              }
-
-              // Refresh client list
-              try {
-                const apiData = await api.clients.list();
-                if (Array.isArray(apiData) && apiData.length > 0) {
-                  setApiClients(apiData);
-                  setSidebarClients(apiData.map((c) => ({
-                    id: String(c.id),
-                    name: c.name,
-                    meta: `${c.filing_status} \u00b7 ${c.dependents} dep. \u00b7 ${c.tax_year}`,
-                    status: mapWorkflowStep(c.workflow_step),
-                    initials: c.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase(),
-                    color: hashColor(c.name),
-                    adults: mockAdults[c.id] || undefined,
-                  })));
-                }
-              } catch { /* ignore */ }
-            } catch (err) {
-              console.error("Failed to update client:", err);
-            }
-            return;
+            const updated = await api.clients.update(intakeEditData.id, payload);
+            clientId = updated.id;
+          } else {
+            const created = await api.clients.create(payload);
+            clientId = created.id;
           }
 
-          // ── Create mode ──
-          try {
-            // Create client via backend API
-            const created = await api.clients.create({
-              name,
-              filing_status: data.filingStatus,
-              tax_year: data.taxYear,
-              dependents: data.dependents,
-              primary_ssn: data.ssn || undefined,
-              primary_dob: data.dateOfBirth || undefined,
-              spouse_first_name: data.spouseFirstName || undefined,
-              spouse_last_name: data.spouseLastName || undefined,
-              spouse_ssn: data.spouseSsn || undefined,
-              spouse_dob: data.spouseDob || undefined,
-              street: data.street || undefined,
-              city: data.city || undefined,
-              state: data.state || undefined,
-              zip_code: data.zip || undefined,
-              family_group_name: data.familyGroupName || undefined,
-            } as any);
-            const newId = String(created.id);
-            const meta = [
-              data.spouseFirstName ? `${data.firstName} & ${data.spouseFirstName}` : data.firstName,
-              filingLabel,
-              data.dependents > 0 ? `${data.dependents} dep.` : null,
-            ].filter(Boolean).join(" \u00b7 ");
-
-            setSidebarClients((prev) => [
-              {
-                id: newId, name, meta, status: "pending",
-                initials: name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase(),
-                color: hashColor(name),
-              },
-              ...prev,
-            ]);
-            setActiveClientId(newId);
-            setUsingApi(true);
-
-            // Post dependents
-            for (const dep of data.dependentDetails) {
-              if (dep.firstName) {
-                try {
-                  await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/clients/${created.id}/dependents`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      first_name: dep.firstName,
-                      last_name: dep.lastName,
-                      ssn: dep.ssn,
-                      date_of_birth: dep.dob,
-                      relationship: dep.relationship,
-                    }),
-                  });
-                } catch { /* ignore */ }
-              }
-            }
-
-            // Log to chat via API
-            const filingDesc = [data.filingFederal ? "Federal" : "", ...data.filingStates].filter(Boolean).join(", ");
-            await api.chat.send(created.id, `[System] New client intake: ${name}, ${filingLabel}, TY ${data.taxYear}. Filing: ${filingDesc}.`);
-
-            // Reload chat
-            const chatData = await api.chat.history(created.id);
-            if (Array.isArray(chatData)) {
-              setMessages(chatData.map((m: ChatMessage) => ({
-                id: m.id, role: m.role, content: m.content,
-                timestamp: new Date(m.created_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }),
-              })));
-            }
-            setDocuments([]);
-
-            // Upload attached files
-            if (files && files.length > 0) {
-              for (const file of files) {
-                const fname = file.name.toLowerCase();
-                let formType = "Other";
-                if (fname.includes("w2") || fname.includes("w-2")) formType = "W-2";
-                else if (fname.includes("1099")) formType = "1099";
-                else if (fname.includes("1098")) formType = "1098";
-                else if (fname.includes("k-1") || fname.includes("k1")) formType = "K-1";
-                try {
-                  await api.documents.upload(created.id, file, formType);
-                } catch { /* ignore */ }
-              }
-              try {
-                const docData = await api.documents.list(created.id);
-                if (Array.isArray(docData)) {
-                  setDocuments(docData.map((d: any) => ({
-                    ...d, client_id: d.client_id, name: d.title, type: d.form_type,
-                  })));
-                }
-              } catch { /* ignore */ }
-            }
-          } catch {
-            try {
-              const created = await mockApi.clients.create({
-                name,
-                filing_status: data.filingStatus,
-                tax_year: data.taxYear,
-                dependents: data.dependents,
-              });
-              const newId = String(created.id);
-              const meta = [
-                data.spouseFirstName ? `${data.firstName} & ${data.spouseFirstName}` : data.firstName,
-                filingLabel,
-                data.dependents > 0 ? `${data.dependents} dep.` : null,
-              ].filter(Boolean).join(" \u00b7 ");
-
-              setSidebarClients((prev) => [
-                {
-                  id: newId, name, meta, status: "pending",
-                  initials: name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase(),
-                  color: hashColor(name),
-                },
-                ...prev,
-              ]);
-              handleSelectClient(newId);
-
-              const chatData = await mockApi.chat.history(created.id);
-              if (Array.isArray(chatData)) {
-                setMessages(chatData.map((m: ChatMessage) => ({
-                  id: m.id, role: m.role, content: m.content,
-                  timestamp: new Date(m.created_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }),
-                })));
-              }
-              setDocuments([]);
-            } catch {
-              const newId = String(Date.now());
-              setSidebarClients((prev) => [
-                { id: newId, name, meta: filingLabel, status: "pending", initials: name.slice(0, 2).toUpperCase(), color: "#6B7280" },
-                ...prev,
-              ]);
-              handleSelectClient(newId);
-              setMessages([]);
-            }
+          // Persist dependents (best-effort: a failure here surfaces as a
+          // toast but doesn't roll back the client save).
+          for (const dep of data.dependentDetails) {
+            if (!dep.firstName.trim()) continue;
+            await api.dependents.create(clientId, {
+              first_name: dep.firstName,
+              last_name: dep.lastName,
+              ssn: dep.ssn || undefined,
+              date_of_birth: dep.dob || undefined,
+              relationship: dep.relationship,
+            });
           }
+
+          // Refresh sidebar so the new/updated client shows immediately.
+          const apiData = await api.clients.list();
+          if (Array.isArray(apiData)) {
+            setApiClients(apiData);
+            setSidebarClients(apiData.map((c) => ({
+              id: String(c.id),
+              name: c.name,
+              meta: `${c.filing_status} \u00b7 ${c.dependents} dep. \u00b7 ${c.tax_year}`,
+              status: mapWorkflowStep(c.workflow_step),
+              initials: c.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase(),
+              color: hashColor(c.name),
+              adults: deriveAdults(c),
+            })));
+          }
+          setActiveClientId(String(clientId));
         }}
       />
     </div>
@@ -1245,6 +1182,170 @@ function mapWorkflowStep(step: string): string {
     default:
       return "pending";
   }
+}
+
+// ── Helpers used by the "Check status" / "Review docs" chat chips ───────────
+//
+// Kept as pure module-level functions (not closures) so they don't need to be
+// recreated each render. The chip handlers consume a ``LocalDoc`` — the
+// flattened UI shape of ``Document`` plus a few convenience fields.
+
+function docFileLabel(d: LocalDoc): string {
+  // Prefer the actual filename the user uploaded; fall back to the sanitized
+  // title ("W-2 (w2_acme.pdf)") and finally the form type so we never render
+  // an empty label.
+  return d.file_name || d.title || d.form_type;
+}
+
+function formatAuditTimestamp(iso: string | null | undefined): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+function docUploadedTrail(d: LocalDoc): string {
+  const who = d.created_by_name || "unknown user";
+  const when = formatAuditTimestamp(d.created_at) || "unknown time";
+  return `by ${who} on ${when}`;
+}
+
+/**
+ * Returns a self-contained audit-trail clause for a document's review state.
+ * The string already starts with the verb ("Reviewed", "Auto-verified", …)
+ * so callers should NOT prepend their own label. Possible outputs:
+ *
+ *   - "Reviewed by Marcus Lee on Apr 15, 2026, 9:05 AM"  (status=approved)
+ *   - "Auto-verified at upload (no human review)"        (status=verified)
+ *   - "Pending review"                                   (status=review/flagged)
+ *   - "Not yet reviewed"                                 (anything else)
+ */
+function docReviewedTrail(d: LocalDoc): string {
+  if (d.reviewed_at) {
+    const who = d.reviewed_by_name || "unknown user";
+    const when = formatAuditTimestamp(d.reviewed_at) || "unknown time";
+    return `Reviewed by ${who} on ${when}`;
+  }
+  if (d.status === "verified") return "Auto-verified at upload (no human review)";
+  if (d.status === "review" || d.status === "flagged") return "Pending review";
+  return "Not yet reviewed";
+}
+
+function docStatusBadge(status: string): string {
+  switch (status) {
+    case "approved":
+      return "approved";
+    case "verified":
+      return "auto-verified";
+    case "review":
+    case "flagged":
+      return "needs review";
+    case "pending":
+      return "pending";
+    default:
+      return status;
+  }
+}
+
+/**
+ * Map a server `Client` (snake_case, masked PII) onto the intake form's
+ * `IntakeFormData` shape (camelCase, plaintext fields). Crucial for edit:
+ *
+ *   - Splits ``name`` into first/last on either "Last, First" or "First Last"
+ *     so the value round-trips cleanly with the new "First Last" save format.
+ *   - Blanks out values that look masked ("***-**-1234") because the form
+ *     can't display them as real values; sending them back would corrupt
+ *     the encrypted column. User must re-type sensitive PII to change it.
+ *   - Date inputs cleared too — masked DOBs cannot bind to a date input.
+ */
+/**
+ * Build the "adult names" line that appears under each client in the sidebar
+ * (e.g. "John Doe" or "John & Jane Doe"). Derived purely from REAL backend
+ * data — no mock map keyed on client id (the previous implementation showed
+ * "Marcus Williams" for any client that happened to land at id=6).
+ */
+function deriveAdults(c: ApiClient): string | undefined {
+  const first = (c.primary_first_name || "").trim();
+  const last = (c.primary_last_name || "").trim();
+  const sFirst = (c.spouse_first_name || "").trim();
+  const sLast = (c.spouse_last_name || "").trim();
+  const primary = `${first} ${last}`.trim();
+  if (sFirst || sLast) {
+    const spouse = `${sFirst} ${sLast}`.trim();
+    if (primary && spouse) return `${first || primary} & ${spouse}`;
+    return primary || spouse || undefined;
+  }
+  return primary || undefined;
+}
+
+function clientToFormData(
+  c: ApiClient,
+): Partial<IntakeFormData> & {
+  id: string;
+  ssnMasked?: string;
+  dobMasked?: string;
+  spouseSsnMasked?: string;
+  spouseDobMasked?: string;
+  streetMasked?: string;
+} {
+  // Prefer the dedicated columns (added later — they round-trip cleanly).
+  // Fall back to a name-split heuristic ONLY for legacy rows created before
+  // the columns existed (where they may still be NULL).
+  let firstName = c.primary_first_name || "";
+  let lastName = c.primary_last_name || "";
+  if (!firstName && !lastName) {
+    const name = (c.name || "").trim();
+    if (name.includes(",")) {
+      const [last, ...rest] = name.split(",");
+      lastName = last.trim();
+      firstName = rest.join(",").trim();
+    } else {
+      const parts = name.split(/\s+/);
+      firstName = parts[0] || "";
+      lastName = parts.slice(1).join(" ");
+    }
+  }
+
+  // PII fields (SSN, DOB, street) are intentionally returned as empty
+  // strings — PiiInput renders the masked snippet as a placeholder and
+  // exposes an eye-toggle to fetch the plaintext on demand. This keeps
+  // sensitive values off the screen by default.
+  return {
+    id: c.id,
+    firstName,
+    lastName,
+    ssn: "",
+    ssnMasked: c.primary_ssn_masked || "",
+    dateOfBirth: "",
+    dobMasked: c.primary_dob_masked || "",
+    email: c.email || "",
+    phone: c.phone || "",
+    spouseFirstName: c.spouse_first_name || "",
+    spouseLastName: c.spouse_last_name || "",
+    spouseSsn: "",
+    spouseSsnMasked: c.spouse_ssn_masked || "",
+    spouseDob: "",
+    spouseDobMasked: c.spouse_dob_masked || "",
+    spouseEmail: c.spouse_email || "",
+    spousePhone: c.spouse_phone || "",
+    filingStatus: c.filing_status,
+    taxYear: c.tax_year,
+    dependents: c.dependents,
+    street: "",
+    streetMasked: c.street_masked || "",
+    city: c.city || "",
+    state: c.state || "",
+    zip: c.zip_code || "",
+    familyGroupName: c.family_group_name || "",
+    filingFederal: c.filing_federal ?? true,
+    filingStates: c.filing_states ?? [],
+  };
 }
 
 function hashColor(name: string): string {

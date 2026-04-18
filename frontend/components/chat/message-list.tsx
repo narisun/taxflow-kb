@@ -5,7 +5,7 @@ import { MessageBubble } from "./message-bubble";
 import { TypingIndicator } from "./typing-indicator";
 
 interface Message {
-  id: number | string;
+  id: string | string;
   role: "user" | "assistant";
   content: string;
   created_at?: string;
@@ -61,11 +61,14 @@ export function MessageList({ messages, isTyping = false }: MessageListProps) {
       >
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center flex-1 text-tertiary">
-            <svg className="w-10 h-10 mb-3 text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1}>
+            <svg className="w-10 h-10 mb-3 text-apple-blue/40" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1}>
               <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            <p className="text-[13px]">
-              Start a conversation about this client&apos;s tax return.
+            <p className="text-[14px] font-medium text-secondary mb-1">
+              TaxFlow AI Assistant
+            </p>
+            <p className="text-[12px] text-tertiary text-center max-w-[280px] leading-relaxed">
+              Ask questions, check status, review documents, or use the quick actions below to get started.
             </p>
           </div>
         ) : (
