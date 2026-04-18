@@ -309,7 +309,7 @@ export function ResearchAgentModal({ open, onClose }: ResearchAgentModalProps) {
                   <span className={cn(
                     "text-[12px] truncate",
                     activeThreadId === thread.id ? "font-semibold text-apple-blue" : "font-medium text-primary"
-                  )}>
+                  )} title={thread.title}>
                     {thread.title}
                   </span>
                   <div className="flex items-center gap-1 shrink-0 ml-2">
@@ -339,7 +339,7 @@ export function ResearchAgentModal({ open, onClose }: ResearchAgentModalProps) {
           <div className="flex items-center justify-between px-4 py-3 border-b border-divider shrink-0">
             <div className="flex items-center gap-2 min-w-0">
               <span className="w-6 h-6 rounded-md flex items-center justify-center text-white text-[10px] font-bold shrink-0" style={{ background: "#6B8BA4" }}>R</span>
-              <span className="text-[13px] font-semibold text-primary truncate">
+              <span className="text-[13px] font-semibold text-primary truncate" title={threads.find((t) => t.id === activeThreadId)?.title || "Research Agent"}>
                 {threads.find((t) => t.id === activeThreadId)?.title || "Research Agent"}
               </span>
             </div>

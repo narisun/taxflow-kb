@@ -136,14 +136,14 @@ export function DocumentCard({ doc, onClick, onDelete, isDuplicate }: DocumentCa
         <div className="flex items-center justify-between px-3 pt-2.5 pb-1.5">
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <span className="text-[13px] font-medium text-primary truncate">{doc.name}</span>
+              <span className="text-[13px] font-medium text-primary truncate" title={doc.name}>{doc.name}</span>
               {isDuplicate && (
                 <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 shrink-0">
                   Possible Duplicate
                 </span>
               )}
             </div>
-            <div className="text-[11px] text-tertiary truncate">
+            <div className="text-[11px] text-tertiary truncate" title={data.employer_name || data.payer || data.lender || data.entity_name || doc.form_type}>
               {data.employer_name || data.payer || data.lender || data.entity_name || doc.form_type}
             </div>
           </div>

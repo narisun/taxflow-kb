@@ -9,7 +9,7 @@ import { PdfViewer } from "@/components/documents/pdf-viewer";
 import { parseJson, fmtCurrency } from "@/lib/utils";
 
 interface DocItem {
-  id: number;
+  id: string;
   form_type: string;
   title: string;
   name?: string;
@@ -33,7 +33,7 @@ interface ClientInfo {
 }
 
 interface Dependent {
-  id: number;
+  id: string;
   first_name: string;
   last_name: string;
   relationship: string;
@@ -55,8 +55,8 @@ interface DocumentManagerModalProps {
   dependents: Dependent[];
   documents: DocItem[];
   onUpload: (files: File[]) => Promise<void>;
-  onDelete: (docId: number) => Promise<void>;
-  onApprove: (docId: number) => Promise<void>;
+  onDelete: (docId: string) => Promise<void>;
+  onApprove: (docId: string) => Promise<void>;
   onViewDoc: (doc: DocItem) => void;
 }
 
@@ -123,7 +123,7 @@ function detectFormType(filename: string): string {
   return "Other";
 }
 
-function getDocUrl(docId: number): string {
+function getDocUrl(docId: string): string {
   const apiBase = process.env.NEXT_PUBLIC_API_URL;
   return apiBase ? `${apiBase}/api/documents/${docId}/file` : "/sample-forms/fw2.pdf";
 }
@@ -145,7 +145,7 @@ export function DocumentManagerModal({
 }: DocumentManagerModalProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
-  const [expandedDocId, setExpandedDocId] = useState<number | null>(null);
+  const [expandedDocId, setExpandedDocId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFiles = useCallback(async (files: File[]) => {
@@ -176,7 +176,7 @@ export function DocumentManagerModal({
     handleFiles(Array.from(e.dataTransfer.files));
   }, [handleFiles]);
 
-  const handleDeleteDoc = async (e: React.MouseEvent, docId: number) => {
+  const handleDeleteDoc = async (e: React.MouseEvent, docId: string) => {
     e.stopPropagation();
     if (confirm("Delete this document?")) {
       if (expandedDocId === docId) setExpandedDocId(null);
@@ -190,7 +190,7 @@ export function DocumentManagerModal({
   const needsReview = documents.filter(d => d.status === "review" || d.status === "flagged").length;
 
   // Duplicate detection
-  const dupeIds = new Set<number>();
+  const dupeIds = new Set<string>();
   for (let i = 0; i < documents.length; i++) {
     for (let j = i + 1; j < documents.length; j++) {
       if (documents[i].form_type === documents[j].form_type &&
@@ -238,7 +238,7 @@ export function DocumentManagerModal({
               <div className="flex gap-2 overflow-x-auto pb-1">
                 {uploadingFiles.map(uf => (
                   <div key={uf.id} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-secondary border border-divider shrink-0">
-                    <span className="text-[11px] font-medium text-primary truncate max-w-[120px]">{uf.name}</span>
+                    <span className="text-[11px] font-medium text-primary truncate max-w-[120px]" title={uf.name}>{uf.name}</span>
                     <span className="text-[10px] text-tertiary">{uf.formType}</span>
                     {uf.status === "uploading" && <span className="text-[10px] text-apple-blue animate-pulse">Uploading...</span>}
                     {uf.status === "extracting" && <span className="text-[10px] text-amber-600 animate-pulse">Extracting...</span>}
@@ -302,7 +302,7 @@ export function DocumentManagerModal({
                       {/* Title + key data */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="text-[12px] text-secondary truncate">{doc.title || doc.name}</span>
+                          <span className="text-[12px] text-secondary truncate" title={doc.title || doc.name}>{doc.title || doc.name}</span>
                           {isDupe && (
                             <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 shrink-0">Duplicate?</span>
                           )}

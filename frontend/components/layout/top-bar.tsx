@@ -1,15 +1,15 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Avatar } from "@/components/ui/avatar";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { NotificationBell } from "@/components/notifications/notification-bell";
+import { LoginButton } from "@/components/auth/login-button";
+import { UserMenu } from "@/components/auth/user-menu";
 import { cn } from "@/lib/utils";
 
 interface TopBarProps {
   stats: { clients: number; filed: number; review: number };
   deadline: string;
-  user: { initials: string; name?: string };
   onMenuToggle?: () => void;
   showMenu?: boolean;
   clientName?: string;
@@ -54,7 +54,7 @@ function IrsNewsFeed({ deadline }: { deadline: string }) {
         className="flex items-center gap-1.5 max-w-[240px] xl:max-w-[320px] hover:bg-surface-secondary px-2 py-1 rounded-md transition-colors cursor-pointer"
       >
         <span className="text-[10px] font-semibold text-tertiary uppercase shrink-0">IRS</span>
-        <span className="text-[11px] text-secondary truncate">{latest.title}</span>
+        <span className="text-[11px] text-secondary truncate" title={latest.title}>{latest.title}</span>
       </button>
 
       {open && (
@@ -80,7 +80,7 @@ function IrsNewsFeed({ deadline }: { deadline: string }) {
   );
 }
 
-function TopBar({ stats, deadline, user, onMenuToggle, showMenu, clientName, onDashboard, onAvatarClick, onInbox, inboxUnread, onStatsClick }: TopBarProps) {
+function TopBar({ stats, deadline, onMenuToggle, showMenu, clientName, onDashboard, onAvatarClick, onInbox, inboxUnread, onStatsClick }: TopBarProps) {
   return (
     <nav
       className="h-12 max-md:h-10 flex items-center px-4 gap-4 shrink-0 z-50 border-b"
@@ -116,7 +116,7 @@ function TopBar({ stats, deadline, user, onMenuToggle, showMenu, clientName, onD
 
       {/* Mobile: client name */}
       {clientName && (
-        <span className="md:hidden text-[13px] font-medium text-primary truncate flex-1 text-center">
+        <span className="md:hidden text-[13px] font-medium text-primary truncate flex-1 text-center" title={clientName}>
           {clientName}
         </span>
       )}
@@ -184,10 +184,12 @@ function TopBar({ stats, deadline, user, onMenuToggle, showMenu, clientName, onD
 
         <ThemeToggle />
 
-        {/* User avatar */}
-        <button onClick={onAvatarClick} className="hidden md:block cursor-pointer">
-          <Avatar initials={user.initials} size="sm" color="#6B7280" />
-        </button>
+        {/* Login appears only when Auth0 is configured AND user is logged out */}
+        <LoginButton />
+
+        {/* Avatar + dropdown (email · settings · log out). Reads identity
+            from Auth0's React SDK directly; no `user` prop needed. */}
+        <UserMenu onSettings={onAvatarClick} />
       </div>
     </nav>
   );

@@ -103,14 +103,14 @@ function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake, o
                 <div className={cn(
                   "text-[13px] truncate",
                   isActive ? "font-semibold text-apple-blue" : "font-medium"
-                )}>
+                )} title={client.name}>
                   {client.name}
                 </div>
                 {client.adults && (
                   <div className={cn(
                     "text-[11px] truncate",
                     isActive ? "text-apple-blue/60" : "text-tertiary"
-                  )}>
+                  )} title={client.adults}>
                     {client.adults}
                   </div>
                 )}
@@ -118,7 +118,7 @@ function ClientSidebar({ clients, activeClientId, onSelectClient, onNewIntake, o
                   <span className={cn(
                     "text-[11px] truncate",
                     isActive ? "text-apple-blue/70" : "text-tertiary"
-                  )}>
+                  )} title={`${filingInfo} \u00b7 ${taxYear}`}>
                     {filingInfo} &middot; {taxYear}
                   </span>
                   {onEditClient && (
