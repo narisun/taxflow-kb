@@ -770,17 +770,19 @@ export default function Home() {
       <div className="shrink-0 border-b border-divider px-5 py-3 bg-surface-secondary/50">
         {/* Top row: client info + tracking labels */}
         <div className="flex items-center gap-3">
-          <div className="flex-1 min-w-0 flex items-center gap-3">
-            <span className="text-[16px] font-semibold text-primary tracking-tight">
-              {activeClient?.name || "Select a client"}
-            </span>
-            {activeClient && (
-              <>
-                <span className="text-[12px] text-secondary hidden md:inline">{activeClient.meta}</span>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-3">
+              <span className="text-[16px] font-semibold text-primary tracking-tight">
+                {activeClient?.name || "Select a client"}
+              </span>
+              {activeClient && (
                 <Badge variant={activeClient.status as "pending" | "inProgress" | "review" | "completed" | "filed"}>
                   {activeClient.status === "pending" ? "Intake" : activeClient.status === "inProgress" ? "Documents" : activeClient.status === "completed" ? "Prepare" : activeClient.status}
                 </Badge>
-              </>
+              )}
+            </div>
+            {activeClient?.adults && (
+              <div className="text-[12px] text-secondary mt-0.5">{activeClient.adults}</div>
             )}
           </div>
 
@@ -809,29 +811,37 @@ export default function Home() {
           )}
         </div>
 
-        {/* Second row: workflow stepper — grayscale */}
-        <div className="hidden md:flex items-center gap-1 mt-2">
-          <span className="text-[11px] text-tertiary mr-1">2025</span>
-          {["Intake", "Documents", "Review", "Prepare", "File"].map(
-            (step, i) => (
-              <div key={step} className="flex items-center gap-1">
-                {i > 0 && <div className="w-3 h-px bg-divider" />}
-                <span
-                  className={cn(
-                    "text-[11px] px-2 py-0.5 rounded-full",
-                    i < 2
-                      ? "text-primary font-medium bg-surface-secondary"
-                      : i === 2
-                        ? "text-primary font-semibold bg-surface-tertiary"
-                        : "text-tertiary"
-                  )}
-                >
-                  {step}
-                </span>
-              </div>
-            )
-          )}
-        </div>
+        {/* Second row: workflow stepper — highlights based on client status */}
+        {activeClient && (() => {
+          const steps = ["Intake", "Documents", "Review", "Prepare", "File"];
+          const statusToStep: Record<string, number> = {
+            pending: 0, inProgress: 1, review: 2, completed: 3, filed: 4,
+          };
+          const activeStep = statusToStep[activeClient.status] ?? 0;
+          const clientYear = activeClient.meta.match(/\d{4}/)?.[0] || "2025";
+          return (
+            <div className="hidden md:flex items-center gap-1 mt-2">
+              <span className="text-[11px] text-tertiary mr-1">{clientYear}</span>
+              {steps.map((step, i) => (
+                <div key={step} className="flex items-center gap-1">
+                  {i > 0 && <div className={cn("w-3 h-px", i <= activeStep ? "bg-apple-blue/30" : "bg-divider")} />}
+                  <span
+                    className={cn(
+                      "text-[11px] px-2 py-0.5 rounded-full",
+                      i < activeStep
+                        ? "text-secondary font-medium bg-surface-secondary"
+                        : i === activeStep
+                          ? "text-apple-blue font-semibold bg-apple-blue/10"
+                          : "text-tertiary"
+                    )}
+                  >
+                    {step}
+                  </span>
+                </div>
+              ))}
+            </div>
+          );
+        })()}
       </div>
 
       {/* Chat area — messages scroll, input floats at bottom */}
