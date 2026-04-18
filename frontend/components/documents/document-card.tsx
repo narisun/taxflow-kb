@@ -177,9 +177,9 @@ export function DocumentCard({ doc, onClick, onDelete, isDuplicate }: DocumentCa
           {/* Left: key data points */}
           <div className="space-y-0.5 text-[11px] min-w-0">
             {kvPairs.slice(0, 5).map((kv) => (
-              <div key={kv.label} className="flex items-baseline justify-between gap-1">
+              <div key={kv.label} className="flex items-baseline gap-1.5">
                 <span className="text-tertiary shrink-0">{kv.label}</span>
-                <span className="text-primary font-medium truncate text-right">{kv.value}</span>
+                <span className="text-primary font-medium truncate">{kv.value}</span>
               </div>
             ))}
             {kvPairs.length === 0 && (
