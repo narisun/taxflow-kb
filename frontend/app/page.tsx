@@ -626,7 +626,7 @@ export default function Home() {
         if (step.complete) {
           return (
             <div className="shrink-0 border-t border-divider px-3 py-2.5">
-              <div className="group flex items-center justify-center gap-1.5 py-2 rounded-lg bg-green-100/60 dark:bg-green-900/30 text-green-800 dark:text-green-300 text-[12px] font-semibold">
+              <div className="group flex items-center justify-center gap-1.5 py-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 text-[12px] font-semibold">
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}><path d="M4.5 12.75l6 6 9-13.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 {label} Complete
                 <button
@@ -715,12 +715,12 @@ export default function Home() {
               <span className="text-[11px] text-tertiary mr-1">{clientYear}</span>
               {workflowSteps.map((step, i) => (
                 <div key={step.id} className="flex items-center gap-1">
-                  {i > 0 && <div className={cn("w-3 h-px", step.complete ? "bg-green-600/30" : "bg-divider")} />}
+                  {i > 0 && <div className={cn("w-3 h-px", step.complete ? "bg-emerald-400/40" : "bg-divider")} />}
                   <span
                     className={cn(
                       "text-[11px] px-2 py-0.5 rounded-full",
                       step.complete
-                        ? "text-green-800 dark:text-green-300 font-semibold bg-green-100/60 dark:bg-green-900/30"
+                        ? "text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-50 dark:bg-emerald-950/30"
                         : "text-tertiary"
                     )}
                   >
