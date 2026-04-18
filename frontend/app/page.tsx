@@ -626,7 +626,7 @@ export default function Home() {
         if (step.complete) {
           return (
             <div className="shrink-0 border-t border-divider px-3 py-2.5">
-              <div className="group flex items-center justify-center gap-1.5 py-2 rounded-lg bg-gray-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 text-[12px] font-semibold">
+              <div className="group flex items-center justify-center gap-1.5 py-2 rounded-lg bg-white dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 text-[12px] font-semibold">
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}><path d="M4.5 12.75l6 6 9-13.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 {label} Complete
                 <button
@@ -720,7 +720,7 @@ export default function Home() {
                     className={cn(
                       "text-[11px] px-2 py-0.5 rounded-full",
                       step.complete
-                        ? "text-emerald-600 dark:text-emerald-400 font-semibold bg-gray-50 dark:bg-emerald-950/20"
+                        ? "text-emerald-600 dark:text-emerald-400 font-semibold bg-white dark:bg-emerald-950/20"
                         : "text-tertiary"
                     )}
                   >
