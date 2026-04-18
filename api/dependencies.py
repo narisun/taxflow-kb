@@ -168,3 +168,22 @@ def get_research_service(
         max_tool_rounds=settings.agent_max_tool_rounds,
         tool_registry=build_research_tool_registry(),
     )
+
+
+def get_agent_service_for_chat(
+    settings: SettingsDep,
+    anthropic_client: AnthropicClientDep,
+    encryptor: PIIEncryptorDep,
+):
+    """Construct an AgentService for client chat (with all 11 tools)."""
+    from api.agent.service import AgentService
+    from api.agent.mcp_server import build_tool_registry
+
+    return AgentService(
+        anthropic_client=anthropic_client,
+        model=settings.agent_model,
+        max_tokens=settings.agent_max_tokens,
+        max_tool_rounds=settings.agent_max_tool_rounds,
+        history_token_budget=settings.agent_history_token_budget,
+        tool_registry=build_tool_registry(),
+    )

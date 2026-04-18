@@ -1,131 +1,31 @@
-"""Chat endpoints — AI-assisted tax Q&A per client using Claude."""
-import asyncio
-import json
-import os
+"""Chat endpoints — unified on AgentService with tool-use."""
+from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import select, func
+from fastapi import APIRouter, Depends, Query
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.db.engine import get_session
-from api.db.models import ChatMessageModel, ClientModel, DocumentModel
-from api.auth.dependencies import get_current_user
+from api.agent.service import AgentService
+from api.agent.session import AgentSession
+from api.auth.dependencies import require_onboarded_user
 from api.auth.models import UserModel
-from api.models.chat import ChatMessageCreate, ChatMessageResponse, ChatHistoryResponse
+from api.db.engine import get_session
+from api.db.models import ChatMessageModel, ConversationModel, ConversationMessageModel
+from api.dependencies import get_agent_service_for_chat, get_pii_encryptor_dep
+from api.models.chat import ChatHistoryResponse, ChatMessageCreate, ChatMessageResponse
 from api.routers._helpers import get_client_or_404
+from api.services.pii.encryptor import PIIEncryptor
 
 router = APIRouter(prefix="/api/clients/{client_id}/chat", tags=["chat"])
 
 
-async def _build_client_context(client_id: int, session: AsyncSession, user: UserModel) -> str:
-    """Build context about the client's tax situation for Claude."""
-    # Load client
-    result = await session.execute(
-        select(ClientModel).where(ClientModel.id == client_id, ClientModel.org_id == user.org_id)
-    )
-    client = result.scalar_one_or_none()
-    if not client:
-        return "No client data available."
-
-    context_parts = [
-        f"Client: {client.name}",
-        f"Filing status: {client.filing_status}",
-        f"Tax year: {client.tax_year}",
-        f"Dependents: {client.dependents}",
-        f"Workflow step: {client.workflow_step}",
-    ]
-
-    # Load documents
-    doc_result = await session.execute(
-        select(DocumentModel).where(
-            DocumentModel.client_id == client_id,
-            DocumentModel.org_id == user.org_id,
-        )
-    )
-    docs = doc_result.scalars().all()
-    if docs:
-        context_parts.append(f"\nDocuments ({len(docs)}):")
-        for doc in docs:
-            context_parts.append(f"  - {doc.form_type}: status={doc.status}, confidence={doc.confidence}")
-            if doc.status == "approved" and doc.extracted_data:
-                try:
-                    data = json.loads(doc.extracted_data)
-                    if isinstance(data, dict):
-                        for k, v in data.items():
-                            context_parts.append(f"    {k}: {v}")
-                except (json.JSONDecodeError, TypeError):
-                    pass
-
-    # Try to load draft if exists
-    from api.db.models import TaxReturnDraftModel
-    draft_result = await session.execute(
-        select(TaxReturnDraftModel).where(
-            TaxReturnDraftModel.client_id == client_id,
-            TaxReturnDraftModel.org_id == user.org_id,
-        )
-    )
-    draft = draft_result.scalar_one_or_none()
-    if draft and draft.draft_json:
-        try:
-            draft_data = json.loads(draft.draft_json)
-            context_parts.append(f"\nComputed Tax Return:")
-            context_parts.append(f"  Total income: ${draft_data.get('total_income', 0):,.2f}")
-            context_parts.append(f"  Taxable income: ${draft_data.get('taxable_income', 0):,.2f}")
-            context_parts.append(f"  Total tax: ${draft_data.get('total_tax', 0):,.2f}")
-            context_parts.append(f"  Total payments: ${draft_data.get('total_payments', 0):,.2f}")
-            context_parts.append(f"  Refund/owed: ${draft_data.get('refund_or_owed', 0):,.2f}")
-            context_parts.append(f"  Effective rate: {draft_data.get('effective_rate', 0)}%")
-        except (json.JSONDecodeError, TypeError):
-            pass
-
-    return "\n".join(context_parts)
-
-
-async def _get_chat_history_context(client_id: int, session: AsyncSession, org_id: str, limit: int = 10) -> list[dict]:
-    """Get recent chat messages for conversation context."""
-    result = await session.execute(
-        select(ChatMessageModel)
-        .where(ChatMessageModel.client_id == client_id, ChatMessageModel.org_id == org_id)
-        .order_by(ChatMessageModel.created_at.desc())
-        .limit(limit)
-    )
-    messages = list(reversed(result.scalars().all()))
-    return [{"role": msg.role, "content": msg.content} for msg in messages]
-
-
-def _query_claude(system_prompt: str, messages: list[dict], user_message: str) -> str:
-    """Call Claude API synchronously (run in thread)."""
-    import anthropic
-
-    api_key = os.getenv("ANTHROPIC_API_KEY")
-    if not api_key:
-        return "Chat is unavailable — ANTHROPIC_API_KEY not configured."
-
-    client = anthropic.Anthropic(api_key=api_key)
-
-    # Build conversation for Claude
-    claude_messages = []
-    for msg in messages:
-        claude_messages.append({"role": msg["role"], "content": msg["content"]})
-    claude_messages.append({"role": "user", "content": user_message})
-
-    response = client.messages.create(
-        model="claude-sonnet-4-20250514",
-        max_tokens=1024,
-        system=system_prompt,
-        messages=claude_messages,
-    )
-
-    return response.content[0].text if response.content else "I couldn't generate a response."
-
-
 @router.get("", response_model=ChatHistoryResponse)
 async def get_chat_history(
-    client_id: int,
+    client_id: str,
     page: int = Query(1, ge=1),
     page_size: int = Query(100, ge=1, le=500),
     session: AsyncSession = Depends(get_session),
-    user: UserModel = Depends(get_current_user),
+    user: UserModel = Depends(require_onboarded_user),
 ):
     await get_client_or_404(client_id, session, user)
     base = (
@@ -138,7 +38,7 @@ async def get_chat_history(
     )
     count_q = select(func.count()).select_from(base.subquery())
     count_result = await session.execute(count_q)
-    total = count_result.scalar() or 0
+    total = count_result.scalar() or 0  # noqa: F841
 
     paginated = base.offset((page - 1) * page_size).limit(page_size)
     result = await session.execute(paginated)
@@ -150,14 +50,40 @@ async def get_chat_history(
 
 @router.post("", response_model=ChatMessageResponse)
 async def send_message(
-    client_id: int,
+    client_id: str,
     message: ChatMessageCreate,
     session: AsyncSession = Depends(get_session),
-    user: UserModel = Depends(get_current_user),
+    user: UserModel = Depends(require_onboarded_user),
+    agent: AgentService = Depends(get_agent_service_for_chat),
+    encryptor: PIIEncryptor = Depends(get_pii_encryptor_dep),
 ):
+    """Send a user message through the AgentService tool-use loop."""
     await get_client_or_404(client_id, session, user)
 
-    # Persist user message
+    # Auto-create or resume a conversation for this client
+    conv = await _get_or_create_conversation(session, client_id, user)
+
+    # Build agent session
+    agent_session = AgentSession(
+        org_id=user.org_id,
+        client_id=client_id,
+        user_id=user.id,
+        conversation_id=conv.id,
+        db_session=session,
+        pii_encryptor=encryptor,
+    )
+
+    # Load conversation history for context
+    history = await _load_history(session, conv.id, user.org_id)
+
+    # Get agent reply (tool-use loop)
+    ai_content = await agent.reply(
+        user_message=message.content,
+        session=agent_session,
+        history=history,
+    )
+
+    # Persist user message (after reply to avoid double-counting in history)
     user_msg = ChatMessageModel(
         client_id=client_id,
         role="user",
@@ -168,34 +94,7 @@ async def send_message(
     session.add(user_msg)
     await session.flush()
 
-    # Build client context and chat history
-    client_context = await _build_client_context(client_id, session, user)
-    chat_history = await _get_chat_history_context(client_id, session, user.org_id)
-
-    system_prompt = f"""You are a tax assistant AI embedded in a CPA tax preparation platform called TaxFlow AI.
-You help CPAs with tax questions, return preparation, and client advisory.
-
-You have access to the following client data:
-
-{client_context}
-
-Guidelines:
-- Answer tax questions accurately based on the client's data
-- Reference specific numbers from the client's documents and computed return when relevant
-- If the client's return has been computed, reference the actual tax amounts
-- Suggest next steps in the workflow (e.g., "upload remaining documents", "run validation", "generate PDF")
-- Keep answers concise and professional
-- If you don't have enough data to answer, say so and suggest what's needed
-- Never make up numbers — only reference data shown above"""
-
-    # Call Claude API
-    try:
-        ai_content = await asyncio.to_thread(
-            _query_claude, system_prompt, chat_history, message.content
-        )
-    except Exception as e:
-        ai_content = f"I encountered an error processing your question. Please try again. ({type(e).__name__})"
-
+    # Persist assistant message
     ai_msg = ChatMessageModel(
         client_id=client_id,
         role="assistant",
@@ -204,6 +103,82 @@ Guidelines:
         created_by=user.id,
     )
     session.add(ai_msg)
+
+    # Also persist to conversation messages for agent history
+    conv_user_msg = ConversationMessageModel(
+        conversation_id=conv.id, role="user", content=message.content,
+        org_id=user.org_id, created_by=user.id,
+    )
+    conv_ai_msg = ConversationMessageModel(
+        conversation_id=conv.id, role="assistant", content=ai_content,
+        org_id=user.org_id, created_by=user.id,
+    )
+    session.add(conv_user_msg)
+    session.add(conv_ai_msg)
+
     await session.commit()
     await session.refresh(ai_msg)
     return ai_msg
+
+
+async def _get_or_create_conversation(
+    session: AsyncSession, client_id: str, user: UserModel,
+) -> ConversationModel:
+    """Get or create a single conversation per client for chat."""
+    result = await session.execute(
+        select(ConversationModel).where(
+            ConversationModel.client_id == client_id,
+            ConversationModel.user_id == user.id,
+            ConversationModel.org_id == user.org_id,
+            ConversationModel.conversation_type == "client",
+            ConversationModel.is_active == True,  # noqa: E712
+        ).order_by(ConversationModel.created_at.desc()).limit(1)
+    )
+    conv = result.scalar_one_or_none()
+    if conv:
+        return conv
+
+    conv = ConversationModel(
+        client_id=client_id,
+        user_id=user.id,
+        org_id=user.org_id,
+        created_by=user.id,
+        conversation_type="client",
+        title="Client chat",
+    )
+    session.add(conv)
+    await session.flush()
+    return conv
+
+
+async def _load_history(
+    session: AsyncSession, conversation_id: str, org_id: str, max_chars: int = 32000,
+) -> list[dict]:
+    """Load conversation history up to token budget."""
+    result = await session.execute(
+        select(ConversationMessageModel)
+        .where(
+            ConversationMessageModel.conversation_id == conversation_id,
+            ConversationMessageModel.org_id == org_id,
+        )
+        .order_by(ConversationMessageModel.created_at.desc())
+    )
+    all_msgs = result.scalars().all()
+    budget = max_chars
+    selected = []
+    for msg in all_msgs:
+        if msg.role in ("user", "assistant"):
+            text = msg.content or ""
+        elif msg.role == "tool_call":
+            text = f"[Used tool: {msg.tool_name}]"
+        elif msg.role == "tool_result":
+            text = f"[Tool {msg.tool_name} returned data]"
+        else:
+            continue
+        cost = len(text)
+        if budget - cost < 0:
+            break
+        budget -= cost
+        selected.append({"role": msg.role if msg.role in ("user", "assistant") else "assistant", "content": text})
+    selected.reverse()
+    return selected
