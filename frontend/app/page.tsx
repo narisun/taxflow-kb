@@ -118,6 +118,31 @@ export default function Home() {
 
   const activeClient = sidebarClients.find((c) => c.id === activeClientId);
 
+  // Refresh a single client's data (workflow_step, etc.) after state-changing actions
+  const refreshActiveClient = useCallback(async () => {
+    const cid = activeClientId;
+    if (!cid) return;
+    try {
+      const updated = await api.clients.get(cid);
+      if (!updated) return;
+      setApiClients((prev) => prev.map((c) => (c.id === cid ? updated : c)));
+      setSidebarClients((prev) =>
+        prev.map((c) =>
+          c.id === cid
+            ? {
+                ...c,
+                status: mapWorkflowStep(updated.workflow_step),
+                meta: `${updated.filing_status} \u00b7 ${updated.dependents} dep. \u00b7 ${updated.tax_year}`,
+                adults: deriveAdults(updated),
+              }
+            : c
+        )
+      );
+    } catch {
+      // Non-critical — UI will update on next full refresh
+    }
+  }, [activeClientId, setApiClients]);
+
   // Check onboarding on mount
   useEffect(() => {
     if (!localStorage.getItem("taxflow_product_tour_complete")) {
@@ -271,6 +296,8 @@ export default function Home() {
       try {
         const response = await api.chat.send(cid, content);
         setIsTyping(false);
+        // Agent may have triggered workflow changes (compute, approve) via tools
+        refreshActiveClient();
         if (response && response.content) {
           setMessages((prev) => [
             ...prev,
@@ -296,7 +323,7 @@ export default function Home() {
         );
       }
     },
-    [activeClientId, toast]
+    [activeClientId, toast, refreshActiveClient]
   );
 
   // Document approve handler
@@ -326,8 +353,10 @@ export default function Home() {
             : d,
         ),
       );
+      // Approval may advance workflow (documents → review)
+      refreshActiveClient();
     },
-    []
+    [refreshActiveClient]
   );
 
   // Generate return draft
@@ -338,8 +367,10 @@ export default function Home() {
     try {
       const draft = await api.returns.draft(cid);
       setReturnDraft(draft);
+      // Compute advances workflow (review → filing)
+      refreshActiveClient();
     } catch { /* ignore */ }
-  }, [activeClientId]);
+  }, [activeClientId, refreshActiveClient]);
 
   // File upload handler
   const handleFileSelected = useCallback(
@@ -374,6 +405,8 @@ export default function Home() {
 
       try {
         const doc = await api.documents.upload(cid, file, formType);
+        // Upload advances workflow (intake → documents)
+        refreshActiveClient();
         const docData = await api.documents.list(cid);
         if (Array.isArray(docData)) {
           setDocuments(docData.map((d: ApiDocument) => ({
