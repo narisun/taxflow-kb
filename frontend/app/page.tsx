@@ -1103,7 +1103,6 @@ const FILING_STATUS_LABELS: Record<string, string> = {
 function mapWorkflowStep(step: string): string {
   // Pass through directly — sidebar now uses the raw step ID
   return step || "intake";
-  }
 }
 
 /**
