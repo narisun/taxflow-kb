@@ -6,6 +6,7 @@ from pypdf import PdfReader, PdfWriter
 from pypdf.generic import NameObject, TextStringObject
 
 from api.tax_engine.models.tax_return import TaxReturn, TaxResult
+from api.models.tax_return import FormManifestEntry, ReturnManifest
 from api.tax_engine.pdf.field_maps import (
     map_f1040, map_schedule_a, map_schedule_b, map_schedule_d,
     map_schedule_e, map_schedule_se, map_form_8812,
@@ -16,6 +17,19 @@ from api.tax_engine.pdf.field_maps import (
 )
 
 DEFAULT_TEMPLATES_DIR = Path(__file__).parent / "templates"
+
+_FORM_LABELS = {
+    "f1040.pdf":    ("f1040",  "Form 1040"),
+    "f1040sb.pdf":  ("sb",     "Schedule B"),
+    "f1040sa.pdf":  ("sa",     "Schedule A"),
+    "f1040sd.pdf":  ("sd",     "Schedule D"),
+    "f1040se.pdf":  ("se",     "Schedule E"),
+    "f1040sse.pdf": ("sse",    "Schedule SE"),
+    "f1040s8.pdf":  ("f8812",  "Form 8812"),
+    "f8959.pdf":    ("f8959",  "Form 8959"),
+    "f8960.pdf":    ("f8960",  "Form 8960"),
+    "f8995.pdf":    ("f8995",  "Form 8995"),
+}
 
 _FORM_REGISTRY = [
     ("f1040.pdf",    None,   map_f1040,       lambda tr, r: True),
@@ -55,6 +69,31 @@ class PDFGenerator:
         output = io.BytesIO()
         final_writer.write(output)
         return output.getvalue()
+
+    def generate_manifest(self, tax_return: TaxReturn, result: TaxResult) -> ReturnManifest:
+        """Return activation status and page ranges for all registered forms."""
+        forms: list[FormManifestEntry] = []
+        current_page = 1
+
+        for template_name, _prefix, _map_fn, active_fn in _FORM_REGISTRY:
+            form_id, label = _FORM_LABELS[template_name]
+            active = active_fn(tax_return, result)
+
+            if active:
+                path = self.templates_dir / template_name
+                page_count = len(PdfReader(str(path)).pages) if path.exists() else 0
+                forms.append(FormManifestEntry(
+                    id=form_id, label=label, active=True,
+                    start_page=current_page, page_count=page_count,
+                ))
+                current_page += page_count
+            else:
+                forms.append(FormManifestEntry(
+                    id=form_id, label=label, active=False,
+                    start_page=None, page_count=0,
+                ))
+
+        return ReturnManifest(total_pages=current_page - 1, forms=forms)
 
     def _fill_form(self, template_name: str, fields_by_page: dict[int, dict[str, str]]) -> io.BytesIO | None:
         path = self.templates_dir / template_name
