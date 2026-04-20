@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
-import { cn } from "@/lib/utils";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { cn, detectFormType } from "@/lib/utils";
 import { TopBar } from "@/components/layout/top-bar";
 import { ClientSidebar, type Client as SidebarClient } from "@/components/layout/client-sidebar";
 import { MessageList } from "@/components/chat/message-list";
@@ -9,9 +9,10 @@ import { ChatInput } from "@/components/chat/chat-input";
 import { DocumentViewerModal } from "@/components/documents/document-viewer-modal";
 import { IntakeModal, type IntakeFormData } from "@/components/clients/intake-modal";
 import { ReturnPreview } from "@/components/returns/return-preview";
+import { ReturnViewerModal } from "@/components/returns/return-viewer-modal";
 import { FilingWorkflow } from "@/components/returns/filing-workflow";
 import { AdvisoryPanel } from "@/components/returns/advisory-panel";
-import { InboxModal } from "@/components/inbox/inbox-modal";
+import { InboxModal, type EmailDraft } from "@/components/inbox/inbox-modal";
 import { ClientMasterModal } from "@/components/clients/client-master-modal";
 import { DashboardModal } from "@/components/dashboard/dashboard-modal";
 import { ResearchAgentModal } from "@/components/research/research-agent-modal";
@@ -19,6 +20,7 @@ import { DocumentCard } from "@/components/documents/document-card";
 import { DocumentManagerModal } from "@/components/documents/document-manager-modal";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Tabs } from "@/components/ui/tabs";
 import { api, USE_MOCK } from "@/lib/api-client";
 import { useToast } from "@/components/ui/toast";
@@ -28,6 +30,7 @@ import type {
   Document as ApiDocument,
   TaxReturnDraft,
 } from "@/lib/api-client";
+import type { Alert } from "@/components/notifications/notification-bell";
 import { PanelOverlay } from "@/components/layout/panel-overlay";
 import { BottomTabBar, type TabId } from "@/components/layout/bottom-tab-bar";
 import { useIsMobile, useIsDesktopXL } from "@/lib/hooks/use-media-query";
@@ -102,6 +105,7 @@ export default function Home() {
   >();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [inboxOpen, setInboxOpen] = useState(false);
+  const [emailDrafts, setEmailDrafts] = useState<EmailDraft[]>([]);
   const [researchOpen, setResearchOpen] = useState(false);
   const [showProductTour, setShowProductTour] = useState(false);
   const [dashboardOpen, setDashboardOpen] = useState(false);
@@ -109,6 +113,7 @@ export default function Home() {
   const [clientDependents, setClientDependents] = useState<Array<{id: string; first_name: string; last_name: string; relationship: string; ssn_masked?: string}>>([]);
   const [clientMasterOpen, setClientMasterOpen] = useState(false);
   const [clientMasterFilter, setClientMasterFilter] = useState("");
+  const [returnViewerOpen, setReturnViewerOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const isMobile = useIsMobile();
@@ -212,7 +217,6 @@ export default function Home() {
   useEffect(() => {
     if (!activeClientId) return;
     const cid = activeClientId;
-    if (!cid) return;
 
     let cancelled = false;
     async function loadClientData() {
@@ -230,10 +234,7 @@ export default function Home() {
               id: m.id,
               role: m.role,
               content: m.content,
-              timestamp: new Date(m.created_at).toLocaleTimeString([], {
-                hour: "numeric",
-                minute: "2-digit",
-              }),
+              timestamp: m.created_at,
               created_at: m.created_at,
             }))
           );
@@ -276,10 +277,7 @@ export default function Home() {
         id: `m-${Date.now()}`,
         role: "user",
         content,
-        timestamp: new Date().toLocaleTimeString([], {
-          hour: "numeric",
-          minute: "2-digit",
-        }),
+        timestamp: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, newUserMsg]);
       setIsTyping(true);
@@ -297,7 +295,7 @@ export default function Home() {
               "1. **Create a new client** using the **+ New Intake** button in the sidebar\n" +
               "2. **Select an existing client** from the sidebar\n\n" +
               "Once a client is selected, I can help you with their tax return, documents, and advisory work.",
-            timestamp: new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }),
+            timestamp: new Date().toISOString(),
           },
         ]);
         return;
@@ -315,14 +313,38 @@ export default function Home() {
               id: response.id || `m-${Date.now()}-r`,
               role: "assistant",
               content: response.content,
-              timestamp: new Date(
-                response.created_at || Date.now()
-              ).toLocaleTimeString([], {
-                hour: "numeric",
-                minute: "2-digit",
-              }),
+              timestamp: response.created_at || new Date().toISOString(),
             },
           ]);
+          // Auto-create email draft when agent drafts an email or advisory
+          const lc = content.toLowerCase();
+          if (lc.includes("draft email") || lc.includes("draft advisory")) {
+            const fullClient = apiClients.find((c) => String(c.id) === activeClientId);
+            if (fullClient) {
+              // Try to extract subject from response
+              let subject = "";
+              let bodyStart = 0;
+              const subjectMatch = response.content.match(/\*\*Subject:\*\*\s*(.+)/i) || response.content.match(/^#+\s*(.+)/m);
+              if (subjectMatch) {
+                subject = subjectMatch[1].trim();
+                bodyStart = response.content.indexOf(subjectMatch[0]) + subjectMatch[0].length;
+              } else {
+                subject = lc.includes("advisory") ? `Tax Advisory — ${fullClient.name}` : `Re: ${fullClient.name} — Tax Return`;
+              }
+              const body = bodyStart > 0
+                ? response.content.slice(bodyStart).trim()
+                : response.content;
+              setEmailDrafts((prev) => [...prev, {
+                id: `draft-${Date.now()}`,
+                to: fullClient.email || "",
+                subject,
+                body,
+                clientName: fullClient.name,
+                createdAt: new Date().toISOString(),
+              }]);
+              toast("info", "Draft saved", "Check the Drafts inbox to copy or send");
+            }
+          }
         }
       } catch (err) {
         setIsTyping(false);
@@ -333,7 +355,7 @@ export default function Home() {
         );
       }
     },
-    [activeClientId, toast, refreshActiveClient]
+    [activeClientId, apiClients, toast, refreshActiveClient]
   );
 
   // Document approve handler
@@ -373,7 +395,6 @@ export default function Home() {
   const handleGenerateReturn = useCallback(async () => {
     const cid = activeClientId;
     if (!cid) return;
-    const source = api;
     try {
       const draft = await api.returns.draft(cid);
       setReturnDraft(draft);
@@ -389,24 +410,14 @@ export default function Home() {
       if (!file || !activeClientId) return;
       e.target.value = ""; // reset so same file can be re-selected
 
-      // Detect form type from filename
-      const fname = file.name.toLowerCase();
-      let formType = "Other";
-      if (fname.includes("w2") || fname.includes("w-2")) formType = "W-2";
-      else if (fname.includes("1099-int") || fname.includes("1099int")) formType = "1099-INT";
-      else if (fname.includes("1099-nec") || fname.includes("1099nec")) formType = "1099-NEC";
-      else if (fname.includes("1099-b") || fname.includes("1099b")) formType = "1099-B";
-      else if (fname.includes("1099-div") || fname.includes("1099div")) formType = "1099-DIV";
-      else if (fname.includes("1099")) formType = "1099";
-      else if (fname.includes("1098")) formType = "1098";
-      else if (fname.includes("k-1") || fname.includes("k1")) formType = "K-1";
+      const formType = detectFormType(file.name);
 
       // Log upload start to chat
       const uploadMsg: LocalMessage = {
         id: `m-${Date.now()}`,
         role: "assistant",
         content: `Uploading **${file.name}** (${formType})...`,
-        timestamp: new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }),
+        timestamp: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, uploadMsg]);
 
@@ -439,14 +450,14 @@ export default function Home() {
         setMessages((prev) => [
           ...prev.filter((m) => m.id !== uploadMsg.id),
           { id: `m-${Date.now()}-1`, role: "assistant" as const, content: summary,
-            timestamp: new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) },
+            timestamp: new Date().toISOString() },
         ]);
       } catch (err) {
         setMessages((prev) => [
           ...prev.filter((m) => m.id !== uploadMsg.id),
           { id: `m-${Date.now()}-1`, role: "assistant" as const,
             content: `Failed to upload ${file.name}: ${err instanceof Error ? err.message : "Unknown error"}`,
-            timestamp: new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) },
+            timestamp: new Date().toISOString() },
         ]);
       }
     },
@@ -475,6 +486,67 @@ export default function Home() {
   ).length;
 
   const flagCount = documents.filter((d) => d.status === "flagged" || d.status === "pending").length;
+
+  // ── Derive alerts from real data ──────────────────────
+  const alerts = useMemo<Alert[]>(() => {
+    const result: Alert[] = [];
+
+    // Flagged documents for the active client
+    for (const doc of documents) {
+      if (doc.status === "flagged" || doc.status === "review") {
+        const flags = (() => { try { return JSON.parse(doc.flags || "[]") as string[]; } catch { return []; } })();
+        result.push({
+          id: `doc-${doc.id}`,
+          type: "document",
+          title: flags[0] || `${doc.name || doc.form_type} needs review`,
+          detail: flags.length > 1 ? `+${flags.length - 1} more flag${flags.length > 2 ? "s" : ""}` : undefined,
+          clientName: activeClient?.name,
+          read: false,
+        });
+      }
+    }
+
+    // Clients stuck in early workflow steps with no progress
+    for (const c of apiClients) {
+      if (c.workflow_step === "intake" && c.created_at) {
+        const age = Date.now() - new Date(c.created_at).getTime();
+        if (age > 3 * 24 * 60 * 60 * 1000) { // older than 3 days
+          result.push({
+            id: `stale-${c.id}`,
+            type: "workflow",
+            title: `${c.name} has been in intake for ${Math.floor(age / (24 * 60 * 60 * 1000))} days`,
+            detail: "No documents uploaded yet",
+            clientName: c.name,
+            read: false,
+          });
+        }
+      }
+    }
+
+    // Deadline alerts — check upcoming IRS deadlines
+    const year = new Date().getFullYear();
+    const deadlineDates = [
+      { date: new Date(year, 3, 15), label: "April 15 filing deadline" },
+      { date: new Date(year, 5, 15), label: "Q2 estimated tax payment" },
+      { date: new Date(year, 8, 15), label: "Extension deadline" },
+      { date: new Date(year, 0, 15), label: "Q4 estimated tax payment" },
+    ];
+    const unfiled = apiClients.filter((c) => c.workflow_step !== "filed").length;
+    for (const dl of deadlineDates) {
+      const days = Math.ceil((dl.date.getTime() - Date.now()) / (24 * 60 * 60 * 1000));
+      if (days > 0 && days <= 14 && unfiled > 0) {
+        result.push({
+          id: `deadline-${dl.date.toISOString()}`,
+          type: "deadline",
+          title: `${dl.label} in ${days} day${days > 1 ? "s" : ""}`,
+          detail: `${unfiled} return${unfiled > 1 ? "s" : ""} not yet filed`,
+          read: false,
+        });
+      }
+    }
+
+    return result;
+  }, [documents, apiClients, activeClient?.name]);
 
   // ── Reusable content blocks ──────────────────────
 
@@ -581,7 +653,15 @@ export default function Home() {
             effectiveRate={returnDraft?.effective_rate}
             computedAt={returnDraft?.computed_at}
             onViewFull={handleGenerateReturn}
+            onViewReturn={() => setReturnViewerOpen(true)}
           />
+            {returnDraft && (
+              <div className="mt-4 flex justify-center">
+                <Button variant="primary" onClick={() => setReturnViewerOpen(true)} className="text-[13px] px-6">
+                  View Return
+                </Button>
+              </div>
+            )}
           </>
         )}
 
@@ -625,8 +705,8 @@ export default function Home() {
 
         if (step.complete) {
           return (
-            <div className="shrink-0 border-t border-divider px-3 py-2.5">
-              <div className="group flex items-center justify-center gap-1.5 py-2 rounded-lg bg-white dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 text-[12px] font-semibold">
+            <div className="shrink-0 px-3 py-2.5">
+              <div className="group w-full flex items-center justify-center gap-1.5 py-2 rounded-lg border border-brand-green/30 text-brand-green text-[12px] font-semibold">
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}><path d="M4.5 12.75l6 6 9-13.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 {label} Complete
                 <button
@@ -639,10 +719,11 @@ export default function Home() {
           );
         }
         return (
-          <div className="shrink-0 border-t border-divider px-3 py-2.5">
+          <div className="shrink-0 px-3 py-2.5">
             <button
               onClick={async () => { const cid = activeClientId; if (cid) { await api.clients.completeStep(cid, stepId); refreshActiveClient(); } }}
               disabled={!step.can_complete}
+              title={!step.can_complete ? `Complete the previous workflow step before marking ${label} complete` : undefined}
               className="w-full py-2 text-[12px] font-medium text-apple-blue hover:bg-apple-blue/5 rounded-lg border border-apple-blue/30 hover:border-apple-blue transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
             >
               Mark {label} Complete
@@ -690,17 +771,17 @@ export default function Home() {
                 <span className={cn(
                   "text-[12px] font-semibold px-2.5 py-1 rounded-md",
                   returnDraft.refund_or_owed >= 0
-                    ? "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/15"
-                    : "text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/15"
+                    ? "text-brand-green bg-white border border-white"
+                    : "text-red-600 dark:text-red-400 bg-white border border-white"
                 )}>
                   Federal: {returnDraft.refund_or_owed >= 0 ? "+" : ""}${returnDraft.refund_or_owed.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                 </span>
               ) : (
-                <span className="text-[12px] font-medium text-tertiary px-2.5 py-1 rounded-md bg-surface-secondary">
+                <span className="text-[12px] font-medium text-tertiary px-2.5 py-1 rounded-md bg-white border border-white">
                   Federal: --
                 </span>
               )}
-              <span className="text-[12px] font-medium text-tertiary px-2.5 py-1 rounded-md bg-surface-secondary">
+              <span className="text-[12px] font-medium text-tertiary px-2.5 py-1 rounded-md bg-white border border-white">
                 State: --
               </span>
             </div>
@@ -715,12 +796,12 @@ export default function Home() {
               <span className="text-[11px] text-tertiary mr-1">{clientYear}</span>
               {workflowSteps.map((step, i) => (
                 <div key={step.id} className="flex items-center gap-1">
-                  {i > 0 && <div className={cn("w-3 h-px", step.complete ? "bg-emerald-400/40" : "bg-divider")} />}
+                  {i > 0 && <div className={cn("w-3 h-px", step.complete ? "bg-brand-green/40" : "bg-divider")} />}
                   <span
                     className={cn(
                       "text-[11px] px-2 py-0.5 rounded-full",
                       step.complete
-                        ? "text-emerald-600 dark:text-emerald-400 font-semibold bg-white dark:bg-emerald-950/20 border border-white dark:border-emerald-800"
+                        ? "text-brand-green font-semibold border bg-white border-white"
                         : "text-tertiary"
                     )}
                   >
@@ -767,7 +848,8 @@ export default function Home() {
         onStatsClick={(filter?: string) => { setClientMasterFilter(filter || ""); setClientMasterOpen(true); }}
         onAvatarClick={() => setSettingsOpen(true)}
         onInbox={() => setInboxOpen(true)}
-        inboxUnread={3}
+        inboxUnread={emailDrafts.length}
+        alerts={alerts}
       />
 
       {isMobile ? (
@@ -802,6 +884,7 @@ export default function Home() {
                       effectiveRate={returnDraft?.effective_rate}
                       computedAt={returnDraft?.computed_at}
                       onViewFull={handleGenerateReturn}
+                      onViewReturn={() => setReturnViewerOpen(true)}
                     />
                   )}
                   {activeWorkTab === "Filing" && (
@@ -890,16 +973,7 @@ export default function Home() {
           const cid = activeClientId;
           if (!cid) return;
               for (const file of files) {
-            const fname = file.name.toLowerCase();
-            let formType = "Other";
-            if (fname.includes("w2") || fname.includes("w-2")) formType = "W-2";
-            else if (fname.includes("1099-int") || fname.includes("1099int")) formType = "1099-INT";
-            else if (fname.includes("1099-nec") || fname.includes("1099nec")) formType = "1099-NEC";
-            else if (fname.includes("1099-b") || fname.includes("1099b")) formType = "1099-B";
-            else if (fname.includes("1099-div") || fname.includes("1099div")) formType = "1099-DIV";
-            else if (fname.includes("1099")) formType = "1099";
-            else if (fname.includes("1098")) formType = "1098";
-            else if (fname.includes("k-1") || fname.includes("k1")) formType = "K-1";
+            const formType = detectFormType(file.name);
             try {
               await api.documents.upload(cid, file, formType);
             } catch (err) {
@@ -948,7 +1022,7 @@ export default function Home() {
         }}
       />
 
-      <DashboardModal open={dashboardOpen} onClose={() => setDashboardOpen(false)} />
+      <DashboardModal open={dashboardOpen} onClose={() => setDashboardOpen(false)} clients={apiClients} />
       <ClientMasterModal
         open={clientMasterOpen}
         onClose={() => setClientMasterOpen(false)}
@@ -956,8 +1030,19 @@ export default function Home() {
         initialFilter={clientMasterFilter}
         onSelectClient={(id) => handleSelectClient(String(id))}
       />
-      <InboxModal open={inboxOpen} onClose={() => setInboxOpen(false)} />
+      <InboxModal
+        open={inboxOpen}
+        onClose={() => setInboxOpen(false)}
+        drafts={emailDrafts}
+        onDeleteDraft={(id) => setEmailDrafts((prev) => prev.filter((d) => d.id !== id))}
+      />
       <ResearchAgentModal open={researchOpen} onClose={() => setResearchOpen(false)} />
+
+        <ReturnViewerModal
+          open={returnViewerOpen}
+          onClose={() => setReturnViewerOpen(false)}
+          clientId={activeClientId || ""}
+        />
 
       <SettingsModal
         open={settingsOpen}
@@ -1054,13 +1139,6 @@ export default function Home() {
   );
 }
 
-const FILING_STATUS_LABELS: Record<string, string> = {
-  single: "Single",
-  mfj: "MFJ",
-  mfs: "MFS",
-  hoh: "HOH",
-  qw: "QSS",
-};
 
 // ────────────────────────────────────────────
 // Helpers
