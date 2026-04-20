@@ -12,7 +12,7 @@ class ReturnLine(BaseModel):
 
 
 class TaxReturnDraft(BaseModel):
-    client_id: int
+    client_id: str
     tax_year: int
     filing_status: str
     lines: list[ReturnLine]
@@ -25,3 +25,16 @@ class TaxReturnDraft(BaseModel):
     effective_rate: float
     validation_results: list[dict] = []
     computed_at: str | None = None
+
+
+class FormManifestEntry(BaseModel):
+    id: str
+    label: str
+    active: bool
+    start_page: int | None
+    page_count: int
+
+
+class ReturnManifest(BaseModel):
+    total_pages: int
+    forms: list[FormManifestEntry]
