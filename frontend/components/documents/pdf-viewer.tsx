@@ -2,13 +2,15 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { authHeaders } from "@/lib/api-client";
 
 interface PdfViewerProps {
   src: string;
   className?: string;
+  goToPage?: number;
 }
 
-export function PdfViewer({ src, className }: PdfViewerProps) {
+export function PdfViewer({ src, className, goToPage }: PdfViewerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [numPages, setNumPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -48,7 +50,14 @@ export function PdfViewer({ src, className }: PdfViewerProps) {
         const pdfjsLib = await import("pdfjs-dist");
         pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
 
-        const loadingTask = pdfjsLib.getDocument(src);
+        // PDF.js makes its own HTTP request to `src`; attach the bearer
+        // token via httpHeaders so authenticated endpoints don't 401.
+        const headers = await authHeaders();
+        const loadingTask = pdfjsLib.getDocument({
+          url: src,
+          httpHeaders: headers,
+          withCredentials: false,
+        });
         const pdfDoc = await loadingTask.promise;
 
         if (cancelled) return;
@@ -77,6 +86,12 @@ export function PdfViewer({ src, className }: PdfViewerProps) {
       renderPage(currentPage, scale);
     }
   }, [currentPage, scale, loading, renderPage]);
+
+  useEffect(() => {
+    if (goToPage && goToPage >= 1 && goToPage <= numPages) {
+      setCurrentPage(goToPage);
+    }
+  }, [goToPage, numPages]);
 
   const prevPage = () => setCurrentPage((p) => Math.max(1, p - 1));
   const nextPage = () => setCurrentPage((p) => Math.min(numPages, p + 1));
