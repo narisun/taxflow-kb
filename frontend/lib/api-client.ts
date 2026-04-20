@@ -146,6 +146,19 @@ export interface ComparisonReport {
   summary: { current: number; prior: number; change: number };
 }
 
+export interface FormManifestEntry {
+  id: string;
+  label: string;
+  active: boolean;
+  start_page: number | null;
+  page_count: number;
+}
+
+export interface ReturnManifest {
+  total_pages: number;
+  forms: FormManifestEntry[];
+}
+
 export interface Dependent {
   id: string;
   client_id: string;
@@ -325,6 +338,10 @@ const realApi = {
       fetchJson<ComparisonReport>(
         `${API_BASE}/api/clients/${clientId}/returns/compare?prior_year=${priorYear}`,
       ),
+    manifest: (clientId: string): Promise<ReturnManifest> =>
+      fetchJson<ReturnManifest>(`${API_BASE}/api/clients/${clientId}/returns/manifest`),
+    pdfUrl: (clientId: string, disposition: "inline" | "attachment" = "inline"): string =>
+      `${API_BASE}/api/clients/${clientId}/returns/pdf?disposition=${disposition}`,
   },
   dependents: {
     list: (clientId: string): Promise<Dependent[]> =>
@@ -344,6 +361,12 @@ const realApi = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
+      }),
+    updateProfile: (data: { timezone?: string | null }): Promise<MeResponse> =>
+      fetchJson<MeResponse>(`${API_BASE}/api/auth/profile`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
       }),
   },
   research: {
