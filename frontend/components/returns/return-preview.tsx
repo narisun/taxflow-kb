@@ -1,6 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { fmtTimestamp } from "@/lib/utils";
+import { useTimezone } from "@/components/auth/me-context";
 
 interface TaxLine { number: string; label: string; value: number; section: string; }
 
@@ -15,6 +17,7 @@ interface ReturnPreviewProps {
   effectiveRate?: number;
   computedAt?: string;
   onViewFull?: () => void;
+  onViewReturn?: () => void;
   onApproveFile?: () => void;
 }
 
@@ -29,8 +32,10 @@ export function ReturnPreview({
   effectiveRate,
   computedAt,
   onViewFull,
+  onViewReturn,
   onApproveFile,
 }: ReturnPreviewProps) {
+  const tz = useTimezone();
   const hasData = lines && lines.length > 0;
   const fmt = (v: number | undefined) => v !== undefined ? `$${Math.abs(v).toLocaleString("en-US", { minimumFractionDigits: 0 })}` : "\u2014";
   const sections = ["income", "deductions", "tax_credits", "payments"];
@@ -61,11 +66,18 @@ export function ReturnPreview({
       <div className="bg-surface-secondary/50 rounded-xl p-3">
         <div className="flex items-center justify-between mb-2">
           <div className="text-[12px] font-semibold text-primary">Federal Return Summary</div>
-          {onViewFull && (
-            <Button variant="pill" onClick={onViewFull} className="text-[10px] px-2.5 py-1">
-              Recompute
-            </Button>
-          )}
+          <div className="flex items-center gap-1.5">
+            {onViewReturn && (
+              <Button variant="pill" onClick={onViewReturn} className="text-[10px] px-2.5 py-1">
+                View Return
+              </Button>
+            )}
+            {onViewFull && (
+              <Button variant="pill" onClick={onViewFull} className="text-[10px] px-2.5 py-1">
+                Recompute
+              </Button>
+            )}
+          </div>
         </div>
         <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-[11px]">
           <div className="flex justify-between">
@@ -95,14 +107,14 @@ export function ReturnPreview({
         </div>
         {/* Refund/Owed highlight */}
         {refundOrOwed !== undefined && (
-          <div className={`mt-2 pt-2 border-t border-divider flex items-center justify-between text-[13px] font-semibold ${refundOrOwed >= 0 ? "text-green-600" : "text-red-500"}`}>
+          <div className={`mt-2 pt-2 border-t border-divider flex items-center justify-between text-[13px] font-semibold ${refundOrOwed >= 0 ? "text-brand-green" : "text-red-500"}`}>
             <span>{refundOrOwed >= 0 ? "Refund" : "Amount Owed"}</span>
             <span>{fmt(refundOrOwed)}</span>
           </div>
         )}
         {computedAt && (
           <div className="text-[10px] text-tertiary mt-1.5">
-            Last computed: {new Date(computedAt).toLocaleString()}
+            Last computed: {fmtTimestamp(computedAt, tz)}
           </div>
         )}
       </div>
