@@ -14,7 +14,7 @@ from api.auth.models import UserModel
 from api.db.engine import get_session
 from api.db.models import ManualEntryModel, TaxReturnDraftModel
 from api.dependencies import get_tax_return_service
-from api.models.tax_return import TaxReturnDraft
+from api.models.tax_return import TaxReturnDraft, ReturnManifest
 from api.routers._helpers import get_client_or_404
 from api.services.tax import TaxReturnService
 from api.tax_engine.advisory.models import AdvisoryItem
@@ -190,16 +190,28 @@ async def get_advisory(
 @router.get("/pdf")
 async def download_pdf(
     client_id: str,
+    disposition: str = "attachment",
     session: AsyncSession = Depends(get_session),
     user: UserModel = Depends(require_onboarded_user),
     service: TaxReturnService = Depends(get_tax_return_service),
 ):
     pdf_bytes, filename = await service.generate_pdf(client_id, session, user)
+    disp = "inline" if disposition == "inline" else "attachment"
     return Response(
         content=pdf_bytes,
         media_type="application/pdf",
-        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        headers={"Content-Disposition": f'{disp}; filename="{filename}"'},
     )
+
+
+@router.get("/manifest", response_model=ReturnManifest)
+async def get_manifest(
+    client_id: str,
+    session: AsyncSession = Depends(get_session),
+    user: UserModel = Depends(require_onboarded_user),
+    service: TaxReturnService = Depends(get_tax_return_service),
+):
+    return await service.get_manifest(client_id, session, user)
 
 
 @router.get("/compare", response_model=ComparisonReport)

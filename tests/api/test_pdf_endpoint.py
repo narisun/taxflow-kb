@@ -34,3 +34,42 @@ async def test_pdf_content_disposition(client):
 async def test_pdf_nonexistent_client(client):
     resp = await client.get("/api/clients/9999/returns/pdf")
     assert resp.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_manifest_returns_all_forms(client):
+    c = await client.post("/api/clients", json={"name": "Test User", "filing_status": "single", "tax_year": 2024})
+    cid = c.json()["id"]
+    resp = await client.get(f"/api/clients/{cid}/returns/manifest")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "total_pages" in data
+    assert "forms" in data
+    assert len(data["forms"]) == 10
+    f1040 = data["forms"][0]
+    assert f1040["id"] == "f1040"
+    assert f1040["active"] is True
+    assert f1040["start_page"] == 1
+
+
+@pytest.mark.asyncio
+async def test_manifest_nonexistent_client(client):
+    resp = await client.get("/api/clients/9999/returns/manifest")
+    assert resp.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_pdf_inline_disposition(client):
+    c = await client.post("/api/clients", json={"name": "John Doe", "filing_status": "single", "tax_year": 2024})
+    cid = c.json()["id"]
+    resp = await client.get(f"/api/clients/{cid}/returns/pdf?disposition=inline")
+    assert resp.status_code == 200
+    assert "inline" in resp.headers.get("content-disposition", "")
+
+
+@pytest.mark.asyncio
+async def test_pdf_default_disposition_is_attachment(client):
+    c = await client.post("/api/clients", json={"name": "John Doe", "filing_status": "single", "tax_year": 2024})
+    cid = c.json()["id"]
+    resp = await client.get(f"/api/clients/{cid}/returns/pdf")
+    assert "attachment" in resp.headers.get("content-disposition", "")
