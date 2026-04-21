@@ -12,6 +12,7 @@ import type {
   DependentCreate,
   Document,
   MeResponse,
+  ReturnManifest,
   OnboardingPayload,
   TaxReturnDraft,
   ValidationResponse,
@@ -33,7 +34,9 @@ function delay(ms: number): Promise<void> {
 let clients = [...mockClients];
 let documents: Record<string, Document[]> = JSON.parse(JSON.stringify(mockDocuments));
 let chat: Record<string, ChatMessage[]> = JSON.parse(JSON.stringify(mockChat));
-let drafts: Record<string, TaxReturnDraft> = JSON.parse(JSON.stringify(mockReturnDrafts));
+let drafts: Record<string, TaxReturnDraft> = Object.fromEntries(
+  Object.entries(mockReturnDrafts).map(([k, v]) => [`mock-${k}`, JSON.parse(JSON.stringify(v))]),
+);
 let nextClientId = 100;
 let nextDocId = 1000;
 let nextMsgId = 10000;
@@ -323,6 +326,17 @@ export const mockApi = {
       return { has_errors: false, results: [] };
     },
 
+    manifest: async (clientId: string): Promise<ReturnManifest> => {
+      void clientId;
+      return { total_pages: 0, forms: [] };
+    },
+
+    pdfUrl: (clientId: string, disposition: "inline" | "attachment" = "inline"): string => {
+      void clientId;
+      void disposition;
+      return "about:blank";
+    },
+
     compare: async (
       clientId: string,
       priorYear: number,
@@ -509,6 +523,32 @@ export const mockApi = {
           id: "mock-org-1",
           name: payload.firm_name,
           slug: payload.firm_name.toLowerCase().replace(/\s+/g, "-"),
+          plan: "starter",
+          is_active: true,
+          created_at: new Date().toISOString(),
+        },
+        permissions: {},
+      };
+    },
+    updateProfile: async (data: { timezone?: string | null }): Promise<MeResponse> => {
+      await delay(100);
+      return {
+        user: {
+          id: "mock-user-1",
+          org_id: "mock-org-1",
+          email: "mock@taxflow.local",
+          name: "Mock Admin",
+          role: "admin",
+          is_active: true,
+          onboarding_status: "complete",
+          timezone: data.timezone || null,
+          last_login_at: new Date().toISOString(),
+          created_at: new Date().toISOString(),
+        },
+        organization: {
+          id: "mock-org-1",
+          name: "Mock Firm",
+          slug: "mock-firm",
           plan: "starter",
           is_active: true,
           created_at: new Date().toISOString(),
