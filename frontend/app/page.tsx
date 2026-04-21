@@ -37,6 +37,7 @@ import { useIsMobile, useIsDesktopXL } from "@/lib/hooks/use-media-query";
 import { useApp } from "./providers";
 import { SettingsModal } from "@/components/settings/settings-modal";
 import { ProductTour } from "@/components/onboarding/product-tour";
+import { mockPriorYearDrafts } from "@/lib/mock-data";
 
 // ────────────────────────────────────────────
 // Page component
@@ -90,6 +91,7 @@ export default function Home() {
   const [activeWorkTab, setActiveWorkTab] = useState("Documents");
   const { toast } = useToast();
   const [returnDraft, setReturnDraft] = useState<TaxReturnDraft | null>(null);
+  const [priorYearDraft, setPriorYearDraft] = useState<TaxReturnDraft | null>(null);
   const [workflowSteps, setWorkflowSteps] = useState<Array<{ id: string; label: string; complete: boolean; can_complete?: boolean }>>([]);
   const [intakeOpen, setIntakeOpen] = useState(false);
   const [intakeMode, setIntakeMode] = useState<"create" | "edit">("create");
@@ -150,6 +152,10 @@ export default function Home() {
         );
       }
       if (draft) setReturnDraft(draft);
+      {
+        const numId = typeof activeClientId === "string" ? parseInt(activeClientId.replace("mock-", ""), 10) : activeClientId;
+        setPriorYearDraft(mockPriorYearDrafts[numId as number] ?? null);
+      }
       if (workflow?.steps) setWorkflowSteps(workflow.steps);
     } catch {
       // Non-critical — UI will update on next full refresh
@@ -268,6 +274,9 @@ export default function Home() {
     api.returns.get(cid).then((draft) => {
       if (draft) setReturnDraft(draft);
     });
+    // Load prior year for YoY comparison (mock data for now)
+    const numId = typeof cid === "string" ? parseInt(cid.replace("mock-", ""), 10) : cid;
+    setPriorYearDraft(mockPriorYearDrafts[numId as number] ?? null);
   }, [activeWorkTab, activeClientId, documents.length]);
 
   // Send message handler — all messages (chips + free text) go to the agent
@@ -652,6 +661,16 @@ export default function Home() {
             refundOrOwed={returnDraft?.refund_or_owed}
             effectiveRate={returnDraft?.effective_rate}
             computedAt={returnDraft?.computed_at}
+            priorYear={priorYearDraft ? {
+              totalIncome: priorYearDraft.total_income,
+              totalDeductions: priorYearDraft.total_deductions,
+              taxableIncome: priorYearDraft.taxable_income,
+              totalTax: priorYearDraft.total_tax,
+              totalPayments: priorYearDraft.total_payments,
+              refundOrOwed: priorYearDraft.refund_or_owed,
+              effectiveRate: priorYearDraft.effective_rate,
+              lines: priorYearDraft.lines,
+            } : undefined}
             onViewFull={handleGenerateReturn}
             onViewReturn={() => setReturnViewerOpen(true)}
           />
@@ -883,6 +902,16 @@ export default function Home() {
                       refundOrOwed={returnDraft?.refund_or_owed}
                       effectiveRate={returnDraft?.effective_rate}
                       computedAt={returnDraft?.computed_at}
+                      priorYear={priorYearDraft ? {
+                        totalIncome: priorYearDraft.total_income,
+                        totalDeductions: priorYearDraft.total_deductions,
+                        taxableIncome: priorYearDraft.taxable_income,
+                        totalTax: priorYearDraft.total_tax,
+                        totalPayments: priorYearDraft.total_payments,
+                        refundOrOwed: priorYearDraft.refund_or_owed,
+                        effectiveRate: priorYearDraft.effective_rate,
+                        lines: priorYearDraft.lines,
+                      } : undefined}
                       onViewFull={handleGenerateReturn}
                       onViewReturn={() => setReturnViewerOpen(true)}
                     />
