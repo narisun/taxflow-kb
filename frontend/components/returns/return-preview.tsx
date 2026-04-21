@@ -57,7 +57,7 @@ export function ReturnPreview({
     if (current === undefined || prior === undefined) return null;
     const diff = current - prior;
     if (diff === 0) return null;
-    const sign = diff > 0 ? "+" : "";
+    const sign = diff > 0 ? "+" : "-";
     const dollarPart = `${sign}$${Math.abs(diff).toLocaleString("en-US", { minimumFractionDigits: 0 })}`;
     const pctPart = prior !== 0
       ? ` (${sign}${((diff / Math.abs(prior)) * 100).toFixed(1)}%)`
@@ -194,7 +194,7 @@ export function ReturnPreview({
               {priorYear && (
                 <DeltaBadge
                   text={fmtDelta(refundOrOwed, priorYear.refundOrOwed)}
-                  colorClass={deltaColor(refundOrOwed, priorYear.refundOrOwed, refundOrOwed >= 0 ? "up-good" : "up-bad")}
+                  colorClass={deltaColor(refundOrOwed, priorYear.refundOrOwed, "up-good")}
                 />
               )}
             </div>
@@ -226,7 +226,7 @@ export function ReturnPreview({
                     {priorYear && (
                       <DeltaBadge
                         text={fmtDelta(line.value, priorLineValue(line.number))}
-                        colorClass={deltaColor(line.value, priorLineValue(line.number), "up-good")}
+                        colorClass={deltaColor(line.value, priorLineValue(line.number), section === "tax_credits" ? "up-bad" : "up-good")}
                       />
                     )}
                   </div>

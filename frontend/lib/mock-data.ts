@@ -802,6 +802,8 @@ export const mockReturnDrafts: Record<number, TaxReturnDraft> = {
     total_tax: 15412,
     refund_or_owed: 3338,
     effective_rate: 13.4,
+    total_deductions: 15000,
+    total_payments: 18750,
   },
 
   // Client 4 — Garcia (MFJ, 4 dep)
@@ -827,6 +829,8 @@ export const mockReturnDrafts: Record<number, TaxReturnDraft> = {
     total_tax: 9520,
     refund_or_owed: 9880,
     effective_rate: 6.6,
+    total_deductions: 29200,
+    total_payments: 19400,
   },
 
   // Client 5 — Patel (MFJ, 1 dep)
@@ -851,6 +855,8 @@ export const mockReturnDrafts: Record<number, TaxReturnDraft> = {
     total_tax: 53760,
     refund_or_owed: 3240,
     effective_rate: 17.3,
+    total_deductions: 29200,
+    total_payments: 57000,
   },
 
   // Client 8 — O'Brien (single, 0 dep, high income)
@@ -870,6 +876,7 @@ export const mockReturnDrafts: Record<number, TaxReturnDraft> = {
     ],
     total_income: 235500, taxable_income: 220500,
     total_tax: 47800, refund_or_owed: -5800, effective_rate: 20.3,
+    total_deductions: 15000, total_payments: 42000,
   },
 
   // Client 9 — Nguyen (MFJ, 2 dep, filed)
@@ -890,6 +897,7 @@ export const mockReturnDrafts: Record<number, TaxReturnDraft> = {
     ],
     total_income: 251800, taxable_income: 222600,
     total_tax: 40340, refund_or_owed: 2460, effective_rate: 16.0,
+    total_deductions: 29200, total_payments: 42800,
   },
 };
 
