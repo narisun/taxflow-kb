@@ -187,21 +187,21 @@ function StepWelcome({
       </p>
 
       {emailVerified === false && (
-        <div className="mt-5 rounded-lg border border-gray-200 bg-gray-100 dark:bg-gray-800 dark:border-gray-700 p-4">
+        <div className="mt-5 rounded-lg border border-gray-200 bg-gray-50 dark:bg-gray-800/50 dark:border-gray-700 p-4">
           <div className="flex items-start gap-2.5">
-            <svg className="w-5 h-5 text-slate-800 dark:text-slate-200 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+            <svg className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
             </svg>
             <div>
-              <div className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">
+              <div className="text-[13px] font-semibold text-blue-800 dark:text-blue-300">
                 Email verification required
               </div>
-              <p className="text-[12px] text-slate-800 dark:text-slate-200 mt-1 leading-relaxed">
+              <p className="text-[12px] text-blue-700 dark:text-blue-300/90 mt-1 leading-relaxed">
                 Check your inbox for a verification email from Auth0 and click the
                 link to verify <span className="font-medium">{userEmail}</span>.
                 You&apos;ll need to verify your email before you can create your workspace.
               </p>
-              <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-2">
+              <p className="text-[11px] text-blue-500 dark:text-blue-400/70 mt-2">
                 Don&apos;t see it? Check your spam folder or sign out and sign in again to resend.
               </p>
             </div>
@@ -434,21 +434,21 @@ function StepConfirm({
       </dl>
 
       {emailVerified === false && (
-        <div className="mt-5 rounded-lg border border-gray-200 bg-gray-100 dark:bg-gray-800 dark:border-gray-700 p-4">
+        <div className="mt-5 rounded-lg border border-gray-200 bg-gray-50 dark:bg-gray-800/50 dark:border-gray-700 p-4">
           <div className="flex items-start gap-2.5">
-            <svg className="w-5 h-5 text-slate-800 dark:text-slate-200 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+            <svg className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
             </svg>
             <div>
-              <div className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">
+              <div className="text-[13px] font-semibold text-blue-800 dark:text-blue-300">
                 Email verification required
               </div>
-              <p className="text-[12px] text-slate-800 dark:text-slate-200 mt-1 leading-relaxed">
+              <p className="text-[12px] text-blue-700 dark:text-blue-300/90 mt-1 leading-relaxed">
                 Check your inbox for a verification email from Auth0 and click the
                 link to verify <span className="font-medium">{userEmail}</span>.
                 You&apos;ll need to verify your email before you can create your workspace.
               </p>
-              <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-2">
+              <p className="text-[11px] text-blue-500 dark:text-blue-400/70 mt-2">
                 Don&apos;t see it? Check your spam folder or sign out and sign in again to resend.
               </p>
             </div>
