@@ -187,21 +187,21 @@ function StepWelcome({
       </p>
 
       {emailVerified === false && (
-        <div className="mt-5 rounded-lg border border-amber-300 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-800 p-4">
+        <div className="mt-5 rounded-lg border border-amber-400 bg-amber-50 dark:bg-amber-950/40 dark:border-amber-700 p-4">
           <div className="flex items-start gap-2.5">
             <svg className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
             </svg>
             <div>
-              <div className="text-[13px] font-semibold text-amber-800 dark:text-amber-300">
+              <div className="text-[13px] font-semibold text-amber-900 dark:text-amber-200">
                 Email verification required
               </div>
-              <p className="text-[12px] text-amber-700 dark:text-amber-400 mt-1 leading-relaxed">
+              <p className="text-[12px] text-amber-900 dark:text-amber-100/90 mt-1 leading-relaxed">
                 Check your inbox for a verification email from Auth0 and click the
                 link to verify <span className="font-medium">{userEmail}</span>.
                 You&apos;ll need to verify your email before you can create your workspace.
               </p>
-              <p className="text-[11px] text-amber-600 dark:text-amber-500 mt-2">
+              <p className="text-[11px] text-amber-800 dark:text-amber-200/70 mt-2">
                 Don&apos;t see it? Check your spam folder or sign out and sign in again to resend.
               </p>
             </div>
@@ -295,6 +295,7 @@ function StepChoice({
           variant="primary"
           onClick={onNext}
           disabled={choice !== "create"}
+          title={choice !== "create" ? "Select 'Create a new firm' to continue" : undefined}
           className="text-[14px]"
         >
           Continue
@@ -373,6 +374,7 @@ function StepFirmDetails({
           variant="primary"
           onClick={onNext}
           disabled={!canAdvance}
+          title={!canAdvance ? "Enter a firm name (at least 2 characters) to continue" : undefined}
           className="text-[14px]"
         >
           Continue
@@ -432,21 +434,21 @@ function StepConfirm({
       </dl>
 
       {emailVerified === false && (
-        <div className="mt-5 rounded-lg border border-amber-300 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-800 p-4">
+        <div className="mt-5 rounded-lg border border-amber-400 bg-amber-50 dark:bg-amber-950/40 dark:border-amber-700 p-4">
           <div className="flex items-start gap-2.5">
             <svg className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
             </svg>
             <div>
-              <div className="text-[13px] font-semibold text-amber-800 dark:text-amber-300">
+              <div className="text-[13px] font-semibold text-amber-900 dark:text-amber-200">
                 Email verification required
               </div>
-              <p className="text-[12px] text-amber-700 dark:text-amber-400 mt-1 leading-relaxed">
+              <p className="text-[12px] text-amber-900 dark:text-amber-100/90 mt-1 leading-relaxed">
                 Check your inbox for a verification email from Auth0 and click the
                 link to verify <span className="font-medium">{userEmail}</span>.
                 You&apos;ll need to verify your email before you can create your workspace.
               </p>
-              <p className="text-[11px] text-amber-600 dark:text-amber-500 mt-2">
+              <p className="text-[11px] text-amber-800 dark:text-amber-200/70 mt-2">
                 Don&apos;t see it? Check your spam folder or sign out and sign in again to resend.
               </p>
             </div>
