@@ -9,6 +9,7 @@ import {
   type MeResponse,
 } from "@/lib/api-client";
 import { AccountWizard } from "@/components/onboarding/account-wizard";
+import { EmailVerificationGate } from "@/components/onboarding/email-verification-gate";
 import { MeProvider } from "@/components/auth/me-context";
 
 const DOMAIN = process.env.NEXT_PUBLIC_AUTH0_DOMAIN || "";
@@ -57,9 +58,10 @@ export function AppAuth0Provider({ children }: { children: ReactNode }) {
 
 /**
  * Fetches /api/auth/me after the user is authenticated. If their
- * onboarding_status is "pending", renders the AccountWizard instead of
- * the app. After the wizard POSTs and we receive a complete MeResponse,
- * unmounts the wizard and renders children.
+ * onboarding_status is "pending", checks email verification first —
+ * unverified users see the EmailVerificationGate, verified users see
+ * the AccountWizard. After the wizard POSTs and we receive a complete
+ * MeResponse, unmounts the wizard and renders children.
  *
  * In USE_MOCK mode we skip this entirely — mocks always return complete.
  */
@@ -67,11 +69,9 @@ function OnboardingGate({ children }: { children: ReactNode }) {
   const auth0 = (() => { try { return useAuth0(); } catch { return null; } })();
   const [me, setMe] = useState<MeResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [verified, setVerified] = useState<boolean | null>(null);
 
   useEffect(() => {
-    // In mock mode we still fetch — mock-api.auth.me() returns a complete
-    // MeResponse with permissions, which the rest of the app needs (e.g.
-    // PiiInput's eye toggle is gated by permissions.can_view_pii).
     let cancelled = false;
     api.auth.me()
       .then((data) => {
@@ -86,6 +86,13 @@ function OnboardingGate({ children }: { children: ReactNode }) {
       cancelled = true;
     };
   }, []);
+
+  // Initialize verified state from Auth0 user once available
+  useEffect(() => {
+    if (verified === null && auth0?.user !== undefined) {
+      setVerified(auth0.user?.email_verified ?? true);
+    }
+  }, [auth0?.user, verified]);
 
   const handleComplete = useCallback((updated: MeResponse) => {
     setMe(updated);
@@ -109,18 +116,26 @@ function OnboardingGate({ children }: { children: ReactNode }) {
   }
 
   if (me.user.onboarding_status === "pending") {
+    // Gate: email must be verified before entering the wizard
+    if (verified === false) {
+      return (
+        <EmailVerificationGate
+          userEmail={me.user.email}
+          onVerified={() => setVerified(true)}
+        />
+      );
+    }
+
     return (
       <AccountWizard
         userName={me.user.name}
         userEmail={me.user.email}
-        emailVerified={auth0?.user?.email_verified ?? undefined}
         onComplete={handleComplete}
       />
     );
   }
 
-  // Provide me + permissions to the whole app.
-  return <MeProvider value={me}>{children}</MeProvider>;
+  return <MeProvider value={me} onUpdate={setMe}>{children}</MeProvider>;
 }
 
 /** Pushes Auth0's access-token getter into the api-client at mount time. */
