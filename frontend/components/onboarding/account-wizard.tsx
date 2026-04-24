@@ -25,13 +25,12 @@ import { useToast } from "@/components/ui/toast";
 interface AccountWizardProps {
   userName: string;
   userEmail: string;
-  emailVerified?: boolean;
   onComplete: (me: MeResponse) => void;
 }
 
 type Choice = "create" | "join";
 
-export function AccountWizard({ userName, userEmail, emailVerified, onComplete }: AccountWizardProps) {
+export function AccountWizard({ userName, userEmail, onComplete }: AccountWizardProps) {
   const { toast } = useToast();
   const [step, setStep] = useState(1);
   const [choice, setChoice] = useState<Choice>("create");
@@ -59,12 +58,7 @@ export function AccountWizard({ userName, userEmail, emailVerified, onComplete }
     if (!match) return raw;
     try {
       const parsed = JSON.parse(match[1]);
-      const detail = parsed.detail || parsed.message || match[1];
-      // Replace the backend's terse message with a user-friendly one
-      if (detail.includes("Verify your email")) {
-        return "Your email address hasn't been verified yet. Please check your inbox (and spam folder) for a verification link from Auth0, click it, then come back and try again.";
-      }
-      return detail;
+      return parsed.detail || parsed.message || match[1];
     } catch {
       return match[1];
     }
@@ -96,7 +90,7 @@ export function AccountWizard({ userName, userEmail, emailVerified, onComplete }
 
         <div className="px-8 py-8">
           {step === 1 && (
-            <StepWelcome userName={userName} userEmail={userEmail} emailVerified={emailVerified} onNext={next} />
+            <StepWelcome userName={userName} userEmail={userEmail} onNext={next} />
           )}
           {step === 2 && (
             <StepChoice
@@ -122,8 +116,6 @@ export function AccountWizard({ userName, userEmail, emailVerified, onComplete }
             <StepConfirm
               firmName={firmName}
               timezone={timezone}
-              userEmail={userEmail}
-              emailVerified={emailVerified}
               submitting={submitting}
               error={submitError}
               onBack={back}
@@ -162,16 +154,12 @@ function ProgressRail({ step, total }: { step: number; total: number }) {
 function StepWelcome({
   userName,
   userEmail,
-  emailVerified,
   onNext,
 }: {
   userName: string;
   userEmail: string;
-  emailVerified?: boolean;
   onNext: () => void;
 }) {
-  // Auth0 defaults `name` to the email when the user has no display name.
-  // Pretty-print: if name looks like an email, take the local part.
   const greeting = (() => {
     if (!userName) return "";
     const cleaned = userName.includes("@") ? userName.split("@")[0] : userName;
@@ -185,29 +173,6 @@ function StepWelcome({
       <p className="text-[13px] text-tertiary mt-1">
         You signed in as <span className="text-secondary">{userEmail}</span>
       </p>
-
-      {emailVerified === false && (
-        <div className="mt-5 rounded-lg border border-[#D5D5D0] bg-[#E3E3DE] p-4">
-          <div className="flex items-start gap-2.5">
-            <svg className="w-5 h-5 text-[#4375C4] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-            </svg>
-            <div>
-              <div className="text-[13px] font-semibold text-[#4375C4]">
-                Email verification required
-              </div>
-              <p className="text-[12px] text-[#4375C4] mt-1 leading-relaxed">
-                Check your inbox for a verification email from Auth0 and click the
-                link to verify <span className="font-medium">{userEmail}</span>.
-                You&apos;ll need to verify your email before you can create your workspace.
-              </p>
-              <p className="text-[11px] text-[#4375C4]/70 mt-2">
-                Don&apos;t see it? Check your spam folder or sign out and sign in again to resend.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
 
       <p className="text-[14px] text-secondary mt-5 leading-relaxed">
         Let&apos;s set up your workspace. This takes about 30 seconds and can&apos;t
@@ -387,8 +352,6 @@ function StepFirmDetails({
 function StepConfirm({
   firmName,
   timezone,
-  userEmail,
-  emailVerified,
   submitting,
   error,
   onBack,
@@ -396,8 +359,6 @@ function StepConfirm({
 }: {
   firmName: string;
   timezone: string;
-  userEmail: string;
-  emailVerified?: boolean;
   submitting: boolean;
   error: string | null;
   onBack: () => void;
@@ -431,30 +392,7 @@ function StepConfirm({
         </div>
       </dl>
 
-      {emailVerified === false && (
-        <div className="mt-5 rounded-lg border border-[#D5D5D0] bg-[#E3E3DE] p-4">
-          <div className="flex items-start gap-2.5">
-            <svg className="w-5 h-5 text-[#4375C4] shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-            </svg>
-            <div>
-              <div className="text-[13px] font-semibold text-[#4375C4]">
-                Email verification required
-              </div>
-              <p className="text-[12px] text-[#4375C4] mt-1 leading-relaxed">
-                Check your inbox for a verification email from Auth0 and click the
-                link to verify <span className="font-medium">{userEmail}</span>.
-                You&apos;ll need to verify your email before you can create your workspace.
-              </p>
-              <p className="text-[11px] text-[#4375C4]/70 mt-2">
-                Don&apos;t see it? Check your spam folder or sign out and sign in again to resend.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {error && emailVerified !== false && (
+      {error && (
         <div className="mt-6 rounded-lg border border-red-300 bg-red-50 dark:bg-red-950/30 dark:border-red-900 p-3">
           <div className="text-[12px] font-semibold text-red-700 dark:text-red-300 mb-0.5">
             Couldn&apos;t create your workspace
