@@ -1,5 +1,5 @@
 """Tax return Pydantic schemas."""
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from api.models.enums import FilingStatus, ReturnSection
 
@@ -38,3 +38,16 @@ class FormManifestEntry(BaseModel):
 class ReturnManifest(BaseModel):
     total_pages: int
     forms: list[FormManifestEntry]
+
+
+class PriorYearResponse(BaseModel):
+    """Response for GET /prior-year — includes source provenance."""
+    draft: TaxReturnDraft | None = None
+    source_type: str = "computed"
+    source_document_id: str | None = None
+
+
+class ImportPriorRequest(BaseModel):
+    """Body for POST /import-prior."""
+    document_id: str
+    tax_year: int = Field(ge=2000, le=2100)
