@@ -28,6 +28,9 @@ interface ReturnPreviewProps {
   effectiveRate?: number;
   computedAt?: string;
   priorYear?: PriorYearData;
+  priorYearSourceType?: string;
+  priorYearDocumentId?: string | null;
+  onOpenDocument?: (docId: string) => void;
   onViewFull?: () => void;
   onViewReturn?: () => void;
   onApproveFile?: () => void;
@@ -44,6 +47,9 @@ export function ReturnPreview({
   effectiveRate,
   computedAt,
   priorYear,
+  priorYearSourceType,
+  priorYearDocumentId,
+  onOpenDocument,
   onViewFull,
   onViewReturn,
   onApproveFile,
@@ -125,6 +131,28 @@ export function ReturnPreview({
             {priorYear && (
               <span className="text-[9px] font-medium text-tertiary bg-surface-tertiary/50 rounded-full px-2 py-0.5">
                 2025 vs 2024
+              </span>
+            )}
+            {priorYearSourceType === "imported" && priorYearDocumentId && (
+              <button
+                onClick={() => onOpenDocument?.(priorYearDocumentId!)}
+                className="inline-flex items-center gap-1 text-[10px] text-secondary hover:text-brand transition-colors cursor-pointer"
+                title="View source document"
+              >
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                  <path d="M4 2h5l4 4v8a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.2"/>
+                  <path d="M9 2v4h4" stroke="currentColor" strokeWidth="1.2"/>
+                </svg>
+                Imported
+              </button>
+            )}
+            {priorYearSourceType === "computed" && priorYear && (
+              <span className="inline-flex items-center gap-1 text-[10px] text-tertiary">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                  <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.2"/>
+                  <path d="M5.5 8l2 2 3.5-4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Computed
               </span>
             )}
           </div>
