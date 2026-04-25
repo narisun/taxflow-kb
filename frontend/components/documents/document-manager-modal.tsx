@@ -98,6 +98,18 @@ const FORM_FIELDS: Record<string, FieldDef[]> = {
     ["box1_interest", "1", "Mortgage interest", "money"],
     ["box10_property_taxes", "10", "Property taxes", "money"],
   ],
+  "1040-Prior": [
+    ["tax_year", "", "Tax Year", "text"],
+    ["filing_status", "", "Filing Status", "text"],
+    ["line_1a", "1a", "Wages", "money"],
+    ["line_9", "9", "Total Income", "money"],
+    ["line_12", "12", "Deductions", "money"],
+    ["line_15", "15", "Taxable Income", "money"],
+    ["line_24", "24", "Total Tax", "money"],
+    ["line_33", "33", "Total Payments", "money"],
+    ["line_35a", "35a", "Refund", "money"],
+    ["line_37", "37", "Amount Owed", "money"],
+  ],
 };
 
 function formatValue(val: unknown, type: ValueType): string {
