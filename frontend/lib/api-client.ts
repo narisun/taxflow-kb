@@ -159,6 +159,12 @@ export interface ReturnManifest {
   forms: FormManifestEntry[];
 }
 
+export interface PriorYearResponse {
+  draft: TaxReturnDraft | null;
+  source_type: string;
+  source_document_id: string | null;
+}
+
 export interface Dependent {
   id: string;
   client_id: string;
@@ -324,9 +330,20 @@ const realApi = {
       fetchJson<TaxReturnDraft>(`${API_BASE}/api/clients/${clientId}/returns/draft`, {
         method: "POST",
       }),
-    get: (clientId: string): Promise<TaxReturnDraft | null> =>
-      fetchJson<TaxReturnDraft>(`${API_BASE}/api/clients/${clientId}/returns/draft`)
-        .catch(() => null),
+    get: (clientId: string, taxYear?: number): Promise<TaxReturnDraft | null> => {
+      const params = taxYear ? `?tax_year=${taxYear}` : "";
+      return fetchJson<TaxReturnDraft>(`${API_BASE}/api/clients/${clientId}/returns/draft${params}`)
+        .catch(() => null);
+    },
+    priorYear: (clientId: string): Promise<PriorYearResponse> =>
+      fetchJson<PriorYearResponse>(
+        `${API_BASE}/api/clients/${clientId}/returns/prior-year`,
+      ).catch(() => ({ draft: null, source_type: "computed", source_document_id: null })),
+    importPrior: (clientId: string, documentId: string, taxYear: number): Promise<TaxReturnDraft> =>
+      fetchJson<TaxReturnDraft>(
+        `${API_BASE}/api/clients/${clientId}/returns/import-prior`,
+        { method: "POST", body: JSON.stringify({ document_id: documentId, tax_year: taxYear }) },
+      ),
     advisory: (clientId: string): Promise<AdvisoryItem[]> =>
       fetchJson<AdvisoryItem[]>(`${API_BASE}/api/clients/${clientId}/returns/advisory`),
     validate: (clientId: string): Promise<ValidationResponse> =>

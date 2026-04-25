@@ -12,6 +12,7 @@ import type {
   DependentCreate,
   Document,
   MeResponse,
+  PriorYearResponse,
   ReturnManifest,
   OnboardingPayload,
   TaxReturnDraft,
@@ -290,9 +291,22 @@ export const mockApi = {
       return draft;
     },
 
-    get: async (clientId: string): Promise<TaxReturnDraft | null> => {
+    get: async (clientId: string, _taxYear?: number): Promise<TaxReturnDraft | null> => {
       await delay(150);
       return drafts[clientId] ? { ...drafts[clientId] } : null;
+    },
+
+    priorYear: async (clientId: string): Promise<PriorYearResponse> => {
+      await delay(150);
+      const { mockPriorYearDrafts } = await import("./mock-data");
+      const numId = typeof clientId === "string" ? parseInt(clientId.replace("mock-", ""), 10) : clientId;
+      const draft = mockPriorYearDrafts[numId as number] ?? null;
+      return { draft, source_type: "computed", source_document_id: null };
+    },
+
+    importPrior: async (_clientId: string, _documentId: string, _taxYear: number): Promise<TaxReturnDraft> => {
+      await delay(300);
+      throw new Error("Import not available in mock mode");
     },
 
     advisory: async (clientId: string): Promise<AdvisoryItem[]> => {
