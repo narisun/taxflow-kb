@@ -4,41 +4,79 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { authHeaders } from "@/lib/api-client";
 
+type FitMode = "page-width" | "page-fit" | "custom";
+
 interface PdfViewerProps {
   src: string;
   className?: string;
+  /** Jump to this page (scrolls into view in continuous mode). */
   goToPage?: number;
 }
 
 export function PdfViewer({ src, className, goToPage }: PdfViewerProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const canvasRefs = useRef<Map<number, HTMLCanvasElement>>(new Map());
   const [numPages, setNumPages] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
   const [scale, setScale] = useState(1.0);
+  const [fitMode, setFitMode] = useState<FitMode>("page-width");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const pdfDocRef = useRef<any>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  // Track whether a fit-mode recalc is needed after initial render
+  const fitRecalcNeeded = useRef(true);
 
-  const renderPage = useCallback(async (pageNum: number, renderScale: number) => {
-    const pdfDoc = pdfDocRef.current;
-    if (!pdfDoc || !canvasRef.current) return;
+  // ── Render a single page onto its canvas ────────────────────────────
+  const renderPage = useCallback(
+    async (pageNum: number, renderScale: number) => {
+      const pdfDoc = pdfDocRef.current;
+      const canvas = canvasRefs.current.get(pageNum);
+      if (!pdfDoc || !canvas) return;
 
-    try {
-      const page = await pdfDoc.getPage(pageNum);
-      const viewport = page.getViewport({ scale: renderScale });
-      const canvas = canvasRef.current;
-      const context = canvas.getContext("2d");
-      if (!context) return;
+      try {
+        const page = await pdfDoc.getPage(pageNum);
+        const viewport = page.getViewport({ scale: renderScale });
+        const context = canvas.getContext("2d");
+        if (!context) return;
 
-      canvas.height = viewport.height;
-      canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
 
-      await page.render({ canvasContext: context, viewport }).promise;
-    } catch (err) {
-      console.error("Error rendering page:", err);
-    }
-  }, []);
+        await page.render({ canvasContext: context, viewport }).promise;
+      } catch (err) {
+        console.error("Error rendering page:", err);
+      }
+    },
+    [],
+  );
 
+  // ── Compute scale for fit modes ─────────────────────────────────────
+  const computeFitScale = useCallback(
+    async (mode: FitMode) => {
+      const pdfDoc = pdfDocRef.current;
+      const container = containerRef.current;
+      if (!pdfDoc || !container) return 1;
+
+      const page = await pdfDoc.getPage(1);
+      const baseViewport = page.getViewport({ scale: 1 });
+      // Subtract padding (16px each side) and a small margin
+      const availableWidth = container.clientWidth - 40;
+      const availableHeight = container.clientHeight - 24;
+
+      if (mode === "page-width") {
+        return availableWidth / baseViewport.width;
+      }
+      if (mode === "page-fit") {
+        const scaleW = availableWidth / baseViewport.width;
+        const scaleH = availableHeight / baseViewport.height;
+        return Math.min(scaleW, scaleH);
+      }
+      return 1;
+    },
+    [],
+  );
+
+  // ── Load the PDF document ───────────────────────────────────────────
   useEffect(() => {
     let cancelled = false;
 
@@ -50,8 +88,6 @@ export function PdfViewer({ src, className, goToPage }: PdfViewerProps) {
         const pdfjsLib = await import("pdfjs-dist");
         pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
 
-        // PDF.js makes its own HTTP request to `src`; attach the bearer
-        // token via httpHeaders so authenticated endpoints don't 401.
         const headers = await authHeaders();
         const loadingTask = pdfjsLib.getDocument({
           url: src,
@@ -65,9 +101,8 @@ export function PdfViewer({ src, className, goToPage }: PdfViewerProps) {
         pdfDocRef.current = pdfDoc;
         setNumPages(pdfDoc.numPages);
         setCurrentPage(1);
+        fitRecalcNeeded.current = true;
         setLoading(false);
-
-        await renderPage(1, scale);
       } catch (err) {
         if (!cancelled) {
           setError("Unable to load document preview");
@@ -78,62 +113,156 @@ export function PdfViewer({ src, className, goToPage }: PdfViewerProps) {
     }
 
     loadPdf();
-    return () => { cancelled = true; };
-  }, [src]); // eslint-disable-line react-hooks/exhaustive-deps
+    return () => {
+      cancelled = true;
+    };
+  }, [src]);
 
+  // ── Recalculate scale when fit mode changes or PDF loads ────────────
   useEffect(() => {
-    if (!loading && pdfDocRef.current) {
-      renderPage(currentPage, scale);
-    }
-  }, [currentPage, scale, loading, renderPage]);
+    if (loading || !pdfDocRef.current) return;
 
+    if (fitMode === "custom") return; // user zoomed manually
+
+    let cancelled = false;
+    computeFitScale(fitMode).then((s) => {
+      if (!cancelled) {
+        setScale(s);
+        fitRecalcNeeded.current = false;
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [fitMode, loading, computeFitScale]);
+
+  // ── Render all pages when scale changes ─────────────────────────────
+  useEffect(() => {
+    if (loading || !pdfDocRef.current) return;
+
+    for (let i = 1; i <= numPages; i++) {
+      renderPage(i, scale);
+    }
+  }, [scale, numPages, loading, renderPage]);
+
+  // ── Scroll to goToPage ──────────────────────────────────────────────
   useEffect(() => {
     if (goToPage && goToPage >= 1 && goToPage <= numPages) {
-      setCurrentPage(goToPage);
+      const canvas = canvasRefs.current.get(goToPage);
+      if (canvas) {
+        canvas.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     }
-  }, [goToPage, numPages]);
+  }, [goToPage, numPages, scale]);
 
-  const prevPage = () => setCurrentPage((p) => Math.max(1, p - 1));
-  const nextPage = () => setCurrentPage((p) => Math.min(numPages, p + 1));
-  const zoomIn = () => setScale((s) => Math.min(3, s + 0.2));
-  const zoomOut = () => setScale((s) => Math.max(0.5, s - 0.2));
+  // ── Track current page from scroll position ─────────────────────────
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || loading) return;
+
+    function onScroll() {
+      const scrollTop = container!.scrollTop + container!.clientHeight / 3;
+      let page = 1;
+      for (const [pageNum, canvas] of canvasRefs.current.entries()) {
+        if (canvas.offsetTop <= scrollTop) {
+          page = pageNum;
+        }
+      }
+      setCurrentPage(page);
+    }
+
+    container.addEventListener("scroll", onScroll, { passive: true });
+    return () => container.removeEventListener("scroll", onScroll);
+  }, [loading, numPages]);
+
+  // ── Zoom controls ───────────────────────────────────────────────────
+  const zoomIn = () => {
+    setFitMode("custom");
+    setScale((s) => Math.min(4, +(s + 0.25).toFixed(2)));
+  };
+  const zoomOut = () => {
+    setFitMode("custom");
+    setScale((s) => Math.max(0.25, +(s - 0.25).toFixed(2)));
+  };
+  const setFit = (mode: FitMode) => setFitMode(mode);
+
+  // ── Register canvas ref for a page ──────────────────────────────────
+  const setCanvasRef = useCallback(
+    (pageNum: number) => (el: HTMLCanvasElement | null) => {
+      if (el) {
+        canvasRefs.current.set(pageNum, el);
+      } else {
+        canvasRefs.current.delete(pageNum);
+      }
+    },
+    [],
+  );
 
   if (error) {
     return (
-      <div className={`flex items-center justify-center h-64 text-secondary text-[13px] ${className || ""}`}>
+      <div
+        className={`flex items-center justify-center h-64 text-secondary text-[13px] ${className || ""}`}
+      >
         {error}
       </div>
     );
   }
 
+  const pctLabel = Math.round(scale * 100);
+
   return (
     <div className={`flex flex-col h-full ${className || ""}`}>
-      {/* Controls */}
-      <div className="flex items-center justify-between mb-2 shrink-0">
-        <div className="flex items-center gap-1">
-          <button onClick={prevPage} disabled={currentPage <= 1} className="w-7 h-7 rounded-lg flex items-center justify-center text-secondary hover:bg-surface-secondary disabled:opacity-30 transition-colors cursor-pointer text-[12px]" aria-label="Previous page">
-            &larr;
+      {/* ── Toolbar ─────────────────────────────────────────────────── */}
+      <div className="flex items-center justify-between mb-1.5 shrink-0 px-1">
+        {/* Page indicator */}
+        <span className="text-[11px] text-secondary min-w-[60px]">
+          {loading ? "\u2014" : `Page ${currentPage} of ${numPages}`}
+        </span>
+
+        {/* Fit mode + zoom controls */}
+        <div className="flex items-center gap-0.5">
+          <button
+            onClick={() => setFit("page-width")}
+            className={`h-7 px-2 rounded-md text-[11px] transition-colors cursor-pointer ${fitMode === "page-width" ? "bg-brand/10 text-brand font-medium" : "text-secondary hover:bg-surface-secondary"}`}
+            title="Fit to width"
+          >
+            Width
           </button>
-          <span className="text-[11px] text-secondary min-w-[60px] text-center">
-            {loading ? "\u2014" : `${currentPage} / ${numPages}`}
-          </span>
-          <button onClick={nextPage} disabled={currentPage >= numPages} className="w-7 h-7 rounded-lg flex items-center justify-center text-secondary hover:bg-surface-secondary disabled:opacity-30 transition-colors cursor-pointer text-[12px]" aria-label="Next page">
-            &rarr;
+          <button
+            onClick={() => setFit("page-fit")}
+            className={`h-7 px-2 rounded-md text-[11px] transition-colors cursor-pointer ${fitMode === "page-fit" ? "bg-brand/10 text-brand font-medium" : "text-secondary hover:bg-surface-secondary"}`}
+            title="Fit whole page"
+          >
+            Page
           </button>
-        </div>
-        <div className="flex items-center gap-1">
-          <button onClick={zoomOut} className="w-7 h-7 rounded-lg flex items-center justify-center text-secondary hover:bg-surface-secondary transition-colors cursor-pointer text-[13px]" aria-label="Zoom out">
+
+          <div className="w-px h-4 bg-divider mx-1" />
+
+          <button
+            onClick={zoomOut}
+            className="w-7 h-7 rounded-md flex items-center justify-center text-secondary hover:bg-surface-secondary transition-colors cursor-pointer text-[13px]"
+            aria-label="Zoom out"
+          >
             &minus;
           </button>
-          <span className="text-[11px] text-tertiary min-w-[36px] text-center">{Math.round(scale * 100)}%</span>
-          <button onClick={zoomIn} className="w-7 h-7 rounded-lg flex items-center justify-center text-secondary hover:bg-surface-secondary transition-colors cursor-pointer text-[13px]" aria-label="Zoom in">
+          <span className="text-[11px] text-tertiary min-w-[36px] text-center">
+            {pctLabel}%
+          </span>
+          <button
+            onClick={zoomIn}
+            className="w-7 h-7 rounded-md flex items-center justify-center text-secondary hover:bg-surface-secondary transition-colors cursor-pointer text-[13px]"
+            aria-label="Zoom in"
+          >
             +
           </button>
         </div>
       </div>
 
-      {/* Canvas — fills remaining height */}
-      <div className="overflow-auto rounded-lg border border-divider bg-surface-tertiary flex-1 min-h-0">
+      {/* ── Scroll container (fixed height, both-axis overflow) ───── */}
+      <div
+        ref={containerRef}
+        className="overflow-auto rounded-lg border border-divider bg-surface-tertiary flex-1 min-h-0"
+      >
         {loading ? (
           <div className="p-4 space-y-3">
             <Skeleton className="h-6 w-[80%]" />
@@ -142,7 +271,17 @@ export function PdfViewer({ src, className, goToPage }: PdfViewerProps) {
             <Skeleton className="h-64 w-full" />
           </div>
         ) : (
-          <canvas ref={canvasRef} className="mx-auto block" />
+          <div className="flex flex-col items-center gap-3 py-3 min-w-fit">
+            {Array.from({ length: numPages }, (_, i) => i + 1).map(
+              (pageNum) => (
+                <canvas
+                  key={pageNum}
+                  ref={setCanvasRef(pageNum)}
+                  className="shadow-md bg-white block"
+                />
+              ),
+            )}
+          </div>
         )}
       </div>
     </div>

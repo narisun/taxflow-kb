@@ -47,7 +47,7 @@ export function ReturnViewerModal({ open, onClose, clientId }: ReturnViewerModal
   const headerLabel = selectedForm ? `Tax Return — ${selectedForm.label}` : "Tax Return";
 
   return (
-    <Modal open={open} onClose={onClose} className="w-[90vw] max-w-6xl h-[calc(100vh-64px)]">
+    <Modal open={open} onClose={onClose} className="w-[95vw] max-w-7xl h-[calc(100vh-48px)]">
       <ModalHeader onClose={onClose}>{headerLabel}</ModalHeader>
       <ModalBody className="flex flex-row gap-0 p-0 overflow-hidden flex-1 min-h-0">
         {/* Left nav */}

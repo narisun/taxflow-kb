@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { useEffect, type ReactNode } from "react";
+import type { ReactNode } from "react";
 
 interface ModalProps {
   open: boolean;
@@ -11,29 +11,22 @@ interface ModalProps {
 }
 
 function Modal({ open, onClose, children, className }: ModalProps) {
-  useEffect(() => {
-    if (!open) return;
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
-    }
-    document.addEventListener("keydown", handleKey);
-    return () => document.removeEventListener("keydown", handleKey);
-  }, [open, onClose]);
+  // Deliberately NOT closing on Escape or backdrop click — modals only
+  // dismiss via the explicit Close button so accidental clicks don't drop
+  // half-filled forms. ``onClose`` is held by the consumer for that button.
+  void onClose;
 
   if (!open) return null;
 
   return (
     <div
       className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center animate-fade-in"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
       role="dialog"
       aria-modal="true"
     >
       <div
         className={cn(
-          "bg-surface rounded-2xl shadow-2xl max-h-[calc(100vh-48px)] overflow-hidden animate-scale-in w-full mx-4",
+          "bg-surface rounded-2xl shadow-2xl max-h-[calc(100vh-48px)] overflow-hidden animate-scale-in w-full mx-4 flex flex-col",
           className
         )}
       >
