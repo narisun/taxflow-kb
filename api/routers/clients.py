@@ -1,5 +1,6 @@
 """Client CRUD endpoints — tenant-scoped, with PII encryption."""
 import json
+import logging
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select, func
@@ -14,6 +15,8 @@ from api.models.client import (
 )
 from api.services.pii.encryptor import PIIEncryptor, get_pii_encryptor
 from api.routers._helpers import get_client_or_404
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/clients", tags=["clients"])
 
@@ -317,6 +320,14 @@ async def reveal_pii(
             raise HTTPException(status_code=400, detail=f"Invalid PII field: {f}")
         enc_value = field_map[f]
         revealed[f] = enc.decrypt(enc_value) if enc_value else None
+
+    logger.info(
+        "PII_REVEAL user=%s org=%s client=%s fields=%s",
+        user.id,
+        user.org_id,
+        client_id,
+        sorted(req.fields),
+    )
 
     return revealed
 
