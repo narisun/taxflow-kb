@@ -139,18 +139,18 @@ def get_agent_service(
 
 
 @lru_cache(maxsize=1)
-def _cached_tax_brain_pool():
-    """Lazy singleton psycopg2 pool for tax_brain KB access."""
+def _cached_taxkb_pool():
+    """Lazy singleton psycopg2 pool for taxkb KB access."""
     try:
-        from tax_brain.factories import create_pool
+        from taxkb.factories import create_pool
         return create_pool()
     except Exception:
-        logger.warning("tax_brain pool unavailable — research tools will be degraded")
+        logger.warning("taxkb pool unavailable — research tools will be degraded")
         return None
 
 
-def get_tax_brain_pool():
-    return _cached_tax_brain_pool()
+def get_taxkb_pool():
+    return _cached_taxkb_pool()
 
 
 def get_research_service(
@@ -170,20 +170,5 @@ def get_research_service(
     )
 
 
-def get_agent_service_for_chat(
-    settings: SettingsDep,
-    anthropic_client: AnthropicClientDep,
-    encryptor: PIIEncryptorDep,
-):
-    """Construct an AgentService for client chat (with all 11 tools)."""
-    from api.agent.service import AgentService
-    from api.agent.mcp_server import build_tool_registry
-
-    return AgentService(
-        anthropic_client=anthropic_client,
-        model=settings.agent_model,
-        max_tokens=settings.agent_max_tokens,
-        max_tool_rounds=settings.agent_max_tool_rounds,
-        history_token_budget=settings.agent_history_token_budget,
-        tool_registry=build_tool_registry(),
-    )
+# get_agent_service_for_chat was identical to get_agent_service and has been
+# removed. Chat router now uses get_agent_service directly.

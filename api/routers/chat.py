@@ -11,7 +11,7 @@ from api.auth.dependencies import require_onboarded_user
 from api.auth.models import UserModel
 from api.db.engine import get_session
 from api.db.models import ChatMessageModel, ConversationModel, ConversationMessageModel
-from api.dependencies import get_agent_service_for_chat, get_pii_encryptor_dep
+from api.dependencies import get_agent_service, get_pii_encryptor_dep
 from api.models.chat import ChatHistoryResponse, ChatMessageCreate, ChatMessageResponse
 from api.routers._helpers import get_client_or_404
 from api.services.pii.encryptor import PIIEncryptor
@@ -54,7 +54,7 @@ async def send_message(
     message: ChatMessageCreate,
     session: AsyncSession = Depends(get_session),
     user: UserModel = Depends(require_onboarded_user),
-    agent: AgentService = Depends(get_agent_service_for_chat),
+    agent: AgentService = Depends(get_agent_service),
     encryptor: PIIEncryptor = Depends(get_pii_encryptor_dep),
 ):
     """Send a user message through the AgentService tool-use loop."""
