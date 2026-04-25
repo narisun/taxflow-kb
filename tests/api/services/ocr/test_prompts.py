@@ -55,6 +55,11 @@ class TestGetPrompt:
             assert "json" in prompt.lower() or "JSON" in prompt
 
     def test_all_prompts_mention_confidence(self):
+        # 1040-Prior uses direct value extraction (no confidence scores)
+        # since it's extracting from a completed filed return, not raw OCR.
+        skip = {"1040-Prior"}
         for form_type in SUPPORTED_FORM_TYPES:
+            if form_type in skip:
+                continue
             prompt = get_prompt(form_type)
             assert "confidence" in prompt.lower()

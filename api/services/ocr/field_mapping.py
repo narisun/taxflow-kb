@@ -62,6 +62,28 @@ FIELD_LABELS: dict[str, dict[str, str]] = {
         "box14a_se_earnings": "Box 14a \u2014 Self-employment earnings",
         "box20z_section_199a_qbi": "Box 20 Code Z \u2014 Section 199A QBI",
     },
+    "1040-Prior": {
+        "tax_year": "Tax Year",
+        "filing_status": "Filing Status",
+        "line_1a": "Line 1a \u2014 Wages, salaries, tips",
+        "line_2b": "Line 2b \u2014 Taxable interest",
+        "line_3b": "Line 3b \u2014 Qualified dividends",
+        "line_7": "Line 7 \u2014 Capital gain or loss",
+        "line_8": "Line 8 \u2014 Other income",
+        "line_9": "Line 9 \u2014 Total income",
+        "line_12": "Line 12 \u2014 Deductions",
+        "line_13a": "Line 13a \u2014 QBI deduction",
+        "line_15": "Line 15 \u2014 Taxable income",
+        "line_16": "Line 16 \u2014 Tax",
+        "line_24": "Line 24 \u2014 Total tax",
+        "line_25a": "Line 25a \u2014 W-2 withholding",
+        "line_25b": "Line 25b \u2014 1099 withholding",
+        "line_25c": "Line 25c \u2014 Other withholding",
+        "line_26": "Line 26 \u2014 Estimated tax payments",
+        "line_33": "Line 33 \u2014 Total payments",
+        "line_35a": "Line 35a \u2014 Refund",
+        "line_37": "Line 37 \u2014 Amount owed",
+    },
 }
 
 
