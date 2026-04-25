@@ -13,6 +13,36 @@ interface PdfViewerProps {
   goToPage?: number;
 }
 
+/* ── Toolbar icons (inline SVG, 16x16) ──────────────────────────────── */
+
+function FitWidthIcon({ className }: { className?: string }) {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={className}>
+      {/* Left arrow */}
+      <path d="M1 8h4M1 8l2-2M1 8l2 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      {/* Right arrow */}
+      <path d="M15 8h-4M15 8l-2-2M15 8l-2 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      {/* Page outline */}
+      <rect x="5" y="3" width="6" height="10" rx="1" stroke="currentColor" strokeWidth="1.2" />
+    </svg>
+  );
+}
+
+function FitPageIcon({ className }: { className?: string }) {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={className}>
+      {/* Outer frame */}
+      <rect x="1" y="1" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.2" />
+      {/* Inner page */}
+      <rect x="4" y="3" width="8" height="10" rx="1" stroke="currentColor" strokeWidth="1.2" />
+      {/* Corner arrows (top-left) */}
+      <path d="M1.5 4.5V1.5h3" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+      {/* Corner arrows (bottom-right) */}
+      <path d="M14.5 11.5v3h-3" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export function PdfViewer({ src, className, goToPage }: PdfViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRefs = useRef<Map<number, HTMLCanvasElement>>(new Map());
@@ -23,8 +53,8 @@ export function PdfViewer({ src, className, goToPage }: PdfViewerProps) {
   const [error, setError] = useState<string | null>(null);
   const pdfDocRef = useRef<any>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  // Track whether a fit-mode recalc is needed after initial render
-  const fitRecalcNeeded = useRef(true);
+  // Bumped to force recalc even when fitMode value doesn't change
+  const [fitSeq, setFitSeq] = useState(0);
 
   // ── Render a single page onto its canvas ────────────────────────────
   const renderPage = useCallback(
@@ -55,11 +85,10 @@ export function PdfViewer({ src, className, goToPage }: PdfViewerProps) {
     async (mode: FitMode) => {
       const pdfDoc = pdfDocRef.current;
       const container = containerRef.current;
-      if (!pdfDoc || !container) return 1;
+      if (!pdfDoc || !container || container.clientWidth === 0) return null;
 
       const page = await pdfDoc.getPage(1);
       const baseViewport = page.getViewport({ scale: 1 });
-      // Subtract padding (16px each side) and a small margin
       const availableWidth = container.clientWidth - 40;
       const availableHeight = container.clientHeight - 24;
 
@@ -71,10 +100,17 @@ export function PdfViewer({ src, className, goToPage }: PdfViewerProps) {
         const scaleH = availableHeight / baseViewport.height;
         return Math.min(scaleW, scaleH);
       }
-      return 1;
+      return null;
     },
     [],
   );
+
+  // ── Apply fit scale (shared logic) ──────────────────────────────────
+  const applyFit = useCallback(async () => {
+    if (loading || !pdfDocRef.current || fitMode === "custom") return;
+    const s = await computeFitScale(fitMode);
+    if (s !== null) setScale(s);
+  }, [loading, fitMode, computeFitScale]);
 
   // ── Load the PDF document ───────────────────────────────────────────
   useEffect(() => {
@@ -101,7 +137,6 @@ export function PdfViewer({ src, className, goToPage }: PdfViewerProps) {
         pdfDocRef.current = pdfDoc;
         setNumPages(pdfDoc.numPages);
         setCurrentPage(1);
-        fitRecalcNeeded.current = true;
         setLoading(false);
       } catch (err) {
         if (!cancelled) {
@@ -118,23 +153,25 @@ export function PdfViewer({ src, className, goToPage }: PdfViewerProps) {
     };
   }, [src]);
 
-  // ── Recalculate scale when fit mode changes or PDF loads ────────────
+  // ── Recalculate scale when fit mode, fitSeq, or loading changes ─────
   useEffect(() => {
-    if (loading || !pdfDocRef.current) return;
+    applyFit();
+  }, [fitMode, fitSeq, loading, applyFit]);
 
-    if (fitMode === "custom") return; // user zoomed manually
+  // ── ResizeObserver — recalculate fit when container resizes ──────────
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
 
-    let cancelled = false;
-    computeFitScale(fitMode).then((s) => {
-      if (!cancelled) {
-        setScale(s);
-        fitRecalcNeeded.current = false;
+    const observer = new ResizeObserver(() => {
+      // Only recalc if we're in a fit mode (not custom zoom)
+      if (fitMode !== "custom" && pdfDocRef.current && !loading) {
+        applyFit();
       }
     });
-    return () => {
-      cancelled = true;
-    };
-  }, [fitMode, loading, computeFitScale]);
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [fitMode, loading, applyFit]);
 
   // ── Render all pages when scale changes ─────────────────────────────
   useEffect(() => {
@@ -184,7 +221,11 @@ export function PdfViewer({ src, className, goToPage }: PdfViewerProps) {
     setFitMode("custom");
     setScale((s) => Math.max(0.25, +(s - 0.25).toFixed(2)));
   };
-  const setFit = (mode: FitMode) => setFitMode(mode);
+  const requestFit = (mode: FitMode) => {
+    setFitMode(mode);
+    // Bump sequence so the effect re-runs even if mode is the same value
+    setFitSeq((n) => n + 1);
+  };
 
   // ── Register canvas ref for a page ──────────────────────────────────
   const setCanvasRef = useCallback(
@@ -222,18 +263,20 @@ export function PdfViewer({ src, className, goToPage }: PdfViewerProps) {
         {/* Fit mode + zoom controls */}
         <div className="flex items-center gap-0.5">
           <button
-            onClick={() => setFit("page-width")}
-            className={`h-7 px-2 rounded-md text-[11px] transition-colors cursor-pointer ${fitMode === "page-width" ? "bg-brand/10 text-brand font-medium" : "text-secondary hover:bg-surface-secondary"}`}
+            onClick={() => requestFit("page-width")}
+            className={`h-7 w-7 rounded-md flex items-center justify-center transition-colors cursor-pointer ${fitMode === "page-width" ? "bg-brand/10 text-brand" : "text-secondary hover:bg-surface-secondary"}`}
             title="Fit to width"
+            aria-label="Fit to width"
           >
-            Width
+            <FitWidthIcon />
           </button>
           <button
-            onClick={() => setFit("page-fit")}
-            className={`h-7 px-2 rounded-md text-[11px] transition-colors cursor-pointer ${fitMode === "page-fit" ? "bg-brand/10 text-brand font-medium" : "text-secondary hover:bg-surface-secondary"}`}
+            onClick={() => requestFit("page-fit")}
+            className={`h-7 w-7 rounded-md flex items-center justify-center transition-colors cursor-pointer ${fitMode === "page-fit" ? "bg-brand/10 text-brand" : "text-secondary hover:bg-surface-secondary"}`}
             title="Fit whole page"
+            aria-label="Fit whole page"
           >
-            Page
+            <FitPageIcon />
           </button>
 
           <div className="w-px h-4 bg-divider mx-1" />
