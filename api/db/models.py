@@ -179,11 +179,15 @@ class TaxReturnDraftModel(TenantMixin, Base):
     filing_status: Mapped[str] = mapped_column(String(10))
     draft_json: Mapped[str] = mapped_column(Text)
     computed_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    source_type: Mapped[str] = mapped_column(String(20), default="computed")
+    source_document_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("documents.id"), nullable=True
+    )
 
     client: Mapped["ClientModel"] = relationship()
 
     __table_args__ = (
-        UniqueConstraint("org_id", "client_id", name="uq_draft_org_client"),
+        UniqueConstraint("org_id", "client_id", "tax_year", name="uq_draft_org_client_year"),
         Index("ix_drafts_org_client", "org_id", "client_id"),
     )
 
