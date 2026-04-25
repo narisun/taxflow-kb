@@ -7,14 +7,14 @@ async def test_create_client_with_pii(client):
         "name": "Smith Family", "filing_status": "mfj", "tax_year": 2024,
         "primary_ssn": "123456789", "primary_dob": "1985-03-15",
         "spouse_first_name": "Jane", "spouse_last_name": "Smith",
-        "spouse_ssn": "987654321", "spouse_dob": "1987-05-10",
+        "spouse_ssn": "456789012", "spouse_dob": "1987-05-10",
         "street": "123 Main St", "city": "Springfield", "state": "IL", "zip_code": "62701",
     })
     assert resp.status_code == 201
     body = resp.json()
     assert body["primary_ssn_masked"] == "***-**-6789"
     assert body["primary_dob_masked"] == "**/**/1985"
-    assert body["spouse_ssn_masked"] == "***-**-4321"
+    assert body["spouse_ssn_masked"] == "***-**-9012"
     assert body["street_masked"] == "123 M***"
     assert body["city"] == "Springfield"
 
@@ -52,9 +52,9 @@ async def test_reveal_pii(client):
 async def test_update_client_pii(client):
     c = await client.post("/api/clients", json={"name": "Test", "primary_ssn": "111111111"})
     cid = c.json()["id"]
-    resp = await client.patch(f"/api/clients/{cid}", json={"primary_ssn": "999888777"})
+    resp = await client.patch(f"/api/clients/{cid}", json={"primary_ssn": "234567890"})
     assert resp.status_code == 200
-    assert resp.json()["primary_ssn_masked"] == "***-**-8777"
+    assert resp.json()["primary_ssn_masked"] == "***-**-7890"
 
 @pytest.mark.asyncio
 async def test_create_client_without_pii(client):

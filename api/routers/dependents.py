@@ -2,13 +2,13 @@
 from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.db.engine import get_session
 from api.db.models import DependentModel
-from api.auth.dependencies import get_current_user
+from api.auth.dependencies import get_current_user, require_onboarded_user
 from api.auth.models import UserModel
 from api.routers._helpers import get_client_or_404
 from api.services.pii.encryptor import get_pii_encryptor, PIIEncryptor
@@ -19,29 +19,53 @@ router = APIRouter(prefix="/api/clients/{client_id}/dependents", tags=["dependen
 class DependentCreate(BaseModel):
     first_name: str
     last_name: str
-    ssn: str | None = None
-    dob: str | None = None  # ISO: "2015-06-01"
+    ssn: str | None = Field(default=None, max_length=20)
+    dob: str | None = Field(default=None, max_length=20)
     relationship: str
     months_lived_with: int = 12
     is_student: bool = False
     is_qualifying_child: bool = True
     is_us_citizen: bool = True
 
+    @field_validator("ssn")
+    @classmethod
+    def _v_ssn(cls, v: str | None) -> str | None:
+        from api.models.client import _validate_ssn
+        return _validate_ssn(v)
+
+    @field_validator("dob")
+    @classmethod
+    def _v_dob(cls, v: str | None) -> str | None:
+        from api.models.client import _validate_dob
+        return _validate_dob(v)
+
 
 class DependentUpdate(BaseModel):
     first_name: str | None = None
     last_name: str | None = None
-    ssn: str | None = None
-    dob: str | None = None
+    ssn: str | None = Field(default=None, max_length=20)
+    dob: str | None = Field(default=None, max_length=20)
     relationship: str | None = None
     months_lived_with: int | None = None
     is_student: bool | None = None
     is_qualifying_child: bool | None = None
     is_us_citizen: bool | None = None
 
+    @field_validator("ssn")
+    @classmethod
+    def _v_ssn(cls, v: str | None) -> str | None:
+        from api.models.client import _validate_ssn
+        return _validate_ssn(v)
+
+    @field_validator("dob")
+    @classmethod
+    def _v_dob(cls, v: str | None) -> str | None:
+        from api.models.client import _validate_dob
+        return _validate_dob(v)
+
 
 class DependentResponse(BaseModel):
-    id: int
+    id: str
     first_name: str
     last_name: str
     ssn_masked: str
@@ -73,10 +97,10 @@ def _build_dep_response(dep: DependentModel, enc: PIIEncryptor) -> DependentResp
 
 @router.post("", response_model=DependentResponse, status_code=status.HTTP_201_CREATED)
 async def add_dependent(
-    client_id: int,
+    client_id: str,
     data: DependentCreate,
     session: AsyncSession = Depends(get_session),
-    user: UserModel = Depends(get_current_user),
+    user: UserModel = Depends(require_onboarded_user),
 ):
     await get_client_or_404(client_id, session, user)
     enc = get_pii_encryptor()
@@ -99,9 +123,9 @@ async def add_dependent(
 
 @router.get("", response_model=list[DependentResponse])
 async def list_dependents(
-    client_id: int,
+    client_id: str,
     session: AsyncSession = Depends(get_session),
-    user: UserModel = Depends(get_current_user),
+    user: UserModel = Depends(require_onboarded_user),
 ):
     await get_client_or_404(client_id, session, user)
     result = await session.execute(
@@ -117,11 +141,11 @@ async def list_dependents(
 
 @router.patch("/{dep_id}", response_model=DependentResponse)
 async def update_dependent(
-    client_id: int,
-    dep_id: int,
+    client_id: str,
+    dep_id: str,
     data: DependentUpdate,
     session: AsyncSession = Depends(get_session),
-    user: UserModel = Depends(get_current_user),
+    user: UserModel = Depends(require_onboarded_user),
 ):
     await get_client_or_404(client_id, session, user)
     result = await session.execute(
@@ -153,10 +177,10 @@ async def update_dependent(
 
 @router.delete("/{dep_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_dependent(
-    client_id: int,
-    dep_id: int,
+    client_id: str,
+    dep_id: str,
     session: AsyncSession = Depends(get_session),
-    user: UserModel = Depends(get_current_user),
+    user: UserModel = Depends(require_onboarded_user),
 ):
     await get_client_or_404(client_id, session, user)
     result = await session.execute(
