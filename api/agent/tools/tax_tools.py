@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 from typing import Any
 
 from sqlalchemy import select
@@ -53,6 +54,12 @@ async def _get_user(session: AgentSession):
     return result.scalar_one_or_none()
 
 
+def _ssn_last4(ssn: str) -> str:
+    """Extract last 4 digits from an SSN, whether masked or unmasked."""
+    digits = re.sub(r"\D", "", ssn)
+    return digits[-4:] if len(digits) >= 4 else ""
+
+
 async def validate_intake_vs_documents(session: AgentSession) -> dict:
     """Cross-check intake form data against extracted document data."""
     client = await _load_client(session)
@@ -81,9 +88,13 @@ async def validate_intake_vs_documents(session: AgentSession) -> dict:
 
         doc_ref = f"{doc.form_type} ({doc.file_name or doc.id[:8]})"
 
-        # SSN check
+        # SSN check — compare last 4 digits only. Document SSNs may be
+        # stored masked (***-**-6789) while intake SSNs are decrypted to
+        # full plaintext, so a direct string comparison would false-positive.
         doc_ssn = extracted.get("employee_ssn") or extracted.get("recipient_ssn")
-        if intake_ssn and doc_ssn and intake_ssn != doc_ssn:
+        intake_last4 = _ssn_last4(intake_ssn) if intake_ssn else ""
+        doc_last4 = _ssn_last4(doc_ssn) if doc_ssn else ""
+        if intake_last4 and doc_last4 and intake_last4 != doc_last4:
             mismatches.append({
                 "field": "ssn",
                 "intake_value": f"***-**-{intake_ssn[-4:]}",

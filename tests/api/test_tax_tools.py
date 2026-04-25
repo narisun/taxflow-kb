@@ -13,6 +13,28 @@ def _make_session() -> AgentSession:
     )
 
 
+class TestSSNLast4:
+    def test_full_ssn_with_dashes(self):
+        from api.agent.tools.tax_tools import _ssn_last4
+        assert _ssn_last4("123-45-6789") == "6789"
+
+    def test_full_ssn_digits_only(self):
+        from api.agent.tools.tax_tools import _ssn_last4
+        assert _ssn_last4("123456789") == "6789"
+
+    def test_masked_ssn(self):
+        from api.agent.tools.tax_tools import _ssn_last4
+        assert _ssn_last4("***-**-6789") == "6789"
+
+    def test_too_short_returns_empty(self):
+        from api.agent.tools.tax_tools import _ssn_last4
+        assert _ssn_last4("12") == ""
+
+    def test_empty_returns_empty(self):
+        from api.agent.tools.tax_tools import _ssn_last4
+        assert _ssn_last4("") == ""
+
+
 class TestValidateIntakeVsDocuments:
     @pytest.mark.asyncio
     async def test_reports_ssn_mismatch(self):
@@ -71,6 +93,68 @@ class TestValidateIntakeVsDocuments:
 
         assert len(result["mismatches"]) == 0
         assert "No discrepancies" in result["summary"]
+
+    @pytest.mark.asyncio
+    async def test_masked_ssn_matches_plaintext(self):
+        """Document SSN stored masked (***-**-6789) should match decrypted
+        intake SSN (123-45-6789) when last 4 digits are the same."""
+        from api.agent.tools.tax_tools import validate_intake_vs_documents
+
+        mock_session = _make_session()
+        mock_client = MagicMock()
+        mock_client.primary_ssn_enc = b"encrypted"
+        mock_client.primary_first_name = "John"
+        mock_client.primary_last_name = "Doe"
+        mock_client.city = "Princeton"
+        mock_client.state = "NJ"
+        mock_client.tax_year = 2025
+        mock_session.pii_encryptor.decrypt.return_value = "123-45-6789"
+
+        mock_doc = MagicMock()
+        mock_doc.id = "doc-1"
+        mock_doc.form_type = "W-2"
+        mock_doc.file_name = "w2.pdf"
+        mock_doc.status = "approved"
+        # SSN is masked in extracted_data (as stored by the upload pipeline)
+        mock_doc.extracted_data = '{"employee_ssn": "***-**-6789", "employee_name": "John Doe"}'
+
+        with patch("api.agent.tools.tax_tools._load_client", return_value=mock_client), \
+             patch("api.agent.tools.tax_tools._load_approved_docs", return_value=[mock_doc]):
+            result = await validate_intake_vs_documents(mock_session)
+
+        assert len(result["mismatches"]) == 0
+        assert "No discrepancies" in result["summary"]
+
+    @pytest.mark.asyncio
+    async def test_masked_ssn_mismatch_detected(self):
+        """Different last-4 digits between masked doc SSN and intake SSN
+        should still be caught as a mismatch."""
+        from api.agent.tools.tax_tools import validate_intake_vs_documents
+
+        mock_session = _make_session()
+        mock_client = MagicMock()
+        mock_client.primary_ssn_enc = b"encrypted"
+        mock_client.primary_first_name = "John"
+        mock_client.primary_last_name = "Doe"
+        mock_client.city = "Princeton"
+        mock_client.state = "NJ"
+        mock_client.tax_year = 2025
+        mock_session.pii_encryptor.decrypt.return_value = "123-45-6789"
+
+        mock_doc = MagicMock()
+        mock_doc.id = "doc-1"
+        mock_doc.form_type = "W-2"
+        mock_doc.file_name = "w2.pdf"
+        mock_doc.status = "approved"
+        mock_doc.extracted_data = '{"employee_ssn": "***-**-4321", "employee_name": "John Doe"}'
+
+        with patch("api.agent.tools.tax_tools._load_client", return_value=mock_client), \
+             patch("api.agent.tools.tax_tools._load_approved_docs", return_value=[mock_doc]):
+            result = await validate_intake_vs_documents(mock_session)
+
+        ssn_mismatch = [m for m in result["mismatches"] if m["field"] == "ssn"]
+        assert len(ssn_mismatch) == 1
+        assert ssn_mismatch[0]["severity"] == "critical"
 
 
 class TestComputeTaxReturn:
