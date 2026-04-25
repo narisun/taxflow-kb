@@ -1,20 +1,23 @@
 """DocumentAssembler — builds TaxReturn from approved documents + manual overrides."""
 import json
+import logging
 from collections import defaultdict
 from datetime import date
-from decimal import Decimal
+from decimal import Decimal  # noqa: F401 — used by imported tax_engine models
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.db.models import ClientModel, DocumentModel, ManualEntryModel, DependentModel, FamilyGroupModel
-from api.services.pii.encryptor import get_pii_encryptor
+from api.services.pii.encryptor import PIIEncryptor, get_pii_encryptor
 from api.tax_engine.models.people import Person, Dependent, Address
 from api.tax_engine.models.income import (
     W2, Income1099Int, Income1099Div, Income1099B, Income1099NEC, ScheduleK1,
 )
 from api.tax_engine.models.deductions import Mortgage1098
 from api.tax_engine.models.tax_return import TaxReturn
+
+logger = logging.getLogger(__name__)
 
 _FORM_MAP: dict[str, tuple[type, str]] = {
     "W-2": (W2, "w2s"),
@@ -33,10 +36,18 @@ _FILING_STATUS_MAP = {
 
 
 class DocumentAssembler:
-    def __init__(self):
+    """Assembles a :class:`TaxReturn` domain object from DB records.
+
+    The encryptor is injected so tests can pass a fake or a key-specific
+    instance. Callers that cannot inject one get the legacy settings-backed
+    singleton via :func:`api.services.pii.encryptor.get_pii_encryptor`.
+    """
+
+    def __init__(self, encryptor: PIIEncryptor | None = None):
+        self._encryptor = encryptor if encryptor is not None else get_pii_encryptor()
         self.skipped_documents: list[dict] = []
 
-    async def assemble(self, client_id: int, session: AsyncSession) -> TaxReturn:
+    async def assemble(self, client_id: str, session: AsyncSession) -> TaxReturn:
         self.skipped_documents = []
 
         result = await session.execute(select(ClientModel).where(ClientModel.id == client_id))
@@ -82,6 +93,9 @@ class DocumentAssembler:
                 model = model_cls(**data)
                 form_lists[field_name].append(model)
             except Exception as e:
+                logger.info(
+                    "Skipping document_id=%s (%s): %s", doc.id, form_type, e
+                )
                 self.skipped_documents.append({
                     "document_id": doc.id,
                     "form_type": form_type,
@@ -91,16 +105,15 @@ class DocumentAssembler:
 
         filing_status = _FILING_STATUS_MAP.get(client.filing_status, "S")
 
-        enc = get_pii_encryptor()
+        enc = self._encryptor
 
         # Primary person
         ssn = enc.decrypt(client.primary_ssn_enc) if client.primary_ssn_enc else "999119999"
         dob_str = enc.decrypt(client.primary_dob_enc) if client.primary_dob_enc else "1980-01-01"
         dob = date.fromisoformat(dob_str)
-        name_parts = client.name.split() if client.name else ["Unknown"]
         primary = Person(
-            first_name=name_parts[0],
-            last_name=name_parts[-1] if len(name_parts) > 1 else "Unknown",
+            first_name=client.primary_first_name or "Unknown",
+            last_name=client.primary_last_name or "Unknown",
             ssn=ssn,
             date_of_birth=dob,
         )
@@ -120,7 +133,7 @@ class DocumentAssembler:
             spouse_ssn = enc.decrypt(client.spouse_ssn_enc)
             spouse_dob_str = enc.decrypt(client.spouse_dob_enc) if client.spouse_dob_enc else "1980-01-01"
             spouse_first = "Spouse"
-            spouse_last = name_parts[-1] if len(name_parts) > 1 else "Unknown"
+            spouse_last = client.primary_last_name or "Unknown"
             if client.family_group_id:
                 fg_result = await session.execute(
                     select(FamilyGroupModel).where(FamilyGroupModel.id == client.family_group_id)
