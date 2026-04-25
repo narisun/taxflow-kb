@@ -67,7 +67,7 @@ class TaxReturnService:
         user: UserModel,
     ) -> TaxReturnDraft:
         """Assemble, compute, validate, and upsert the draft row."""
-        from api.routers._helpers import get_client_or_404
+        from api.db.queries import get_client_or_404
 
         client = await get_client_or_404(client_id, session, user)
 
@@ -141,7 +141,7 @@ class TaxReturnService:
         session: AsyncSession,
         user: UserModel,
     ) -> list[AdvisoryItem]:
-        from api.routers._helpers import get_client_or_404
+        from api.db.queries import get_client_or_404
 
         client = await get_client_or_404(client_id, session, user)
 
@@ -162,7 +162,7 @@ class TaxReturnService:
         user: UserModel,
     ) -> tuple[bytes, str]:
         """Return ``(pdf_bytes, suggested_filename)``."""
-        from api.routers._helpers import get_client_or_404
+        from api.db.queries import get_client_or_404
 
         client = await get_client_or_404(client_id, session, user)
 
@@ -187,7 +187,7 @@ class TaxReturnService:
         user: UserModel,
     ) -> "ReturnManifest":
         """Return form activation status and page mapping."""
-        from api.routers._helpers import get_client_or_404
+        from api.db.queries import get_client_or_404
         from api.models.tax_return import ReturnManifest
 
         client = await get_client_or_404(client_id, session, user)
@@ -209,7 +209,7 @@ class TaxReturnService:
         session: AsyncSession,
         user: UserModel,
     ) -> ComparisonReport:
-        from api.routers._helpers import get_client_or_404
+        from api.db.queries import get_client_or_404
 
         client = await get_client_or_404(client_id, session, user)
         if prior_year == client.tax_year:
@@ -240,7 +240,7 @@ class TaxReturnService:
         session: AsyncSession,
         user: UserModel,
     ) -> dict:
-        from api.routers._helpers import get_client_or_404
+        from api.db.queries import get_client_or_404
 
         await get_client_or_404(client_id, session, user)
         assembler = self._assembler_factory()

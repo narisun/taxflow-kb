@@ -1,24 +1,7 @@
-"""Shared router helpers."""
+"""Shared router helpers.
 
-from fastapi import HTTPException
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from api.db.models import ClientModel
-from api.auth.models import UserModel
-
-
-async def get_client_or_404(
-    client_id: int, session: AsyncSession, user: UserModel
-) -> ClientModel:
-    """Load a client scoped to the user's org, or raise 404."""
-    result = await session.execute(
-        select(ClientModel).where(
-            ClientModel.id == client_id,
-            ClientModel.org_id == user.org_id,
-        )
-    )
-    client = result.scalar_one_or_none()
-    if not client:
-        raise HTTPException(status_code=404, detail="Client not found")
-    return client
+The canonical implementation of :func:`get_client_or_404` now lives in
+:mod:`api.db.queries` (data-access layer). This module re-exports it so
+existing router imports keep working without a mass-rename.
+"""
+from api.db.queries import get_client_or_404  # noqa: F401
