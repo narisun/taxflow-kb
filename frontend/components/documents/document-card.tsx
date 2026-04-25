@@ -1,9 +1,10 @@
 // components/documents/document-card.tsx
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { parseJson, fmtCurrency, fmtTimestamp } from "@/lib/utils";
+import { useTimezone } from "@/components/auth/me-context";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 
@@ -17,6 +18,7 @@ interface DocumentCardProps {
     extracted_data: string;
     flags: string;
     created_at?: string;
+    reviewed_at?: string | null;
   };
   onClick: () => void;
   onDelete?: (docId: string) => void;
@@ -68,6 +70,8 @@ const FORM_KEY_FIELDS: Record<string, [string, string, boolean][]> = {
 };
 
 export function DocumentCard({ doc, onClick, onDelete, isDuplicate }: DocumentCardProps) {
+  const tz = useTimezone();
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const data = parseJson<Record<string, any>>(doc.extracted_data, {});
   const flags = parseJson<string[]>(doc.flags || "[]", []);
 
@@ -106,14 +110,14 @@ export function DocumentCard({ doc, onClick, onDelete, isDuplicate }: DocumentCa
   // Build timeline
   const ts = doc.created_at ? new Date(doc.created_at) : new Date();
   const events: { icon: string; text: string; accent?: string }[] = [
-    { icon: "\u2B06", text: `Uploaded ${fmtTimestamp(ts.toISOString())}` },
+    { icon: "\u2B06", text: `Uploaded ${fmtTimestamp(ts.toISOString(), tz)}` },
   ];
   if (doc.status === "review" || doc.status === "flagged") {
     events.push({ icon: "\u23F3", text: "Needs Review" });
   } else if (doc.status === "verified") {
     events.push({ icon: "\u2713", text: "Verified" });
   } else if (doc.status === "approved") {
-    const approvedAt = doc.reviewed_at ? fmtTimestamp(doc.reviewed_at) : "";
+    const approvedAt = doc.reviewed_at ? fmtTimestamp(doc.reviewed_at, tz) : "";
     events.push({ icon: "\u2713", text: approvedAt ? `Approved ${approvedAt}` : "Approved" });
   }
   if (flags.length > 0) {
@@ -124,13 +128,17 @@ export function DocumentCard({ doc, onClick, onDelete, isDuplicate }: DocumentCa
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (onDelete && confirm("Delete this document? This cannot be undone.")) {
-      onDelete(doc.id);
+    if (!confirmDelete) {
+      setConfirmDelete(true);
+      setTimeout(() => setConfirmDelete(false), 3000);
+      return;
     }
+    onDelete?.(doc.id);
+    setConfirmDelete(false);
   };
 
   return (
-    <div onClick={onClick} role="button" tabIndex={0} className="w-full text-left cursor-pointer group">
+    <div onClick={onClick} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick?.(); } }} role="button" tabIndex={0} className="w-full text-left cursor-pointer group">
       <Card className="p-0 overflow-hidden hover:shadow-md transition-shadow">
         {/* Header */}
         <div className="flex items-center justify-between px-3 pt-2.5 pb-1.5">
@@ -159,12 +167,19 @@ export function DocumentCard({ doc, onClick, onDelete, isDuplicate }: DocumentCa
             {onDelete && (
               <button
                 onClick={handleDelete}
-                className="w-6 h-6 rounded flex items-center justify-center text-tertiary hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 opacity-0 group-hover:opacity-100 transition-all"
-                title="Delete document"
+                className={cn(
+                  "rounded flex items-center justify-center transition-all",
+                  confirmDelete
+                    ? "px-1.5 h-6 text-[9px] font-medium text-red-500 bg-red-50 dark:bg-red-950/30 opacity-100"
+                    : "w-6 h-6 text-tertiary hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 opacity-0 group-hover:opacity-100"
+                )}
+                title={confirmDelete ? "Click again to confirm" : "Delete document"}
               >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14"/>
-                </svg>
+                {confirmDelete ? "Confirm?" : (
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14"/>
+                  </svg>
+                )}
               </button>
             )}
           </div>

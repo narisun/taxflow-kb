@@ -6,13 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { PdfViewer } from "@/components/documents/pdf-viewer";
-import { parseJson, fmtCurrency } from "@/lib/utils";
+import { cn, parseJson, fmtCurrency } from "@/lib/utils";
 
 interface DocItem {
   id: string;
   form_type: string;
   title: string;
-  name?: string;
+  name: string;
+  type: string;
   status: string;
   confidence: number;
   extracted_data: string;
@@ -176,12 +177,17 @@ export function DocumentManagerModal({
     handleFiles(Array.from(e.dataTransfer.files));
   }, [handleFiles]);
 
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const handleDeleteDoc = async (e: React.MouseEvent, docId: string) => {
     e.stopPropagation();
-    if (confirm("Delete this document?")) {
-      if (expandedDocId === docId) setExpandedDocId(null);
-      await onDelete(docId);
+    if (confirmDeleteId !== docId) {
+      setConfirmDeleteId(docId);
+      setTimeout(() => setConfirmDeleteId(null), 3000);
+      return;
     }
+    setConfirmDeleteId(null);
+    if (expandedDocId === docId) setExpandedDocId(null);
+    await onDelete(docId);
   };
 
   if (!client) return null;
@@ -224,7 +230,7 @@ export function DocumentManagerModal({
           </div>
           <div className="flex items-center gap-3 text-[11px]">
             <span className="text-secondary">{documents.length} docs</span>
-            {approved > 0 && <span className="text-green-600">{approved} approved</span>}
+            {approved > 0 && <span className="text-brand-green">{approved} approved</span>}
             {needsReview > 0 && <span className="text-amber-600">{needsReview} review</span>}
           </div>
         </div>
@@ -242,7 +248,7 @@ export function DocumentManagerModal({
                     <span className="text-[10px] text-tertiary">{uf.formType}</span>
                     {uf.status === "uploading" && <span className="text-[10px] text-apple-blue animate-pulse">Uploading...</span>}
                     {uf.status === "extracting" && <span className="text-[10px] text-amber-600 animate-pulse">Extracting...</span>}
-                    {uf.status === "done" && <span className="text-[10px] text-green-600">Done</span>}
+                    {uf.status === "done" && <span className="text-[10px] text-brand-green">Done</span>}
                     {uf.status === "error" && <span className="text-[10px] text-red-500">Error</span>}
                   </div>
                 ))}
@@ -331,19 +337,26 @@ export function DocumentManagerModal({
                         {(doc.status === "review" || doc.status === "verified") && (
                           <button
                             onClick={(e) => { e.stopPropagation(); onApprove(doc.id); }}
-                            className="text-[10px] px-2 py-1 rounded bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 hover:bg-green-100 transition-colors cursor-pointer"
+                            className="text-[10px] px-2 py-1 rounded bg-brand-green/10 text-brand-green hover:bg-brand-green/20 transition-colors cursor-pointer"
                           >
                             Approve
                           </button>
                         )}
                         <button
                           onClick={(e) => handleDeleteDoc(e, doc.id)}
-                          className="w-6 h-6 rounded flex items-center justify-center text-tertiary hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors opacity-0 group-hover:opacity-100 cursor-pointer"
-                          title="Delete"
+                          className={cn(
+                            "rounded flex items-center justify-center transition-all cursor-pointer",
+                            confirmDeleteId === doc.id
+                              ? "px-1.5 h-6 text-[9px] font-medium text-red-500 bg-red-50 dark:bg-red-950/30 opacity-100"
+                              : "w-6 h-6 text-tertiary hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 opacity-0 group-hover:opacity-100"
+                          )}
+                          title={confirmDeleteId === doc.id ? "Click again to confirm" : "Delete"}
                         >
-                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14" />
-                          </svg>
+                          {confirmDeleteId === doc.id ? "Confirm?" : (
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14" />
+                            </svg>
+                          )}
                         </button>
                       </div>
                     </div>
