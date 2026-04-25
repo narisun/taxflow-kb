@@ -108,18 +108,20 @@ class TaxReturnService:
             computed_at=self._now(),
         )
 
-        # Upsert
+        # Upsert by (org_id, client_id, tax_year)
         db_result = await session.execute(
             select(TaxReturnDraftModel).where(
                 TaxReturnDraftModel.org_id == user.org_id,
                 TaxReturnDraftModel.client_id == client_id,
+                TaxReturnDraftModel.tax_year == draft.tax_year,
             )
         )
         existing = db_result.scalar_one_or_none()
         if existing:
-            existing.tax_year = draft.tax_year
             existing.filing_status = draft.filing_status
             existing.draft_json = draft.model_dump_json()
+            existing.source_type = "computed"
+            existing.source_document_id = None
         else:
             db_draft = TaxReturnDraftModel(
                 client_id=client_id,
@@ -128,8 +130,85 @@ class TaxReturnService:
                 tax_year=draft.tax_year,
                 filing_status=draft.filing_status,
                 draft_json=draft.model_dump_json(),
+                source_type="computed",
             )
             session.add(db_draft)
+        await session.commit()
+        return draft
+
+    # --------------------------------------------------------------- prior-year
+
+    async def get_prior_year_draft(
+        self,
+        client_id: str,
+        session: AsyncSession,
+        user: UserModel,
+    ) -> dict:
+        """Return the prior-year draft with source provenance, or None."""
+        from api.db.queries import get_client_or_404
+
+        client = await get_client_or_404(client_id, session, user)
+        prior_year = client.tax_year - 1
+
+        result = await session.execute(
+            select(TaxReturnDraftModel).where(
+                TaxReturnDraftModel.org_id == user.org_id,
+                TaxReturnDraftModel.client_id == client_id,
+                TaxReturnDraftModel.tax_year == prior_year,
+            )
+        )
+        row = result.scalar_one_or_none()
+        if not row:
+            return {"draft": None, "source_type": "computed", "source_document_id": None}
+
+        from api.models.tax_return import TaxReturnDraft
+        draft = TaxReturnDraft.model_validate_json(row.draft_json)
+        return {
+            "draft": draft,
+            "source_type": row.source_type,
+            "source_document_id": row.source_document_id,
+        }
+
+    async def import_prior_year(
+        self,
+        client_id: str,
+        document_id: str,
+        tax_year: int,
+        lines: dict,
+        session: AsyncSession,
+        user: UserModel,
+    ) -> "TaxReturnDraft":
+        """Create a draft from imported prior-year 1040 line data."""
+        from api.tax_engine.prior_year_import import build_draft_from_lines
+
+        draft = build_draft_from_lines(client_id, tax_year, lines)
+
+        # Upsert by (org_id, client_id, tax_year)
+        result = await session.execute(
+            select(TaxReturnDraftModel).where(
+                TaxReturnDraftModel.org_id == user.org_id,
+                TaxReturnDraftModel.client_id == client_id,
+                TaxReturnDraftModel.tax_year == tax_year,
+            )
+        )
+        existing = result.scalar_one_or_none()
+        if existing:
+            existing.filing_status = draft.filing_status
+            existing.draft_json = draft.model_dump_json()
+            existing.source_type = "imported"
+            existing.source_document_id = document_id
+        else:
+            row = TaxReturnDraftModel(
+                client_id=client_id,
+                org_id=user.org_id,
+                created_by=user.id,
+                tax_year=tax_year,
+                filing_status=draft.filing_status,
+                draft_json=draft.model_dump_json(),
+                source_type="imported",
+                source_document_id=document_id,
+            )
+            session.add(row)
         await session.commit()
         return draft
 
