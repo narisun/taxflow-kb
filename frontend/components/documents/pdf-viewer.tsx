@@ -89,8 +89,11 @@ export function PdfViewer({ src, className, goToPage }: PdfViewerProps) {
 
       const page = await pdfDoc.getPage(1);
       const baseViewport = page.getViewport({ scale: 1 });
-      const availableWidth = container.clientWidth - 40;
-      const availableHeight = container.clientHeight - 24;
+      // Account for: inner padding (py-3 = 24px top+bottom), scrollbar (~17px),
+      // shadow overflow (~8px), and some breathing room.
+      const scrollbarWidth = container.offsetWidth - container.clientWidth;
+      const availableWidth = container.clientWidth - scrollbarWidth - 48;
+      const availableHeight = container.clientHeight - 48;
 
       if (mode === "page-width") {
         return availableWidth / baseViewport.width;
