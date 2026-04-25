@@ -1,6 +1,6 @@
 """Form-specific extraction prompts for Claude Vision API."""
 
-SUPPORTED_FORM_TYPES = ["W-2", "1099-INT", "1099-DIV", "1099-B", "1099-NEC", "1098", "K-1"]
+SUPPORTED_FORM_TYPES = ["W-2", "1099-INT", "1099-DIV", "1099-B", "1099-NEC", "1098", "K-1", "1040-Prior"]
 
 _RESPONSE_FORMAT = """
 Return ONLY valid JSON in this exact format (no markdown fences, no extra text):
@@ -110,6 +110,9 @@ Extract the following fields using these exact JSON keys:
 {_COMMON_RULES}
 {_RESPONSE_FORMAT}""",
 }
+
+from api.services.ocr.prompts_1040_prior import PROMPT_1040_PRIOR
+_PROMPTS["1040-Prior"] = PROMPT_1040_PRIOR
 
 _FALLBACK_PROMPT = f"""You are extracting data from a US tax document. The exact form type is unknown.
 
