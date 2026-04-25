@@ -48,7 +48,7 @@ export function PdfViewer({ src, className, goToPage }: PdfViewerProps) {
   const canvasRefs = useRef<Map<number, HTMLCanvasElement>>(new Map());
   const [numPages, setNumPages] = useState(0);
   const [scale, setScale] = useState(1.0);
-  const [fitMode, setFitMode] = useState<FitMode>("page-width");
+  const [fitMode, setFitMode] = useState<FitMode>("page-fit");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const pdfDocRef = useRef<any>(null);
