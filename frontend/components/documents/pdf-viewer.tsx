@@ -18,11 +18,8 @@ interface PdfViewerProps {
 function FitWidthIcon({ className }: { className?: string }) {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={className}>
-      {/* Left arrow */}
       <path d="M1 8h4M1 8l2-2M1 8l2 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      {/* Right arrow */}
       <path d="M15 8h-4M15 8l-2-2M15 8l-2 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      {/* Page outline */}
       <rect x="5" y="3" width="6" height="10" rx="1" stroke="currentColor" strokeWidth="1.2" />
     </svg>
   );
@@ -31,13 +28,9 @@ function FitWidthIcon({ className }: { className?: string }) {
 function FitPageIcon({ className }: { className?: string }) {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={className}>
-      {/* Outer frame */}
       <rect x="1" y="1" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.2" />
-      {/* Inner page */}
       <rect x="4" y="3" width="8" height="10" rx="1" stroke="currentColor" strokeWidth="1.2" />
-      {/* Corner arrows (top-left) */}
       <path d="M1.5 4.5V1.5h3" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-      {/* Corner arrows (bottom-right) */}
       <path d="M14.5 11.5v3h-3" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
     </svg>
   );
@@ -53,8 +46,9 @@ export function PdfViewer({ src, className, goToPage }: PdfViewerProps) {
   const [error, setError] = useState<string | null>(null);
   const pdfDocRef = useRef<any>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  // Bumped to force recalc even when fitMode value doesn't change
   const [fitSeq, setFitSeq] = useState(0);
+  // Track in-flight render tasks so we can cancel before re-rendering
+  const renderTasksRef = useRef<Map<number, any>>(new Map());
 
   // ── Render a single page onto its canvas ────────────────────────────
   const renderPage = useCallback(
@@ -62,6 +56,13 @@ export function PdfViewer({ src, className, goToPage }: PdfViewerProps) {
       const pdfDoc = pdfDocRef.current;
       const canvas = canvasRefs.current.get(pageNum);
       if (!pdfDoc || !canvas) return;
+
+      // Cancel any in-flight render for this page
+      const prev = renderTasksRef.current.get(pageNum);
+      if (prev) {
+        prev.cancel();
+        renderTasksRef.current.delete(pageNum);
+      }
 
       try {
         const page = await pdfDoc.getPage(pageNum);
@@ -72,8 +73,13 @@ export function PdfViewer({ src, className, goToPage }: PdfViewerProps) {
         canvas.height = viewport.height;
         canvas.width = viewport.width;
 
-        await page.render({ canvasContext: context, viewport }).promise;
-      } catch (err) {
+        const task = page.render({ canvasContext: context, viewport });
+        renderTasksRef.current.set(pageNum, task);
+        await task.promise;
+        renderTasksRef.current.delete(pageNum);
+      } catch (err: any) {
+        // Ignore cancellation errors — they're expected when re-rendering
+        if (err?.name === "RenderingCancelledException") return;
         console.error("Error rendering page:", err);
       }
     },
@@ -89,8 +95,6 @@ export function PdfViewer({ src, className, goToPage }: PdfViewerProps) {
 
       const page = await pdfDoc.getPage(1);
       const baseViewport = page.getViewport({ scale: 1 });
-      // Account for: inner padding (py-3 = 24px top+bottom), scrollbar (~17px),
-      // shadow overflow (~8px), and some breathing room.
       const scrollbarWidth = container.offsetWidth - container.clientWidth;
       const availableWidth = container.clientWidth - scrollbarWidth - 48;
       const availableHeight = container.clientHeight - 48;
@@ -132,6 +136,7 @@ export function PdfViewer({ src, className, goToPage }: PdfViewerProps) {
           url: src,
           httpHeaders: headers,
           withCredentials: false,
+          standardFontDataUrl: "/standard_fonts/",
         });
         const pdfDoc = await loadingTask.promise;
 
@@ -167,7 +172,6 @@ export function PdfViewer({ src, className, goToPage }: PdfViewerProps) {
     if (!container) return;
 
     const observer = new ResizeObserver(() => {
-      // Only recalc if we're in a fit mode (not custom zoom)
       if (fitMode !== "custom" && pdfDocRef.current && !loading) {
         applyFit();
       }
@@ -226,7 +230,6 @@ export function PdfViewer({ src, className, goToPage }: PdfViewerProps) {
   };
   const requestFit = (mode: FitMode) => {
     setFitMode(mode);
-    // Bump sequence so the effect re-runs even if mode is the same value
     setFitSeq((n) => n + 1);
   };
 
@@ -258,12 +261,10 @@ export function PdfViewer({ src, className, goToPage }: PdfViewerProps) {
     <div className={`flex flex-col h-full ${className || ""}`}>
       {/* ── Toolbar ─────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between mb-1.5 shrink-0 px-1">
-        {/* Page indicator */}
         <span className="text-[11px] text-secondary min-w-[60px]">
           {loading ? "\u2014" : `Page ${currentPage} of ${numPages}`}
         </span>
 
-        {/* Fit mode + zoom controls */}
         <div className="flex items-center gap-0.5">
           <button
             onClick={() => requestFit("page-width")}
