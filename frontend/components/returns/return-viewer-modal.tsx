@@ -39,8 +39,21 @@ export function ReturnViewerModal({ open, onClose, clientId }: ReturnViewerModal
     setGoToPage(form.start_page);
   };
 
-  const handleDownload = () => {
-    window.open(api.returns.pdfUrl(clientId, "attachment"), "_blank");
+  const handleDownload = async () => {
+    try {
+      const headers = await import("@/lib/api-client").then((m) => m.authHeaders());
+      const res = await fetch(api.returns.pdfUrl(clientId, "attachment"), { headers });
+      if (!res.ok) throw new Error(`Download failed: ${res.status}`);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `1040_${clientId}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("PDF download error:", err);
+    }
   };
 
   const pdfSrc = api.returns.pdfUrl(clientId, "inline");
