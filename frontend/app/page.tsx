@@ -1028,6 +1028,21 @@ export default function Home() {
               setDocuments(docData.map((d: any) => ({
                 ...d, client_id: d.client_id, name: d.title, type: d.form_type,
               })));
+              // Auto-import prior-year drafts from 1040-Prior documents
+              for (const doc of docData) {
+                if (doc.form_type === "1040-Prior" && doc.extracted_data) {
+                  try {
+                    const extracted = JSON.parse(doc.extracted_data);
+                    const taxYear = parseInt(extracted.tax_year) || new Date().getFullYear() - 1;
+                    await api.returns.importPrior(cid, doc.id, taxYear);
+                    const resp = await api.returns.priorYear(cid);
+                    setPriorYearDraft(resp.draft);
+                    setPriorYearSource({ type: resp.source_type, documentId: resp.source_document_id });
+                  } catch (err) {
+                    console.error("Prior year import failed:", err);
+                  }
+                }
+              }
             }
           } catch { /* ignore */ }
         }}
