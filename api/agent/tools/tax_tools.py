@@ -254,7 +254,7 @@ async def compare_prior_year(session: AgentSession, *, prior_year: int | None = 
             }
             for row in section.rows
         ]
-        sections.append({"name": section.name, "rows": rows})
+        sections.append({"name": section.title, "rows": rows})
 
     summary = {
         "current_refund": float(report.summary.current) if report.summary else 0,

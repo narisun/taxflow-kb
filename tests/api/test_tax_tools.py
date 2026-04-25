@@ -220,7 +220,7 @@ class TestComparePriorYear:
         mock_row.pct_change = 6.25
 
         mock_section = MagicMock()
-        mock_section.name = "Income"
+        mock_section.title = "Income"
         mock_section.rows = [mock_row]
 
         mock_summary = MagicMock()
