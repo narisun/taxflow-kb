@@ -71,7 +71,13 @@ function OnboardingGate({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const [verified, setVerified] = useState<boolean | null>(null);
 
+  // When Auth0 is configured, wait until the user is authenticated (and the
+  // token bridge has registered the getter) before calling /me. Without this
+  // guard the request fires before the Bearer token is available → 401.
+  const auth0Ready = !DOMAIN || !CLIENT_ID || (auth0?.isAuthenticated ?? false);
+
   useEffect(() => {
+    if (!auth0Ready) return;
     let cancelled = false;
     api.auth.me()
       .then((data) => {
@@ -85,7 +91,7 @@ function OnboardingGate({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [auth0Ready]);
 
   // Initialize verified state from Auth0 user once available
   useEffect(() => {
