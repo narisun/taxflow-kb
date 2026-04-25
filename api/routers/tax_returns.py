@@ -12,9 +12,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from api.auth.dependencies import get_current_user, require_onboarded_user, require_role
 from api.auth.models import UserModel
 from api.db.engine import get_session
-from api.db.models import ManualEntryModel, TaxReturnDraftModel
+from api.db.models import DocumentModel, ManualEntryModel, TaxReturnDraftModel
 from api.dependencies import get_tax_return_service
-from api.models.tax_return import TaxReturnDraft, ReturnManifest
+from api.models.tax_return import ImportPriorRequest, TaxReturnDraft, ReturnManifest
 from api.routers._helpers import get_client_or_404
 from api.services.tax import TaxReturnService
 from api.tax_engine.advisory.models import AdvisoryItem
@@ -61,20 +61,68 @@ async def generate_draft(
 @router.get("/draft", response_model=TaxReturnDraft)
 async def get_draft(
     client_id: str,
+    tax_year: int | None = None,
     session: AsyncSession = Depends(get_session),
     user: UserModel = Depends(require_onboarded_user),
 ):
     await get_client_or_404(client_id, session, user)
-    result = await session.execute(
-        select(TaxReturnDraftModel).where(
-            TaxReturnDraftModel.org_id == user.org_id,
-            TaxReturnDraftModel.client_id == client_id,
-        )
+    query = select(TaxReturnDraftModel).where(
+        TaxReturnDraftModel.org_id == user.org_id,
+        TaxReturnDraftModel.client_id == client_id,
     )
-    db_draft = result.scalar_one_or_none()
+    if tax_year is not None:
+        query = query.where(TaxReturnDraftModel.tax_year == tax_year)
+    else:
+        query = query.order_by(TaxReturnDraftModel.tax_year.desc())
+    result = await session.execute(query)
+    db_draft = result.scalars().first()
     if not db_draft:
         raise HTTPException(status_code=404, detail="No draft found — generate one first")
     return TaxReturnDraft.model_validate_json(db_draft.draft_json)
+
+
+@router.get("/prior-year")
+async def get_prior_year(
+    client_id: str,
+    session: AsyncSession = Depends(get_session),
+    user: UserModel = Depends(require_onboarded_user),
+    service: TaxReturnService = Depends(get_tax_return_service),
+):
+    """Return the prior-year draft with source provenance."""
+    return await service.get_prior_year_draft(client_id, session, user)
+
+
+@router.post("/import-prior")
+async def import_prior_year(
+    client_id: str,
+    body: ImportPriorRequest,
+    session: AsyncSession = Depends(get_session),
+    user: UserModel = Depends(require_onboarded_user),
+    service: TaxReturnService = Depends(get_tax_return_service),
+):
+    """Import a prior-year 1040 — extract lines and create archived draft."""
+    doc_result = await session.execute(
+        select(DocumentModel).where(
+            DocumentModel.id == body.document_id,
+            DocumentModel.client_id == client_id,
+            DocumentModel.org_id == user.org_id,
+        )
+    )
+    doc = doc_result.scalar_one_or_none()
+    if not doc:
+        raise HTTPException(status_code=404, detail="Document not found")
+
+    import json
+    extracted = json.loads(doc.extracted_data) if doc.extracted_data else {}
+
+    return await service.import_prior_year(
+        client_id=client_id,
+        document_id=body.document_id,
+        tax_year=body.tax_year,
+        lines=extracted,
+        session=session,
+        user=user,
+    )
 
 
 # --- Manual entries ---------------------------------------------------------

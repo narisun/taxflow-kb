@@ -179,6 +179,7 @@ class ClientUpdate(BaseModel):
     filing_status: FilingStatus | None = None
     workflow_step: WorkflowStep | None = None
     dependents: int | None = Field(default=None, ge=0, le=99)
+    tax_year: int | None = Field(default=None, ge=2000, le=2100)
 
     primary_ssn: str | None = Field(default=None, max_length=20)
     primary_dob: str | None = Field(default=None, max_length=20)
