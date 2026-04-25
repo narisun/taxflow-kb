@@ -1,7 +1,7 @@
 "use client";
 
 import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
-import { ReactNode, useCallback, useEffect, useState } from "react";
+import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import {
   api,
   setAuthTokenGetter,
@@ -144,14 +144,21 @@ function OnboardingGate({ children }: { children: ReactNode }) {
   return <MeProvider value={me} onUpdate={setMe}>{children}</MeProvider>;
 }
 
-/** Pushes Auth0's access-token getter into the api-client at mount time. */
+/**
+ * Pushes Auth0's access-token getter into the api-client.
+ *
+ * The getter is registered synchronously during render (via a ref guard)
+ * rather than in useEffect, so it is available before children's effects
+ * fire. This prevents the race where OnboardingGate calls /api/auth/me
+ * before the token getter is set.
+ */
 function Auth0TokenBridge({ children }: { children: ReactNode }) {
   const { getAccessTokenSilently, isAuthenticated } = useAuth0();
-  useEffect(() => {
-    if (!isAuthenticated) {
-      setAuthTokenGetter(null);
-      return;
-    }
+  const registeredRef = useRef(false);
+
+  // Register synchronously on first render once authenticated, and update
+  // if getAccessTokenSilently identity changes.
+  if (isAuthenticated && !registeredRef.current) {
     setAuthTokenGetter(async () => {
       try {
         return await getAccessTokenSilently();
@@ -159,7 +166,17 @@ function Auth0TokenBridge({ children }: { children: ReactNode }) {
         return null;
       }
     });
-  }, [getAccessTokenSilently, isAuthenticated]);
+    registeredRef.current = true;
+  }
+
+  // Clean up on unmount or when auth state changes
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setAuthTokenGetter(null);
+      registeredRef.current = false;
+    }
+  }, [isAuthenticated]);
+
   return <>{children}</>;
 }
 
