@@ -8,6 +8,7 @@
   --color-apple-blue: #0071e3;
   --color-link-blue: #0066cc;
   --color-bright-blue: #2997ff;
+  --color-brand-green: #09B5B5;
 
   /* Semantic surface aliases — resolved by data-theme */
   --color-bg: var(--t-bg);

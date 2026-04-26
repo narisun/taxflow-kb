@@ -6,13 +6,19 @@ from pydantic import BaseModel, field_validator
 
 
 def _validate_ssn(ssn: str) -> str:
-    """Validate SSN: 9 digits, no all-zero groups (area/group/serial)."""
-    if not re.fullmatch(r"\d{9}", ssn):
-        raise ValueError("SSN must be exactly 9 digits")
-    area, group, serial = ssn[:3], ssn[3:5], ssn[5:]
+    """Validate SSN and return the canonical digits-only form.
+
+    Accepts common input shapes — ``123-45-6789``, ``123 45 6789``,
+    ``123456789`` — because SSNs flow in from many sources (intake form,
+    OCR, manual entry). Rejects all-zero area/group/serial per IRS rules.
+    """
+    digits = re.sub(r"[\s-]", "", ssn)
+    if not re.fullmatch(r"\d{9}", digits):
+        raise ValueError("SSN must be exactly 9 digits (dashes/spaces ignored)")
+    area, group, serial = digits[:3], digits[3:5], digits[5:]
     if area == "000" or group == "00" or serial == "0000":
         raise ValueError("SSN cannot have all-zero area, group, or serial")
-    return ssn
+    return digits
 
 
 class Person(BaseModel):

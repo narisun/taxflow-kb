@@ -21,7 +21,7 @@ This is a large project spanning 5 independent subsystems. Each can be developed
 
 | # | Subsystem | Scope | Dependency |
 |---|-----------|-------|------------|
-| **Plan A** | Backend API Layer | FastAPI app, domain models, REST endpoints, SSE streaming | Existing `tax_brain` package |
+| **Plan A** | Backend API Layer | FastAPI app, domain models, REST endpoints, SSE streaming | Existing `taxkb` package |
 | **Plan B** | Design System & Shell | Tailwind config, Apple tokens, layout shell, shared components | None |
 | **Plan C** | Frontend Features | Client management, chat, document panel, dashboard | Plan A + B |
 | **Plan D** | OCR & Document Pipeline | Upload, extraction, confidence scoring, form rendering | Plan A |
@@ -87,7 +87,7 @@ tests/
 **Key design decisions:**
 - **Router → Service → Repository** layering. Routers handle HTTP, services handle business logic, repositories handle DB queries.
 - **Services receive dependencies via FastAPI's `Depends()`** — no global singletons.
-- **Chat service wraps TaxBrain agent** — the `tax_brain` package is consumed as a library, not modified.
+- **Chat service wraps TaxBrain agent** — the `taxkb` package is consumed as a library, not modified.
 - **All actions logged to audit trail** — the chat history IS the audit trail.
 
 ### A.2 Tasks
@@ -436,7 +436,7 @@ async def test_chat_history_persists(client):
 ```python
 # api/services/chat_service.py
 """Chat service — bridges user messages to TaxBrain agent."""
-from tax_brain.agent.classifier import classify_query
+from taxkb.agent.classifier import classify_query
 
 class ChatService:
     def __init__(self, agent, session):

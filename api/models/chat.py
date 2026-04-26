@@ -7,7 +7,7 @@ class ChatMessageCreate(BaseModel):
 
 
 class ChatMessageResponse(BaseModel):
-    id: int
+    id: str
     role: str
     content: str
     message_type: str
@@ -17,6 +17,6 @@ class ChatMessageResponse(BaseModel):
 
 class ChatHistoryResponse(BaseModel):
     messages: list[ChatMessageResponse]
-    client_id: int
+    client_id: str
     page: int = 1
     page_size: int = 100

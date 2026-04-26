@@ -58,7 +58,7 @@ def _make_row(label: str, line: str, current: Decimal, prior: Decimal) -> Compar
 
 
 class ComparisonEngine:
-    def compare(self, current: TaxResult, prior: TaxResult, client_id: int) -> ComparisonReport:
+    def compare(self, current: TaxResult, prior: TaxResult, client_id: str) -> ComparisonReport:
         """Compare two TaxResults and return a structured report."""
         sections: list[ComparisonSection] = []
 

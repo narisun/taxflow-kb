@@ -1,6 +1,6 @@
-"""Research tools — thin async wrappers around tax_brain retriever components.
+"""Research tools — thin async wrappers around taxkb retriever components.
 
-Each tool bridges the async API layer to tax_brain's sync psycopg2 calls
+Each tool bridges the async API layer to taxkb's sync psycopg2 calls
 via asyncio.to_thread(). Tools are registered into a ToolRegistry by
 build_research_tool_registry().
 """
@@ -20,28 +20,28 @@ _MAX_PASSAGES = 8
 _MAX_TEXT_LEN = 500
 
 
-# ── Lazy singletons for tax_brain components ─────────────────────────────────
+# ── Lazy singletons for taxkb components ─────────────────────────────────
 
 @lru_cache(maxsize=1)
 def _get_retriever() -> Any:
-    from tax_brain.factories import create_retriever
+    from taxkb.factories import create_retriever
     return create_retriever()
 
 
 @lru_cache(maxsize=1)
 def _get_ontology() -> Any:
-    from tax_brain.publications.ontology import get_ontology
+    from taxkb.publications.ontology import get_ontology
     return get_ontology()
 
 
 def _get_instruction_searcher(session: ResearchSession) -> Any:
-    from tax_brain.agent.search import InstructionSearcher
-    return InstructionSearcher(pool=session.tax_brain_pool)
+    from taxkb.agent.search import InstructionSearcher
+    return InstructionSearcher(pool=session.taxkb_pool)
 
 
 def _get_rule_searcher(session: ResearchSession) -> Any:
-    from tax_brain.agent.search import RuleSearcher
-    return RuleSearcher(pool=session.tax_brain_pool)
+    from taxkb.agent.search import RuleSearcher
+    return RuleSearcher(pool=session.taxkb_pool)
 
 
 def _truncate(text: str, max_len: int = _MAX_TEXT_LEN) -> str:
@@ -50,7 +50,7 @@ def _truncate(text: str, max_len: int = _MAX_TEXT_LEN) -> str:
 
 def _pub_title(pub_number: str) -> str:
     try:
-        from tax_brain.publications.models import PUB_TITLES
+        from taxkb.publications.models import PUB_TITLES
         return PUB_TITLES.get(pub_number, f"Publication {pub_number}")
     except Exception:
         return f"Publication {pub_number}"
@@ -59,7 +59,7 @@ def _pub_title(pub_number: str) -> str:
 def _expand(query: str) -> str:
     """Run query expansion, swallowing errors."""
     try:
-        from tax_brain.agent.query_expander import expand_query
+        from taxkb.agent.query_expander import expand_query
         return expand_query(query)
     except Exception:
         return query

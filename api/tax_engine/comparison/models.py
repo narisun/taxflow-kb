@@ -20,6 +20,6 @@ class ComparisonSection(BaseModel):
 class ComparisonReport(BaseModel):
     current_year: int
     prior_year: int
-    client_id: int
+    client_id: str
     sections: list[ComparisonSection]
     summary: ComparisonRow

@@ -1,5 +1,8 @@
 """Tests for text layer extraction."""
+from pathlib import Path
+
 import pytest
+
 from api.services.ocr.text_extractor import (
     TextLayerExtractor,
     detect_pdf_format,
@@ -7,6 +10,8 @@ from api.services.ocr.text_extractor import (
     _parse_currency,
     _extract_number,
 )
+
+FIXTURES_DIR = Path(__file__).resolve().parents[3] / "fixtures"
 
 
 class TestParseCurrency:
@@ -68,12 +73,11 @@ class TestDetectFormat:
 class TestTextLayerExtractor:
     @pytest.mark.asyncio
     async def test_extracts_from_real_w2(self):
-        """Test extraction from a real W-2 PDF if available."""
-        try:
-            with open("/Users/admin-h26/Downloads/johndoe_W2.pdf", "rb") as f:
-                content = f.read()
-        except FileNotFoundError:
-            pytest.skip("johndoe_W2.pdf not found")
+        """Test extraction from the bundled sample W-2 PDF."""
+        fixture = FIXTURES_DIR / "johndoe_W2.pdf"
+        if not fixture.exists():
+            pytest.skip(f"Fixture missing: {fixture}")
+        content = fixture.read_bytes()
 
         extractor = TextLayerExtractor()
         result = await extractor.extract(content, "W-2")
@@ -93,11 +97,10 @@ class TestTextLayerExtractor:
     @pytest.mark.asyncio
     async def test_handles_minimal_pdf(self):
         """Minimal/simple PDFs should not crash — may extract 0 fields."""
-        try:
-            with open("tests/sample_w2.pdf", "rb") as f:
-                content = f.read()
-        except FileNotFoundError:
-            pytest.skip("tests/sample_w2.pdf not found")
+        fixture = FIXTURES_DIR / "johndoe_W2.pdf"
+        if not fixture.exists():
+            pytest.skip(f"Fixture missing: {fixture}")
+        content = fixture.read_bytes()
 
         extractor = TextLayerExtractor()
         result = await extractor.extract(content, "W-2")
@@ -124,11 +127,10 @@ class TestCascadingExtractor:
     async def test_cascade_uses_text_layer(self):
         from api.services.ocr.cascading_extractor import CascadingExtractor
 
-        try:
-            with open("tests/sample_w2.pdf", "rb") as f:
-                content = f.read()
-        except FileNotFoundError:
-            pytest.skip("tests/sample_w2.pdf not found")
+        fixture = FIXTURES_DIR / "johndoe_W2.pdf"
+        if not fixture.exists():
+            pytest.skip(f"Fixture missing: {fixture}")
+        content = fixture.read_bytes()
 
         extractor = CascadingExtractor(vision_extractor=None)
         result = await extractor.extract(content, "W-2")

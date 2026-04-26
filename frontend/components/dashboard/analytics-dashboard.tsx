@@ -1,77 +1,144 @@
 // frontend/components/dashboard/analytics-dashboard.tsx
 "use client";
 
+import { useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import type { Client } from "@/lib/api-client";
 
-// TODO: wire to real API — all values below are placeholder mock data
+interface AnalyticsDashboardProps {
+  clients: Client[];
+}
 
-const metrics = [
-  { label: "Total Clients", value: "67", trend: "+3", trendUp: true, color: "text-apple-blue" },
-  { label: "Returns Filed", value: "42", trend: "63%", trendUp: true, color: "text-green-600 dark:text-green-400" },
-  { label: "Pending Review", value: "12", trend: "5 urgent", trendUp: false, color: "text-orange-500" },
-  { label: "Revenue", value: "$148,500", trend: "+12% YoY", trendUp: true, color: "text-green-600 dark:text-green-400" },
-];
+const STEP_ORDER = ["intake", "documents", "tax_return", "review", "filed"] as const;
 
-const pipeline = [
-  { stage: "Intake", count: 8, color: "bg-badge-pending-bg", badge: "pending" as const },
-  { stage: "Documents", count: 12, color: "bg-badge-progress-bg", badge: "inProgress" as const },
-  { stage: "Review", count: 15, color: "bg-badge-review-bg", badge: "review" as const },
-  { stage: "Filing", count: 18, color: "bg-badge-complete-bg", badge: "completed" as const },
-  { stage: "Complete", count: 14, color: "bg-badge-filed-bg", badge: "filed" as const },
-];
+const stepMeta: Record<string, { label: string; badge: "pending" | "inProgress" | "review" | "completed" | "filed"; color: string }> = {
+  intake:     { label: "Intake",     badge: "pending",     color: "bg-badge-pending-bg" },
+  documents:  { label: "Documents",  badge: "inProgress",  color: "bg-badge-progress-bg" },
+  tax_return: { label: "Tax Return", badge: "review",      color: "bg-badge-review-bg" },
+  review:     { label: "Review",     badge: "completed",   color: "bg-badge-complete-bg" },
+  filed:      { label: "Filed",      badge: "filed",       color: "bg-badge-filed-bg" },
+};
 
 const deadlines = [
-  { date: "Apr 15, 2026", desc: "Individual returns", clients: 8, accent: "text-red-500" },
-  { date: "Jun 15, 2026", desc: "Estimated Q2 payments", clients: 3, accent: "text-orange-500" },
-  { date: "Sep 15, 2026", desc: "Extension deadline", clients: 2, accent: "text-yellow-600 dark:text-yellow-400" },
-  { date: "Jan 15, 2027", desc: "Estimated Q4 payments", clients: 1, accent: "text-tertiary" },
+  { date: "Apr 15, 2026", desc: "Individual returns", accent: "text-red-500" },
+  { date: "Jun 15, 2026", desc: "Estimated Q2 payments", accent: "text-orange-500" },
+  { date: "Sep 15, 2026", desc: "Extension deadline", accent: "text-yellow-600 dark:text-yellow-400" },
+  { date: "Jan 15, 2027", desc: "Estimated Q4 payments", accent: "text-tertiary" },
 ];
 
-const activity = [
-  { icon: "⬆", text: "Sarah Johnson's W-2 uploaded", time: "2h ago" },
-  { icon: "🔍", text: "Data extracted from Mike Chen's 1099-INT", time: "5h ago" },
-  { icon: "📄", text: "Draft return generated for Lisa Park", time: "8h ago" },
-  { icon: "💬", text: "New response for David Kim's query", time: "1d ago" },
-  { icon: "👤", text: "New client James Wright added", time: "1d ago" },
-];
+function timeAgo(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days}d ago`;
+}
 
-const seasonTotal = 67;
-const seasonFiled = 42;
-const seasonReview = 12;
-const seasonPending = seasonTotal - seasonFiled - seasonReview;
+export function AnalyticsDashboard({ clients }: AnalyticsDashboardProps) {
+  const stats = useMemo(() => {
+    const total = clients.length;
+    const stepCounts: Record<string, number> = {};
+    for (const s of STEP_ORDER) stepCounts[s] = 0;
+    for (const c of clients) {
+      const step = c.workflow_step || "intake";
+      stepCounts[step] = (stepCounts[step] || 0) + 1;
+    }
 
-export function AnalyticsDashboard() {
+    const filed = stepCounts["filed"] || 0;
+    const review = stepCounts["review"] || 0;
+    const filedPct = total > 0 ? Math.round((filed / total) * 100) : 0;
+
+    const recentClients = [...clients]
+      .filter((c) => c.updated_at || c.created_at)
+      .sort((a, b) => new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime())
+      .slice(0, 4);
+
+    const activity = recentClients.map((c) => {
+      const step = c.workflow_step || "intake";
+      const icons: Record<string, string> = { intake: "👤", documents: "📄", tax_return: "📊", review: "🔍", filed: "✅" };
+      const labels: Record<string, string> = {
+        intake: `${c.name} — intake in progress`,
+        documents: `${c.name} — documents under review`,
+        tax_return: `${c.name} — return being prepared`,
+        review: `${c.name} — ready for review`,
+        filed: `${c.name} — return filed`,
+      };
+      return {
+        icon: icons[step] || "📋",
+        text: labels[step] || `${c.name} — ${step}`,
+        time: timeAgo(c.updated_at || c.created_at),
+      };
+    });
+
+    const unfiled = clients.filter((c) => c.workflow_step !== "filed");
+
+    return { total, filed, review, filedPct, stepCounts, activity, unfiled: unfiled.length };
+  }, [clients]);
+
+  const pipeline = STEP_ORDER.map((step) => ({
+    stage: stepMeta[step].label,
+    count: stats.stepCounts[step] || 0,
+    color: stepMeta[step].color,
+    badge: stepMeta[step].badge,
+  }));
+
+  const metrics = [
+    { label: "Total Clients", value: String(stats.total), trend: `${stats.unfiled} active`, trendUp: true, color: "text-apple-blue" },
+    { label: "Returns Filed", value: String(stats.filed), trend: `${stats.filedPct}%`, trendUp: true, color: "text-brand-green" },
+    { label: "Pending Review", value: String(stats.review), trend: stats.review > 0 ? `${stats.review} pending` : "All clear", trendUp: stats.review === 0, color: "text-orange-500" },
+    { label: "In Progress", value: String(stats.total - stats.filed), trend: `${stats.total - stats.filed} remaining`, trendUp: false, color: "text-apple-blue" },
+  ];
+
   return (
-    <div className="p-6 max-md:p-4 space-y-6 overflow-y-auto h-full">
-      <h2 className="text-[17px] font-semibold text-primary">Dashboard</h2>
+    <div className="p-4 space-y-3">
+      {/* Season progress — top */}
+      <Card className="p-3">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-[12px] font-semibold text-primary">
+            Tax Season {new Date().getFullYear() - 1}
+          </h3>
+          <span className="text-[11px] text-secondary">{stats.filed} of {stats.total} filed ({stats.filedPct}%)</span>
+        </div>
+        <div className="h-2.5 rounded-full bg-surface-tertiary overflow-hidden flex">
+          <div className="bg-brand-green h-full" style={{ width: `${stats.filedPct}%` }} />
+          <div className="bg-orange-500 h-full" style={{ width: `${stats.total > 0 ? (stats.review / stats.total) * 100 : 0}%` }} />
+        </div>
+        <div className="flex gap-4 mt-1.5 text-[10px]">
+          <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-brand-green" /> Filed ({stats.filed})</span>
+          <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-orange-500" /> Review ({stats.review})</span>
+          <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-surface-tertiary" /> Other ({stats.total - stats.filed - stats.review})</span>
+        </div>
+      </Card>
 
-      {/* Row 1: Metric cards */}
-      <div className="grid grid-cols-4 max-md:grid-cols-2 gap-4 max-md:gap-3">
+      {/* Metric cards */}
+      <div className="grid grid-cols-4 max-md:grid-cols-2 gap-3">
         {metrics.map((m) => (
-          <Card key={m.label} className="p-5 max-md:p-4 text-center">
-            <div className={cn("text-[28px] max-md:text-[24px] font-semibold", m.color)}>{m.value}</div>
-            <div className="text-[11px] text-secondary uppercase tracking-wider mt-1">{m.label}</div>
-            <div className={cn("text-[11px] mt-1", m.trendUp ? "text-green-600 dark:text-green-400" : "text-orange-500")}>
+          <Card key={m.label} className="p-3 text-center">
+            <div className={cn("text-[22px] font-semibold", m.color)}>{m.value}</div>
+            <div className="text-[10px] text-secondary uppercase tracking-wider mt-0.5">{m.label}</div>
+            <div className={cn("text-[10px] mt-0.5", m.trendUp ? "text-brand-green" : "text-orange-500")}>
               {m.trendUp ? "↑" : ""} {m.trend}
             </div>
           </Card>
         ))}
       </div>
 
-      {/* Row 2: Filing pipeline */}
-      <Card className="p-5">
-        <h3 className="text-[13px] font-semibold text-primary mb-4">Filing Pipeline</h3>
+      {/* Filing pipeline */}
+      <Card className="p-3">
+        <h3 className="text-[12px] font-semibold text-primary mb-2">Filing Pipeline</h3>
         <div className="flex max-md:flex-col gap-3">
           {pipeline.map((p) => (
             <div key={p.stage} className="flex-1 text-center">
               <Badge variant={p.badge}>{p.stage}</Badge>
-              <div className="text-[20px] font-semibold text-primary mt-2">{p.count}</div>
-              <div className="h-2 rounded-full bg-surface-tertiary mt-2 overflow-hidden">
+              <div className="text-[18px] font-semibold text-primary mt-1">{p.count}</div>
+              <div className="h-1.5 rounded-full bg-surface-tertiary mt-1 overflow-hidden">
                 <div
                   className={cn("h-full rounded-full", p.color)}
-                  style={{ width: `${(p.count / seasonTotal) * 100}%` }}
+                  style={{ width: `${stats.total > 0 ? (p.count / stats.total) * 100 : 0}%` }}
                 />
               </div>
             </div>
@@ -79,60 +146,45 @@ export function AnalyticsDashboard() {
         </div>
       </Card>
 
-      {/* Row 3: Deadlines + Activity */}
-      <div className="grid grid-cols-2 max-md:grid-cols-1 gap-4">
-        {/* Deadline timeline */}
-        <Card className="p-5">
-          <h3 className="text-[13px] font-semibold text-primary mb-4">Upcoming Deadlines</h3>
-          <div className="space-y-4">
+      {/* Deadlines + Activity */}
+      <div className="grid grid-cols-2 max-md:grid-cols-1 gap-3">
+        <Card className="p-3">
+          <h3 className="text-[12px] font-semibold text-primary mb-2">Upcoming Deadlines</h3>
+          <div className="space-y-2">
             {deadlines.map((d) => (
-              <div key={d.date} className="flex items-start gap-3">
-                <div className="flex flex-col items-center">
-                  <div className={cn("w-2.5 h-2.5 rounded-full border-2 shrink-0", d.accent.replace("text-", "border-"))} />
-                  <div className="w-px h-8 bg-divider last:hidden" />
-                </div>
+              <div key={d.date} className="flex items-start gap-2">
+                <div className={cn("w-2 h-2 rounded-full border-2 shrink-0 mt-0.5", d.accent.replace("text-", "border-"))} />
                 <div className="flex-1">
-                  <div className={cn("text-[12px] font-semibold", d.accent)}>{d.date}</div>
-                  <div className="text-[12px] text-primary">{d.desc}</div>
-                  <div className="text-[11px] text-tertiary">{d.clients} client{d.clients > 1 ? "s" : ""}</div>
+                  <div className="flex items-baseline gap-2">
+                    <span className={cn("text-[11px] font-semibold", d.accent)}>{d.date}</span>
+                    <span className="text-[10px] text-tertiary">{d.desc}</span>
+                  </div>
+                  <div className="text-[10px] text-tertiary">{stats.unfiled} client{stats.unfiled !== 1 ? "s" : ""}</div>
                 </div>
               </div>
             ))}
           </div>
         </Card>
 
-        {/* Activity feed */}
-        <Card className="p-5">
-          <h3 className="text-[13px] font-semibold text-primary mb-4">Recent Activity</h3>
-          <div className="space-y-3">
-            {activity.map((a, i) => (
-              <div key={i} className="flex items-start gap-3">
-                <span className="text-[14px] mt-0.5 shrink-0">{a.icon}</span>
-                <div className="flex-1 min-w-0">
-                  <div className="text-[12px] text-primary">{a.text}</div>
-                  <div className="text-[11px] text-tertiary">{a.time}</div>
+        <Card className="p-3">
+          <h3 className="text-[12px] font-semibold text-primary mb-2">Recent Activity</h3>
+          {stats.activity.length > 0 ? (
+            <div className="space-y-2">
+              {stats.activity.map((a, i) => (
+                <div key={i} className="flex items-start gap-2">
+                  <span className="text-[12px] shrink-0">{a.icon}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[11px] text-primary leading-tight">{a.text}</div>
+                    <div className="text-[10px] text-tertiary">{a.time}</div>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-[11px] text-tertiary">No recent activity</div>
+          )}
         </Card>
       </div>
-
-      {/* Row 4: Season progress */}
-      <Card className="p-5">
-        <h3 className="text-[13px] font-semibold text-primary mb-3">
-          Tax Season 2025: {seasonFiled} of {seasonTotal} returns filed ({Math.round((seasonFiled / seasonTotal) * 100)}%)
-        </h3>
-        <div className="h-3 rounded-full bg-surface-tertiary overflow-hidden flex">
-          <div className="bg-green-500 h-full" style={{ width: `${(seasonFiled / seasonTotal) * 100}%` }} />
-          <div className="bg-orange-500 h-full" style={{ width: `${(seasonReview / seasonTotal) * 100}%` }} />
-        </div>
-        <div className="flex gap-4 mt-2 text-[11px]">
-          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500" /> Filed ({seasonFiled})</span>
-          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-orange-500" /> Review ({seasonReview})</span>
-          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-surface-tertiary" /> Pending ({seasonPending})</span>
-        </div>
-      </Card>
     </div>
   );
 }

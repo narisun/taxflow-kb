@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
-interface OnboardingTourProps {
+interface ProductTourProps {
   active: boolean;
   onComplete: () => void;
 }
@@ -23,7 +23,7 @@ const steps = [
   },
 ];
 
-export function OnboardingTour({ active, onComplete }: OnboardingTourProps) {
+export function ProductTour({ active, onComplete }: ProductTourProps) {
   const [step, setStep] = useState(0);
 
   useEffect(() => {

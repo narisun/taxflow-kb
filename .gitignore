@@ -1,5 +1,6 @@
 # ── Secrets & Environment ────────────────────────────────────────────────────
 .env
+.env.*
 !.env.example
 
 # ── Python ───────────────────────────────────────────────────────────────────
@@ -27,12 +28,23 @@ ENV/
 
 # ── Testing & Coverage ──────────────────────────────────────────────────────
 .pytest_cache/
+pytest-cache-files-*/
 .coverage
 htmlcov/
 *.cover
+.playwright/
+.playwright-cli/
+
+# ── Frontend build artifacts ─────────────────────────────────────────────────
+.next/
+frontend/.next/
+frontend/node_modules/
+frontend/out/
 
 # ── Misc ────────────────────────────────────────────────────────────────────
 *.log
 .superpowers/
 taxbrain.db
 uploads/
+docs/
+.claude/

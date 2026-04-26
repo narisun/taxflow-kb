@@ -1,4 +1,4 @@
-"""Tests for research tool handlers — all tax_brain calls mocked."""
+"""Tests for research tool handlers — all taxkb calls mocked."""
 from __future__ import annotations
 import pytest
 from unittest.mock import MagicMock, patch, AsyncMock
@@ -8,7 +8,7 @@ from api.agent.research_session import ResearchSession
 def _make_session() -> ResearchSession:
     return ResearchSession(
         org_id="org-1", user_id="user-1", conversation_id="conv-1",
-        db_session=MagicMock(), tax_brain_pool=MagicMock(),
+        db_session=MagicMock(), taxkb_pool=MagicMock(),
     )
 
 
@@ -54,7 +54,7 @@ class TestSearchPublicationDetails:
     @pytest.mark.asyncio
     async def test_returns_passages(self):
         from api.agent.tools.research_tools import search_publication_details
-        from tax_brain.agent.models import RetrievedPassage
+        from taxkb.agent.models import RetrievedPassage
 
         mock_passages = [
             RetrievedPassage(
@@ -80,7 +80,7 @@ class TestSearchPublicationDetails:
     @pytest.mark.asyncio
     async def test_max_8_passages(self):
         from api.agent.tools.research_tools import search_publication_details
-        from tax_brain.agent.models import RetrievedPassage
+        from taxkb.agent.models import RetrievedPassage
 
         mock_passages = [
             RetrievedPassage(
@@ -129,7 +129,7 @@ class TestSearchFormInstructions:
     @pytest.mark.asyncio
     async def test_returns_instructions(self):
         from api.agent.tools.research_tools import search_form_instructions
-        from tax_brain.agent.models import RetrievedPassage
+        from taxkb.agent.models import RetrievedPassage
 
         mock_passages = [
             RetrievedPassage(
@@ -154,7 +154,7 @@ class TestSearchMefRules:
     @pytest.mark.asyncio
     async def test_returns_rules(self):
         from api.agent.tools.research_tools import search_mef_rules
-        from tax_brain.agent.models import RetrievedPassage
+        from taxkb.agent.models import RetrievedPassage
 
         mock_passages = [
             RetrievedPassage(
@@ -178,7 +178,7 @@ class TestCompareTaxYears:
     @pytest.mark.asyncio
     async def test_returns_per_year_passages(self):
         from api.agent.tools.research_tools import compare_tax_years
-        from tax_brain.agent.models import RetrievedPassage
+        from taxkb.agent.models import RetrievedPassage
 
         mock_passages = [
             RetrievedPassage(

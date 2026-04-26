@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn, fmtTimestamp, fmtDate } from "@/lib/utils";
+import { useTimezone } from "@/components/auth/me-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
@@ -15,6 +16,7 @@ interface FilingWorkflowProps {
 }
 
 export function FilingWorkflow({ clientName = "Smith, John", filingStatus = "single" }: FilingWorkflowProps) {
+  const tz = useTimezone();
   const [step, setStep] = useState<FilingStep>("verify");
   const [result, setResult] = useState<FilingResult>(null);
   const [ssnPrimary, setSsnPrimary] = useState("");
@@ -75,7 +77,7 @@ export function FilingWorkflow({ clientName = "Smith, John", filingStatus = "sin
               )}>
                 <span className={cn(
                   "w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold",
-                  i + 1 < stepNumber ? "bg-green-500 text-white"
+                  i + 1 < stepNumber ? "bg-brand-green text-white"
                     : i + 1 === stepNumber ? "bg-apple-blue text-white"
                     : "bg-surface-tertiary text-tertiary"
                 )}>
@@ -135,6 +137,7 @@ export function FilingWorkflow({ clientName = "Smith, John", filingStatus = "sin
               variant="primary"
               onClick={() => setStep("authorize")}
               disabled={!ssnPrimary || (isJoint && !ssnSpouse)}
+              title={!ssnPrimary ? "Enter the primary taxpayer's SSN to continue" : (isJoint && !ssnSpouse) ? "Enter the spouse's SSN for joint filing" : undefined}
               className="text-[12px] px-4 py-1.5"
             >
               Next: Authorize
@@ -186,6 +189,7 @@ export function FilingWorkflow({ clientName = "Smith, John", filingStatus = "sin
               variant="primary"
               onClick={() => setStep("pin")}
               disabled={!authorized}
+              title={!authorized ? "Confirm CPA authorization to continue" : undefined}
               className="text-[12px] px-4 py-1.5"
             >
               Next: IRS PIN
@@ -228,6 +232,7 @@ export function FilingWorkflow({ clientName = "Smith, John", filingStatus = "sin
               variant="primary"
               onClick={handleSubmit}
               disabled={!irsPin}
+              title={!irsPin ? "Enter the IRS PIN or ERO PIN to submit" : undefined}
               className="text-[12px] px-4 py-1.5"
             >
               Submit to IRS
@@ -257,7 +262,7 @@ export function FilingWorkflow({ clientName = "Smith, John", filingStatus = "sin
       {step === "result" && result === "accepted" && (
         <div className="space-y-3">
           <div className="flex items-center gap-2">
-            <span className="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center text-[16px]">{"\u2713"}</span>
+            <span className="w-8 h-8 rounded-full bg-brand-green text-white flex items-center justify-center text-[16px]">{"\u2713"}</span>
             <div>
               <div className="text-[13px] font-semibold text-primary">Return Accepted</div>
               <div className="text-[11px] text-tertiary">IRS acknowledged receipt</div>
@@ -265,9 +270,9 @@ export function FilingWorkflow({ clientName = "Smith, John", filingStatus = "sin
           </div>
 
           <div className="bg-surface-secondary rounded-lg p-3 space-y-1.5 text-[11px]">
-            <div><span className="text-tertiary">Status: </span><span className="text-green-600 dark:text-green-400 font-medium">Accepted</span></div>
+            <div><span className="text-tertiary">Status: </span><span className="text-brand-green font-medium">Accepted</span></div>
             <div><span className="text-tertiary">Confirmation: </span><span className="text-primary font-medium">2026-FED-{String(Math.floor(Math.random() * 90000 + 10000))}</span></div>
-            <div><span className="text-tertiary">Submitted: </span><span className="text-primary">{new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })} at {new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}</span></div>
+            <div><span className="text-tertiary">Submitted: </span><span className="text-primary">{fmtTimestamp(new Date().toISOString(), tz)}</span></div>
             <div><span className="text-tertiary">Preparer: </span><span className="text-primary">SC (ERO)</span></div>
             <div><span className="text-tertiary">Client: </span><span className="text-primary">{clientName}</span></div>
             <div><span className="text-tertiary">Expected refund: </span><span className="text-primary">2-3 weeks via direct deposit</span></div>
@@ -292,7 +297,7 @@ export function FilingWorkflow({ clientName = "Smith, John", filingStatus = "sin
 
           <div className="bg-surface-secondary rounded-lg p-3 space-y-1.5 text-[11px]">
             <div><span className="text-tertiary">Status: </span><span className="text-red-500 font-medium">Rejected</span></div>
-            <div><span className="text-tertiary">Submitted: </span><span className="text-primary">{new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span></div>
+            <div><span className="text-tertiary">Submitted: </span><span className="text-primary">{fmtDate(new Date().toISOString(), tz)}</span></div>
             <div><span className="text-tertiary">Reject code: </span><span className="text-primary font-medium">IND-031-04</span></div>
             <div><span className="text-tertiary">Reason: </span><span className="text-primary">SSN/Name mismatch — the primary taxpayer SSN does not match IRS records for the name provided.</span></div>
           </div>

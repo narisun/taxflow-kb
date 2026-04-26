@@ -17,6 +17,24 @@ class TestPerson:
         with pytest.raises(ValueError):
             Person(first_name="John", last_name="Doe", ssn="12345", date_of_birth=date(1985, 3, 15))
 
+    def test_ssn_normalizes_dashed_input(self):
+        """SSNs flow in from UIs, OCR, and intake forms with dashes — model
+        should normalize to the 9-digit canonical form."""
+        from api.tax_engine.models.people import Person
+        p = Person(
+            first_name="Jane", last_name="Doe",
+            ssn="100-10-1001", date_of_birth=date(1990, 1, 1),
+        )
+        assert p.ssn == "100101001"
+
+    def test_ssn_normalizes_spaced_input(self):
+        from api.tax_engine.models.people import Person
+        p = Person(
+            first_name="Jane", last_name="Doe",
+            ssn="100 10 1001", date_of_birth=date(1990, 1, 1),
+        )
+        assert p.ssn == "100101001"
+
     def test_ssn_rejects_all_zeros_in_area(self):
         from api.tax_engine.models.people import Person
         with pytest.raises(ValueError):

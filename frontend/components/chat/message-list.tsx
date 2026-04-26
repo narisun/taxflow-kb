@@ -25,10 +25,14 @@ export function MessageList({ messages, isTyping = false }: MessageListProps) {
 
   useEffect(() => {
     const newCount = messages.length;
+    const isInitialLoad = lastMessageCount.current === 0 && newCount > 0;
     const wasAdded = newCount > lastMessageCount.current && lastMessageCount.current > 0;
     lastMessageCount.current = newCount;
 
-    if (wasAdded && !userScrolledUp) {
+    if (isInitialLoad) {
+      // Scroll instantly to bottom on first load (no animation)
+      bottomRef.current?.scrollIntoView();
+    } else if (wasAdded && !userScrolledUp) {
       bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages.length, userScrolledUp]);

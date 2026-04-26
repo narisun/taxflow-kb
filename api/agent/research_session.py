@@ -15,4 +15,4 @@ class ResearchSession:
     user_id: str
     conversation_id: str
     db_session: AsyncSession
-    tax_brain_pool: Any  # psycopg2 ConnectionPool for KB access
+    taxkb_pool: Any  # psycopg2 ConnectionPool for KB access

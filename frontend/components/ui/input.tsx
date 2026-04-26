@@ -9,7 +9,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 const validationClasses: Record<InputValidation, string> = {
   default: "border-divider focus:border-apple-blue",
-  ok: "border-green-500 bg-green-50 dark:bg-green-950/30",
+  ok: "border-brand-green bg-brand-green/10",
   warning: "border-orange-500 bg-orange-50 dark:bg-orange-950/30",
   error: "border-red-500 bg-red-50 dark:bg-red-950/30",
 };

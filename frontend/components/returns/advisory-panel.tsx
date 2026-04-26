@@ -1,17 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn, fmtCurrency } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-
-interface AdvisoryItem {
-  id: string;
-  category: "deduction" | "credit" | "retirement" | "planning" | "compliance";
-  title: string;
-  detail: string;
-  savings?: string;
-  selected: boolean;
-}
+import { api, type AdvisoryItem } from "@/lib/api-client";
 
 const categoryLabels: Record<string, string> = {
   deduction: "Deduction",
@@ -30,212 +22,230 @@ const categoryIcons: Record<string, string> = {
 };
 
 interface AdvisoryPanelProps {
+  clientId?: string | null;
   clientName?: string;
   filingStatus?: string;
   dependents?: number;
 }
 
-function getAdvisoryItems(filingStatus: string, dependents: number): AdvisoryItem[] {
-  const items: AdvisoryItem[] = [
-    {
-      id: "hsa",
-      category: "deduction",
-      title: "Maximize HSA contributions",
-      detail: "You can contribute up to $4,300 (individual) or $8,550 (family) pre-tax to a Health Savings Account for 2026. HSA contributions reduce taxable income and grow tax-free.",
-      savings: "Up to $1,500/yr",
-      selected: true,
-    },
-    {
-      id: "401k",
-      category: "retirement",
-      title: "Increase 401(k) contributions",
-      detail: "The 2026 401(k) limit is $23,500 ($31,000 if age 50+). Increasing contributions reduces your current taxable income while building retirement savings.",
-      savings: "Up to $5,000/yr",
-      selected: true,
-    },
-    {
-      id: "ira",
-      category: "retirement",
-      title: "Consider backdoor Roth IRA",
-      detail: "Your income may exceed Roth IRA limits. A backdoor Roth conversion lets you contribute post-tax to a traditional IRA and convert to Roth, enabling tax-free growth.",
-      savings: "Long-term benefit",
-      selected: false,
-    },
-    {
-      id: "estimated",
-      category: "compliance",
-      title: "Set up quarterly estimated payments",
-      detail: "Based on your withholding, you may owe at year-end. Setting up quarterly estimated payments (Form 1040-ES) avoids underpayment penalties.",
-      selected: true,
-    },
-    {
-      id: "charitable",
-      category: "deduction",
-      title: "Bunch charitable donations",
-      detail: "Consider bunching two years of charitable donations into one year to exceed the standard deduction threshold, then take the standard deduction the following year.",
-      savings: "Up to $2,000/yr",
-      selected: false,
-    },
-    {
-      id: "529",
-      category: "planning",
-      title: "Open or fund 529 education plan",
-      detail: dependents > 0
-        ? `With ${dependents} dependent${dependents > 1 ? "s" : ""}, a 529 plan offers tax-free growth for education expenses. Some states offer a state tax deduction for contributions.`
-        : "A 529 plan offers tax-free growth for education expenses. Even without dependents, you can name yourself or a future beneficiary.",
-      savings: dependents > 0 ? "State deduction varies" : undefined,
-      selected: dependents > 0,
-    },
-  ];
-
-  if (filingStatus === "mfj") {
-    items.push({
-      id: "spouse-ira",
-      category: "retirement",
-      title: "Spousal IRA contribution",
-      detail: "A non-working or lower-income spouse can contribute to an IRA based on the working spouse's income. This doubles your household retirement savings capacity.",
-      savings: "Up to $7,000/yr",
-      selected: false,
-    });
-  }
-
-  if (filingStatus === "single" || filingStatus === "hoh") {
-    items.push({
-      id: "home-office",
-      category: "deduction",
-      title: "Home office deduction review",
-      detail: "If you use part of your home exclusively for business, you may qualify for the home office deduction — $5/sq ft up to 300 sq ft ($1,500 max) using the simplified method.",
-      savings: "Up to $1,500/yr",
-      selected: false,
-    });
-  }
-
-  items.push({
-    id: "withholding",
-    category: "compliance",
-    title: "Review W-4 withholding",
-    detail: "Based on this year's return, your withholding may be too high or too low. Adjusting your W-4 can optimize your paycheck and avoid a large refund or balance due.",
-    selected: true,
-  });
-
-  items.push({
-    id: "records",
-    category: "compliance",
-    title: "Organize records for next year",
-    detail: "Start tracking deductible expenses now — medical expenses over 7.5% of AGI, charitable donations, business expenses, and investment losses for tax-loss harvesting.",
-    selected: false,
-  });
-
-  return items;
+interface UIItem extends AdvisoryItem {
+  selected: boolean;
 }
 
-export function AdvisoryPanel({ clientName = "Client", filingStatus = "single", dependents = 0 }: AdvisoryPanelProps) {
-  const [items, setItems] = useState<AdvisoryItem[]>(() => getAdvisoryItems(filingStatus, dependents));
-  const [sent, setSent] = useState(false);
+function parseSavings(v: string | number | null | undefined): number {
+  if (v == null) return 0;
+  const n = typeof v === "number" ? v : parseFloat(v);
+  return isNaN(n) ? 0 : n;
+}
+
+export function AdvisoryPanel({ clientId, clientName = "Client" }: AdvisoryPanelProps) {
+  const [items, setItems] = useState<UIItem[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [generated, setGenerated] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handleGenerate = async () => {
+    if (!clientId) {
+      setError("Select a client first.");
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await api.returns.advisory(clientId);
+      setItems(data.map((it) => ({ ...it, selected: it.selected ?? true })));
+      setGenerated(true);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to generate advisory");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const toggleItem = (id: string) => {
-    setItems((prev) => prev.map((item) => item.id === id ? { ...item, selected: !item.selected } : item));
+    setItems((prev) => prev.map((item) => (item.id === id ? { ...item, selected: !item.selected } : item)));
   };
 
-  const selectedCount = items.filter((i) => i.selected).length;
+  const selectedItems = items.filter((i) => i.selected);
+  const selectedCount = selectedItems.length;
 
-  const handleSend = () => {
-    setSent(true);
+  const totalSavings = selectedItems.reduce((sum, it) => sum + parseSavings(it.estimated_savings), 0);
+
+  const buildAdvisoryText = (): string => {
+    const lines: string[] = [`Tax Advisory for ${clientName}`, ""];
+    selectedItems.forEach((it, idx) => {
+      lines.push(`${idx + 1}. ${it.title} [${categoryLabels[it.category] || it.category}]`);
+      if (it.savings) lines.push(`   Estimated savings: ${it.savings}`);
+      lines.push(`   ${it.detail}`);
+      lines.push("");
+    });
+    if (totalSavings > 0) {
+      lines.push(`Total estimated savings: ${fmtCurrency(Math.round(totalSavings))}`);
+    }
+    return lines.join("\n");
   };
 
-  if (sent) {
-    return (
-      <div className="space-y-4">
-        <div className="text-[11px] font-semibold text-secondary uppercase tracking-wider">Tax Advisory</div>
-        <div className="flex flex-col items-center py-8 text-center">
-          <span className="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center text-[18px] mb-3">{"\u2713"}</span>
-          <div className="text-[13px] font-medium text-primary mb-1">Advisory Sent</div>
-          <div className="text-[11px] text-tertiary mb-4">
-            {selectedCount} recommendation{selectedCount !== 1 ? "s" : ""} sent to {clientName}
-          </div>
-          <Button variant="ghost" onClick={() => setSent(false)} className="text-[12px]">
-            Edit &amp; Resend
-          </Button>
-        </div>
-      </div>
-    );
-  }
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(buildAdvisoryText());
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setError("Could not copy to clipboard");
+    }
+  };
 
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center justify-between mb-3">
-        <div>
+      <div className="flex items-center justify-between mb-3 gap-2">
+        <div className="min-w-0">
           <div className="text-[12px] font-semibold text-secondary tracking-wide">Tax Advisory</div>
-          <div className="text-[11px] text-tertiary mt-0.5">Select items to include in client letter</div>
+          <div className="text-[11px] text-tertiary mt-0.5 truncate">
+            {generated
+              ? `${items.length} recommendation${items.length !== 1 ? "s" : ""} sorted by priority`
+              : "Generate AI-prioritized recommendations"}
+          </div>
         </div>
+        <Button
+          variant="pill"
+          onClick={handleGenerate}
+          disabled={loading || !clientId}
+          title={!clientId ? "Select a client to generate advisory" : undefined}
+          className="text-[11px] px-3 py-1 shrink-0"
+        >
+          {loading ? "Generating\u2026" : generated ? "Refresh" : "Create Advisory"}
+        </Button>
       </div>
 
-      {/* Advisory items — scrollable */}
-      <div className="flex-1 overflow-y-auto space-y-2 min-h-0">
-        {items.map((item) => (
-          <div
-            key={item.id}
-            onClick={() => toggleItem(item.id)}
-            className={cn(
-              "rounded-lg border p-2.5 cursor-pointer transition-all",
-              item.selected
-                ? "border-apple-blue/30 bg-apple-blue/5"
-                : "border-divider bg-surface-secondary/50 opacity-70 hover:opacity-90 hover:border-tertiary"
-            )}
-          >
-            <div className="flex items-start gap-2">
-              {/* Checkbox */}
-              <input
-                type="checkbox"
-                checked={item.selected}
-                onChange={() => toggleItem(item.id)}
-                className="w-3.5 h-3.5 mt-0.5 accent-apple-blue cursor-pointer shrink-0"
-              />
-              <div className="flex-1 min-w-0">
-                {/* Title row */}
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[12px]">{categoryIcons[item.category]}</span>
-                  <span className={cn(
-                    "text-[12px] font-medium",
-                    item.selected ? "text-primary" : "text-secondary"
-                  )}>{item.title}</span>
-                </div>
-                {/* Category + savings */}
-                <div className="flex items-center gap-2 mt-0.5">
-                  <span className="text-[9px] font-medium px-1.5 py-px rounded-full bg-surface-tertiary text-secondary">
-                    {categoryLabels[item.category]}
-                  </span>
-                  {item.savings && (
-                    <span className="text-[10px] text-green-600 dark:text-green-400 font-medium">
-                      {item.savings}
+      {/* Selected summary chip */}
+      {generated && items.length > 0 && (
+        <div className="flex items-center justify-between gap-2 px-2.5 py-1.5 mb-2 rounded-md bg-apple-blue/5 border border-apple-blue/20">
+          <span className="text-[11px] text-secondary">
+            <span className="font-medium text-primary">{selectedCount}</span> of {items.length} selected
+          </span>
+          {totalSavings > 0 && (
+            <span className="text-[11px] text-brand-green font-medium">
+              ~{fmtCurrency(Math.round(totalSavings))} savings
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* Body */}
+      <div className="flex-1 overflow-y-auto min-h-0">
+        {error && (
+          <div className="text-[11px] text-red-600 dark:text-red-400 px-2.5 py-2 rounded bg-red-50 dark:bg-red-950/30 mb-2">
+            {error}
+          </div>
+        )}
+
+        {!generated && !loading && !error && (
+          <div className="flex flex-col items-center justify-center text-center py-10 px-4 text-tertiary">
+            <span className="text-[28px] mb-2">{"\u{1F4A1}"}</span>
+            <div className="text-[12px] text-secondary font-medium mb-1">No advisory yet</div>
+            <div className="text-[11px] mb-4">
+              Click <span className="text-primary font-medium">Create Advisory</span> to analyze this return
+              and surface the highest-impact tax-saving opportunities.
+            </div>
+          </div>
+        )}
+
+        {loading && (
+          <div className="flex flex-col items-center justify-center text-center py-10 text-tertiary">
+            <div className="w-6 h-6 border-2 border-apple-blue border-t-transparent rounded-full animate-spin mb-2" />
+            <div className="text-[11px]">Analyzing return&hellip;</div>
+          </div>
+        )}
+
+        {generated && items.length === 0 && !loading && (
+          <div className="text-center py-10 text-tertiary text-[11px]">
+            No advisory recommendations were generated. Try after the draft return is fully computed.
+          </div>
+        )}
+
+        <div className="space-y-2">
+          {items.map((item, idx) => (
+            <div
+              key={item.id}
+              onClick={() => toggleItem(item.id)}
+              className={cn(
+                "rounded-lg border p-2.5 cursor-pointer transition-all",
+                item.selected
+                  ? "border-apple-blue/30 bg-apple-blue/5"
+                  : "border-divider bg-surface-secondary/50 opacity-70 hover:opacity-90 hover:border-tertiary"
+              )}
+            >
+              <div className="flex items-start gap-2">
+                <input
+                  type="checkbox"
+                  checked={item.selected}
+                  onChange={() => toggleItem(item.id)}
+                  onClick={(e) => e.stopPropagation()}
+                  className="w-3.5 h-3.5 mt-0.5 accent-apple-blue cursor-pointer shrink-0"
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[10px] font-mono text-tertiary w-4 shrink-0">#{idx + 1}</span>
+                    <span className="text-[12px]">{categoryIcons[item.category]}</span>
+                    <span
+                      className={cn(
+                        "text-[12px] font-medium",
+                        item.selected ? "text-primary" : "text-secondary"
+                      )}
+                    >
+                      {item.title}
                     </span>
-                  )}
-                </div>
-                {/* Detail */}
-                <div className={cn(
-                  "text-[10px] mt-1 leading-relaxed",
-                  item.selected ? "text-tertiary" : "text-tertiary/70"
-                )}>
-                  {item.detail}
+                  </div>
+                  <div className="flex items-center gap-2 mt-0.5 ml-6">
+                    <span className="text-[9px] font-medium px-1.5 py-px rounded-full bg-surface-tertiary text-secondary">
+                      {categoryLabels[item.category] || item.category}
+                    </span>
+                    {item.savings && (
+                      <span className="text-[10px] text-brand-green font-medium">
+                        {item.savings}
+                      </span>
+                    )}
+                  </div>
+                  <div
+                    className={cn(
+                      "text-[10px] mt-1 ml-6 leading-relaxed",
+                      item.selected ? "text-tertiary" : "text-tertiary/70"
+                    )}
+                  >
+                    {item.detail}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
-      {/* Sticky CTA footer */}
-      <div className="shrink-0 pt-3 mt-2 border-t border-divider">
-        <Button
-          variant="primary"
-          onClick={handleSend}
-          disabled={selectedCount === 0}
-          className="w-full text-[12px] py-2"
-        >
-          Generate Advisory Letter ({selectedCount} item{selectedCount !== 1 ? "s" : ""})
-        </Button>
-      </div>
+      {/* Sticky footer — share actions */}
+      {generated && items.length > 0 && (
+        <div className="shrink-0 pt-3 mt-2 border-t border-divider flex gap-2">
+          <Button
+            variant="pill"
+            onClick={handleCopy}
+            disabled={selectedCount === 0}
+            title={selectedCount === 0 ? "Select at least one advisory item to copy" : undefined}
+            className="flex-1 text-[11px] py-1.5"
+          >
+            {copied ? "\u2713 Copied" : `Copy summary (${selectedCount})`}
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={handleGenerate}
+            disabled={loading}
+            className="text-[11px]"
+            title="Re-run analysis"
+          >
+            {"\u21BB"}
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

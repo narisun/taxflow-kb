@@ -63,7 +63,7 @@ export function ChatInput({
         </button>
       </div>
 
-      <div className="hidden md:flex gap-1.5 mt-2 flex-wrap">
+      <div className="hidden md:flex gap-1.5 mt-2 flex-wrap justify-center">
         {hints.map((hint) => (
           <button
             key={hint}

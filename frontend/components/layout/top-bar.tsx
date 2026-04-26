@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
-import { NotificationBell } from "@/components/notifications/notification-bell";
+import { NotificationBell, type Alert } from "@/components/notifications/notification-bell";
 import { LoginButton } from "@/components/auth/login-button";
 import { UserMenu } from "@/components/auth/user-menu";
 import { cn } from "@/lib/utils";
@@ -18,22 +18,30 @@ interface TopBarProps {
   onInbox?: () => void;
   inboxUnread?: number;
   onStatsClick?: (filter?: string) => void;
+  alerts?: Alert[];
 }
 
-const irsNewsItems = [
-  { id: 1, title: "EITC refunds released — check Where\u2019s My Refund tool", date: "Apr 11", category: "Refunds" },
-  { id: 2, title: "Form 1099-K reporting threshold remains $5,000 for 2025", date: "Apr 10", category: "Compliance" },
-  { id: 3, title: "Direct File expanded to 25 states for TY 2025", date: "Apr 8", category: "E-File" },
-  { id: 4, title: "IRS processed over 90 million returns this filing season", date: "Apr 7", category: "Stats" },
-  { id: 5, title: "Free File available for taxpayers with AGI $84,000 or less", date: "Apr 3", category: "Resources" },
-  { id: 6, title: "Estimated tax payment Q1 deadline April 15", date: "Mar 28", category: "Deadlines" },
-  { id: 7, title: "IRS warns of new phishing scams targeting tax professionals", date: "Mar 25", category: "Security" },
-  { id: 8, title: "Standard mileage rate set at 70 cents per mile for 2025", date: "Mar 20", category: "Deductions" },
-];
+interface IrsNewsItem {
+  id: number;
+  title: string;
+  date: string;
+  url: string;
+  category: string;
+}
 
 function IrsNewsFeed({ deadline }: { deadline: string }) {
   const [open, setOpen] = useState(false);
+  const [items, setItems] = useState<IrsNewsItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    fetch("/api/irs-news")
+      .then((r) => r.json())
+      .then((data) => { if (Array.isArray(data)) setItems(data); })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -44,8 +52,10 @@ function IrsNewsFeed({ deadline }: { deadline: string }) {
     return () => document.removeEventListener("mousedown", handler);
   }, [open]);
 
-  const latest = irsNewsItems[0];
-  void deadline; // used by parent for positioning
+  const latest = items[0];
+  void deadline;
+
+  if (loading || !latest) return null;
 
   return (
     <div ref={ref} className="hidden lg:flex items-center relative">
@@ -61,17 +71,23 @@ function IrsNewsFeed({ deadline }: { deadline: string }) {
         <div className="absolute right-0 top-10 w-96 bg-surface rounded-xl shadow-xl border border-divider overflow-hidden z-50 animate-scale-in">
           <div className="flex items-center justify-between px-4 py-3 border-b border-divider">
             <span className="text-[13px] font-semibold text-primary">IRS News &amp; Updates</span>
-            <span className="text-[10px] text-tertiary">irs.gov/newsroom</span>
+            <a href="https://www.irs.gov/newsroom" target="_blank" rel="noopener noreferrer" className="text-[10px] text-apple-blue hover:underline">irs.gov/newsroom</a>
           </div>
           <div className="max-h-80 overflow-y-auto scroll-visible">
-            {irsNewsItems.map((item) => (
-              <div key={item.id} className="px-4 py-3 border-b border-divider last:border-0 hover:bg-surface-secondary transition-colors">
+            {items.map((item) => (
+              <a
+                key={item.id}
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block px-4 py-3 border-b border-divider last:border-0 hover:bg-surface-secondary transition-colors"
+              >
                 <div className="flex items-center gap-2 mb-0.5">
                   <span className="text-[9px] font-medium px-1.5 py-px rounded-full bg-surface-tertiary text-secondary">{item.category}</span>
                   <span className="text-[10px] text-tertiary">{item.date}</span>
                 </div>
                 <div className="text-[12px] text-primary leading-relaxed">{item.title}</div>
-              </div>
+              </a>
             ))}
           </div>
         </div>
@@ -80,7 +96,7 @@ function IrsNewsFeed({ deadline }: { deadline: string }) {
   );
 }
 
-function TopBar({ stats, deadline, onMenuToggle, showMenu, clientName, onDashboard, onAvatarClick, onInbox, inboxUnread, onStatsClick }: TopBarProps) {
+function TopBar({ stats, deadline, onMenuToggle, showMenu, clientName, onDashboard, onAvatarClick, onInbox, inboxUnread, onStatsClick, alerts }: TopBarProps) {
   return (
     <nav
       className="h-12 max-md:h-10 flex items-center px-4 gap-4 shrink-0 z-50 border-b"
@@ -134,7 +150,7 @@ function TopBar({ stats, deadline, onMenuToggle, showMenu, clientName, onDashboa
         </button>
         <span className="text-[10px] text-tertiary">&middot;</span>
         <button onClick={() => onStatsClick?.("filed")} className="hover:text-primary transition-colors cursor-pointer">
-          <span className="text-green-500 font-medium">{stats.filed}</span> filed
+          <span className="text-brand-green font-medium">{stats.filed}</span> filed
         </button>
         <span className="text-[10px] text-tertiary">&middot;</span>
         <button onClick={() => onStatsClick?.("review")} className="hover:text-primary transition-colors cursor-pointer">
@@ -152,17 +168,18 @@ function TopBar({ stats, deadline, onMenuToggle, showMenu, clientName, onDashboa
             aria-label="Dashboard"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-              <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M3 20L8 14l4 4 9-12" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M17 6h4v4" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
         )}
 
-        {/* Inbox */}
+        {/* Drafts */}
         {onInbox && (
           <button
             onClick={onInbox}
             className="hidden md:flex w-8 h-8 rounded-lg items-center justify-center text-secondary hover:text-primary hover:bg-surface-secondary transition-colors cursor-pointer relative"
-            aria-label="Inbox"
+            aria-label="Drafts"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
               <path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" strokeLinecap="round" strokeLinejoin="round" />
@@ -175,7 +192,7 @@ function TopBar({ stats, deadline, onMenuToggle, showMenu, clientName, onDashboa
           </button>
         )}
 
-        <NotificationBell />
+        <NotificationBell alerts={alerts} />
 
         {/* Deadline — hidden when empty */}
         {deadline && (

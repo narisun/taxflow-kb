@@ -21,7 +21,7 @@ from api.models.research import (
 )
 from api.agent.research_service import ResearchService
 from api.agent.research_session import ResearchSession
-from api.dependencies import get_research_service, get_tax_brain_pool
+from api.dependencies import get_research_service, get_taxkb_pool
 
 router = APIRouter(tags=["research"])
 
@@ -107,7 +107,7 @@ async def send_research_message(
     session: AsyncSession = Depends(get_session),
     user: UserModel = Depends(require_onboarded_user),
     service: ResearchService = Depends(get_research_service),
-    tax_brain_pool=Depends(get_tax_brain_pool),
+    taxkb_pool=Depends(get_taxkb_pool),
 ):
     conv = await _get_research_thread_or_404(conversation_id, session, user)
 
@@ -133,7 +133,7 @@ async def send_research_message(
     research_session = ResearchSession(
         org_id=user.org_id, user_id=user.id,
         conversation_id=conversation_id,
-        db_session=session, tax_brain_pool=tax_brain_pool,
+        db_session=session, taxkb_pool=taxkb_pool,
     )
     history = await _load_history(session, conversation_id, user.org_id)
 

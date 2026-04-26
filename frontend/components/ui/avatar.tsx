@@ -19,7 +19,7 @@ function Avatar({ initials, color = "#0071e3", size = "md", className }: AvatarP
   return (
     <div
       className={cn(
-        "rounded-lg flex items-center justify-center font-bold text-white shrink-0",
+        "rounded-full flex items-center justify-center font-bold text-white shrink-0",
         sizeClasses[size],
         className
       )}

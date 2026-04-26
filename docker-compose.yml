@@ -1,11 +1,13 @@
-version: "3.9"
-
 # TaxFlow AI — Knowledge Base Local Development Stack
 # Starts Neo4j and PostgreSQL for Layer 1 development and testing.
 #
+# All credentials and ports are sourced from .env (same directory as this file).
+# To run against a different environment, swap .env — no edits to this file.
+#
 # Usage:
+#   cp .env.example .env    # first time only
 #   docker compose up -d
-#   docker compose down -v   # tear down and remove volumes
+#   docker compose down -v  # tear down and remove volumes
 
 services:
 
@@ -14,10 +16,12 @@ services:
     image: neo4j:5.18-community
     container_name: taxflow-neo4j
     ports:
-      - "7474:7474"   # Browser UI: http://localhost:7474
-      - "7687:7687"   # Bolt protocol (used by Python driver)
+      - "${NEO4J_BROWSER_PORT:-7474}:7474"   # Browser UI: http://localhost:7474
+      - "${NEO4J_BOLT_PORT:-7687}:7687"      # Bolt protocol (used by Python driver)
     environment:
-      NEO4J_AUTH: "neo4j/taxflow_dev"
+      # In production, set NEO4J_PASSWORD explicitly in .env — the default below
+      # only exists so `docker compose up -d` works out of the box for new devs.
+      NEO4J_AUTH: "${NEO4J_USER:-neo4j}/${NEO4J_PASSWORD:-taxflow_dev}"
       NEO4J_PLUGINS: '["apoc"]'
       NEO4J_dbms_security_procedures_unrestricted: "apoc.*"
       NEO4J_dbms_memory_heap_initial__size: "512m"
@@ -26,7 +30,7 @@ services:
     volumes:
       - neo4j_data:/data
       - neo4j_logs:/logs
-      - ./schema:/var/lib/neo4j/import     # Schema cypher files accessible in import
+      - ./taxkb/schema:/var/lib/neo4j/import     # Schema cypher files accessible in import
     healthcheck:
       test: ["CMD", "neo4j", "status"]
       interval: 30s
@@ -34,30 +38,25 @@ services:
       retries: 5
       start_period: 40s
 
-  # ── PostgreSQL ─────────────────────────────────────────────────────────────
-  # Note: schema is NOT auto-applied via docker-entrypoint-initdb.d because
-  # Docker Desktop on Windows/WSL2 mounts host files with permissions that the
-  # container's postgres user cannot read.  Apply the schema with either:
-  #   docker exec -i taxflow-postgres psql -U taxflow -d taxflow < schema/postgres_schema.sql
-  # or via the Python CLI (recommended):
+  # ── PostgreSQL (with pgvector for Layer 3 semantic search) ─────────────────
+  # Schema is applied by the Python CLI — not docker-entrypoint-initdb.d — because
+  # host-mount permissions vary across OSes. Apply with:
   #   python cli.py ingest --csv <file> ... --init-schema
   postgres:
-    # pgvector/pgvector:pg16 is postgres:16 + the pgvector extension pre-installed.
-    # Required for Layer 3 (Publications semantic search via vector embeddings).
-    # If you were previously running postgres:16-alpine, recreate the container:
-    #   docker compose down -v && docker compose up -d
     image: pgvector/pgvector:pg16
     container_name: taxflow-postgres
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     environment:
-      POSTGRES_DB:       taxflow
-      POSTGRES_USER:     taxflow
-      POSTGRES_PASSWORD: taxflow_dev
+      # In production, set POSTGRES_PASSWORD explicitly in .env. The default
+      # below is only for local dev convenience.
+      POSTGRES_DB:       ${POSTGRES_DB:-taxflow}
+      POSTGRES_USER:     ${POSTGRES_USER:-taxflow}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-taxflow_dev}
     volumes:
       - pg_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U taxflow"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-taxflow}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -66,16 +65,3 @@ volumes:
   neo4j_data:
   neo4j_logs:
   pg_data:
-
-# ── Connection strings for local development ──────────────────────────────────
-# Neo4j:    bolt://localhost:7687   user: neo4j   password: taxflow_dev
-# Postgres: postgresql://taxflow:taxflow_dev@localhost:5432/taxflow
-#
-# CLI example after `docker compose up -d`:
-#   python cli.py ingest \
-#     --csv data/sample/mef_1040_2024_v5_2.csv \
-#     --neo4j-uri bolt://localhost:7687 \
-#     --neo4j-user neo4j \
-#     --neo4j-password taxflow_dev \
-#     --pg-dsn "postgresql://taxflow:taxflow_dev@localhost:5432/taxflow" \
-#     --init-schema

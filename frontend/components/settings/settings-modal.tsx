@@ -5,7 +5,9 @@ import { useState } from "react";
 import { Modal, ModalHeader, ModalBody } from "@/components/ui/modal";
 import { useTheme } from "@/components/providers/theme-provider";
 import { cn } from "@/lib/utils";
-import { useMe } from "@/components/auth/me-context";
+import { useMe, useUpdateMe } from "@/components/auth/me-context";
+import { api } from "@/lib/api-client";
+import { useToast } from "@/components/ui/toast";
 
 interface SettingsModalProps {
   open: boolean;
@@ -41,11 +43,12 @@ const SHORTCUTS = [
 export function SettingsModal({ open, onClose, onReplayTour }: SettingsModalProps) {
   const [active, setActive] = useState<Section>("profile");
   const { theme, setTheme } = useTheme();
+  const { toast } = useToast();
   let me: ReturnType<typeof useMe> | null = null;
   try { me = useMe(); } catch { /* MeProvider not mounted yet */ }
-  const [notifPrefs, setNotifPrefs] = useState<Record<string, boolean>>(
-    Object.fromEntries(NOTIFICATION_CATEGORIES.map((c) => [c.key, true]))
-  );
+  const updateMe = useUpdateMe();
+  const [timezone, setTimezone] = useState(me?.user?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone);
+  const [savingTz, setSavingTz] = useState(false);
 
   const inputCls = "w-full border border-divider rounded-lg px-3 py-2 text-[13px] outline-none focus:border-apple-blue transition-colors bg-surface text-primary placeholder:text-tertiary";
   const labelCls = "text-[11px] font-medium text-tertiary uppercase tracking-wider mb-1 block";
@@ -90,6 +93,38 @@ export function SettingsModal({ open, onClose, onReplayTour }: SettingsModalProp
                   <div><label className={labelCls}>Email</label><input className={inputCls} defaultValue={me?.user?.email || ""} readOnly /></div>
                   <div><label className={labelCls}>Firm</label><input className={inputCls} defaultValue={me?.organization?.name || ""} readOnly /></div>
                   <div><label className={labelCls}>Role</label><input className={inputCls} defaultValue={me?.user?.role || ""} readOnly /></div>
+                  <div className="col-span-2">
+                    <label className={labelCls}>Timezone</label>
+                    <div className="flex gap-2">
+                      <select
+                        className={cn(inputCls, "flex-1")}
+                        value={timezone}
+                        onChange={(e) => setTimezone(e.target.value)}
+                      >
+                        {Intl.supportedValuesOf("timeZone").map((tz) => (
+                          <option key={tz} value={tz}>{tz.replace(/_/g, " ")}</option>
+                        ))}
+                      </select>
+                      <button
+                        onClick={async () => {
+                          setSavingTz(true);
+                          try {
+                            const updated = await api.auth.updateProfile({ timezone });
+                            updateMe(updated);
+                            toast("success", "Timezone updated");
+                          } catch (err) {
+                            toast("error", "Failed to save timezone", err instanceof Error ? err.message : "");
+                          } finally {
+                            setSavingTz(false);
+                          }
+                        }}
+                        disabled={savingTz || timezone === (me?.user?.timezone || "")}
+                        className="px-4 py-2 rounded-lg bg-apple-blue text-white text-[12px] font-medium hover:brightness-110 transition-all cursor-pointer disabled:opacity-40"
+                      >
+                        {savingTz ? "Saving..." : "Save"}
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -134,14 +169,9 @@ export function SettingsModal({ open, onClose, onReplayTour }: SettingsModalProp
                         <div className="text-[11px] text-tertiary">{cat.desc}</div>
                       </div>
                       <div className="flex items-center gap-4">
-                        <label className="flex items-center gap-1.5 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={notifPrefs[cat.key]}
-                            onChange={(e) => setNotifPrefs((p) => ({ ...p, [cat.key]: e.target.checked }))}
-                            className="w-4 h-4 accent-apple-blue cursor-pointer"
-                          />
-                          <span className="text-[11px] text-secondary">In-app</span>
+                        <label className="flex items-center gap-1.5 opacity-40 cursor-not-allowed" title="Coming soon">
+                          <input type="checkbox" disabled className="w-4 h-4 cursor-not-allowed" />
+                          <span className="text-[11px] text-tertiary">In-app</span>
                         </label>
                         <label className="flex items-center gap-1.5 opacity-40 cursor-not-allowed" title="Coming soon">
                           <input type="checkbox" disabled className="w-4 h-4 cursor-not-allowed" />
@@ -172,8 +202,8 @@ export function SettingsModal({ open, onClose, onReplayTour }: SettingsModalProp
               <div className="space-y-4">
                 <h3 className="text-[15px] font-semibold text-primary">About TaxFlow AI</h3>
                 <div className="space-y-2 text-[13px]">
-                  <div className="flex justify-between"><span className="text-secondary">Version</span><span className="text-primary font-medium">0.1.0</span></div>
-                  <div className="flex justify-between"><span className="text-secondary">Build</span><span className="text-primary font-medium">2026.04.12</span></div>
+                  <div className="flex justify-between"><span className="text-secondary">Version</span><span className="text-primary font-medium">{process.env.npm_package_version || "0.1.0"}</span></div>
+                  <div className="flex justify-between"><span className="text-secondary">Build</span><span className="text-primary font-medium">{process.env.NEXT_PUBLIC_BUILD_DATE || new Date().toISOString().slice(0, 10)}</span></div>
                 </div>
                 <div className="flex gap-2 mt-4">
                   {onReplayTour && (

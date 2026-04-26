@@ -30,7 +30,7 @@ def _clear_settings_cache():
     Without this, a test that modifies environment variables or creates
     a Settings with custom values would leak that state to subsequent tests.
     """
-    from tax_brain.config import get_settings
+    from taxkb.config import get_settings
     get_settings.cache_clear()
     yield
     get_settings.cache_clear()
@@ -39,7 +39,7 @@ def _clear_settings_cache():
 @pytest.fixture(autouse=True)
 def _clear_registry_cache():
     """Clear the publication registry singleton between tests."""
-    import tax_brain.publications.registry as reg_module
+    import taxkb.publications.registry as reg_module
     reg_module._registry = None
     yield
     reg_module._registry = None

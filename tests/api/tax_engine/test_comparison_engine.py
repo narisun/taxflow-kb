@@ -29,7 +29,7 @@ class TestComparisonEngine:
                                      "24": Decimal("10000"), "33": Decimal("14000"),
                                      "35a": Decimal("4000")})
         engine = ComparisonEngine()
-        report = engine.compare(current, prior, client_id=1)
+        report = engine.compare(current, prior, client_id="00000000-0000-0000-0000-000000000001")
 
         assert report.current_year == 2024
         assert report.prior_year == 2023
@@ -46,7 +46,7 @@ class TestComparisonEngine:
     def test_decreased_values(self):
         current = _make_result(2024, {"9": Decimal("50000"), "24": Decimal("5000")})
         prior = _make_result(2023, {"9": Decimal("80000"), "24": Decimal("10000")})
-        report = ComparisonEngine().compare(current, prior, client_id=1)
+        report = ComparisonEngine().compare(current, prior, client_id="00000000-0000-0000-0000-000000000001")
 
         total_income = next(r for r in report.sections[0].rows if r.line == "9")
         assert total_income.change == Decimal("-30000")
@@ -55,7 +55,7 @@ class TestComparisonEngine:
     def test_prior_zero_pct_change(self):
         current = _make_result(2024, {"2b": Decimal("5000")})
         prior = _make_result(2023, {"2b": Decimal("0")})
-        report = ComparisonEngine().compare(current, prior, client_id=1)
+        report = ComparisonEngine().compare(current, prior, client_id="00000000-0000-0000-0000-000000000001")
 
         interest = next(r for r in report.sections[0].rows if r.line == "2b")
         assert interest.pct_change == 100.0
@@ -63,7 +63,7 @@ class TestComparisonEngine:
     def test_both_zero(self):
         current = _make_result(2024, {})
         prior = _make_result(2023, {})
-        report = ComparisonEngine().compare(current, prior, client_id=1)
+        report = ComparisonEngine().compare(current, prior, client_id="00000000-0000-0000-0000-000000000001")
 
         for section in report.sections:
             for row in section.rows:
@@ -73,7 +73,7 @@ class TestComparisonEngine:
     def test_summary_refund_change(self):
         current = _make_result(2024, {"35a": Decimal("3000")})
         prior = _make_result(2023, {"35a": Decimal("5000")})
-        report = ComparisonEngine().compare(current, prior, client_id=1)
+        report = ComparisonEngine().compare(current, prior, client_id="00000000-0000-0000-0000-000000000001")
 
         assert report.summary.current == Decimal("3000")
         assert report.summary.prior == Decimal("5000")
@@ -82,7 +82,7 @@ class TestComparisonEngine:
     def test_summary_owed_vs_refund(self):
         current = _make_result(2024, {"37": Decimal("1000")})  # owed
         prior = _make_result(2023, {"35a": Decimal("2000")})   # refund
-        report = ComparisonEngine().compare(current, prior, client_id=1)
+        report = ComparisonEngine().compare(current, prior, client_id="00000000-0000-0000-0000-000000000001")
 
         assert report.summary.current == Decimal("-1000")  # owed shown as negative
         assert report.summary.prior == Decimal("2000")
@@ -91,7 +91,7 @@ class TestComparisonEngine:
     def test_four_sections(self):
         current = _make_result(2024, {})
         prior = _make_result(2023, {})
-        report = ComparisonEngine().compare(current, prior, client_id=1)
+        report = ComparisonEngine().compare(current, prior, client_id="00000000-0000-0000-0000-000000000001")
 
         section_titles = [s.title for s in report.sections]
         assert section_titles == ["Income", "Deductions", "Tax", "Payments"]

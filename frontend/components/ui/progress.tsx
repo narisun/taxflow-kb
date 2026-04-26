@@ -11,7 +11,7 @@ interface ProgressProps {
 const colorClasses: Record<ProgressColor, string> = {
   default: "bg-tertiary",
   blue: "bg-apple-blue",
-  green: "bg-green-500",
+  green: "bg-brand-green",
   orange: "bg-orange-500",
   red: "bg-red-500",
 };

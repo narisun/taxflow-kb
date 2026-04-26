@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { Modal, ModalHeader, ModalBody } from "@/components/ui/modal";
-import { cn } from "@/lib/utils";
+import { cn, fmtDate } from "@/lib/utils";
+import { useTimezone } from "@/components/auth/me-context";
 import type { Client } from "@/lib/api-client";
 
 interface ClientMasterModalProps {
@@ -10,7 +11,7 @@ interface ClientMasterModalProps {
   onClose: () => void;
   clients: Client[];
   initialFilter?: string;
-  onSelectClient?: (id: number) => void;
+  onSelectClient?: (id: string) => void;
 }
 
 const statusLabels: Record<string, string> = {
@@ -42,6 +43,7 @@ const filters = [
 ];
 
 export function ClientMasterModal({ open, onClose, clients, initialFilter = "", onSelectClient }: ClientMasterModalProps) {
+  const tz = useTimezone();
   const [filter, setFilter] = useState(initialFilter);
   const [search, setSearch] = useState("");
 
@@ -126,7 +128,7 @@ export function ClientMasterModal({ open, onClose, clients, initialFilter = "", 
                     </span>
                   </td>
                   <td className="px-4 py-2.5 text-tertiary">
-                    {new Date(client.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                    {fmtDate(client.created_at, tz)}
                   </td>
                 </tr>
               ))}

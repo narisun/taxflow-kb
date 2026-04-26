@@ -4973,7 +4973,7 @@ async def test_manual_entry_crud(client):
 
 - [ ] **Step 4: Run all tests**
 
-Run: `python -m pytest tests/ -v --ignore=ustaxes-master --ignore=tax_brain -x`
+Run: `python -m pytest tests/ -v --ignore=ustaxes-master --ignore=taxkb -x`
 Expected: All tests PASS
 
 - [ ] **Step 5: Commit**

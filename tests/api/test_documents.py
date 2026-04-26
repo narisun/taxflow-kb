@@ -87,7 +87,36 @@ async def test_approve_document(client):
     did = doc.json()["id"]
     resp = await client.patch(f"/api/documents/{did}/approve")
     assert resp.status_code == 200
-    assert resp.json()["status"] == "approved"
+    body = resp.json()
+    assert body["status"] == "approved"
+    # Approval must populate the audit trail used by the "Review docs" chip.
+    assert body["reviewed_by"], "reviewed_by must be set after approval"
+    assert body["reviewed_at"], "reviewed_at must be set after approval"
+    assert body["reviewed_by_name"], "reviewed_by_name must resolve from user join"
+
+
+@pytest.mark.asyncio
+async def test_document_response_exposes_uploader_and_filename(client):
+    """List + GET must surface file_name and uploader name for the chips."""
+    c = await client.post("/api/clients", json={"name": "Test", "tax_year": 2024})
+    cid = c.json()["id"]
+    upload = await client.post(
+        f"/api/clients/{cid}/documents",
+        data={"form_type": "W-2"},
+        files={"file": ("w2_acme_2024.pdf", b"fake", "application/pdf")},
+    )
+    body = upload.json()
+    assert body["file_name"] == "w2_acme_2024.pdf"
+    assert body["created_by"], "created_by must be present on upload response"
+    assert body["created_by_name"], "created_by_name must resolve from user join"
+    # Pre-approval the review fields are unset.
+    assert body["reviewed_by"] is None
+    assert body["reviewed_at"] is None
+
+    listing = await client.get(f"/api/clients/{cid}/documents")
+    items = listing.json()["items"]
+    assert items[0]["file_name"] == "w2_acme_2024.pdf"
+    assert items[0]["created_by_name"] == body["created_by_name"]
 
 
 @pytest.mark.asyncio

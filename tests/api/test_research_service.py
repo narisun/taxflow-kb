@@ -30,7 +30,7 @@ class TestResearchServiceReply:
 
         session = ResearchSession(
             org_id="org-1", user_id="user-1", conversation_id="conv-1",
-            db_session=MagicMock(), tax_brain_pool=MagicMock(),
+            db_session=MagicMock(), taxkb_pool=MagicMock(),
         )
 
         result = await service.reply("What is the standard deduction?", session, [])
@@ -85,7 +85,7 @@ class TestResearchServiceReply:
         )
         session = ResearchSession(
             org_id="org-1", user_id="user-1", conversation_id="conv-1",
-            db_session=MagicMock(), tax_brain_pool=MagicMock(),
+            db_session=MagicMock(), taxkb_pool=MagicMock(),
         )
 
         result = await service.reply("IRA limits?", session, [])

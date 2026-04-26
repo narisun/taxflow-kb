@@ -10,7 +10,7 @@ class TestResearchSession:
             user_id="user-1",
             conversation_id="conv-1",
             db_session=MagicMock(),
-            tax_brain_pool=MagicMock(),
+            taxkb_pool=MagicMock(),
         )
         assert session.org_id == "org-1"
         assert session.user_id == "user-1"
@@ -22,7 +22,7 @@ class TestResearchSession:
             user_id="user-1",
             conversation_id="conv-1",
             db_session=MagicMock(),
-            tax_brain_pool=MagicMock(),
+            taxkb_pool=MagicMock(),
         )
         import pytest
         with pytest.raises(AttributeError):

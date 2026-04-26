@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 type ToastType = "success" | "error" | "info";
 
 interface Toast {
-  id: number;
+  id: string;
   type: ToastType;
   title: string;
   description?: string;
@@ -25,7 +25,7 @@ export function useToast() {
 }
 
 const borderColors: Record<ToastType, string> = {
-  success: "border-l-green-500",
+  success: "border-l-brand-green",
   error: "border-l-red-500",
   info: "border-l-apple-blue",
 };
@@ -40,14 +40,18 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
   const addToast = useCallback((type: ToastType, title: string, description?: string) => {
-    const id = Date.now();
+    const id = `t-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
     setToasts((prev) => [...prev.slice(-2), { id, type, title, description }]);
-    setTimeout(() => {
-      setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 4000);
+    // Errors stay until the user dismisses them (they often need action).
+    // Success / info auto-dismiss so they don't pile up on screen.
+    if (type !== "error") {
+      setTimeout(() => {
+        setToasts((prev) => prev.filter((t) => t.id !== id));
+      }, 4000);
+    }
   }, []);
 
-  const removeToast = useCallback((id: number) => {
+  const removeToast = useCallback((id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 

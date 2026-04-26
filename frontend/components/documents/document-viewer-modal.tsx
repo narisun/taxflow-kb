@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { PdfViewer } from "@/components/documents/pdf-viewer";
 
 interface DocumentData {
-  id: number;
+  id: string;
   form_type: string;
   title: string;
   status: string;
@@ -22,10 +22,10 @@ interface DocumentViewerModalProps {
   open: boolean;
   onClose: () => void;
   document: DocumentData | null;
-  onApprove?: (docId: number) => void;
+  onApprove?: (docId: string) => void;
 }
 
-function getDocUrl(docId: number | string): string {
+function getDocUrl(docId: string | string): string {
   const apiBase = process.env.NEXT_PUBLIC_API_URL;
   if (apiBase) {
     return `${apiBase}/api/documents/${docId}/file`;
